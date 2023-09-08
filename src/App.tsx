@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { RootState } from "./store/store";
 import Login from "./pages/login/Login";
+import DefaultInfo from "./pages/signup/DefaultInfo.container";
 import { detectWebpSupport } from "./library/webpSupport";
 function App() {
   const userData = useSelector((state: RootState) => state.user.data);
@@ -31,6 +32,10 @@ function App() {
           <Route
             path='/login'
             element={userData ? <Navigate to='/' /> : <Login />}
+          />
+          <Route
+            path='/signup'
+            element={userData ? <Navigate to='/' /> : <DefaultInfo />}
           />
         </Routes>
       )}
