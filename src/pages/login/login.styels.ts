@@ -35,12 +35,11 @@ export const InputWrapper = styled.div`
 export const LoginBtn = styled.button`
   width: 100%;
   background-color: ${(props) =>
-    props.disabled ? "#cbcbcb" : "#e50914"};
+    props.disabled ? "#cbcbcb" : "gold"};
   padding: 14px 0;
   border-radius: 4px;
   font-size: 16px;
   font-weight: 500;
-  color: #fff;
   margin-top: 10px;
   transition: all 0.5s;
 `;
@@ -94,6 +93,17 @@ export const SocialLoginBtn = styled.button`
   font-weight: 400;
   padding: 15px 0;
   border: px solid #bdbdbd;
+  body.webp &{
+    &.google {
+      background: url("/assets/webp/icon-google.webp") no-repeat center left 15px /
+        24px #fff;
+    }
+    &.github {
+      background: url("/assets/webp/icon-github.webp") no-repeat center left 15px /
+        24px #fff;
+    }
+  }
+  body.no-webp &{
     &.google {
       background: url("/assets/icon-google.svg") no-repeat center left 15px /
         24px #fff;
@@ -102,6 +112,9 @@ export const SocialLoginBtn = styled.button`
       background: url("/assets/icon-github.svg") no-repeat center left 15px /
         24px #fff;
     }
+  }
+  
+ 
   :hover {
     background-color: ${isMobile ? "" : "#ddd"};
   }

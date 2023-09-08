@@ -11,19 +11,20 @@ import {
   SocialLoginWrapper,
   SocialLoginBtn,
   InputWrapper,
-  SocialLoginItem,
+  SocialLoginItem
 } from "./login.styels";
-import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch, RootState } from '../../store/store';
-import { useValidationInput } from '../../hook/useValidationInput';
-import Loading from '../../compoent/commons/loading/Loading';
-import ErrorMsg from '../../compoent/commons/errorMsg/ErrorMsg';
-import UserInput from '../../compoent/commons/userInput/UserInput';
-import { fetchLogin, fetchSocialLogin } from '../../slice/userSlice';
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../store/store";
+import { useValidationInput } from "../../hook/useValidationInput";
+import Loading from "../../compoent/commons/loading/Loading";
+import ErrorMsg from "../../compoent/commons/errorMsg/ErrorMsg";
+import UserInput from "../../compoent/commons/userInput/UserInput";
+import { fetchLogin, fetchSocialLogin } from "../../slice/userSlice";
+import { resolveWebp } from "../../library/webpSupport";
 
 export default function Login() {
   const dispatch = useDispatch<AppDispatch>();
-  const isLoading = useSelector((state: RootState)=>state.user.isLoading);
+  const isLoading = useSelector((state: RootState) => state.user.isLoading);
   const [disabled, setDisabled] = useState(true);
   const emailRef = useRef<HTMLInputElement>(null);
   const [emailValue, emailValid, onChangeEmail, setEmailValue] =
@@ -33,7 +34,7 @@ export default function Login() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (emailValid.valid && passwordValid.valid) {
-      dispatch(fetchLogin({emailValue, passwordValue}));
+      dispatch(fetchLogin({ emailValue, passwordValue }));
       setEmailValue("");
       setPasswordValue("");
       setDisabled(true);
@@ -41,7 +42,7 @@ export default function Login() {
   };
 
   useEffect(() => {
-    emailRef.current&&emailRef.current.focus();
+    emailRef.current && emailRef.current.focus();
   }, []);
 
   useEffect(() => {
@@ -53,10 +54,12 @@ export default function Login() {
   }, [emailValid, passwordValid]);
   return (
     <>
-      <Title className="a11y-hidden">로그인 페이지</Title>
+      <Title className='a11y-hidden'>로그인 페이지</Title>
       <Wrapper>
         <LoginForm onSubmit={handleSubmit}>
-          <LoginFormTitle><img src='/assets/icon-loginLogo.svg' /></LoginFormTitle>
+          <LoginFormTitle>
+            <img src={resolveWebp("/assets/webp/icon-loginLogo.webp", "svg")} />
+          </LoginFormTitle>
           <InputWrapper>
             <UserInput
               label_hidden={true}
@@ -90,7 +93,7 @@ export default function Login() {
             <span style={{ fontSize: "10px", verticalAlign: "top" }}>|</span>{" "}
             비밀번호 찾기
           </FindAccountLink>
-          <LoginBtn type="submit" disabled={disabled}>
+          <LoginBtn type='submit' disabled={disabled}>
             로그인
           </LoginBtn>
 
@@ -101,8 +104,8 @@ export default function Login() {
           <SocialLoginWrapper>
             <SocialLoginItem>
               <SocialLoginBtn
-                className="google"
-                type="button"
+                className='google'
+                type='button'
                 onClick={() => dispatch(fetchSocialLogin("google"))}
               >
                 구글 계정으로 로그인
@@ -110,8 +113,8 @@ export default function Login() {
             </SocialLoginItem>
             <SocialLoginItem>
               <SocialLoginBtn
-                className="github"
-                type="button"
+                className='github'
+                type='button'
                 onClick={() => dispatch(fetchSocialLogin("github"))}
               >
                 깃 허브 계정으로 로그인
