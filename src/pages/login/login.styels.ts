@@ -93,6 +93,7 @@ export const SocialLoginBtn = styled.button`
   font-weight: 400;
   padding: 15px 0;
   border: px solid #bdbdbd;
+  transition: all 0.2s;
   body.webp &{
     &.google {
       background: url("/assets/webp/icon-google.webp") no-repeat center left 15px /
@@ -102,6 +103,9 @@ export const SocialLoginBtn = styled.button`
       background: url("/assets/webp/icon-github.webp") no-repeat center left 15px /
         24px #fff;
     }
+    &:hover {
+    background-color: ${isMobile ? "" : "#ddd"};
+  }
   }
   body.no-webp &{
     &.google {
@@ -112,10 +116,9 @@ export const SocialLoginBtn = styled.button`
       background: url("/assets/icon-github.svg") no-repeat center left 15px /
         24px #fff;
     }
-  }
-  
- 
-  :hover {
+    &:hover {
     background-color: ${isMobile ? "" : "#ddd"};
   }
+  }
+
 `;

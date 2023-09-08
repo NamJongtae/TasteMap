@@ -2,9 +2,8 @@ import styled from "styled-components";
 
 export const Wrapper = styled.div``;
 export const Label = styled.label`
-  color: #fff;
   display: block;
-  margin: 0 0 10px 5px;
+  margin: 0 0 5px 5px;
   font-size: 14px;
 `;
 
