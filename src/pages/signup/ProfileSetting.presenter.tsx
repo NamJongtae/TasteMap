@@ -98,7 +98,7 @@ export default function ProfileSettingUI({
       <InputWrapper>
         <UserInput
           type='text'
-          label={"닉네임"}
+          label={"닉네임 (필수)"}
           id={"input-nickname"}
           placeholder={"4-10자 영문, 영문 + 숫자"}
           value={displayNameValue}

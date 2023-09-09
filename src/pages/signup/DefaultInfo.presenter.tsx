@@ -101,7 +101,7 @@ export default function DefaultInfoUI({
             <InputWrapper>
               <UserInput
                 type='text'
-                label={"이메일"}
+                label={"이메일 (필수)"}
                 id={"input-email"}
                 placeholder={"이메일 주소를 입력해주세요."}
                 value={emailValue}
@@ -114,7 +114,7 @@ export default function DefaultInfoUI({
             <InputWrapper>
               <UserInput
                 type='password'
-                label={"비밀번호"}
+                label={"비밀번호 (필수)"}
                 id={"input-password"}
                 placeholder={"8-16자 특수문자, 숫자, 영문 포함"}
                 value={passwordValue}
@@ -129,7 +129,7 @@ export default function DefaultInfoUI({
             <InputWrapper>
               <UserInput
                 type='password'
-                label={"비밀번호 확인"}
+                label={"비밀번호 확인 (필수)"}
                 id={"input-passwordChk"}
                 placeholder={"비밀번호 확인을 입력해주세요."}
                 value={passowrdChkValue}
@@ -144,7 +144,7 @@ export default function DefaultInfoUI({
             <InputWrapper>
               <UserInput
                 type='text'
-                label={"휴대폰"}
+                label={"휴대폰 (필수)"}
                 id={"input-phone"}
                 placeholder={"휴대폰 번호를 입력해주세요. ( - 제외 )"}
                 value={phoneValue
