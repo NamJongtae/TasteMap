@@ -5,6 +5,7 @@ export const SignupForm = styled.form`
   flex-direction: column;
   gap: 20px;
   width: 100%;
+  padding-bottom: 30px;
 `;
 
 export const InputWrapper = styled.div`

@@ -15,6 +15,7 @@ export const FormWrapper = styled.main`
   flex-direction: column;
   align-items: center;
   width: 100%;
+  height: 100vh;
   max-width: 450px;
   padding: 30px 40px;
   @media screen and (max-width: 431px) {
@@ -24,7 +25,7 @@ export const FormWrapper = styled.main`
 `;
 
 export const Title = styled.h1`
-  margin-top: 10px;
+  margin-top: 30px;
   font-size: 25px;
   margin-bottom: 20px;
   font-weight: 500;
@@ -108,6 +109,7 @@ export const SignupForm = styled.form`
   flex-direction: column;
   gap: 20px;
   width: 100%;
+  padding-bottom: 30px;
 `;
 
 export const InputWrapper = styled.div`
@@ -119,11 +121,11 @@ export const InputWrapper = styled.div`
 export const SignupBtn = styled.button`
   width: 100%;
   background-color: ${(props) =>
-    props.disabled ? "rgba(220,220,220, 0.5)" : "gold"};
+    props.disabled ? "#cbcbcb" : "gold"};
   cursor: ${(props) => (props.disabled ? "default" : "cursor")};
   padding: 14px 0;
   border-radius: 4px;
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 500;
   margin-top: 10px;
   transition: all 0.5s;

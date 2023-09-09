@@ -1,27 +1,28 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 import { isMobile } from "react-device-detect";
 import { Link } from "react-router-dom";
 
 export const Title = styled.h1``;
 export const Wrapper = styled.main`
+  display: flex;
+  justify-content: center;
+  align-items: center;
   background-color: #f5f5f5;
   height: 100vh;
+  overflow: auto;
 `;
 export const LoginFormTitle = styled.h2`
   text-align: center;
   font-weight: 500;
 `;
 export const LoginForm = styled.form`
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
   display: flex;
   flex-direction: column;
+  height: 100vh;
   gap: 20px;
   max-width: 400px;
   width: calc(100% - 60px);
-  padding: 30px 40px;
+  padding: 100px 40px 0 40px;
   @media screen and (max-width: 431px) {
     width: calc(100% - 40px);
     padding: 30px 20px;
@@ -34,11 +35,10 @@ export const InputWrapper = styled.div`
 `;
 export const LoginBtn = styled.button`
   width: 100%;
-  background-color: ${(props) =>
-    props.disabled ? "#cbcbcb" : "gold"};
+  background-color: ${(props) => (props.disabled ? "#cbcbcb" : "gold")};
   padding: 14px 0;
   border-radius: 4px;
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 500;
   margin-top: 10px;
   transition: all 0.5s;
@@ -94,20 +94,20 @@ export const SocialLoginBtn = styled.button`
   padding: 15px 0;
   border: px solid #bdbdbd;
   transition: all 0.2s;
-  body.webp &{
+  body.webp & {
     &.google {
-      background: url("/assets/webp/icon-google.webp") no-repeat center left 15px /
-        24px #fff;
+      background: url("/assets/webp/icon-google.webp") no-repeat center left
+        15px / 24px #fff;
     }
     &.github {
-      background: url("/assets/webp/icon-github.webp") no-repeat center left 15px /
-        24px #fff;
+      background: url("/assets/webp/icon-github.webp") no-repeat center left
+        15px / 24px #fff;
     }
     &:hover {
-    background-color: ${isMobile ? "" : "#ddd"};
+      background-color: ${isMobile ? "" : "#ddd"};
+    }
   }
-  }
-  body.no-webp &{
+  body.no-webp & {
     &.google {
       background: url("/assets/icon-google.svg") no-repeat center left 15px /
         24px #fff;
@@ -117,8 +117,7 @@ export const SocialLoginBtn = styled.button`
         24px #fff;
     }
     &:hover {
-    background-color: ${isMobile ? "" : "#ddd"};
+      background-color: ${isMobile ? "" : "#ddd"};
+    }
   }
-  }
-
 `;
