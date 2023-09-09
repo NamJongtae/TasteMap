@@ -1,4 +1,4 @@
-import { collection, doc, setDoc } from "firebase/firestore";
+import { Timestamp, collection, doc, setDoc } from "firebase/firestore";
 import {
   getAuth,
   createUserWithEmailAndPassword,
@@ -48,6 +48,7 @@ export const signup = async (
     reportList: [],
     photoFileName: fileName || "",
     introduce,
+    createdAt: Timestamp.fromDate(new Date()),
   });
   return {
     uid: res.user.uid,

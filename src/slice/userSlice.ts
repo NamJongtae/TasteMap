@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { getAuth } from "firebase/auth";
 import { login, socialLogin } from "../api/firebase/loginAPI";
 import { sweetToast } from "../library/sweetAlert/sweetAlert";
+import { changePassword, findEmail } from "../api/firebase/findAccountAPI";
 const userDataString = localStorage.getItem("user");
 const userData = userDataString ? JSON.parse(userDataString) : "";
 interface IKnownError {
@@ -44,12 +45,48 @@ export const fetchSocialLogin = createAsyncThunk<
   }
 });
 
+// 이메일 찾기
+export const fetchFindEmail = createAsyncThunk<
+  {email?: string, createdAt?: string},
+  Pick<IParms, "displayNameValue" | "phoneValue">,
+  { rejectValue: IKnownError }
+>(
+  "userSlice/fetchFindEmail",
+  async ({ displayNameValue, phoneValue }, thunkAPI) => {
+    try {
+      const res = await findEmail(displayNameValue, phoneValue);
+      return res;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
+// 비밀번호 찾기 시 비밀번호 변경
+export const fetchChangePassowrd = createAsyncThunk<
+  boolean,
+  Pick<IParms, "emailValue" | "phoneValue">,
+  { rejectValue: IKnownError }
+>(
+  "userSlice/fetchChangePassowrd",
+  async ({ emailValue, phoneValue }, thunkAPI) => {
+    try {
+      const res = await changePassword(emailValue, phoneValue);
+      return res;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
 export const userSlice = createSlice({
   name: "userSlice",
   initialState: {
     data: userData,
     isLoading: false,
     error: "",
+    findEmailValue: {} as {email?: string, createdAt?: string},
+    findPasswordValue: false
   },
   reducers: {
     // 유저 데이터 초기화
@@ -67,7 +104,7 @@ export const userSlice = createSlice({
           uid: user?.uid,
           displayName: user?.displayName,
           email: user?.email,
-          photoURL: user?.photoURL,
+          photoURL: user?.photoURL
         })
       );
       // 현재 유저 데이터를 data 저장
@@ -75,9 +112,14 @@ export const userSlice = createSlice({
         uid: user?.uid,
         displayName: user?.displayName,
         email: user?.email,
-        photoURL: user?.photoURL,
+        photoURL: user?.photoURL
       };
     },
+    // 이메일 및 비밀번호 찾은 값 초기화
+    resetFindAccountValue: (state) => {
+      state.findEmailValue = {};
+      state.findPasswordValue = false;
+    }
   },
   extraReducers: (builder) => {
     // 로그인
@@ -93,7 +135,7 @@ export const userSlice = createSlice({
         uid: user?.uid,
         displayName: user?.displayName,
         email: user?.email,
-        photoURL: user?.photoURL,
+        photoURL: user?.photoURL
       };
       // localstorage에 유저 데이터를 저장
       localStorage.setItem(
@@ -102,7 +144,7 @@ export const userSlice = createSlice({
           uid: user?.uid,
           displayName: user?.displayName,
           email: user?.email,
-          photoURL: user?.photoURL,
+          photoURL: user?.photoURL
         })
       );
     });
@@ -144,7 +186,7 @@ export const userSlice = createSlice({
         uid: user?.uid,
         displayName: user?.displayName,
         email: user?.email,
-        photoURL: user?.photoURL,
+        photoURL: user?.photoURL
       };
       // localstorage에 유저 데이터를 저장
       localStorage.setItem(
@@ -153,7 +195,7 @@ export const userSlice = createSlice({
           uid: user?.uid,
           displayName: user?.displayName,
           email: user?.email,
-          photoURL: user?.photoURL,
+          photoURL: user?.photoURL
         })
       );
     });
@@ -167,5 +209,44 @@ export const userSlice = createSlice({
         sweetToast("이미 가입된 이메일 계정입니다!", "warning");
       }
     });
-  },
+
+    // 이메일 찾기
+    builder.addCase(fetchFindEmail.pending, (state) => {
+      state.isLoading = true;
+    });
+    builder.addCase(fetchFindEmail.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.findEmailValue = action.payload;
+    });
+    builder.addCase(fetchFindEmail.rejected, (state, action) => {
+      state.isLoading = false;
+      if (action.payload) {
+        state.error = action.payload.message;
+      }
+      console.log(state.error)
+      sweetToast(
+        "알 수 없는 오류가 발생하였습니다.\n잠시 후 다시 시도해주세요.",
+        "warning"
+      );
+    });
+
+    // 비밀번호 변경
+    builder.addCase(fetchChangePassowrd.pending, (state) => {
+      state.isLoading = true;
+    });
+    builder.addCase(fetchChangePassowrd.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.findPasswordValue = action.payload;
+    });
+    builder.addCase(fetchChangePassowrd.rejected, (state, action) => {
+      if (action.payload) {
+        state.error = action.payload.message;
+      }
+      sweetToast(
+        "알 수 없는 오류가 발생하였습니다.\n잠시 후 다시 시도해주세요.",
+        "warning"
+      );
+      state.isLoading = false;
+    });
+  }
 });
