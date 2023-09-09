@@ -49,7 +49,7 @@ export const userSlice = createSlice({
   initialState: {
     data: userData,
     isLoading: false,
-    error: ""
+    error: "",
   },
   reducers: {
     // 유저 데이터 초기화
@@ -67,7 +67,7 @@ export const userSlice = createSlice({
           uid: user?.uid,
           displayName: user?.displayName,
           email: user?.email,
-          photoURL: user?.photoURL
+          photoURL: user?.photoURL,
         })
       );
       // 현재 유저 데이터를 data 저장
@@ -75,9 +75,9 @@ export const userSlice = createSlice({
         uid: user?.uid,
         displayName: user?.displayName,
         email: user?.email,
-        photoURL: user?.photoURL
+        photoURL: user?.photoURL,
       };
-    }
+    },
   },
   extraReducers: (builder) => {
     // 로그인
@@ -93,7 +93,7 @@ export const userSlice = createSlice({
         uid: user?.uid,
         displayName: user?.displayName,
         email: user?.email,
-        photoURL: user?.photoURL
+        photoURL: user?.photoURL,
       };
       // localstorage에 유저 데이터를 저장
       localStorage.setItem(
@@ -102,7 +102,7 @@ export const userSlice = createSlice({
           uid: user?.uid,
           displayName: user?.displayName,
           email: user?.email,
-          photoURL: user?.photoURL
+          photoURL: user?.photoURL,
         })
       );
     });
@@ -136,6 +136,27 @@ export const userSlice = createSlice({
     });
 
     // 소셜 로그인
+    builder.addCase(fetchSocialLogin.fulfilled, (state) => {
+      // 현재 유저 정보를 불러옴
+      const user = getAuth().currentUser;
+      // 현재 유저 데이터를 data에 저장
+      state.data = {
+        uid: user?.uid,
+        displayName: user?.displayName,
+        email: user?.email,
+        photoURL: user?.photoURL,
+      };
+      // localstorage에 유저 데이터를 저장
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          uid: user?.uid,
+          displayName: user?.displayName,
+          email: user?.email,
+          photoURL: user?.photoURL,
+        })
+      );
+    });
     builder.addCase(fetchSocialLogin.rejected, (state, action) => {
       if (action.payload) {
         state.error = action.payload.toString();
@@ -146,5 +167,5 @@ export const userSlice = createSlice({
         sweetToast("이미 가입된 이메일 계정입니다!", "warning");
       }
     });
-  }
+  },
 });
