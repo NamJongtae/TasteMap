@@ -7,19 +7,6 @@ const GlobalStyles = createGlobalStyle`
   body{
     width: 100%;
     height: 100%;
-    -webkit-tap-highlight-color : rgba(0,0,0,0);
-    ::-webkit-scrollbar {
-    width: 8px;
-  }
-  ::-webkit-scrollbar-thumb {
-    height: 30%;
-    background: #fff;
-
-    border-radius: 10px;
-  }
-  ::-webkit-scrollbar-track {
-    background: rgba(33, 122, 244, 0.1);
-  }
   }
   :root{
     font-family: 'Noto Sans KR', sans-serif;
