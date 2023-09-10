@@ -39,7 +39,7 @@ export default function PostItem({ data }: IProps) {
   const detailBtnRef = useRef<HTMLButtonElement>(null);
   const navigate = useNavigate();
 
-  const onClickSelect = (e:React.MouseEvent<HTMLButtonElement>) => {
+  const onClickSelect = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     setOpenSelect(!openSelect);
   };
@@ -48,13 +48,18 @@ export default function PostItem({ data }: IProps) {
     setIsLike(!isLike);
   };
 
-  const onCliceRemove = (id: string) => {
+  const onCliceRemove = (e: React.MouseEvent<HTMLButtonElement>, id: string) => {
     sweetConfirm("정말 삭제 하시겠습니까?", "삭제", "취소", () => {
+      e.stopPropagation();
       dispatch(postSlice.actions.remove(id));
     });
   };
 
-  const onClickReport = (id: string) => {
+  const onClickReport = (
+    e: React.MouseEvent<HTMLButtonElement>,
+    id: string
+  ) => {
+    e.stopPropagation();
     setOpenSelect(false);
     sweetConfirm("정말 신고 하시겠습니까?", "신고", "취소", () => {
       console.log(id);
@@ -68,7 +73,7 @@ export default function PostItem({ data }: IProps) {
   }, [openSelect]);
   return (
     <Wrapper>
-      <PostItemTop onClick={()=>navigate(`/profile/${data.uid}`)}>
+      <PostItemTop onClick={() => navigate(`/profile/${data.uid}`)}>
         <UserInfo>
           <UserImg src='/assets/icon-defaultProfile.svg' alt='프로필 이미지' />
           <Username>{data.displayName}</Username>
@@ -90,7 +95,7 @@ export default function PostItem({ data }: IProps) {
                 <Opection>
                   <OpectionBtn
                     type='button'
-                    onClick={() => onCliceRemove(data.id)}
+                    onClick={(e) => onCliceRemove(e, data.id)}
                   >
                     삭제
                   </OpectionBtn>
@@ -113,7 +118,7 @@ export default function PostItem({ data }: IProps) {
                 <Opection>
                   <OpectionBtn
                     type='button'
-                    onClick={() => onClickReport(data.id)}
+                    onClick={(e) => onClickReport(e, data.id)}
                   >
                     신고
                   </OpectionBtn>
@@ -125,7 +130,7 @@ export default function PostItem({ data }: IProps) {
       </PostItemTop>
       <ContentWrapper>
         <ContentText>{data.content}</ContentText>
-        {data.img.length>0&&<ImgSlider imgArray={data.img} />}
+        {data.img.length > 0 && <ImgSlider imgArray={data.img} />}
       </ContentWrapper>
       <PostItemButtom>
         <ButtonWrapper>
