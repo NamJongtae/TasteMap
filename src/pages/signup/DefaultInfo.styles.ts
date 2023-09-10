@@ -10,7 +10,7 @@ export const Wrapper = styled.main`
   background-color: #f5f5f5;
 `;
 
-export const FormWrapper = styled.main`
+export const FormWrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
