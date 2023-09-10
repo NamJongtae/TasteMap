@@ -5,7 +5,9 @@ import { RootState } from "./store/store";
 import Login from "./pages/login/Login";
 import DefaultInfo from "./pages/signup/DefaultInfo.container";
 import { detectWebpSupport } from "./library/webpSupport";
-import FindAccount from './pages/findAccount/FindAccount.container';
+import FindAccount from "./pages/findAccount/FindAccount.container";
+import Home from "./pages/home/Home";
+
 function App() {
   const userData = useSelector((state: RootState) => state.user.data);
   // webp 지원유무가 확인 되었을때 컴포넌트를 렌더링 시키위해 사용
@@ -41,6 +43,10 @@ function App() {
           <Route
             path='/findAccount'
             element={userData ? <Navigate to='/' /> : <FindAccount />}
+          />
+          <Route
+            path='/'
+            element={!userData ? <Navigate to='/login' /> : <Home />}
           />
         </Routes>
       )}
