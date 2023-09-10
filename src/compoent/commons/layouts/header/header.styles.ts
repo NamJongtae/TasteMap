@@ -10,7 +10,7 @@ export const Wrapper = styled.header`
   border-bottom: 2px solid #b5b5b5;
   position: sticky;
   top: 0;
-  z-index: 99;
+  z-index: 999;
   width: 100%;
   background-color: #fff;
   min-height: 54px;
