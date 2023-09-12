@@ -5,7 +5,7 @@ import { resolveWebp } from "../../library/webpSupport";
 import { getCompressionImg } from "../../library/imageCompression";
 import { sweetToast } from "../../library/sweetAlert/sweetAlert";
 import { useDispatch } from "react-redux";
-import { fetchSignup } from "../../slice/signupSlice";
+import { thuckFetchSignup } from "../../slice/signupSlice";
 import { AppDispatch } from '../../store/store';
 
 interface IProps {
@@ -82,13 +82,14 @@ export default function ProfileSetting({
   };
 
   const onChangeIntroduce = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if(e.target.value===" "&&e.target.value.length===1) return;
       setIntroduce(e.target.value);
   }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     dispatch(
-      fetchSignup({
+      thuckFetchSignup({
         displayNameValue,
         uploadImg,
         emailValue,

@@ -91,7 +91,7 @@ export default function ProfileSettingUI({
             업로드 가능한 최대 이미지 용량은 10MB 입니다.
           </ProfileImgDesc>
           <ProfileImgDesc>
-            .jpg, .png, .jpeg,.bmp, .tif, *.heic 이미지 형식을 지원합니다.
+            .jpg, .jpge, .png, .svg 이미지 형식을 지원합니다.
           </ProfileImgDesc>
         </ProfileImgDescList>
       </ProfileImgWrapper>
@@ -118,7 +118,6 @@ export default function ProfileSettingUI({
           placeholder={"최대 100자까지 작성 가능합니다."}
           value={introduce}
           onChange={onChangeIntroduce}
-          minLength={4}
           maxLength={100}
         />
       </InputWrapper>
