@@ -1,7 +1,7 @@
 import { debounce } from "lodash";
 import { ChangeEvent, useCallback, useEffect, useState } from "react";
-import { duplication } from "../api/firebase/validationAPI";
-import { IUserData } from '../api/firebase/firebaseAPIType';
+import { fetchDuplication } from "../api/firebase/validationAPI";
+import { IUserData } from '../api/apiType';
 
 export const useValidationInput = (
   initialValue: string,
@@ -74,7 +74,7 @@ export const useValidationInput = (
 
   const duplicationDebounce = useCallback(
     debounce(async (value) => {
-      const isDulplcation = await duplication(
+      const isDulplcation = await fetchDuplication(
         type === "phone" ? value.replace(/-/g, "") : value,
         type
       );
