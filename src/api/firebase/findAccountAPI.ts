@@ -14,7 +14,7 @@ const changeFormateDate = (dateObject: Date) => {
   ).padStart(2, "0")}-${String(dateObject.getDate()).padStart(2, "0")}`;
 };
 // 이메일 찾기 API
-export const findEmail = async (displayName: string, phone: string) => {
+export const fetchFindEmail = async (displayName: string, phone: string) => {
   const userRef = collection(db, "user");
   const q = query(
     userRef,
@@ -35,7 +35,7 @@ export const findEmail = async (displayName: string, phone: string) => {
 };
 
 // 비밀번호 변경 API
-export const changePassword = async (email: string, phone: string) => {
+export const fetchChangePassword = async (email: string, phone: string) => {
   const userRef = collection(db, "user");
   const q = query(
     userRef,

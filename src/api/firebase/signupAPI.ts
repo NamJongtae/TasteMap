@@ -14,7 +14,7 @@ import { v4 as uuidv4 } from "uuid";
 
 const auth = getAuth();
 // 회원가입 API
-export const signup = async (
+export const fetchSignup = async (
   displayName: string,
   file: File | "",
   email: string,

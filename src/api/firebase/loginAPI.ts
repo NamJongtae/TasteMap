@@ -15,13 +15,13 @@ const googleProvider = new GoogleAuthProvider();
 const githubProvider = new GithubAuthProvider();
 
 // 로그인 API
-export const login = async (email: string, password: string) => {
+export const fetchLogin = async (email: string, password: string) => {
   await signInWithEmailAndPassword(auth, email, password);
   if (!auth.currentUser) return;
   sweetToast(`${auth.currentUser.displayName}님 환영합니다.`, "success", 3000);
 };
 
-export const socialLogin = async (type: string) => {
+export const fetchSocialLogin = async (type: string) => {
   let provider;
   if (type === "google") {
     provider = googleProvider;
