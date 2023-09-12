@@ -19,7 +19,7 @@ import { useValidationInput } from "../../hook/useValidationInput";
 import Loading from "../../compoent/commons/loading/Loading";
 import ErrorMsg from "../../compoent/commons/errorMsg/ErrorMsg";
 import UserInput from "../../compoent/commons/userInput/UserInput";
-import { fetchLogin, fetchSocialLogin } from "../../slice/userSlice";
+import { thuckFetchLogin, thuckFetchSocialLogin } from "../../slice/userSlice";
 import { resolveWebp } from "../../library/webpSupport";
 
 export default function Login() {
@@ -34,7 +34,7 @@ export default function Login() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (emailValid.valid && passwordValid.valid) {
-      dispatch(fetchLogin({ emailValue, passwordValue }));
+      dispatch(thuckFetchLogin({ emailValue, passwordValue }));
       setEmailValue("");
       setPasswordValue("");
       setDisabled(true);
@@ -106,7 +106,7 @@ export default function Login() {
               <SocialLoginBtn
                 className='google'
                 type='button'
-                onClick={() => dispatch(fetchSocialLogin("google"))}
+                onClick={() => dispatch(thuckFetchSocialLogin("google"))}
               >
                 구글 계정으로 로그인
               </SocialLoginBtn>
@@ -115,7 +115,7 @@ export default function Login() {
               <SocialLoginBtn
                 className='github'
                 type='button'
-                onClick={() => dispatch(fetchSocialLogin("github"))}
+                onClick={() => dispatch(thuckFetchSocialLogin("github"))}
               >
                 깃 허브 계정으로 로그인
               </SocialLoginBtn>
