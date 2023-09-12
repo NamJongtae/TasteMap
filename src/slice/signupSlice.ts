@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { signup } from "../api/firebase/signupAPI";
+import { fetchSignup } from "../api/firebase/signupAPI";
 import { userSlice } from "./userSlice";
 import { sweetToast } from "../library/sweetAlert/sweetAlert";
 interface IKnownError {
@@ -14,7 +14,7 @@ interface ISignupParms {
   introduce: string;
 }
 // 회원가입
-export const fetchSignup = createAsyncThunk<
+export const thuckFetchSignup = createAsyncThunk<
   void,
   ISignupParms,
   { rejectValue: IKnownError }
@@ -32,7 +32,7 @@ export const fetchSignup = createAsyncThunk<
     thunkAPI
   ) => {
     try {
-      await signup(
+      await fetchSignup(
         displayNameValue,
         uploadImg,
         emailValue,
@@ -55,13 +55,13 @@ export const signupSlice = createSlice({
   },
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(fetchSignup.pending, (state) => {
+    builder.addCase(thuckFetchSignup.pending, (state) => {
       state.isLoading = true;
     });
-    builder.addCase(fetchSignup.fulfilled, (state) => {
+    builder.addCase(thuckFetchSignup.fulfilled, (state) => {
       state.isLoading = false;
     });
-    builder.addCase(fetchSignup.rejected, (state, action) => {
+    builder.addCase(thuckFetchSignup.rejected, (state, action) => {
       state.isLoading = false;
       if (action.payload) {
         state.error = action.payload.toString();
