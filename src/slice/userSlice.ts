@@ -1,10 +1,13 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { getAuth } from "firebase/auth";
-import { login, socialLogin } from "../api/firebase/loginAPI";
+import { fetchLogin, fetchSocialLogin } from "../api/firebase/loginAPI";
 import { sweetToast } from "../library/sweetAlert/sweetAlert";
-import { changePassword, findEmail } from "../api/firebase/findAccountAPI";
-const userDataString = localStorage.getItem("user");
-const userData = userDataString ? JSON.parse(userDataString) : "";
+import {
+  fetchChangePassword,
+  fetchFindEmail
+} from "../api/firebase/findAccountAPI";
+import { IUserData } from "../api/apiType";
+
 interface IKnownError {
   message: string;
 }
@@ -20,41 +23,44 @@ interface IParms {
 }
 
 // 로그인
-export const fetchLogin = createAsyncThunk<
+export const thuckFetchLogin = createAsyncThunk<
   void,
   Pick<IParms, "emailValue" | "passwordValue">,
   { rejectValue: IKnownError }
->("userSlice/fetchLogin", async ({ emailValue, passwordValue }, thunkAPI) => {
-  try {
-    await login(emailValue, passwordValue);
-  } catch (error: any) {
-    return thunkAPI.rejectWithValue(error);
+>(
+  "userSlice/thuckFetchLogin",
+  async ({ emailValue, passwordValue }, thunkAPI) => {
+    try {
+      await fetchLogin(emailValue, passwordValue);
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(error);
+    }
   }
-});
+);
 
 // 소셜 로그인
-export const fetchSocialLogin = createAsyncThunk<
+export const thuckFetchSocialLogin = createAsyncThunk<
   void,
   string,
   { rejectValue: IKnownError }
->("userSlice/fetchSocialLogin", async (type, thunkAPI) => {
+>("userSlice/thuckFetchSocialLogin", async (type, thunkAPI) => {
   try {
-    await socialLogin(type);
+    await fetchSocialLogin(type);
   } catch (error: any) {
     return thunkAPI.rejectWithValue(error);
   }
 });
 
 // 이메일 찾기
-export const fetchFindEmail = createAsyncThunk<
-  {email?: string, createdAt?: string},
+export const thuckFetchFindEmail = createAsyncThunk<
+  { email?: string; createdAt?: string },
   Pick<IParms, "displayNameValue" | "phoneValue">,
   { rejectValue: IKnownError }
 >(
   "userSlice/fetchFindEmail",
   async ({ displayNameValue, phoneValue }, thunkAPI) => {
     try {
-      const res = await findEmail(displayNameValue, phoneValue);
+      const res = await fetchFindEmail(displayNameValue, phoneValue);
       return res;
     } catch (error: any) {
       return thunkAPI.rejectWithValue(error);
@@ -63,7 +69,7 @@ export const fetchFindEmail = createAsyncThunk<
 );
 
 // 비밀번호 찾기 시 비밀번호 변경
-export const fetchChangePassowrd = createAsyncThunk<
+export const thuckFetchChangePassowrd = createAsyncThunk<
   boolean,
   Pick<IParms, "emailValue" | "phoneValue">,
   { rejectValue: IKnownError }
@@ -71,27 +77,32 @@ export const fetchChangePassowrd = createAsyncThunk<
   "userSlice/fetchChangePassowrd",
   async ({ emailValue, phoneValue }, thunkAPI) => {
     try {
-      const res = await changePassword(emailValue, phoneValue);
+      const res = await fetchChangePassword(emailValue, phoneValue);
       return res;
     } catch (error: any) {
       return thunkAPI.rejectWithValue(error);
     }
   }
 );
+const userDataString = localStorage.getItem("user");
+const userData = JSON.parse(userDataString || "{}");
 
 export const userSlice = createSlice({
   name: "userSlice",
   initialState: {
-    data: userData,
+    data: userData as IUserData,
     isLoading: false,
     error: "",
-    findEmailValue: {} as {email?: string, createdAt?: string},
+    findEmailValue: {} as { email?: string; createdAt?: string },
     findPasswordValue: false
   },
   reducers: {
+    setUser: (state, action) => {
+      state.data = action.payload;
+    },
     // 유저 데이터 초기화
     resetUser: (state) => {
-      state.data = "";
+      state.data = {} as IUserData;
     },
     // 유저 데이터 업데이트
     refreshUser: (state) => {
@@ -109,10 +120,10 @@ export const userSlice = createSlice({
       );
       // 현재 유저 데이터를 data 저장
       state.data = {
-        uid: user?.uid,
-        displayName: user?.displayName,
-        email: user?.email,
-        photoURL: user?.photoURL
+        uid: user?.uid || "",
+        displayName: user?.displayName || "",
+        email: user?.email || "",
+        photoURL: user?.photoURL || ""
       };
     },
     // 이메일 및 비밀번호 찾은 값 초기화
@@ -123,19 +134,19 @@ export const userSlice = createSlice({
   },
   extraReducers: (builder) => {
     // 로그인
-    builder.addCase(fetchLogin.pending, (state) => {
+    builder.addCase(thuckFetchLogin.pending, (state) => {
       state.isLoading = true;
     });
-    builder.addCase(fetchLogin.fulfilled, (state) => {
+    builder.addCase(thuckFetchLogin.fulfilled, (state) => {
       state.isLoading = false;
       // 현재 유저 정보를 불러옴
       const user = getAuth().currentUser;
       // 현재 유저 데이터를 data에 저장
       state.data = {
-        uid: user?.uid,
-        displayName: user?.displayName,
-        email: user?.email,
-        photoURL: user?.photoURL
+        uid: user?.uid || "",
+        displayName: user?.displayName || "",
+        email: user?.email || "",
+        photoURL: user?.photoURL || ""
       };
       // localstorage에 유저 데이터를 저장
       localStorage.setItem(
@@ -148,7 +159,7 @@ export const userSlice = createSlice({
         })
       );
     });
-    builder.addCase(fetchLogin.rejected, (state, action) => {
+    builder.addCase(thuckFetchLogin.rejected, (state, action) => {
       state.isLoading = false;
       if (action.payload) {
         state.error = action.payload.toString();
@@ -178,15 +189,15 @@ export const userSlice = createSlice({
     });
 
     // 소셜 로그인
-    builder.addCase(fetchSocialLogin.fulfilled, (state) => {
+    builder.addCase(thuckFetchSocialLogin.fulfilled, (state) => {
       // 현재 유저 정보를 불러옴
       const user = getAuth().currentUser;
       // 현재 유저 데이터를 data에 저장
       state.data = {
-        uid: user?.uid,
-        displayName: user?.displayName,
-        email: user?.email,
-        photoURL: user?.photoURL
+        uid: user?.uid || "",
+        displayName: user?.displayName || "",
+        email: user?.email || "",
+        photoURL: user?.photoURL || ""
       };
       // localstorage에 유저 데이터를 저장
       localStorage.setItem(
@@ -199,7 +210,7 @@ export const userSlice = createSlice({
         })
       );
     });
-    builder.addCase(fetchSocialLogin.rejected, (state, action) => {
+    builder.addCase(thuckFetchSocialLogin.rejected, (state, action) => {
       if (action.payload) {
         state.error = action.payload.toString();
       }
@@ -211,19 +222,19 @@ export const userSlice = createSlice({
     });
 
     // 이메일 찾기
-    builder.addCase(fetchFindEmail.pending, (state) => {
+    builder.addCase(thuckFetchFindEmail.pending, (state) => {
       state.isLoading = true;
     });
-    builder.addCase(fetchFindEmail.fulfilled, (state, action) => {
+    builder.addCase(thuckFetchFindEmail.fulfilled, (state, action) => {
       state.isLoading = false;
       state.findEmailValue = action.payload;
     });
-    builder.addCase(fetchFindEmail.rejected, (state, action) => {
+    builder.addCase(thuckFetchFindEmail.rejected, (state, action) => {
       state.isLoading = false;
       if (action.payload) {
         state.error = action.payload.message;
       }
-      console.log(state.error)
+      console.log(state.error);
       sweetToast(
         "알 수 없는 오류가 발생하였습니다.\n잠시 후 다시 시도해주세요.",
         "warning"
@@ -231,14 +242,14 @@ export const userSlice = createSlice({
     });
 
     // 비밀번호 변경
-    builder.addCase(fetchChangePassowrd.pending, (state) => {
+    builder.addCase(thuckFetchChangePassowrd.pending, (state) => {
       state.isLoading = true;
     });
-    builder.addCase(fetchChangePassowrd.fulfilled, (state, action) => {
+    builder.addCase(thuckFetchChangePassowrd.fulfilled, (state, action) => {
       state.isLoading = false;
       state.findPasswordValue = action.payload;
     });
-    builder.addCase(fetchChangePassowrd.rejected, (state, action) => {
+    builder.addCase(thuckFetchChangePassowrd.rejected, (state, action) => {
       if (action.payload) {
         state.error = action.payload.message;
       }
