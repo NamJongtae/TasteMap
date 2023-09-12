@@ -1,4 +1,5 @@
-export const setDateFormat = (dateString: Date) => {
+export const setDateFormat = (dateString: Date | undefined) => {
+  if(!dateString) return;
   const now = new Date();
   const dataTime = new Date(dateString);
   const diff = Math.floor((now.getTime() - dataTime.getTime()) / 1000);
