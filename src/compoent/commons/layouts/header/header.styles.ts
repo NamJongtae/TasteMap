@@ -8,7 +8,7 @@ export const Wrapper = styled.header`
   padding: 10px 15px;
   margin: 0 auto;
   border-bottom: 2px solid #b5b5b5;
-  position: sticky;
+  position: fixed;
   top: 0;
   z-index: 999;
   width: 100%;

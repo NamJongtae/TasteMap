@@ -19,7 +19,7 @@ interface IParms {
   type: string;
   onSubmit?: () => void;
   btnText?: string;
-  disabled?: boolean
+  disabled?: boolean;
 }
 export default function Header({ type, onSubmit, btnText, disabled }: IParms) {
   const navigate = useNavigate();
@@ -66,7 +66,11 @@ export default function Header({ type, onSubmit, btnText, disabled }: IParms) {
               </LogoLink>
             </LeftSideWrapper>
             <RightSideWrapper>
-              <SubmitBtn type='button' onSubmit={onSubmit} disabled={disabled as boolean}>
+              <SubmitBtn
+                type='button'
+                onClick={onSubmit}
+                disabled={disabled === undefined ? false : disabled}
+              >
                 {btnText}
               </SubmitBtn>
             </RightSideWrapper>
@@ -115,5 +119,10 @@ export default function Header({ type, onSubmit, btnText, disabled }: IParms) {
     }
   };
 
-  return <Wrapper>{setHeader()}</Wrapper>;
+  return (
+    <>
+      <Wrapper>{setHeader()}</Wrapper>
+      <div style={{paddingTop: "54px"}}></div>
+    </>
+  );
 }
