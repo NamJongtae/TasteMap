@@ -7,6 +7,7 @@ import DefaultInfo from "./pages/signup/DefaultInfo.container";
 import { detectWebpSupport } from "./library/webpSupport";
 import FindAccount from "./pages/findAccount/FindAccount.container";
 import Home from "./pages/home/Home";
+import PostUpload from "./pages/postUpload/PostUpload.container";
 import { userSlice } from "./slice/userSlice";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 
@@ -76,6 +77,10 @@ function App() {
           <Route
             path='/'
             element={!userData.uid ? <Navigate to='/login' /> : <Home />}
+          />
+          <Route
+            path='/upload'
+            element={!userData.uid ? <Navigate to='/login' /> : <PostUpload />}
           />
         </Routes>
       )}
