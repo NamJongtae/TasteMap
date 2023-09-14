@@ -9,15 +9,17 @@ export const ImgWrapper = styled.div`
 `;
 
 export const ImgList = styled.ul`
+  width: 100%;
   display: flex;
   transition: all 0.5s;
   gap: 6px;
 `;
 
 export const ImgItem = styled.li`
+  min-width: 320px;
   width: 100%;
-  height: 100%;
-  border: 0.5px #dbdbdb;
+  max-height: 228px;
+  min-height: 228px;
   overflow: hidden;
 `;
 
@@ -30,7 +32,10 @@ export const ImgBtnList = styled.ul`
   transform: translateX(-50%);
 `;
 
-export const ImgBtnItem = styled.li``;
+export const ImgBtnItem = styled.li`
+  width: 100%;
+  height: 100%;
+`;
 
 export const ImgBtn = styled.button`
   position: relative;
