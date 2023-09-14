@@ -36,7 +36,7 @@ export const fetchUploadPost = async (
   const userDoc = doc(userRef, auth.currentUser.uid);
   // 해당 user의  Doc에 postList 배열에 postData 추가
   const addUserPostListPromise = updateDoc(userDoc, {
-    postList: arrayUnion(postData)
+    postList: arrayUnion(postData.id)
   });
   // 비동기 처리 동시 수행
   await Promise.all([addPostPromise, addUserPostListPromise]);
