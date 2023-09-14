@@ -6,11 +6,7 @@ import {
   fetchChangePassword,
   fetchFindEmail
 } from "../api/firebase/findAccountAPI";
-import { IUserData } from "../api/apiType";
-
-interface IKnownError {
-  message: string;
-}
+import { IUserData, IKnownError } from "../api/apiType";
 
 interface IParms {
   displayNameValue: string;

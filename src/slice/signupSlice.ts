@@ -2,9 +2,8 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { fetchSignup } from "../api/firebase/signupAPI";
 import { userSlice } from "./userSlice";
 import { sweetToast } from "../library/sweetAlert/sweetAlert";
-interface IKnownError {
-  message: string;
-}
+import { IKnownError } from '../api/apiType';
+
 interface ISignupParms {
   displayNameValue: string;
   uploadImg: File | "";
