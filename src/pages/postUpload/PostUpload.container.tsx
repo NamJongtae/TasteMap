@@ -6,12 +6,16 @@ import { getCompressionImg } from "../../library/imageCompression";
 import { sweetToast } from "../../library/sweetAlert/sweetAlert";
 import { IPostUploadData } from "../../api/apiType";
 import { Timestamp } from "firebase/firestore";
-import { postSlice, thunkFetchUploadPost } from "../../slice/postSlice";
+import { postSlice, thuckFetchFirstPagePostData, thunkFetchUploadPost } from "../../slice/postSlice";
 import { imgValidation } from "../../library/imageValidation";
 import { isMobile } from "react-device-detect";
 import PostUploadUI from "./PostUpload.presenter";
+import { useNavigate } from 'react-router-dom';
 
 export default function PostUpload() {
+  const navigate = useNavigate();
+  // 페이지당 최대 데이터 수
+  const pagePerData = useSelector((state: RootState)=> state.post.pagePerDate)
   // 작성자의 프로필을 넣기위해 userData를 가져옴
   const userData = useSelector((state: RootState) => state.user.data);
   // 맛집 검색으로 선택된 맛집 데이터를 가져옴
@@ -133,7 +137,10 @@ export default function PostUpload() {
       rating: ratingValue
     };
     // redux thuck를 이용하여 비동기 처리 서버로 데이터 전송
-    dispatch(thunkFetchUploadPost(postData));
+    await dispatch(thunkFetchUploadPost(postData));
+    // 게시물 작성 이후 postData 업데이트
+    await dispatch(thuckFetchFirstPagePostData(pagePerData));
+    navigate("/")
   };
 
   return (
