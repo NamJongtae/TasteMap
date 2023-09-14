@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { AppDispatch, RootState } from "./store/store";
 import Login from "./pages/login/Login";
 import DefaultInfo from "./pages/signup/DefaultInfo.container";
@@ -12,6 +12,7 @@ import { userSlice } from "./slice/userSlice";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 function App() {
+  const { pathname } = useLocation();
   const userData = useSelector((state: RootState) => state.user.data);
   const dispatch = useDispatch<AppDispatch>();
   // webp 지원유무가 확인 되었을때 컴포넌트를 렌더링 시키위해 사용
@@ -32,6 +33,10 @@ function App() {
   useEffect(() => {
     checkwebp();
   }, []);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
 
   // 유저 최신 데이터 갱신
   useEffect(() => {
