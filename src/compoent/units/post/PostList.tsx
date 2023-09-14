@@ -1,18 +1,54 @@
-import React from "react";
-import PostItem from "./PostItem";
-import { PostWrapper, Wrapper } from "./postList.styles";
-import { useSelector } from 'react-redux';
-import { RootState } from '../../../store/store';
+import React, { useEffect } from "react";
+import PostItem from "./PostItem.container";
+import { InfinityScrollTarget, PostWrapper, Wrapper } from "./postList.styles";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../../store/store";
+import {
+  thuckFetchFirstPagePostData,
+  thuckFetchPagingPostData
+} from "../../../slice/postSlice";
+import Loading from "../../commons/loading/Loading";
+import { useInView } from "react-intersection-observer";
 
 export default function PostList() {
-  const postData = useSelector((state: RootState)=>state.post.data);
+  // 게시물 데이터 목록을 가져옴
+  const postData = useSelector((state: RootState) => state.post.postData);
+  // 현재 페이지를 가져옴
+  const page = useSelector((state: RootState) => state.post.page);
+  // 다음 게시물 여부가 있는지를 판변하는 hasMore를 가져옴
+  const hasMore = useSelector((state: RootState) => state.post.hasMore);
+  // 페이장 최대 게시물 수
+  const pagePerDate = useSelector((state: RootState) => state.post.pagePerDate);
+  // react-intersection-observer의 customhook 무한 스크롤을 위해 사용
+  const [ref, inview] = useInView();
+  const dispatch = useDispatch<AppDispatch>();
+  const isLoading = useSelector((state: RootState) => state.post.isLoading);
+
+  // 무한스크롤 처리 inview의 상태가 변경될 때 마다 게시물 목록을 추가로 받아옴
+  useEffect(() => {
+    // 첫 게시물 가져오기, 데이터가 존재하지 않을 시
+    if (postData.length === 0) {
+      dispatch(thuckFetchFirstPagePostData(pagePerDate));
+    } 
+    // 이후 페이지에 따라 게시물 목록 추가로 가져오기
+    if (postData.length > 0 && hasMore && inview) {
+      dispatch(thuckFetchPagingPostData({ page, pagePerDate }));
+    }
+  }, [inview]);
+
+
   return (
-    <Wrapper>
-      <PostWrapper>
-        {postData.map((item) => {
-          return <PostItem key={item.id} data={item}/>;
-        })}
-      </PostWrapper>
-    </Wrapper>
+    <>
+      <Wrapper>
+        <PostWrapper>
+          {postData &&
+            postData.map((item) => {
+              return !item.isBlock && <PostItem key={item.id} data={item} />;
+            })}
+        </PostWrapper>
+      </Wrapper>
+      {postData.length > 0&&<InfinityScrollTarget ref={ref}></InfinityScrollTarget>}
+      {isLoading && <Loading />}
+    </>
   );
 }
