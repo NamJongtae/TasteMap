@@ -7,6 +7,19 @@ export interface IUserData {
   photoURL?: string;
 }
 
+export interface IProfileData {
+  uid?: string;
+  displayName?: string;
+  email?: string;
+  photoURL?: string;
+  phone?: string;
+  introduce?:string;
+  createdAt?: Timestamp;
+  likeList?: string[];
+  postList?: string[];
+  reportList?:string[];
+}
+
 export interface IStoredImgData {
   url?: string[],
   filename?: string[],
@@ -34,8 +47,9 @@ export interface IPostData {
   photoURL?: string;
   id?: string;
   content?: string;
-  img?: string[];
-  createdAt?: Date;
+  imgURL?: string[];
+  imgName?: string[];
+  createdAt?: Timestamp;
   likeCount?: number;
   commentCount?: number;
   reportCount?: number;
@@ -52,4 +66,8 @@ export interface ISearchMapData {
   mapy?: string;
   roadAddress?: string;
   title?: string;
+}
+
+export interface IKnownError {
+  message: string;
 }
