@@ -1,7 +1,7 @@
-export const setDateFormat = (dateString: Date | undefined) => {
-  if(!dateString) return;
+export const setDateFormat = (time: number | undefined) => {
+  if(!time) return;
   const now = new Date();
-  const dataTime = new Date(dateString);
+  const dataTime = new Date(time);
   const diff = Math.floor((now.getTime() - dataTime.getTime()) / 1000);
 
   const minutes = Math.floor(diff / 60);
