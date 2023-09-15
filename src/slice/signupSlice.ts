@@ -13,12 +13,12 @@ interface ISignupParms {
   introduce: string;
 }
 // 회원가입
-export const thuckFetchSignup = createAsyncThunk<
+export const thunkFetchSignup = createAsyncThunk<
   void,
   ISignupParms,
   { rejectValue: IKnownError }
 >(
-  "signupSlice/fetchSignup",
+  "signupSlice/thunkFetchSignup",
   async (
     {
       displayNameValue,
@@ -54,13 +54,13 @@ export const signupSlice = createSlice({
   },
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(thuckFetchSignup.pending, (state) => {
+    builder.addCase(thunkFetchSignup.pending, (state) => {
       state.isLoading = true;
     });
-    builder.addCase(thuckFetchSignup.fulfilled, (state) => {
+    builder.addCase(thunkFetchSignup.fulfilled, (state) => {
       state.isLoading = false;
     });
-    builder.addCase(thuckFetchSignup.rejected, (state, action) => {
+    builder.addCase(thunkFetchSignup.rejected, (state, action) => {
       state.isLoading = false;
       if (action.payload) {
         state.error = action.payload.toString();

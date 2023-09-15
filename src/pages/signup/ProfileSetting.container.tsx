@@ -4,7 +4,7 @@ import ProfileSettingUI from "./ProfileSetting.presenter";
 import { resolveWebp } from "../../library/webpSupport";
 import { getCompressionImg } from "../../library/imageCompression";
 import { useDispatch } from "react-redux";
-import { thuckFetchSignup } from "../../slice/signupSlice";
+import { thunkFetchSignup } from "../../slice/signupSlice";
 import { AppDispatch } from "../../store/store";
 import { imgValidation } from '../../library/imageValidation';
 interface IProps {
@@ -66,7 +66,7 @@ export default function ProfileSetting({
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     dispatch(
-      thuckFetchSignup({
+      thunkFetchSignup({
         displayNameValue,
         uploadImg,
         emailValue,

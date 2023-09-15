@@ -19,12 +19,12 @@ interface IParms {
 }
 
 // 로그인
-export const thuckFetchLogin = createAsyncThunk<
+export const thunkFetchLogin = createAsyncThunk<
   void,
   Pick<IParms, "emailValue" | "passwordValue">,
   { rejectValue: IKnownError }
 >(
-  "userSlice/thuckFetchLogin",
+  "userSlice/thunkFetchLogin",
   async ({ emailValue, passwordValue }, thunkAPI) => {
     try {
       await fetchLogin(emailValue, passwordValue);
@@ -35,11 +35,11 @@ export const thuckFetchLogin = createAsyncThunk<
 );
 
 // 소셜 로그인
-export const thuckFetchSocialLogin = createAsyncThunk<
+export const thunkFetchSocialLogin = createAsyncThunk<
   void,
   string,
   { rejectValue: IKnownError }
->("userSlice/thuckFetchSocialLogin", async (type, thunkAPI) => {
+>("userSlice/thunkFetchSocialLogin", async (type, thunkAPI) => {
   try {
     await fetchSocialLogin(type);
   } catch (error: any) {
@@ -48,12 +48,12 @@ export const thuckFetchSocialLogin = createAsyncThunk<
 });
 
 // 이메일 찾기
-export const thuckFetchFindEmail = createAsyncThunk<
+export const thunkFetchFindEmail = createAsyncThunk<
   { email?: string; createdAt?: string },
   Pick<IParms, "displayNameValue" | "phoneValue">,
   { rejectValue: IKnownError }
 >(
-  "userSlice/fetchFindEmail",
+  "userSlice/thunkFetchFindEmail",
   async ({ displayNameValue, phoneValue }, thunkAPI) => {
     try {
       const res = await fetchFindEmail(displayNameValue, phoneValue);
@@ -65,12 +65,12 @@ export const thuckFetchFindEmail = createAsyncThunk<
 );
 
 // 비밀번호 찾기 시 비밀번호 변경
-export const thuckFetchChangePassowrd = createAsyncThunk<
+export const thunkFetchChangePassowrd = createAsyncThunk<
   boolean,
   Pick<IParms, "emailValue" | "phoneValue">,
   { rejectValue: IKnownError }
 >(
-  "userSlice/fetchChangePassowrd",
+  "userSlice/thunkFetchChangePassowrd",
   async ({ emailValue, phoneValue }, thunkAPI) => {
     try {
       const res = await fetchChangePassword(emailValue, phoneValue);
@@ -130,10 +130,10 @@ export const userSlice = createSlice({
   },
   extraReducers: (builder) => {
     // 로그인
-    builder.addCase(thuckFetchLogin.pending, (state) => {
+    builder.addCase(thunkFetchLogin.pending, (state) => {
       state.isLoading = true;
     });
-    builder.addCase(thuckFetchLogin.fulfilled, (state) => {
+    builder.addCase(thunkFetchLogin.fulfilled, (state) => {
       state.isLoading = false;
       // 현재 유저 정보를 불러옴
       const user = getAuth().currentUser;
@@ -155,7 +155,7 @@ export const userSlice = createSlice({
         })
       );
     });
-    builder.addCase(thuckFetchLogin.rejected, (state, action) => {
+    builder.addCase(thunkFetchLogin.rejected, (state, action) => {
       state.isLoading = false;
       if (action.payload) {
         state.error = action.payload.toString();
@@ -185,7 +185,7 @@ export const userSlice = createSlice({
     });
 
     // 소셜 로그인
-    builder.addCase(thuckFetchSocialLogin.fulfilled, (state) => {
+    builder.addCase(thunkFetchSocialLogin.fulfilled, (state) => {
       // 현재 유저 정보를 불러옴
       const user = getAuth().currentUser;
       // 현재 유저 데이터를 data에 저장
@@ -206,7 +206,7 @@ export const userSlice = createSlice({
         })
       );
     });
-    builder.addCase(thuckFetchSocialLogin.rejected, (state, action) => {
+    builder.addCase(thunkFetchSocialLogin.rejected, (state, action) => {
       if (action.payload) {
         state.error = action.payload.toString();
       }
@@ -218,14 +218,14 @@ export const userSlice = createSlice({
     });
 
     // 이메일 찾기
-    builder.addCase(thuckFetchFindEmail.pending, (state) => {
+    builder.addCase(thunkFetchFindEmail.pending, (state) => {
       state.isLoading = true;
     });
-    builder.addCase(thuckFetchFindEmail.fulfilled, (state, action) => {
+    builder.addCase(thunkFetchFindEmail.fulfilled, (state, action) => {
       state.isLoading = false;
       state.findEmailValue = action.payload;
     });
-    builder.addCase(thuckFetchFindEmail.rejected, (state, action) => {
+    builder.addCase(thunkFetchFindEmail.rejected, (state, action) => {
       state.isLoading = false;
       if (action.payload) {
         state.error = action.payload.message;
@@ -238,14 +238,14 @@ export const userSlice = createSlice({
     });
 
     // 비밀번호 변경
-    builder.addCase(thuckFetchChangePassowrd.pending, (state) => {
+    builder.addCase(thunkFetchChangePassowrd.pending, (state) => {
       state.isLoading = true;
     });
-    builder.addCase(thuckFetchChangePassowrd.fulfilled, (state, action) => {
+    builder.addCase(thunkFetchChangePassowrd.fulfilled, (state, action) => {
       state.isLoading = false;
       state.findPasswordValue = action.payload;
     });
-    builder.addCase(thuckFetchChangePassowrd.rejected, (state, action) => {
+    builder.addCase(thunkFetchChangePassowrd.rejected, (state, action) => {
       if (action.payload) {
         state.error = action.payload.message;
       }

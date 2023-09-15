@@ -3,8 +3,8 @@ import { useValidationInput } from "../../hook/useValidationInput";
 import FindAccountUI from "./FindAccount.presenter";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  thuckFetchChangePassowrd,
-  thuckFetchFindEmail,
+  thunkFetchChangePassowrd,
+  thunkFetchFindEmail,
   userSlice
 } from "../../slice/userSlice";
 import { AppDispatch, RootState } from "../../store/store";
@@ -60,7 +60,7 @@ export default function FindAccount() {
   const onClickFindEmail = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     await dispatch(
-      thuckFetchFindEmail({
+      thunkFetchFindEmail({
         displayNameValue,
         phoneValue: phoneValue.replace(/-/g, "")
       })
@@ -71,7 +71,7 @@ export default function FindAccount() {
   const onClickFindPassword = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     await dispatch(
-      thuckFetchChangePassowrd({
+      thunkFetchChangePassowrd({
         emailValue,
         phoneValue: phoneValue.replace(/-/g, "")
       })
