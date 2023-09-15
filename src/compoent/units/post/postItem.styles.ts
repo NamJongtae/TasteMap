@@ -23,7 +23,7 @@ export const UserInfo = styled.div`
 `;
 
 export const Username = styled.span`
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 500;
 `;
 

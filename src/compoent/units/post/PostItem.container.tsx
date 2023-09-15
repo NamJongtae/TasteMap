@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../../store/store";
 import {
@@ -16,6 +16,7 @@ import { useNavigate } from "react-router-dom";
 
 import PostItemUI from "./PostItem.present";
 import { fetchProfile } from "../../../api/firebase/profileAPI";
+import { setDateFormat } from '../../../library/setDateFormat';
 interface IProps {
   data: IPostData;
 }
@@ -58,7 +59,7 @@ export default function PostItem({ data }: IProps) {
   /**
    * 더보기 메뉴 활성화/비활성화 함수
    */
-  const onClickSelect = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const onClickSelect = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     // 더보기 메뉴가 열려 있을 경우 닫기 애니메이션 추가
     // 애니메이션 실행 후 닫히 도록 하기위해 setTimeout 설정
@@ -70,7 +71,7 @@ export default function PostItem({ data }: IProps) {
     } else {
       setIsOpenSelect(!isOpenSelect);
     }
-  };
+  },[isOpenSelect]);
 
   /**
    * 좋아요 추가 함수
@@ -148,10 +149,15 @@ export default function PostItem({ data }: IProps) {
       setIsLike(userProfile.likeList.includes(data.id));
   }, [userProfile]);
 
-  // 더보기 메뉴가 아닌 다른 요소를 클릭 시 더보기 메뉴가 닫히 도록하는 이벤트를 body에 추가
+  const formattedDate = useMemo(() => {
+    if(data.createdAt?.seconds)
+    return setDateFormat(data.createdAt?.seconds* 1000);
+  }, [data.createdAt?.seconds]);
+
+  // // 더보기 메뉴가 아닌 다른 요소를 클릭 시 더보기 메뉴가 닫히 도록하는 이벤트를 body에 추가
   useEffect(() => {
     // 더보기 메뉴가 닫히도록 하는  이벤트 함수 생성
-    const inActiveMoreBtnMenu = (e: MouseEvent) => {
+    const inActiveMoreMenu = (e: MouseEvent) => {
       // 더보기 메뉴가 열려있고, 현재 target이 더보기 메뉴 하위 요소가 아닐 때
       if (
         isOpenSelect &&
@@ -168,15 +174,15 @@ export default function PostItem({ data }: IProps) {
 
     // 더보기 메뉴가 열렸을 경우 이벤트를 추가
     if (isOpenSelect) {
-      document.body.addEventListener("click", inActiveMoreBtnMenu);
+      document.body.addEventListener("click", inActiveMoreMenu);
     } else {
       // 더보기 메뉴가 닫히는 경우 이벤트를 제거
-      document.body.removeEventListener("click", inActiveMoreBtnMenu);
+      document.body.removeEventListener("click", inActiveMoreMenu);
     }
 
     // clearn up 컴포넌트가 제거 되기 전 이벤트 제거
     return () => {
-      document.body.removeEventListener("click", inActiveMoreBtnMenu);
+      document.body.removeEventListener("click", inActiveMoreMenu);
     };
   }, [isOpenSelect]);
 
@@ -195,6 +201,7 @@ export default function PostItem({ data }: IProps) {
       onClickUserInfo={onClickUserInfo}
       onClickDetailBtn={onClickDetailBtn}
       onClickEditBtn={onClickEditBtn}
+      formattedDate={formattedDate}
     />
   );
 }

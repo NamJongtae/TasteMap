@@ -19,9 +19,9 @@ import {
   Wrapper
 } from "./postItem.styles";
 import ImgSlider from "../imgSlider/ImgSlider";
-import { setDateFormat } from "../../../library/setDateFormat";
 import { resolveWebp } from "../../../library/webpSupport";
 import { IPostData, IProfileData } from "../../../api/apiType";
+import Kakaomap from "../kakaomap/Kakaomap";
 interface IProps {
   data: IPostData;
   onClickSelect: (e: React.MouseEvent<HTMLButtonElement>) => void;
@@ -40,8 +40,9 @@ interface IProps {
   likeCount: number | undefined;
   onClickLike: (id: string | undefined) => Promise<void>;
   onClickUserInfo: () => void;
-  onClickDetailBtn: ()=> void;
+  onClickDetailBtn: () => void;
   onClickEditBtn: () => void;
+  formattedDate: string | undefined;
 }
 
 export default function PostItemUI({
@@ -58,6 +59,7 @@ export default function PostItemUI({
   onClickUserInfo,
   onClickDetailBtn,
   onClickEditBtn,
+  formattedDate
 }: IProps) {
   return (
     <Wrapper>
@@ -99,7 +101,11 @@ export default function PostItemUI({
                   </OptionBtn>
                 </Option>
                 <Option>
-                  <OptionBtn className='opctionBtn' type='button' onClick={onClickEditBtn}>
+                  <OptionBtn
+                    className='opctionBtn'
+                    type='button'
+                    onClick={onClickEditBtn}
+                  >
                     수정
                   </OptionBtn>
                 </Option>
@@ -131,9 +137,12 @@ export default function PostItemUI({
       </PostItemTop>
       <ContentWrapper>
         <ContentText>{data.content}</ContentText>
-        {data.imgURL && data.imgURL.length > 0 && (
-          <ImgSlider imgArray={data.imgURL} />
-        )}
+        {data.thumbnailType === "map"
+          ? data.mapData?.mapx && (
+              <Kakaomap items={[data.mapData]} activeMouseEvent={false} />
+            )
+          : data.imgURL &&
+            data.imgURL.length > 0 && <ImgSlider imgArray={data.imgURL} />}
       </ContentWrapper>
       <PostItemButtom>
         <ButtonWrapper>
@@ -153,7 +162,7 @@ export default function PostItemUI({
           <PostDate
             dateTime={new Date(data.createdAt?.seconds * 1000).toISOString()}
           >
-            {setDateFormat(data.createdAt?.seconds * 1000)}
+            {formattedDate}
           </PostDate>
         )}
       </PostItemButtom>
