@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { v4 as uuid } from "uuid";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store/store";
@@ -6,16 +6,25 @@ import { getCompressionImg } from "../../library/imageCompression";
 import { sweetToast } from "../../library/sweetAlert/sweetAlert";
 import { IPostUploadData } from "../../api/apiType";
 import { Timestamp } from "firebase/firestore";
-import { postSlice, thuckFetchFirstPagePostData, thunkFetchUploadPost } from "../../slice/postSlice";
+import {
+  postSlice,
+  thuckFecthEditPost,
+  thuckFetchPostData,
+  thunkFetchUploadPost
+} from "../../slice/postSlice";
 import { imgValidation } from "../../library/imageValidation";
 import { isMobile } from "react-device-detect";
 import PostUploadUI from "./PostUpload.presenter";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from "react-router-dom";
 
-export default function PostUpload() {
+interface IProps {
+  isEdit: boolean;
+}
+
+export default function PostUpload({ isEdit }: IProps) {
+  const { postId } = useParams();
   const navigate = useNavigate();
-  // 페이지당 최대 데이터 수
-  const pagePerData = useSelector((state: RootState)=> state.post.pagePerDate)
+  const postData = useSelector((state: RootState) => state.post.postData);
   // 작성자의 프로필을 넣기위해 userData를 가져옴
   const userData = useSelector((state: RootState) => state.user.data);
   // 맛집 검색으로 선택된 맛집 데이터를 가져옴
@@ -24,6 +33,10 @@ export default function PostUpload() {
   );
   const isLoading = useSelector((state: RootState) => state.post.isLoading);
   const dispatch = useDispatch<AppDispatch>();
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const [editImgName, setEditImgName] = useState<string[]>([]);
+  const [editImgURL, setEditImgURL] = useState<string[]>([]);
+  const [thumbnailType, setThumbnailType] = useState("");
   // 검색 모달창 오픈 여부
   const [isOpenModal, setIsOpenModal] = useState(false);
   // 업로드할 이미지 파일
@@ -38,6 +51,10 @@ export default function PostUpload() {
   const wrapperRef = useRef<HTMLDivElement>(null);
   // 별점
   const [ratingValue, setRatingValue] = useState(0);
+
+  const onChangeTumbnailType = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setThumbnailType(e.currentTarget.value);
+  };
   /**
    * 검색 모달창 열기 */
   const openSearchModal = () => {
@@ -60,9 +77,18 @@ export default function PostUpload() {
     }
   };
 
+  const handleResizeHeight = () => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto";
+      textareaRef.current.style.height =
+        textareaRef.current.scrollHeight - 30 + "px";
+    }
+  };
+
   /**
    * 게시물 작성 내용 chage 함수 */
   const onChangeContentValue = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    handleResizeHeight();
     if (e.target.value.length === 1 && e.target.value === " ") return;
     setContentValue(e.target.value);
   };
@@ -72,6 +98,11 @@ export default function PostUpload() {
   const onChangeImg = async (e: React.ChangeEvent<HTMLInputElement>) => {
     // 이미지가 존재하지 않을 시 return
     if (!e.target.files || !e.target.files[0]) return;
+    // 이미지가 5개를 이상이면 return
+    if (preview.length >= 5) {
+      sweetToast("최대 5개의 이미지까지 업로드 가능합니다.", "warning");
+      return;
+    }
     const file = e.target.files[0];
     // 이미지 형식 유효성 검사
     const isValidImg = imgValidation(file);
@@ -113,6 +144,8 @@ export default function PostUpload() {
     }
     setPreview((prev) => prev.filter((_, itemIdx) => itemIdx != idx));
     setImgFile((prev) => prev.filter((_, itemIdx) => itemIdx != idx));
+    setEditImgURL((prev) => prev.filter((_, itemIdx) => itemIdx != idx));
+    setEditImgName((prev) => prev.filter((_, itemIdx) => itemIdx != idx));
   };
 
   /**
@@ -120,31 +153,88 @@ export default function PostUpload() {
   const onSubmitUpload = async () => {
     // 내용이 비었거나 맛집을 선택하지 않았을 경우 return
     if (!contentValue || !selectedMapData.length) return;
-    // 서버로 보낼 postData 정의
-    const postData: IPostUploadData = {
-      id: uuid(),
-      content: contentValue,
-      img: imgFile,
-      uid: userData.uid || "",
-      createdAt: Timestamp.fromDate(new Date()),
-      likeCount: 0,
-      commentCount: 0,
-      reportCount: 0,
-      mapData: selectedMapData[0],
-      isBlock: false,
-      imgName: [],
-      imgURL: [],
-      rating: ratingValue
-    };
-    // redux thuck를 이용하여 비동기 처리 서버로 데이터 전송
-    await dispatch(thunkFetchUploadPost(postData));
-    // 게시물 작성 이후 postData 업데이트
-    await dispatch(thuckFetchFirstPagePostData(pagePerData));
-    navigate("/")
+    if (isEdit) {
+      const editPostData: Pick<
+        IPostUploadData,
+        | "id"
+        | "content"
+        | "rating"
+        | "mapData"
+        | "imgURL"
+        | "imgName"
+        | "img"
+        | "thumbnailType"
+      > = {
+        id: postData.id || "",
+        content: contentValue,
+        rating: ratingValue,
+        mapData: selectedMapData[0],
+        imgURL: editImgURL || [],
+        imgName: editImgName || [],
+        img: imgFile,
+        thumbnailType
+      };
+      await dispatch(
+        thuckFecthEditPost({
+          prevPostData: postData,
+          editPostData: editPostData
+        })
+      );
+      navigate(`/post/${postData.id}`);
+    } else {
+      const id = uuid();
+      // 서버로 보낼 postData 정의
+      const uploadData: IPostUploadData = {
+        id,
+        content: contentValue,
+        img: imgFile,
+        uid: userData.uid || "",
+        createdAt: Timestamp.fromDate(new Date()),
+        likeCount: 0,
+        commentCount: 0,
+        reportCount: 0,
+        mapData: selectedMapData[0],
+        isBlock: false,
+        imgName: [],
+        imgURL: [],
+        thumbnailType,
+        rating: ratingValue
+      };
+      // redux thuck를 이용하여 비동기 처리 서버로 데이터 전송
+      await dispatch(thunkFetchUploadPost(uploadData));
+      navigate(`/post/${id}`);
+    }
   };
+
+  useEffect(() => {
+    if (isEdit && postId) {
+      dispatch(thuckFetchPostData(postId));
+    }
+  }, []);
+
+  useEffect(() => {
+    if (
+      isEdit &&
+      postData.imgURL &&
+      postData.content &&
+      postData.rating &&
+      postData.imgName &&
+      postData.thumbnailType
+    ) {
+      setPreview(postData.imgURL);
+      setContentValue(postData.content);
+      setRatingValue(postData.rating);
+      setImgFile(postData.imgURL.map(() => ({}) as File));
+      setEditImgName(postData.imgName);
+      setEditImgURL(postData.imgURL);
+      setThumbnailType(postData.thumbnailType);
+      dispatch(postSlice.actions.setSelectedMapData(postData.mapData));
+    }
+  }, [postData]);
 
   return (
     <PostUploadUI
+      postData={postData}
       contentValue={contentValue}
       selectedMapData={selectedMapData}
       ratingValue={ratingValue}
@@ -153,6 +243,8 @@ export default function PostUpload() {
       userData={userData}
       openSearchModal={openSearchModal}
       setRatingValue={setRatingValue}
+      textareaRef={textareaRef}
+      handleResizeHeight={handleResizeHeight}
       onChangeContentValue={onChangeContentValue}
       preview={preview}
       onClickRemoveImg={onClickRemoveImg}
@@ -162,6 +254,9 @@ export default function PostUpload() {
       closeSearchModal={closeSearchModal}
       isOpenModal={isOpenModal}
       isLoading={isLoading}
+      isEdit={isEdit}
+      thumbnailType={thumbnailType}
+      onChangeTumbnailType={onChangeTumbnailType}
     />
   );
 }

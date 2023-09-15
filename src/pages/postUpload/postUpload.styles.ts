@@ -2,16 +2,10 @@ import { Rate } from "antd";
 import styled from "styled-components";
 
 export const Wrapper = styled.main`
-  padding: 20px;
-`;
-
-export const UserInfo = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 10px;
   width: 100%;
   max-width: 500px;
   margin: 0 auto 20px auto;
+  padding: 20px;
 `;
 
 export const UserImg = styled.img`
@@ -19,26 +13,81 @@ export const UserImg = styled.img`
   height: 42px;
   border-radius: 50%;
   background-color: #f5f5f5;
+  vertical-align: middle;
 `;
 
 export const UserName = styled.span`
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 500;
+  display: inline-block;
+  vertical-align: middle;
+  margin-left: 10px;
 `;
 
-export const KaKaoMapWrapper = styled.div`
-  width: 100%;
-  max-width: 500px;
-  margin: 0 auto;
+export const Section = styled.section`
+  margin-bottom: 20px;
 `;
+
+export const SectionTitle = styled.h3`
+  font-size: 14px;
+  font-weight: 500;
+  display: block;
+  margin-bottom: 15px;
+`;
+
+export const ThumbnailSelect = styled.div`
+  margin-bottom: 20px;
+`;
+
+export const SubTitle = styled.span`
+  font-size: 16px;
+  font-weight: 500;
+  display: block;
+  margin-bottom: 20px;
+`;
+export const ThumbnailSelectLabel = styled.label`
+  display: inline-block;
+  width: 50px;
+  height: 50px;
+  cursor: pointer;
+  margin-right: 10px;
+  transition: all 0.3s;
+  &.map {
+    background: ${(props: { thumbnailType: string }) =>
+      props.thumbnailType === "map"
+        ? document.body.classList.contains("webp")
+          ? 'url("/assets/webp/icon-thumbnailImgBtnActive.webp") no-repeat center'
+          : 'url("/assets/icon-thumbnailImgBtnActive.svg") no-repeat center'
+        : document.body.classList.contains("webp")
+        ? 'url("/assets/webp/icon-thumbnailMapBtn.webp") no-repeat center'
+        : 'url("/assets/icon-thumbnailMapBtn.svg") no-repeat center'};
+  }
+  &.img {
+    background: ${(props: { thumbnailType: string }) =>
+      props.thumbnailType === "image"
+        ? document.body.classList.contains("webp")
+          ? 'url("/assets/webp/icon-thumbnailMapBtnActive.webp") no-repeat center'
+          : 'url("/assets/icon-thumbnailMapBtnActive.svg") no-repeat center'
+        : document.body.classList.contains("webp")
+        ? 'url("/assets/webp/icon-thumbnailImgBtn.webp") no-repeat center'
+        : 'url("/assets/icon-thumbnailImgBtn.svg") no-repeat center'};
+  }
+`;
+export const ThumbnailSelectBtn = styled.input``;
 
 export const SearchModalBtn = styled.button`
   font-size: 14px;
   font-weight: 500;
-  color: #fff;
-  background-color: #5ea6f7;
-  border-radius: 20px;
-  padding: 8px 20px;
+  body.webp & {
+    background: url("/assets/webp/icon-search.webp") no-repeat center right 7px /
+      16px gold;
+  }
+  body.no-webp & {
+    background: url("/assets/icon-search.svg") no-repeat center right 7px / 16px
+      gold;
+  }
+  border-radius: 5px;
+  padding: 8px 30px 8px 14px;
   margin-bottom: 20px;
 `;
 
@@ -50,25 +99,28 @@ export const KakaoMap = styled.div`
 `;
 
 export const TextArea = styled.textarea`
-  width: 100%;
-  max-width: 500px;
+  width: calc(100% - 30px);
   display: block;
-  margin: 0 auto 20px auto;
-  height: 200px;
+  margin: 20px auto;
+  background-color: #f9f9f9;
   resize: none;
+  border: none;
+  font-size: 14px;
+  box-sizing: content-box;
+  border-bottom: 1px solid #bdbdbd;
   padding: 15px;
-  border: 1px solid #bdbdbd;
+  :focus {
+    outline: none;
+  }
 `;
 
 export const RatingWrapper = styled.div`
   width: 100%;
-  max-width: 500px;
   display: flex;
   align-items: center;
   gap: 10px;
-  margin: 20px auto 0 auto;
-  border: 1px solid #bdbdbd;
-  padding: 5px;
+  margin: 0 auto 20px auto;
+  border: none;
 `;
 export const Rating = styled(Rate)`
   font-size: 25px;
@@ -76,7 +128,9 @@ export const Rating = styled(Rate)`
 
 export const RatingTag = styled.span``;
 export const RatingCount = styled.span`
-  font-size: 14px;
+  font-size: 16px;
+  color: #555;
+  font-weight: bold;
 `;
 
 export const ImgList = styled.ul`
@@ -140,18 +194,17 @@ export const RemoveImgBtn = styled.button`
 export const HiddenUploadBtn = styled.input``;
 
 export const ImgUploadBtn = styled.button`
-  position: fixed;
-  right: 20px;
-  bottom: 30px;
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 5px;
+  padding: 8px 32px 8px 12px;
+  margin-bottom: 20px;
   body.webp & {
-    background: url("/assets/webp/icon-upload.webp") no-repeat;
+    background: url("/assets/webp/icon-uploadImg.webp") no-repeat center right 6px/ 20px
+      gold;
   }
   body.no-webp * {
-    background: url("/assets/icon-upload.svg") no-repeat;
+    background: url("/assets/icon-uploadImg.svg") no-repeat center / 20px gold;
   }
   z-index: 990;
 `;
-
