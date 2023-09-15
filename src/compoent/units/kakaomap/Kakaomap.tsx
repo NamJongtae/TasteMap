@@ -32,8 +32,9 @@ interface IMapData {
 }
 interface IProps {
   items: IMapData[];
+  activeMouseEvent: boolean;
 }
-export default function Kakaomap({ items }: IProps) {
+export default function Kakaomap({ items, activeMouseEvent }: IProps) {
   const dispatch = useDispatch<AppDispatch>();
   // 생성한 map를 저장
   const [maps, setMaps] = useState<any>("");
@@ -71,10 +72,10 @@ export default function Kakaomap({ items }: IProps) {
       yAnchor: 1
     });
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error 
+    // @ts-expect-error
     this.walker = walker;
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error 
+    // @ts-expect-error
     this.content = content;
   }
 
@@ -118,13 +119,13 @@ export default function Kakaomap({ items }: IProps) {
     window.kakao.maps.event.addListener(rv, "init", function () {
       let mapWalker: any | null = null;
       // map walker를 생성한다. 생성시 지도의 중심좌표를 넘긴다.
-      
+
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-expect-error 
+      // @ts-expect-error
       // mapwalker 생성
       mapWalker = new MapWalker(position);
       // map walker를 지도에 설정
-      mapWalker && mapWalker.setMap(map); 
+      mapWalker && mapWalker.setMap(map);
       setRoadWalker(mapWalker);
       // 로드뷰가 초기화 된 후, 추가 이벤트를 등록
       // 로드뷰를 상,하,좌,우,줌인,줌아웃을 할 경우 발생
@@ -146,7 +147,7 @@ export default function Kakaomap({ items }: IProps) {
     });
 
     toggleRoadview(position);
-    
+
     // 마커 이미지를 생성
     const markImage = new window.kakao.maps.MarkerImage(
       "https://t1.daumcdn.net/localimg/localimages/07/2018/pc/roadview_minimap_wk_2018.png",
@@ -173,7 +174,7 @@ export default function Kakaomap({ items }: IProps) {
     // 마커 저장
     setRoadMarker(rvMarker);
 
-    // 마커에 드래그 이벤트 추가 
+    // 마커에 드래그 이벤트 추가
     window.kakao.maps.event.addListener(rvMarker, "dragend", function () {
       const position = rvMarker.getPosition();
       toggleRoadview(position);
@@ -207,7 +208,7 @@ export default function Kakaomap({ items }: IProps) {
   };
 
   useEffect(() => {
-    // // 선댁한 검색한 결과 데이터 초기화
+    // 선댁한 검색한 결과 데이터 초기화
     dispatch(postSlice.actions.resetSelectedMapData());
   }, []);
 
@@ -245,6 +246,10 @@ export default function Kakaomap({ items }: IProps) {
     const position = new window.kakao.maps.LatLng(latitude, longitude);
     // 지도 생성
     const map = new window.kakao.maps.Map(container, options);
+    // 드래그 이벤트 사용 유무 props의 activeMouseEvent에 따라 변경
+    map.setDraggable(activeMouseEvent); 
+    // 줌 이벤트 사용 유무 props의 activeMouseEvent에 따라 변경
+    map.setZoomable(activeMouseEvent);  
     // map 저장
     setMaps(map);
     // position 저장
@@ -292,7 +297,7 @@ export default function Kakaomap({ items }: IProps) {
     // 현재 지도의 레벨을 얻어옵니다
     const level = maps.getLevel();
 
-    // 지도를 1레벨 내림 (지도가 축소)
+    // 지도를 1레벨 내림 (지도가 확대)
     maps.setLevel(level - 1);
   }
 
@@ -300,7 +305,7 @@ export default function Kakaomap({ items }: IProps) {
     // 현재 지도의 레벨을 얻어옵니다
     const level = maps.getLevel();
 
-    // 지도를 1레벨 올림 (지도가 확대)
+    // 지도를 1레벨 올림 (지도가 축소)
     maps.setLevel(level + 1);
   }
 
@@ -310,16 +315,18 @@ export default function Kakaomap({ items }: IProps) {
         <Wrapper>
           <Title className='a11y-hidden'>맛집 지도</Title>
           <MapContainer ref={mapRef}>
-            <MapBtnWrapper>
-              <RoadViewBtn
-                title='로드뷰'
-                onClick={() => setLoadView(!loadView)}
-                aria-label='로드뷰'
-                loadView={loadView}
-              />
-              <ZoomInBtn title='확대' onClick={zoomIn} aria-label='확대' />
-              <ZoomOutBtn title='축소' onClick={zoomOut} aria-label='축소' />
-            </MapBtnWrapper>
+            {activeMouseEvent && (
+              <MapBtnWrapper>
+                <RoadViewBtn
+                  title='로드뷰'
+                  onClick={() => setLoadView(!loadView)}
+                  aria-label='로드뷰'
+                  loadView={loadView}
+                />
+                <ZoomInBtn title='확대' onClick={zoomIn} aria-label='확대' />
+                <ZoomOutBtn title='축소' onClick={zoomOut} aria-label='축소' />
+              </MapBtnWrapper>
+            )}
           </MapContainer>
           {loadView && (
             <RvWrapper ref={rvWrapperRef}>
