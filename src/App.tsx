@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Navigate, Route, Routes, useLocation } from "react-router-dom";
+import { Navigate, Outlet, Route, Routes, useLocation } from "react-router-dom";
 import { AppDispatch, RootState } from "./store/store";
 import Login from "./pages/login/Login";
 import DefaultInfo from "./pages/signup/DefaultInfo.container";
@@ -10,6 +10,7 @@ import Home from "./pages/home/Home";
 import PostUpload from "./pages/postUpload/PostUpload.container";
 import { userSlice } from "./slice/userSlice";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+import PostEdit from "./pages/post/postEdit/PostEdit";
 
 function App() {
   const { pathname } = useLocation();
@@ -84,9 +85,12 @@ function App() {
             element={!userData.uid ? <Navigate to='/login' /> : <Home />}
           />
           <Route
-            path='/upload'
-            element={!userData.uid ? <Navigate to='/login' /> : <PostUpload />}
-          />
+            path='/post/'
+            element={!userData.uid ? <Navigate to='/login' /> : <Outlet />}
+          >
+            <Route path='upload' element={<PostUpload isEdit={false}/>} />
+            <Route path=':postId/edit' element={<PostEdit />} />
+          </Route>
         </Routes>
       )}
     </>

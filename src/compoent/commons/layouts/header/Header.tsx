@@ -29,7 +29,7 @@ export default function Header({ type, onSubmit, btnText, disabled }: IParms) {
         return (
           <>
             <LeftSideWrapper>
-              <UploadLink to={"/upload"}></UploadLink>
+              <UploadLink to={"/post/upload"}></UploadLink>
               <LogoLink to={"/"}>
                 <Title>
                   <span className='a11y-hidden'>TasteMap</span>
