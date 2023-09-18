@@ -16,7 +16,8 @@ import {
   KakaoMapWrapper,
   ActiveMapBtn,
   ActiveImageBtn,
-  StoredMapBtn
+  StoredMapBtn,
+  MoreContentBtn
 } from "./postItem.styles";
 import ImgSlider from "../imgSlider/ImgSlider";
 import { IPostData, IProfileData } from "../../../api/apiType";
@@ -33,6 +34,9 @@ interface IProps {
   formattedDate: string | undefined;
   onChangePostType: () => void;
   postType: "map" | "image";
+  onClickMoreText: () => void;
+  contentTextRef: React.RefObject<HTMLParagraphElement>;
+  isShowMoreTextBtn: boolean;
 }
 
 export default function PostItemUI({
@@ -45,7 +49,10 @@ export default function PostItemUI({
   formattedDate,
   userProfile,
   onChangePostType,
-  postType
+  postType,
+  onClickMoreText,
+  contentTextRef,
+  isShowMoreTextBtn
 }: IProps) {
   return (
     <>
@@ -64,7 +71,12 @@ export default function PostItemUI({
           </UserInfoWrapper>
           <ContentWrapper>
             <h3 className='a11y-hidden'>내용</h3>
-            <ContentText>{data.content}</ContentText>
+            <ContentText ref={contentTextRef}>
+              {data.content}
+            </ContentText>
+            {isShowMoreTextBtn && (
+              <MoreContentBtn type='button' onClick={onClickMoreText} aria-label='더보기'/>
+            )}
             <KakaoMapWrapper postType={postType}>
               {postType === "map" && (
                 <StoredMapBtn
@@ -92,6 +104,16 @@ export default function PostItemUI({
               <RatingCount>{data.rating}</RatingCount>
             </RatingWrapper>
           </ContentWrapper>
+          <ActiveMapBtn
+            type='button'
+            postType={postType}
+            onClick={onChangePostType}
+          />
+          <ActiveImageBtn
+            type='button'
+            postType={postType}
+            onClick={onChangePostType}
+          />
           <PostItemButtom>
             <ButtonWrapper>
               <LikeBtn
@@ -116,16 +138,6 @@ export default function PostItemUI({
               </PostDate>
             )}
           </PostItemButtom>
-          <ActiveMapBtn
-            type='button'
-            postType={postType}
-            onClick={onChangePostType}
-          />
-          <ActiveImageBtn
-            type='button'
-            postType={postType}
-            onClick={onChangePostType}
-          />
         </Wrapper>
       )}
     </>

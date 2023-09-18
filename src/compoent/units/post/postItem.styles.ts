@@ -103,7 +103,23 @@ export const ContentText = styled.p`
   overflow: hidden;
   display: -webkit-box;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 6;
+  -webkit-line-clamp: 5;
+`;
+
+export const MoreContentBtn = styled.button`
+  width: calc(100% - 32px);
+  height: 35px;
+  display: block;
+  border-top: 1px solid #bdbdbd;
+  margin: 0 auto 0px auto;
+  font-weight: 500;
+  body.webp & {
+    background: url("/assets/webp/icon-moreTextBtn.webp") no-repeat center /
+      15px 11px;
+  }
+  body.no-webp & {
+    background: url("/assets/icon-moreTextBtn.svg") no-repeat center/ 19px 14px;
+  }
 `;
 
 export const StoredMapBtn = styled.button`
@@ -165,7 +181,8 @@ export const ActiveImageBtn = styled.button`
 export const KakaoMapWrapper = styled.section`
   position: relative;
   width: 100%;
-  height: ${(props: {postType: "map"|"image"})=>props.postType==="image"&&"300px"}
+  height: ${(props: { postType: "map" | "image" }) =>
+    props.postType === "image" && "300px"};
 `;
 
 export const PostItemButtom = styled.div`

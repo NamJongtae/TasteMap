@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../../store/store";
 import {
@@ -27,6 +27,25 @@ export default function PostItem({ data, userProfile }: IProps) {
   const [isStoredMap, setIsStoredMap] = useState(false);
   // 게시물 썸네일 스타일 타입
   const [postType, setType] = useState<"map" | "image">("map");
+  const [isShowMoreTextBtn, setIsShowMoreTextBtn] = useState(false);
+  const contentTextRef = useRef<HTMLParagraphElement>(null);
+
+  const onClickMoreText = () => {
+    if (contentTextRef.current) {
+      contentTextRef.current.style.display = "block";
+      setIsShowMoreTextBtn(false);
+    }
+  };
+
+  useEffect(() => {
+    if (contentTextRef.current) {
+      if (contentTextRef.current.clientHeight >= 105) {
+        setIsShowMoreTextBtn(true);
+      } else {
+        setIsShowMoreTextBtn(false);
+      }
+    }
+  }, []);
 
   const onChangePostType = () => {
     if (postType === "map") {
@@ -151,6 +170,9 @@ export default function PostItem({ data, userProfile }: IProps) {
       formattedDate={formattedDate}
       onChangePostType={onChangePostType}
       postType={postType}
+      onClickMoreText={onClickMoreText}
+      contentTextRef={contentTextRef}
+      isShowMoreTextBtn={isShowMoreTextBtn}
     />
   );
 }
