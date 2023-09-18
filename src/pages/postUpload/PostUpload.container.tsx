@@ -32,11 +32,11 @@ export default function PostUpload({ isEdit }: IProps) {
     (state: RootState) => state.post.seletedMapData
   );
   const isLoading = useSelector((state: RootState) => state.post.isLoading);
+  const invalidPage = useSelector((state: RootState) => state.post.invalidPage);
   const dispatch = useDispatch<AppDispatch>();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [editImgName, setEditImgName] = useState<string[]>([]);
   const [editImgURL, setEditImgURL] = useState<string[]>([]);
-  const [thumbnailType, setThumbnailType] = useState("");
   // 검색 모달창 오픈 여부
   const [isOpenModal, setIsOpenModal] = useState(false);
   // 업로드할 이미지 파일
@@ -52,9 +52,6 @@ export default function PostUpload({ isEdit }: IProps) {
   // 별점
   const [ratingValue, setRatingValue] = useState(0);
 
-  const onChangeTumbnailType = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setThumbnailType(e.currentTarget.value);
-  };
   /**
    * 검색 모달창 열기 */
   const openSearchModal = () => {
@@ -163,7 +160,6 @@ export default function PostUpload({ isEdit }: IProps) {
         | "imgURL"
         | "imgName"
         | "img"
-        | "thumbnailType"
       > = {
         id: postData.id || "",
         content: contentValue,
@@ -172,7 +168,6 @@ export default function PostUpload({ isEdit }: IProps) {
         imgURL: editImgURL || [],
         imgName: editImgName || [],
         img: imgFile,
-        thumbnailType
       };
       await dispatch(
         thuckFecthEditPost({
@@ -180,7 +175,7 @@ export default function PostUpload({ isEdit }: IProps) {
           editPostData: editPostData
         })
       );
-      navigate(`/post/${postData.id}`);
+      navigate("/");
     } else {
       const id = uuid();
       // 서버로 보낼 postData 정의
@@ -197,12 +192,11 @@ export default function PostUpload({ isEdit }: IProps) {
         isBlock: false,
         imgName: [],
         imgURL: [],
-        thumbnailType,
         rating: ratingValue
       };
       // redux thuck를 이용하여 비동기 처리 서버로 데이터 전송
       await dispatch(thunkFetchUploadPost(uploadData));
-      navigate(`/post/${id}`);
+      navigate("/");
     }
   };
 
@@ -218,8 +212,7 @@ export default function PostUpload({ isEdit }: IProps) {
       postData.imgURL &&
       postData.content &&
       postData.rating &&
-      postData.imgName &&
-      postData.thumbnailType
+      postData.imgName 
     ) {
       setPreview(postData.imgURL);
       setContentValue(postData.content);
@@ -227,10 +220,14 @@ export default function PostUpload({ isEdit }: IProps) {
       setImgFile(postData.imgURL.map(() => ({}) as File));
       setEditImgName(postData.imgName);
       setEditImgURL(postData.imgURL);
-      setThumbnailType(postData.thumbnailType);
       dispatch(postSlice.actions.setSelectedMapData(postData.mapData));
     }
   }, [postData]);
+
+  useEffect(() => {
+    handleResizeHeight();
+  },[contentValue]);
+  
 
   return (
     <PostUploadUI
@@ -255,8 +252,7 @@ export default function PostUpload({ isEdit }: IProps) {
       isOpenModal={isOpenModal}
       isLoading={isLoading}
       isEdit={isEdit}
-      thumbnailType={thumbnailType}
-      onChangeTumbnailType={onChangeTumbnailType}
+      invalidPage={invalidPage}
     />
   );
 }

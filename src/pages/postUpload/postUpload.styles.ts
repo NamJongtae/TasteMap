@@ -8,22 +8,6 @@ export const Wrapper = styled.main`
   padding: 20px;
 `;
 
-export const UserImg = styled.img`
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  background-color: #f5f5f5;
-  vertical-align: middle;
-`;
-
-export const UserName = styled.span`
-  font-size: 16px;
-  font-weight: 500;
-  display: inline-block;
-  vertical-align: middle;
-  margin-left: 10px;
-`;
-
 export const Section = styled.section`
   margin-bottom: 20px;
 `;
@@ -35,45 +19,12 @@ export const SectionTitle = styled.h3`
   margin-bottom: 15px;
 `;
 
-export const ThumbnailSelect = styled.div`
-  margin-bottom: 20px;
-`;
-
 export const SubTitle = styled.span`
   font-size: 16px;
   font-weight: 500;
   display: block;
   margin-bottom: 20px;
 `;
-export const ThumbnailSelectLabel = styled.label`
-  display: inline-block;
-  width: 50px;
-  height: 50px;
-  cursor: pointer;
-  margin-right: 10px;
-  transition: all 0.3s;
-  &.map {
-    background: ${(props: { thumbnailType: string }) =>
-      props.thumbnailType === "map"
-        ? document.body.classList.contains("webp")
-          ? 'url("/assets/webp/icon-thumbnailImgBtnActive.webp") no-repeat center'
-          : 'url("/assets/icon-thumbnailImgBtnActive.svg") no-repeat center'
-        : document.body.classList.contains("webp")
-        ? 'url("/assets/webp/icon-thumbnailMapBtn.webp") no-repeat center'
-        : 'url("/assets/icon-thumbnailMapBtn.svg") no-repeat center'};
-  }
-  &.img {
-    background: ${(props: { thumbnailType: string }) =>
-      props.thumbnailType === "image"
-        ? document.body.classList.contains("webp")
-          ? 'url("/assets/webp/icon-thumbnailMapBtnActive.webp") no-repeat center'
-          : 'url("/assets/icon-thumbnailMapBtnActive.svg") no-repeat center'
-        : document.body.classList.contains("webp")
-        ? 'url("/assets/webp/icon-thumbnailImgBtn.webp") no-repeat center'
-        : 'url("/assets/icon-thumbnailImgBtn.svg") no-repeat center'};
-  }
-`;
-export const ThumbnailSelectBtn = styled.input``;
 
 export const SearchModalBtn = styled.button`
   font-size: 14px;
@@ -108,6 +59,7 @@ export const TextArea = styled.textarea`
   font-size: 14px;
   box-sizing: content-box;
   border-bottom: 1px solid #bdbdbd;
+  line-height: 1.6;
   padding: 15px;
   :focus {
     outline: none;
@@ -123,12 +75,12 @@ export const RatingWrapper = styled.div`
   border: none;
 `;
 export const Rating = styled(Rate)`
-  font-size: 25px;
+  font-size: 24px;
 `;
 
 export const RatingTag = styled.span``;
 export const RatingCount = styled.span`
-  font-size: 16px;
+  font-size: 14px;
   color: #555;
   font-weight: bold;
 `;
@@ -165,6 +117,7 @@ export const ImgItem = styled.li`
   margin-bottom: 16px;
   border: 1px solid #bdbdbd;
   border-radius: 10px;
+  box-sizing: content-box;
 `;
 
 export const Img = styled.img`
@@ -200,8 +153,8 @@ export const ImgUploadBtn = styled.button`
   padding: 8px 32px 8px 12px;
   margin-bottom: 20px;
   body.webp & {
-    background: url("/assets/webp/icon-uploadImg.webp") no-repeat center right 6px/ 20px
-      gold;
+    background: url("/assets/webp/icon-uploadImg.webp") no-repeat center right
+      6px/ 20px gold;
   }
   body.no-webp * {
     background: url("/assets/icon-uploadImg.svg") no-repeat center / 20px gold;
