@@ -11,6 +11,7 @@ import PostUpload from "./pages/postUpload/PostUpload.container";
 import { userSlice } from "./slice/userSlice";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import PostEdit from "./pages/post/postEdit/PostEdit";
+import TopButton from "./compoent/commons/topButton/TopButton";
 
 function App() {
   const { pathname } = useLocation();
@@ -82,13 +83,26 @@ function App() {
           />
           <Route
             path='/'
+            element={
+              !userData.uid ? (
+                <Navigate to='/login' />
+              ) : (
+                <>
+                  <Home />
+                  <TopButton />
+                </>
+              )
+            }
+          />
+          <Route
+            path='/'
             element={!userData.uid ? <Navigate to='/login' /> : <Home />}
           />
           <Route
             path='/post/'
             element={!userData.uid ? <Navigate to='/login' /> : <Outlet />}
           >
-            <Route path='upload' element={<PostUpload isEdit={false}/>} />
+            <Route path='upload' element={<PostUpload isEdit={false} />} />
             <Route path=':postId/edit' element={<PostEdit />} />
           </Route>
         </Routes>
