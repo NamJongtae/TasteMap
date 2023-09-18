@@ -28,6 +28,14 @@ export const LeftSideWrapper = styled.div`
   gap: 30px;
 `;
 
+export const CancelBtn = styled.button`
+  padding-bottom: 5px;
+  font-size: 16px;
+  font-weight: 400;
+  color: #888;
+  background: none;
+`;
+
 export const BackBtn = styled.button`
   width: 20px;
   height: 20px;
@@ -82,6 +90,7 @@ export const SubmitBtn = styled.button`
   background-color: gold;
   border-radius: 20px;
   padding: 6px 20px;
-  background-color: ${(props: { disabled: boolean }) => props.disabled && "#eee"};
+  background-color: ${(props: { disabled: boolean }) =>
+    props.disabled && "#eee"};
   transition: all 0.3s;
 `;

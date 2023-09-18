@@ -10,7 +10,8 @@ import {
   MypageLink,
   Wrapper,
   SearchLink,
-  SubmitBtn
+  SubmitBtn,
+  CancelBtn
 } from "./header.styles";
 import { resolveWebp } from "../../../../library/webpSupport";
 import { useNavigate } from "react-router-dom";
@@ -50,11 +51,10 @@ export default function Header({ type, onSubmit, btnText, disabled }: IParms) {
         return (
           <>
             <LeftSideWrapper>
-              <BackBtn
+              <CancelBtn
                 type='button'
-                aria-label='뒤로가기'
-                onClick={() => navigate(-1)}
-              />
+                onClick={()=>navigate("/")}
+              >취소</CancelBtn>
               <LogoLink to={"/"}>
                 <Title>
                   <span className='a11y-hidden'>TasteMap</span>
@@ -122,7 +122,7 @@ export default function Header({ type, onSubmit, btnText, disabled }: IParms) {
   return (
     <>
       <Wrapper>{setHeader()}</Wrapper>
-      <div style={{paddingTop: "54px"}}></div>
+      <div style={{ paddingTop: "54px" }}></div>
     </>
   );
 }
