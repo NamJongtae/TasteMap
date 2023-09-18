@@ -45,6 +45,7 @@ export const fetchSignup = async (
     phone,
     postList:[],
     likeList: [],
+    storedMapList: [],
     reportList: [],
     photoFileName: fileName || "",
     introduce,

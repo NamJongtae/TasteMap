@@ -17,6 +17,7 @@ export interface IProfileData {
   createdAt?: Timestamp;
   likeList?: string[];
   postList?: string[];
+  storedMapList?: ISearchMapData[];
   reportList?:string[];
 }
 
@@ -39,7 +40,6 @@ export interface IPostUploadData {
   imgName: string[];
   imgURL: string[];
   rating: number;
-  thumbnailType: string;
 }
 
 export interface IPostData {
@@ -57,7 +57,6 @@ export interface IPostData {
   mapData?: ISearchMapData;
   isBlock?: boolean;
   rating?: number;
-  thumbnailType?: string;
 }
 
 export interface ISearchMapData {
