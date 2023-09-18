@@ -44,7 +44,7 @@ export default function UserInfoUI({
       <h2 className='a11y-hidden'>유저 프로필</h2>
       <UserProfileLink to={`profile/${postData.uid}`}>
         <UserImg
-          src={postData.photoURL}
+          src={postData.photoURL||userData.photoURL}
           alt='프로필 이미지'
           onError={(e: React.SyntheticEvent<HTMLImageElement>) =>
             (e.currentTarget.src = resolveWebp(
@@ -53,7 +53,7 @@ export default function UserInfoUI({
             ))
           }
         />
-        <Username>{userData.displayName}</Username>
+        <Username>{userData.displayName||userData.displayName}</Username>
       </UserProfileLink>
       {activeMoreBtn&& <MoreBtn type='button' aria-label='더보기' onClick={onClickSelect} />}
       {isOpenSelect && (
