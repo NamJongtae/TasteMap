@@ -1,43 +1,24 @@
 import React, { useEffect, useRef, useState } from "react";
 import "./kakaomap.styles.css";
-import {
-  MapBtnWrapper,
-  MapContainer,
-  NoKakaoMap,
-  NoKakaoMapText,
-  RoadViewBtn,
-  Roadview,
-  RvWrapper,
-  Title,
-  Wrapper,
-  ZoomInBtn,
-  ZoomOutBtn
-} from "./kakaomap.styles";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../../store/store";
 import { postSlice } from "../../../slice/postSlice";
+import KakaomapUI from "./Kakaomap.presenter";
+import { ISearchMapData } from '../../../api/apiType';
 declare global {
   interface Window {
     kakao: any;
   }
 }
-interface IMapData {
-  address?: string;
-  category?: string;
-  link?: string;
-  mapx?: string;
-  mapy?: string;
-  roadAddress?: string;
-  title?: string;
-}
+
 interface IProps {
-  items: IMapData[];
-  activeMouseEvent: boolean;
+  items: ISearchMapData[];
 }
-export default function Kakaomap({ items, activeMouseEvent }: IProps) {
+
+function Kakaomap({ items }: IProps) {
   const dispatch = useDispatch<AppDispatch>();
   // 생성한 map를 저장
-  const [maps, setMaps] = useState<any>("");
+  const [myMap, setMyMap] = useState<any>(null);
   // 생성한 position 값을 저장
   const [pos, setPos] = useState<any>("");
   // 생성한 roadviewMark를 저장
@@ -45,11 +26,13 @@ export default function Kakaomap({ items, activeMouseEvent }: IProps) {
   // 생성한 mapWalker를 저장
   const [roadWalker, setRoadWalker] = useState<any>(null);
   // roadview의 유무
-  const [loadView, setLoadView] = useState(false);
+  const [roadview, setRoadview] = useState(false);
+  // marke 저장
+  const [markers, setMaeksers] = useState<any[]>([]);
+  const [cutsomOverlays, SetCustomOverlays] = useState<any[]>([]);
   const mapRef = useRef<HTMLDivElement>(null);
   const rvWrapperRef = useRef<HTMLDivElement>(null);
   const roadViewRef = useRef<HTMLDivElement>(null);
-
   // 지도위에 현재 로드뷰의 위치와, 각도를 표시하기 위한 map walker 아이콘 생성 클래스
   function MapWalker(position: any) {
     // 커스텀 오버레이에 사용할 map walker 엘리먼트
@@ -81,9 +64,10 @@ export default function Kakaomap({ items, activeMouseEvent }: IProps) {
 
   const onLoadView = (map: any, position: any) => {
     // loadView가 없을 시 return 타입 가드
-    if (!loadView) {
+    if (!roadview) {
       return;
     }
+
     map.addOverlayMapTypeId(window.kakao.maps.MapTypeId.ROADVIEW);
     const rvContainer = roadViewRef.current;
     const rv = new window.kakao.maps.Roadview(rvContainer);
@@ -214,49 +198,81 @@ export default function Kakaomap({ items, activeMouseEvent }: IProps) {
 
   useEffect(() => {
     // map이 없을 시 리턴 맵 중복 생성 방지
-    if (maps === null) {
+    if (myMap === null || items.length === 0) {
       return;
     }
     // 로드 뷰가 true 일시 로드 뷰 활성화
-    if (loadView) {
-      onLoadView(maps, pos);
+    if (roadview) {
+      onLoadView(myMap, pos);
     } else {
       // 로드 뷰가 false 라면 로드 뷰 제거 및 로드뷰 markerm walker 제거
-      maps && maps.removeOverlayMapTypeId(window.kakao.maps.MapTypeId.ROADVIEW);
+      myMap &&
+        myMap.removeOverlayMapTypeId(window.kakao.maps.MapTypeId.ROADVIEW);
       roadMarker && roadMarker.setMap(null);
       roadWalker && roadWalker.setMap(null);
     }
-  }, [loadView]);
+  }, [roadview]);
 
   useEffect(() => {
-    if (maps === null || loadView || !items[0]?.mapx || !items[0]?.mapy) {
+    if (items.length === 0 || !items[0]?.mapx || !items[0]?.mapy) {
       return;
     }
     // items의 mapx, mapy는 문자열 형태로 소수점 형식이 아닌 10000000 단위로 제공
     // parseInt로 문자열을 숫자로 변환 후 10000000으로 나눔
     const longitude = parseInt(items[0].mapx) / 10000000;
     const latitude = parseInt(items[0].mapy) / 10000000;
-    const container = mapRef.current;
-    // 생성할 지도의 중심 좌표 설정 및 지도 level(크기) 지정
-    const options = {
-      center: new window.kakao.maps.LatLng(latitude, longitude),
-      level: 3
-    };
     // 지도 좌표 설정
     const position = new window.kakao.maps.LatLng(latitude, longitude);
-    // 지도 생성
-    const map = new window.kakao.maps.Map(container, options);
-    // 드래그 이벤트 사용 유무 props의 activeMouseEvent에 따라 변경
-    map.setDraggable(activeMouseEvent); 
-    // 줌 이벤트 사용 유무 props의 activeMouseEvent에 따라 변경
-    map.setZoomable(activeMouseEvent);  
-    // map 저장
-    setMaps(map);
-    // position 저장
-    setPos(position);
+
+    // 카카오맵은 하나만 생성해야 맵이 중복으로 생성되지 않음
+    // 따라서 맵을 생성한 뒤에는 좌표값를 변경시켜 지도 위치를 바꿔주어야함
+    // maps
+    if (myMap === null) {
+      const container = mapRef.current;
+      // 생성할 지도의 중심 좌표 설정 및 지도 level(크기) 지정
+      const options = {
+        center: new window.kakao.maps.LatLng(latitude, longitude),
+        level: 3
+      };
+      // 지도 좌표 설정
+      const position = new window.kakao.maps.LatLng(latitude, longitude);
+      // 지도 생성
+      const map = new window.kakao.maps.Map(container, options);
+      // 중 비활성화, 버튼 사용
+      map.setZoomable(false);
+      // map 저장
+      setMyMap(map);
+      // position 저장
+      setPos(position);
+    } else if (myMap) {
+      // roadview 초기화
+      if (roadview) {
+        myMap.removeOverlayMapTypeId(window.kakao.maps.MapTypeId.ROADVIEW);
+        const position = new window.kakao.maps.LatLng(latitude, longitude);
+        setRoadview(false);
+        myMap.setCenter(position);
+      }
+      // position 저장
+      setPos(position);
+      // roadMaker 초기화
+      roadMarker && roadMarker.setMap(null);
+      // roadWalker 초기화
+      roadWalker && roadWalker.setMap(null);
+      myMap.setCenter(position);
+    }
   }, [items]);
 
   useEffect(() => {
+    if (myMap === null || items.length === 0) {
+      return;
+    }
+    // maker 및 customOverlay 초기화
+    if (markers.length > 0) {
+      for (let i = 0; i < markers.length; i++) {
+        markers[i].setMap(null);
+        cutsomOverlays[i].setMap(null);
+      }
+    }
     // items 데이터 수 만큼 마커 생성
     for (let i = 0; i < items.length; i++) {
       const longitude = parseInt(items[i].mapx as string) / 10000000;
@@ -264,12 +280,14 @@ export default function Kakaomap({ items, activeMouseEvent }: IProps) {
       const position = new window.kakao.maps.LatLng(latitude, longitude);
       // 마커 생성
       const marker = new window.kakao.maps.Marker({
-        map: maps,
+        map: myMap,
         position: position,
         title: items[i].title
       });
       // 지도에 마커 적용
-      marker.setMap(maps);
+      marker.setMap(myMap);
+      // 마커 저장
+      setMaeksers((prev) => [...prev, marker]);
       // 마커에 위에 표시되는 오버레이 설정
       const content =
         // prettier-ignore
@@ -288,59 +306,51 @@ export default function Kakaomap({ items, activeMouseEvent }: IProps) {
       });
 
       // 커스텀 오버레이를 지도에 적용
-      customOverlay.setMap(maps);
+      customOverlay.setMap(myMap);
+      // 커스텀 오버레이 저장
+      SetCustomOverlays((prev) => [...prev, customOverlay]);
     }
-  }, [maps]);
+  }, [myMap, items]);
+
+  // 로드뷰를 비활성화 했을 때 roadWalker가 남아있을 경우 제거
+  useEffect(() => {
+    if (!roadview) {
+      roadWalker && roadWalker.setMap(null);
+    }
+  }, [rvWrapperRef.current]);
 
   // 지도 레벨은 지도의 확대 수준을 의미
   function zoomIn() {
     // 현재 지도의 레벨을 얻어옵니다
-    const level = maps.getLevel();
+    const level = myMap.getLevel();
 
     // 지도를 1레벨 내림 (지도가 확대)
-    maps.setLevel(level - 1);
+    myMap.setLevel(level - 1);
   }
 
   function zoomOut() {
     // 현재 지도의 레벨을 얻어옵니다
-    const level = maps.getLevel();
+    const level = myMap.getLevel();
 
     // 지도를 1레벨 올림 (지도가 축소)
-    maps.setLevel(level + 1);
+    myMap.setLevel(level + 1);
   }
 
   return (
-    <>
-      {items.length > 0 ? (
-        <Wrapper>
-          <Title className='a11y-hidden'>맛집 지도</Title>
-          <MapContainer ref={mapRef}>
-            {activeMouseEvent && (
-              <MapBtnWrapper>
-                <RoadViewBtn
-                  title='로드뷰'
-                  onClick={() => setLoadView(!loadView)}
-                  aria-label='로드뷰'
-                  loadView={loadView}
-                />
-                <ZoomInBtn title='확대' onClick={zoomIn} aria-label='확대' />
-                <ZoomOutBtn title='축소' onClick={zoomOut} aria-label='축소' />
-              </MapBtnWrapper>
-            )}
-          </MapContainer>
-          {loadView && (
-            <RvWrapper ref={rvWrapperRef}>
-              <Roadview ref={roadViewRef}></Roadview>
-            </RvWrapper>
-          )}
-        </Wrapper>
-      ) : (
-        <NoKakaoMap>
-          <NoKakaoMapText>
-            {"선택된 맛집이 없습니다.\n맛집 검색을 통해 맛집을 선택해주세요."}
-          </NoKakaoMapText>
-        </NoKakaoMap>
-      )}
-    </>
+    <KakaomapUI
+      items={items}
+      mapRef={mapRef}
+      roadview={roadview}
+      setRoadview={setRoadview}
+      zoomIn={zoomIn}
+      zoomOut={zoomOut}
+      rvWrapperRef={rvWrapperRef}
+      roadViewRef={roadViewRef}
+    />
   );
 }
+
+function kakaomapEqual(prev: IProps, next: IProps) {
+  return prev.items[0]?.mapx === next.items[0]?.mapx;
+}
+export default React.memo(Kakaomap, kakaomapEqual);

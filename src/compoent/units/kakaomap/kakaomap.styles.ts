@@ -85,8 +85,8 @@ export const ZoomOutBtn = styled(ZoomBtn)`
 
 export const RoadViewBtn = styled(ZoomBtn)`
  transition: all 0.3s;
-  background: ${(props: { loadView: boolean }) =>
-    props.loadView
+  background: ${(props: { roadview: boolean }) =>
+    props.roadview
       ? document.body.classList.contains("webp")
         ? "url(/assets/webp/icon-roadViewActive.webp) no-repeat"
         : "url(/assets/icon-roadViewActive.svg) no-repeat"
