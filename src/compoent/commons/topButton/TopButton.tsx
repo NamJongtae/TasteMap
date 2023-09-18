@@ -26,7 +26,7 @@ export default function TopButton() {
   return (
     <>
       {isActive && (
-        <Button type='button' onClick={scrollToTop} ref={buttonRef} />
+        <Button type='button' onClick={scrollToTop} ref={buttonRef}>TOP</Button>
       )}
     </>
   );
