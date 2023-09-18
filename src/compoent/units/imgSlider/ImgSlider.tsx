@@ -61,8 +61,8 @@ export default function ImgSlider({ imgArray }: IProps) {
                 src={item}
                 alt='게시물 이미지'
                 styles={{
-                  objectFit: "cover",
-                  backgroundColor: "#f5f5f5",
+                  objectFit: "contain",
+                  backgroundColor: "#fff",
                   verticalAlign: "top",
                   height: "100%",
                   width: "100%",
