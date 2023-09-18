@@ -8,6 +8,7 @@ import {
 import { fetchSearchData } from "../api/naverSearchAPI/naverSearchAPI";
 import {
   fetchAddPostLike,
+  fetchAddPostMap,
   fetchEditPost,
   fetchFirstPagePostData,
   fetchPagingPostData,
@@ -15,6 +16,7 @@ import {
   fetchPostImg,
   fetchRemovePost,
   fetchRemovePostLike,
+  fetchRemovePostMap,
   fetchReportPost,
   fetchUploadPost
 } from "../api/firebase/postAPI";
@@ -25,6 +27,7 @@ import {
 } from "firebase/firestore";
 import { sweetToast } from "../library/sweetAlert/sweetAlert";
 
+// 게시물 데이터 조회
 export const thuckFetchPostData = createAsyncThunk<
   IPostData | undefined,
   string,
@@ -32,6 +35,11 @@ export const thuckFetchPostData = createAsyncThunk<
 >("postSlice/thuckFetchPostData", async (postId: string, thuckAPI) => {
   try {
     const res = await fetchPostData(postId);
+    if (res?.id) {
+      thuckAPI.dispatch(postSlice.actions.setInvalidPage(false));
+    } else {
+      thuckAPI.dispatch(postSlice.actions.setInvalidPage(true));
+    }
     return res;
   } catch (error: any) {
     thuckAPI.rejectWithValue(error);
@@ -53,7 +61,7 @@ export const thuckFetchSearchMap = createAsyncThunk(
 
 // 게시물 업로드
 export const thunkFetchUploadPost = createAsyncThunk<
-  void,
+  IPostUploadData,
   IPostUploadData,
   { rejectValue: IKnownError }
 >("postSlice/thunkFetchUploadPost", async (postData, thunkAPI) => {
@@ -70,8 +78,7 @@ export const thunkFetchUploadPost = createAsyncThunk<
     // 데이터 업로드시 파일 프로퍼티는 업로드할 필요가 없음
     delete postData.img;
     await fetchUploadPost(postData);
-    // 업로드 이후 데이터 업데이트
-    await thunkAPI.dispatch(thunkFetchFirstPagePostData(10));
+    return postData;
   } catch (error: any) {
     return thunkAPI.rejectWithValue(error);
   }
@@ -128,7 +135,10 @@ export const thunkFetchPagingPostData = createAsyncThunk<
  * 게시물 수정
  */
 export const thuckFecthEditPost = createAsyncThunk<
-  void,
+  Pick<
+    IPostUploadData,
+    "id" | "content" | "rating" | "mapData" | "imgURL" | "imgName" | "img"
+  >,
   {
     prevPostData: IPostData;
     editPostData: Pick<
@@ -153,8 +163,7 @@ export const thuckFecthEditPost = createAsyncThunk<
       // 데이터 업로드시 파일 프로퍼티는 업로드할 필요가 없음
       delete editPostData.img;
       await fetchEditPost(prevPostData, editPostData);
-      // 업로드 이후 데이터 업데이트
-      await thunkAPI.dispatch(thunkFetchFirstPagePostData(10));
+      return editPostData;
     } catch (error: any) {
       return thunkAPI.rejectWithValue(error);
     }
@@ -169,7 +178,7 @@ export const thuckFetchRemovePost = createAsyncThunk<
   { rejectValue: IKnownError }
 >("postSlice/thuckFetchRemovePost", async (postData, thunkAPI) => {
   try {
-    await fetchRemovePost(postData);
+    fetchRemovePost(postData);
     return postData;
   } catch (error: any) {
     return thunkAPI.rejectWithValue(error);
@@ -222,6 +231,37 @@ export const thuckFetchRemovePostLike = createAsyncThunk<
   }
 });
 
+/**
+ * 게시물 지도 추가
+ */
+export const thuckFetchAddPostMap = createAsyncThunk<
+  IPostData,
+  IPostData,
+  { rejectValue: IKnownError }
+>("postSlice/thuckFetchAddPostMap", async (postData, thunkAPI) => {
+  try {
+    await fetchAddPostMap(postData);
+    return postData;
+  } catch (error: any) {
+    return thunkAPI.rejectWithValue(error);
+  }
+});
+
+/**
+ * 게시물 지도 삭제
+ */
+export const thuckFetchRemovePostMap = createAsyncThunk<
+  void,
+  IPostData,
+  { rejectValue: IKnownError }
+>("postSlice/thuckFetchRemovePostMap", async (postData, thunkAPI) => {
+  try {
+    await fetchRemovePostMap(postData);
+  } catch (error: any) {
+    return thunkAPI.rejectWithValue(error);
+  }
+});
+
 export const postSlice = createSlice({
   name: "postSlice",
   initialState: {
@@ -231,11 +271,15 @@ export const postSlice = createSlice({
     pagePerData: 10,
     hasMore: false,
     searchMapData: [] as ISearchMapData[], // 검색 데이터
-    seletedMapData: [] as ISearchMapData[], // 선택한 검색 데이터
+    seletedMapData: [] as ISearchMapData[], // 선택한 검색 데이터,
+    invalidPage: false,
     error: "",
     isLoading: false
   },
   reducers: {
+    setPostListData: (state, action) => {
+      state.postListData = action.payload;
+    },
     setSelectedMapData: (state, action) => {
       state.seletedMapData = [action.payload];
     },
@@ -250,6 +294,9 @@ export const postSlice = createSlice({
         (item) => item.id !== action.payload
       );
       state.postListData = newData;
+    },
+    setInvalidPage: (state, action) => {
+      state.invalidPage = action.payload;
     },
     setIsLoading: (state, action) => {
       state.isLoading = action.payload;
@@ -294,9 +341,10 @@ export const postSlice = createSlice({
       document.body.style.overflow = "hidden";
       state.isLoading = true;
     });
-    builder.addCase(thunkFetchUploadPost.fulfilled, (state) => {
+    builder.addCase(thunkFetchUploadPost.fulfilled, (state, action) => {
       document.body.style.overflow = "auto";
       state.isLoading = false;
+      state.postListData = [action.payload, ...state.postListData];
     });
     builder.addCase(thunkFetchUploadPost.rejected, (state, action) => {
       if (!action.payload) return;
@@ -351,9 +399,15 @@ export const postSlice = createSlice({
       document.body.style.overflow = "hidden";
       state.isLoading = true;
     });
-    builder.addCase(thuckFecthEditPost.fulfilled, (state) => {
+    builder.addCase(thuckFecthEditPost.fulfilled, (state, action) => {
       document.body.style.overflow = "auto";
       state.isLoading = false;
+      const index = [...state.postListData].findIndex(
+        (data) => data.id === action.payload.id
+      );
+      const newData = [...state.postListData];
+      newData[index] = { ...newData[index], ...action.payload };
+      state.postListData = newData;
     });
     builder.addCase(thuckFecthEditPost.rejected, (state, action) => {
       if (!action.payload) return;
@@ -408,6 +462,26 @@ export const postSlice = createSlice({
 
     // 게시물 좋아요 삭제
     builder.addCase(thuckFetchRemovePostLike.rejected, (state, action) => {
+      if (!action.payload) return;
+      state.error = action.payload.message;
+      sweetToast(
+        "알 수 없는 에러가 발생하였습니다.\n잠시 후 다시 시도해 주세요.",
+        "warning"
+      );
+    });
+
+    // 게시물 지도 추가
+    builder.addCase(thuckFetchAddPostMap.rejected, (state, action) => {
+      if (!action.payload) return;
+      state.error = action.payload.message;
+      sweetToast(
+        "알 수 없는 에러가 발생하였습니다.\n잠시 후 다시 시도해 주세요.",
+        "warning"
+      );
+    });
+
+    // 게시물 지도 삭제
+    builder.addCase(thuckFetchRemovePostMap.rejected, (state, action) => {
       if (!action.payload) return;
       state.error = action.payload.message;
       sweetToast(
