@@ -9,8 +9,10 @@ import {
 } from "../../../slice/postSlice";
 import Loading from "../../commons/loading/Loading";
 import { useInView } from "react-intersection-observer";
+import { thunkFetchUserProfile } from '../../../slice/profileSlice';
 
 export default function PostList() {
+  const userProfile = useSelector((state: RootState) => state.profile.profileData);
   // 게시물 데이터 목록을 가져옴
   const postListData = useSelector((state: RootState) => state.post.postListData);
   // 현재 페이지를 가져옴
@@ -36,14 +38,18 @@ export default function PostList() {
     }
   }, [inview]);
 
+  useEffect(()=>{
+    dispatch(thunkFetchUserProfile());
+  },[])
+
 
   return (
     <>
       <Wrapper>
         <PostWrapper>
-          {postListData &&
+          {postListData.length > 0 &&
             postListData.map((item) => {
-              return !item.isBlock && <PostItem key={item.id} data={item} />;
+              return !item.isBlock && <PostItem key={item.id} data={item} userProfile={userProfile}/>;
             })}
         </PostWrapper>
       </Wrapper>

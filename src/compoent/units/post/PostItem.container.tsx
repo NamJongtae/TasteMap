@@ -1,77 +1,64 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../../store/store";
 import {
   thuckFetchAddPostLike,
-  thuckFetchRemovePost,
+  thuckFetchAddPostMap,
   thuckFetchRemovePostLike,
-  thuckFetchReportPost
+  thuckFetchRemovePostMap
 } from "../../../slice/postSlice";
-import {
-  sweetConfirm,
-  sweetToast
-} from "../../../library/sweetAlert/sweetAlert";
-import { IPostData, IProfileData } from "../../../api/apiType";
-import { useNavigate } from "react-router-dom";
-
+import { sweetToast } from "../../../library/sweetAlert/sweetAlert";
+import { IPostData, IProfileData, ISearchMapData } from "../../../api/apiType";
 import PostItemUI from "./PostItem.present";
-import { fetchProfile } from "../../../api/firebase/profileAPI";
-import { setDateFormat } from '../../../library/setDateFormat';
+import { setDateFormat } from "../../../library/setDateFormat";
+import { profileSlice } from "../../../slice/profileSlice";
 interface IProps {
   data: IPostData;
+  userProfile: IProfileData;
 }
 
-export default function PostItem({ data }: IProps) {
+export default function PostItem({ data, userProfile }: IProps) {
   const dispatch = useDispatch<AppDispatch>();
-  // 사용자 프로필
-  const [userProfile, setUserProfile] = useState({} as IProfileData);
-  // 더보기 메뉴 활성화 관리
-  const [isOpenSelect, setIsOpenSelect] = useState(false);
   // 좋아요 유무
   const [isLike, setIsLike] = useState(false);
   // 좋아요 수
-  const [likeCount, setLikeCount] = useState(data.likeCount);
-  // 더보기 메뉴 ref 메뉴창이 닫힐 때 애니메이션 효과를 바꾸기 위해 사용
-  const opectionListRef = useRef<HTMLUListElement>(null);
-  const navigate = useNavigate();
+  const [likeCount, setLikeCount] = useState(0);
+  // 맛집 지도 추가 유무
+  const [isStoredMap, setIsStoredMap] = useState(false);
+  // 게시물 썸네일 스타일 타입
+  const [postType, setType] = useState<"map" | "image">("map");
 
-  /**
-   * 유저 정보 페이지 이동
-   */
-  const onClickUserInfo = () => {
-    navigate(`/profile/${data.uid}`);
-  };
-
-  /**
-   * 게시물 상세 페이지 이동
-   */
-  const onClickDetailBtn = () => {
-    navigate(`/post/${data.id}`);
-  };
-
-  /**
-   * 게시물 수정 페이지 이동
-   */
-  const onClickEditBtn = () => {
-    navigate(`/post/${data.id}/edit`);
-  };
-
-  /**
-   * 더보기 메뉴 활성화/비활성화 함수
-   */
-  const onClickSelect = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation();
-    // 더보기 메뉴가 열려 있을 경우 닫기 애니메이션 추가
-    // 애니메이션 실행 후 닫히 도록 하기위해 setTimeout 설정
-    if (opectionListRef.current && isOpenSelect) {
-      opectionListRef.current.style.animation = "fadeOutOption 0.5s";
-      setTimeout(() => {
-        setIsOpenSelect(!isOpenSelect);
-      }, 300);
+  const onChangePostType = () => {
+    if (postType === "map") {
+      if (data.imgURL && data.imgURL.length === 0) {
+        sweetToast("이미지가 존재하지 않습니다.", "warning");
+        return;
+      }
+      setType("image");
     } else {
-      setIsOpenSelect(!isOpenSelect);
+      setType("map");
     }
-  },[isOpenSelect]);
+  };
+
+  const onChangeStoredMapList = (map: ISearchMapData) => {
+    if (userProfile.storedMapList) {
+      if (!isStoredMap) {
+        const newProfile = {
+          ...userProfile,
+          storedMapList: [...userProfile.storedMapList, map]
+        };
+        dispatch(profileSlice.actions.setprofile(newProfile));
+      } else {
+        const newProfile = {
+          ...userProfile,
+          storedMapList: [...userProfile.storedMapList].filter(
+            (item) => item.mapx !== map.mapx && item.mapy !== map.mapy
+          )
+        };
+        dispatch(profileSlice.actions.setprofile(newProfile));
+      }
+    }
+  };
 
   /**
    * 좋아요 추가 함수
@@ -99,109 +86,71 @@ export default function PostItem({ data }: IProps) {
     setIsLike(!isLike);
   };
 
-  /**
-   * 좋아요 제거 함수
-   */
-  const onCliceRemove = (
-    e: React.MouseEvent<HTMLButtonElement>,
-    data: IPostData
-  ) => {
-    e.stopPropagation();
-    setIsOpenSelect(false);
-    sweetConfirm("정말 삭제 하시겠습니까?", "삭제", "취소", () => {
-      // 게시물 삭제 api 비동기 처리
-      dispatch(thuckFetchRemovePost(data));
-    });
-  };
+  const onClickStoredMap = async (postData: IPostData) => {
+    if (!postData || !userProfile.storedMapList) return;
 
-  /**
-   * 좋아요 신고 함수
-   */
-  const onClickReport = (
-    e: React.MouseEvent<HTMLButtonElement>,
-    postData: IPostData
-  ) => {
-    e.stopPropagation();
-    setIsOpenSelect(false);
-    sweetConfirm("정말 신고 하시겠습니까?", "신고", "취소", () => {
-      // 유저 프로필 데이터의 reportList에서 현재 게시물의 id값이 있으면 이미 신고한 게시물 이므로
-      // 신고를 하지 못하도록 return
-      if (data.id && userProfile.reportList?.includes(data.id)) {
-        return sweetToast("이미 신고한 게시물입니다.", "warning");
-      }
-      // 게시물 신고 api 비동기 처리
-      dispatch(thuckFetchReportPost(postData));
-    });
+    if (!isStoredMap) {
+      // 지도 추가 api 비동기 처리
+      dispatch(thuckFetchAddPostMap(postData));
+      sweetToast("나의 맛집 지도에 맛집이 추가 되었습니다", "success");
+    } else {
+      // 지도 제거 api 비동기 처리
+      dispatch(thuckFetchRemovePostMap(postData));
+      sweetToast("나의 맛집 지도에 맛집이 삭제 되었습니다", "success");
+    }
+    if (postData.mapData) {
+      onChangeStoredMapList(postData.mapData);
+    }
+    // 지도 추가 유무 변경
+    setIsStoredMap(!isStoredMap);
   };
-
-  // userProfile 데이터 가져오기
-  useEffect(() => {
-    const getProfile = async () => {
-      const res = (await fetchProfile()) as IProfileData;
-      setUserProfile(res);
-    };
-    getProfile();
-  }, []);
 
   // userProfile의 likeList 데이터를 이용하여 게시물의 좋아요 유무를 판별
   useEffect(() => {
-    if (userProfile?.likeList && data.id)
+    if (userProfile?.likeList && data.id) {
       setIsLike(userProfile.likeList.includes(data.id));
-  }, [userProfile]);
+    }
+  }, [userProfile, data]);
+
+  useEffect(() => {
+    setLikeCount(data.likeCount || 0);
+  }, [data]);
 
   const formattedDate = useMemo(() => {
-    if(data.createdAt?.seconds)
-    return setDateFormat(data.createdAt?.seconds* 1000);
+    if (data.createdAt?.seconds) {
+      return setDateFormat(data.createdAt?.seconds * 1000);
+    }
   }, [data.createdAt?.seconds]);
 
-  // // 더보기 메뉴가 아닌 다른 요소를 클릭 시 더보기 메뉴가 닫히 도록하는 이벤트를 body에 추가
   useEffect(() => {
-    // 더보기 메뉴가 닫히도록 하는  이벤트 함수 생성
-    const inActiveMoreMenu = (e: MouseEvent) => {
-      // 더보기 메뉴가 열려있고, 현재 target이 더보기 메뉴 하위 요소가 아닐 때
-      if (
-        isOpenSelect &&
-        !opectionListRef.current?.contains(e.target as Node)
-      ) {
-        if (opectionListRef.current) {
-          opectionListRef.current.style.animation = "fadeOutOption 0.5s";
-          setTimeout(() => {
-            setIsOpenSelect(!isOpenSelect);
-          }, 300);
+    // 좌표 값이 일치확인
+    if (userProfile?.storedMapList && data.mapData) {
+      userProfile.storedMapList.forEach((item) => {
+        if (
+          item.mapx === data.mapData?.mapx &&
+          item.mapy === data.mapData?.mapy
+        ) {
+          setIsStoredMap(true);
+          return;
+        } else {
+          setIsStoredMap(false);
         }
-      }
-    };
-
-    // 더보기 메뉴가 열렸을 경우 이벤트를 추가
-    if (isOpenSelect) {
-      document.body.addEventListener("click", inActiveMoreMenu);
-    } else {
-      // 더보기 메뉴가 닫히는 경우 이벤트를 제거
-      document.body.removeEventListener("click", inActiveMoreMenu);
+      });
     }
-
-    // clearn up 컴포넌트가 제거 되기 전 이벤트 제거
-    return () => {
-      document.body.removeEventListener("click", inActiveMoreMenu);
-    };
-  }, [isOpenSelect]);
+  }, [userProfile]);
 
   return (
     <PostItemUI
       data={data}
-      onClickSelect={onClickSelect}
-      isOpenSelect={isOpenSelect}
       userProfile={userProfile}
-      opectionListRef={opectionListRef}
-      onCliceRemove={onCliceRemove}
-      onClickReport={onClickReport}
       isLike={isLike}
       likeCount={likeCount}
       onClickLike={onClickLike}
-      onClickUserInfo={onClickUserInfo}
-      onClickDetailBtn={onClickDetailBtn}
-      onClickEditBtn={onClickEditBtn}
+      isStoredMap={isStoredMap}
+      onClickStoredMap={onClickStoredMap}
       formattedDate={formattedDate}
+      onChangePostType={onChangePostType}
+      postType={postType}
     />
   );
 }

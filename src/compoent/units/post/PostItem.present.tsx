@@ -6,166 +6,128 @@ import {
   ContentWrapper,
   Count,
   LikeBtn,
-  MoreBtn,
-  Option,
-  OptionBtn,
-  OptionList,
+  Rating,
   PostDate,
   PostItemButtom,
-  PostItemTop,
-  UserImg,
-  UserInfo,
-  Username,
-  Wrapper
+  RatingCount,
+  RatingWrapper,
+  Wrapper,
+  UserInfoWrapper,
+  KakaoMapWrapper,
+  ActiveMapBtn,
+  ActiveImageBtn,
+  StoredMapBtn
 } from "./postItem.styles";
 import ImgSlider from "../imgSlider/ImgSlider";
-import { resolveWebp } from "../../../library/webpSupport";
 import { IPostData, IProfileData } from "../../../api/apiType";
-import Kakaomap from "../kakaomap/Kakaomap";
+import Kakaomap from "../kakaomap/Kakaomap.container";
+import UserInfo from "./UserInfo.container";
 interface IProps {
   data: IPostData;
-  onClickSelect: (e: React.MouseEvent<HTMLButtonElement>) => void;
-  isOpenSelect: boolean;
   userProfile: IProfileData;
-  opectionListRef: React.RefObject<HTMLUListElement>;
-  onCliceRemove: (
-    e: React.MouseEvent<HTMLButtonElement>,
-    data: IPostData
-  ) => void;
-  onClickReport: (
-    e: React.MouseEvent<HTMLButtonElement>,
-    postData: IPostData
-  ) => void;
   isLike: boolean;
   likeCount: number | undefined;
   onClickLike: (id: string | undefined) => Promise<void>;
-  onClickUserInfo: () => void;
-  onClickDetailBtn: () => void;
-  onClickEditBtn: () => void;
+  isStoredMap: boolean;
+  onClickStoredMap: (postData: IPostData) => void;
   formattedDate: string | undefined;
+  onChangePostType: () => void;
+  postType: "map" | "image";
 }
 
 export default function PostItemUI({
   data,
-  onClickSelect,
-  isOpenSelect,
-  userProfile,
-  opectionListRef,
-  onCliceRemove,
-  onClickReport,
   isLike,
   likeCount,
+  isStoredMap,
+  onClickStoredMap,
   onClickLike,
-  onClickUserInfo,
-  onClickDetailBtn,
-  onClickEditBtn,
-  formattedDate
+  formattedDate,
+  userProfile,
+  onChangePostType,
+  postType
 }: IProps) {
   return (
-    <Wrapper>
-      <PostItemTop>
-        <UserInfo onClick={onClickUserInfo}>
-          <UserImg
-            src={data.photoURL}
-            alt='프로필 이미지'
-            onError={(e: React.SyntheticEvent<HTMLImageElement>) =>
-              (e.currentTarget.src = resolveWebp(
-                "/assets/webp/icon-defaultProfile.webp",
-                "svg"
-              ))
-            }
-          />
-          <Username>{data.displayName}</Username>
-        </UserInfo>
-        <MoreBtn type='button' aria-label='더보기' onClick={onClickSelect} />
-        {isOpenSelect && (
-          <>
-            {data.uid === userProfile.uid ? (
-              <OptionList ref={opectionListRef}>
-                <Option>
-                  <OptionBtn
-                    className='opctionBtn'
-                    type='button'
-                    onClick={onClickDetailBtn}
-                  >
-                    상세보기
-                  </OptionBtn>
-                </Option>
-                <Option>
-                  <OptionBtn
-                    className='opctionBtn'
-                    type='button'
-                    onClick={(e) => onCliceRemove(e, data)}
-                  >
-                    삭제
-                  </OptionBtn>
-                </Option>
-                <Option>
-                  <OptionBtn
-                    className='opctionBtn'
-                    type='button'
-                    onClick={onClickEditBtn}
-                  >
-                    수정
-                  </OptionBtn>
-                </Option>
-              </OptionList>
-            ) : (
-              <OptionList ref={opectionListRef}>
-                <Option>
-                  <OptionBtn
-                    className='opctionBtn'
-                    type='button'
-                    onClick={onClickDetailBtn}
-                  >
-                    상세보기
-                  </OptionBtn>
-                </Option>
-                <Option>
-                  <OptionBtn
-                    className='opctionBtn'
-                    type='button'
-                    onClick={(e) => onClickReport(e, data)}
-                  >
-                    신고
-                  </OptionBtn>
-                </Option>
-              </OptionList>
+    <>
+      {userProfile.uid && (
+        <Wrapper>
+          <h2 className='a11y-hidden'>홈</h2>
+          <UserInfoWrapper>
+            <h3 className='a11y-hidden'>유저 프로필</h3>
+            <UserInfo
+              userData={{
+                ...userProfile
+              }}
+              postData={{ ...data }}
+              activeMoreBtn={true}
+            />
+          </UserInfoWrapper>
+          <ContentWrapper>
+            <h3 className='a11y-hidden'>내용</h3>
+            <ContentText>{data.content}</ContentText>
+            <KakaoMapWrapper postType={postType}>
+              {postType === "map" && (
+                <StoredMapBtn
+                  type='button'
+                  storedMap={isStoredMap}
+                  onClick={() => onClickStoredMap(data)}
+                  title={isStoredMap ? "맛집 삭제" : "맛집 추가"}
+                />
+              )}
+              <h3 className='a11y-hidden'>
+                {postType === "map" ? "지도" : "이미지"}
+              </h3>
+              {postType === "map"
+                ? data.mapData?.mapx && (
+                    <Kakaomap items={[{ ...data.mapData }]} />
+                  )
+                : data.imgURL &&
+                  data.imgURL.length > 0 && (
+                    <ImgSlider imgArray={data.imgURL} />
+                  )}
+            </KakaoMapWrapper>
+            <RatingWrapper>
+              <h3 className='a11y-hidden'>평점</h3>
+              <Rating value={data.rating} disabled={true} allowHalf />{" "}
+              <RatingCount>{data.rating}</RatingCount>
+            </RatingWrapper>
+          </ContentWrapper>
+          <PostItemButtom>
+            <ButtonWrapper>
+              <LikeBtn
+                type='button'
+                aria-label='좋아요'
+                onClick={() => onClickLike(data.id)}
+                like={isLike}
+              />
+              <Count>{likeCount}</Count>
+            </ButtonWrapper>
+            <ButtonWrapper>
+              <CommentBtn type='button' aria-label='댓글' />
+              <Count>{data.commentCount}</Count>
+            </ButtonWrapper>
+            {data.createdAt?.seconds && (
+              <PostDate
+                dateTime={new Date(
+                  data.createdAt?.seconds * 1000
+                ).toISOString()}
+              >
+                {formattedDate}
+              </PostDate>
             )}
-          </>
-        )}
-      </PostItemTop>
-      <ContentWrapper>
-        <ContentText>{data.content}</ContentText>
-        {data.thumbnailType === "map"
-          ? data.mapData?.mapx && (
-              <Kakaomap items={[data.mapData]} activeMouseEvent={false} />
-            )
-          : data.imgURL &&
-            data.imgURL.length > 0 && <ImgSlider imgArray={data.imgURL} />}
-      </ContentWrapper>
-      <PostItemButtom>
-        <ButtonWrapper>
-          <LikeBtn
+          </PostItemButtom>
+          <ActiveMapBtn
             type='button'
-            aria-label='좋아요'
-            onClick={() => onClickLike(data.id)}
-            like={isLike}
+            postType={postType}
+            onClick={onChangePostType}
           />
-          <Count>{likeCount}</Count>
-        </ButtonWrapper>
-        <ButtonWrapper>
-          <CommentBtn type='button' aria-label='댓글' />
-          <Count>{data.commentCount}</Count>
-        </ButtonWrapper>
-        {data.createdAt?.seconds && (
-          <PostDate
-            dateTime={new Date(data.createdAt?.seconds * 1000).toISOString()}
-          >
-            {formattedDate}
-          </PostDate>
-        )}
-      </PostItemButtom>
-    </Wrapper>
+          <ActiveImageBtn
+            type='button'
+            postType={postType}
+            onClick={onChangePostType}
+          />
+        </Wrapper>
+      )}
+    </>
   );
 }
