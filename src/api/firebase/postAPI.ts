@@ -38,6 +38,23 @@ export const fetchPostData = async (
   const postDoc = doc(db, `post/${postId}`);
   const res = await getDoc(postDoc);
   const data = res.data();
+
+  const userRef = collection(db, "user");
+  if (!auth.currentUser) return;
+  const userDocs = await getDocs(userRef);
+  const userList = userDocs.docs.map((el) => el.data());
+
+  // 게시물 데이터 목록을 반복하면서 사용자 데이터를 연결
+  if (data) {
+    for (let i = 0; i < userList.length; i++) {
+      if (data.uid === userList[i].uid) {
+        data.displayName = userList[i].displayName;
+        data.photoURL = userList[i].photoURL;
+        break;
+      }
+    }
+  }
+
   return data;
 };
 
@@ -65,7 +82,6 @@ export const fetchFirstPagePostData = async (pagePerDate: number) => {
   // 게시물 데이터 목록을 반복하면서 사용자 데이터를 연결
   for (let i = 0; i < data.length; i++) {
     const userData = userMap.get(data[i].uid);
-
     // 기존 data에 displayName과 photoURL을 추가
     data[i].displayName = userData.displayName;
     data[i].photoURL = userData.photoURL;
@@ -193,12 +209,13 @@ export const fetchEditPost = async (
   const updatePostPromise = updateDoc(postDoc, { ...editPostData });
   // 게시물 수정 시 기존 이미지가 삭제된다면 해당 이미지 파일을 저장소에서 삭제처리
   const removeImgPromise = [];
-  if (editPostData.imgName&&prevPostData.imgName) {
-    for (let i = 0; i<prevPostData.imgName.length; i++) {
+  if (editPostData.imgName && prevPostData.imgName) {
+    for (let i = 0; i < prevPostData.imgName.length; i++) {
       if (!editPostData.imgName.includes(prevPostData.imgName[i])) {
-        console.log(prevPostData.imgName[i])
         removeImgPromise.push(
-          deleteObject(storageRef(storage, `images/post/${prevPostData.imgName[i]}`))
+          deleteObject(
+            storageRef(storage, `images/post/${prevPostData.imgName[i]}`)
+          )
         );
       }
     }
@@ -259,6 +276,40 @@ export const fetchRemovePostLike = async (id: string) => {
     likeList: arrayRemove(id)
   });
   await Promise.all([removeLikeCountPromise, removeUserLikeListPromise]);
+};
+
+/**
+ * 맛집 지도 추가
+ */
+export const fetchAddPostMap = async (postData: IPostData) => {
+  const postRef = doc(db, `post/${postData.id}`);
+  const addLMapCountPromise = updateDoc(postRef, {
+    storedMapCount: increment(1)
+  });
+
+  if (!auth.currentUser) return;
+  const userRef = doc(db, `user/${auth.currentUser.uid}`);
+  const addUserMapListPromise = updateDoc(userRef, {
+    storedMapList: arrayUnion(postData.mapData)
+  });
+  await Promise.all([addLMapCountPromise, addUserMapListPromise]);
+};
+
+/**
+ * 맛집 지도 삭제
+ */
+export const fetchRemovePostMap = async (postData: IPostData) => {
+  const postRef = doc(db, `post/${postData.id}`);
+  const removeMapCountPromise = updateDoc(postRef, {
+    storedMapCount: increment(-1)
+  });
+
+  if (!auth.currentUser) return;
+  const userRef = doc(db, `user/${auth.currentUser.uid}`);
+  const removeUserMapListPromise = updateDoc(userRef, {
+    storedMapList: arrayRemove(postData.mapData)
+  });
+  await Promise.all([removeMapCountPromise, removeUserMapListPromise]);
 };
 
 /**
