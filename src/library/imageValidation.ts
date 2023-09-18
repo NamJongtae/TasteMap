@@ -1,7 +1,7 @@
 import { sweetToast } from "./sweetAlert/sweetAlert";
 
 export const imgValidation = (file:File) => {
-  const reg = /(.*?)\.(jpg|jpeg|png|bmp|svg)$/;
+  const reg = /(.*?)\.(jpg|jpeg|png|bmp)$/;
   // 파일 확인
   if (!file) {
     return false;
@@ -14,7 +14,7 @@ export const imgValidation = (file:File) => {
   // 이미지 지원 형식 확인
   if (!reg.test(file.name)) {
     sweetToast(
-      "이미지 형식을 확인해 주세요!\n(지원형식 : .jpg, .jpeg, .png, .svg)",
+      "이미지 형식을 확인해 주세요!\n(지원형식 : .jpg, .jpeg, .png, .bmp)",
       "warning",
     );
     return false;
