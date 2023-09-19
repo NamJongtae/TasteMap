@@ -17,7 +17,8 @@ import {
   ActiveMapBtn,
   ActiveImageBtn,
   StoredMapBtn,
-  MoreContentBtn
+  MoreContentBtn,
+  ContentTextLine
 } from "./postItem.styles";
 import ImgSlider from "../imgSlider/ImgSlider";
 import { IPostData, IProfileData } from "../../../api/apiType";
@@ -74,6 +75,7 @@ export default function PostItemUI({
             <ContentText ref={contentTextRef}>
               {data.content}
             </ContentText>
+            <ContentTextLine></ContentTextLine>
             {isShowMoreTextBtn && (
               <MoreContentBtn type='button' onClick={onClickMoreText} aria-label='더보기'/>
             )}

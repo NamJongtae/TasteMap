@@ -106,12 +106,18 @@ export const ContentText = styled.p`
   -webkit-line-clamp: 5;
 `;
 
+export const ContentTextLine = styled.div`
+  width: calc(100% - 32px);
+  margin: 0  auto 16px auto;
+  height: 1px;
+  border-bottom: 1px solid #bdbdbd;
+`
+
 export const MoreContentBtn = styled.button`
   width: calc(100% - 32px);
-  height: 35px;
+  height: 14px;
   display: block;
-  border-top: 1px solid #bdbdbd;
-  margin: 0 auto 0px auto;
+  margin: 0 auto 16px auto;
   font-weight: 500;
   body.webp & {
     background: url("/assets/webp/icon-moreTextBtn.webp") no-repeat center /
