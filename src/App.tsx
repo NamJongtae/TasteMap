@@ -10,7 +10,7 @@ import Home from "./pages/home/Home";
 import PostUpload from "./pages/postUpload/PostUpload.container";
 import { userSlice } from "./slice/userSlice";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import PostEdit from "./pages/post/postEdit/PostEdit";
+import PostEdit from "./pages/postEdit/PostEdit";
 import TopButton from "./compoent/commons/topButton/TopButton";
 
 function App() {
