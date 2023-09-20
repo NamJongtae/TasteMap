@@ -1,14 +1,17 @@
 import { configureStore, getDefaultMiddleware } from "@reduxjs/toolkit";
 import { userSlice } from "../slice/userSlice";
-import { signupSlice } from '../slice/signupSlice';
-import { postSlice } from '../slice/postSlice';
-import { profileSlice } from '../slice/profileSlice';
+import { signupSlice } from "../slice/signupSlice";
+import { postSlice } from "../slice/postSlice";
+import { profileSlice } from "../slice/profileSlice";
+import { commentSlice } from "../slice/commentSlice";
+
 export const store = configureStore({
   reducer: {
     user: userSlice.reducer,
     signup: signupSlice.reducer,
     post: postSlice.reducer,
-    profile:profileSlice.reducer,
+    profile: profileSlice.reducer,
+    comment: commentSlice.reducer,
   },
   middleware: getDefaultMiddleware({
     serializableCheck: false
