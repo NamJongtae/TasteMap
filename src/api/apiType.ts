@@ -69,6 +69,32 @@ export interface ISearchMapData {
   title?: string;
 }
 
+export interface ICommentData {
+  commentId: string;
+  content: string;
+  postId: string;
+  createdAt: Timestamp;
+  isBlock: boolean;
+  uid: string;
+  displayName?: string;
+  photoURL?: string;
+  replies?: IReplyData[];
+  replyCount: number;
+}
+
+export interface IReplyData {
+  parentCommentId: string;
+  replyId: string;
+  content: string;
+  postId: string;
+  createdAt: Timestamp;
+  isBlock: boolean;
+  uid: string;
+  displayName?: string;
+  photoURL?: string;
+}
+
 export interface IKnownError {
   message: string;
 }
+
