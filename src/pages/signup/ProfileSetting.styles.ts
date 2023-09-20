@@ -44,12 +44,13 @@ export const ProfileImgButton = styled.button`
     bottom: -5px;
     width: 45px;
     height: 45px;
+    border-radius: 50%;
   }
   body.no-webp &::after {
-    background: url("/assets/icon-uploadImg.svg") no-repeat center / 45px;
+    background: url("/assets/icon-uploadImg.svg") no-repeat center / 25px #79A7FF;
   }
   body.webp &::after {
-    background: url("/assets/webp/icon-uploadImg.webp") no-repeat center / 45px;
+    background: url("/assets/webp/icon-uploadImg.webp") no-repeat center / 25px #79A7FF;
   }
 `;
 
