@@ -96,7 +96,7 @@ export default function PostUploadUI({
             </h2>
             <Section>
               <SectionTitle className='a11y-hidden'>유저 프로필</SectionTitle>
-              <UserInfo userData={{...userData}} postData={{...postData}} activeMoreBtn={false}/>
+              <UserInfo userData={{...userData}} data={{...postData}} activeMoreBtn={false}/>
             </Section>
 
             <Section>
