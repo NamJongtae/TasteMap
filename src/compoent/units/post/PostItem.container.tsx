@@ -12,6 +12,8 @@ import { IPostData, IProfileData, ISearchMapData } from "../../../api/apiType";
 import PostItemUI from "./PostItem.present";
 import { setDateFormat } from "../../../library/setDateFormat";
 import { profileSlice } from "../../../slice/profileSlice";
+import { commentSlice } from "../../../slice/commentSlice";
+
 interface IProps {
   data: IPostData;
   userProfile: IProfileData;
@@ -37,6 +39,12 @@ export default function PostItem({ data, userProfile }: IProps) {
     }
   };
 
+  const openCommentModal = () => {
+    document.body.style.overflow = "hidden";
+    dispatch(commentSlice.actions.setIsOpenCommentModal(true));
+    dispatch(commentSlice.actions.setPostId(data.id));
+  };
+
   useEffect(() => {
     if (contentTextRef.current) {
       if (contentTextRef.current.clientHeight >= 105) {
@@ -47,16 +55,16 @@ export default function PostItem({ data, userProfile }: IProps) {
     }
   }, []);
 
-  const onChangePostType = () => {
-    if (postType === "map") {
-      if (data.imgURL && data.imgURL.length === 0) {
-        sweetToast("이미지가 존재하지 않습니다.", "warning");
-        return;
-      }
-      setType("image");
-    } else {
-      setType("map");
+  const changePostMapType = () => {
+    if (data.imgURL && data.imgURL.length === 0) {
+      sweetToast("이미지가 존재하지 않습니다.", "warning");
+      return;
     }
+    setType("image");
+  };
+
+  const changePostImgType = () => {
+    setType("map");
   };
 
   const onChangeStoredMapList = (map: ISearchMapData) => {
@@ -168,11 +176,13 @@ export default function PostItem({ data, userProfile }: IProps) {
       isStoredMap={isStoredMap}
       onClickStoredMap={onClickStoredMap}
       formattedDate={formattedDate}
-      onChangePostType={onChangePostType}
+      changePostMapType={changePostMapType}
+      changePostImgType={changePostImgType}
       postType={postType}
       onClickMoreText={onClickMoreText}
       contentTextRef={contentTextRef}
       isShowMoreTextBtn={isShowMoreTextBtn}
+      openCommentModal={openCommentModal}
     />
   );
 }

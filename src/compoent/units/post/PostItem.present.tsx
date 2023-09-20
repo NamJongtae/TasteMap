@@ -33,11 +33,13 @@ interface IProps {
   isStoredMap: boolean;
   onClickStoredMap: (postData: IPostData) => void;
   formattedDate: string | undefined;
-  onChangePostType: () => void;
+  changePostMapType: () => void;
+  changePostImgType: ()=>void;
   postType: "map" | "image";
   onClickMoreText: () => void;
   contentTextRef: React.RefObject<HTMLParagraphElement>;
   isShowMoreTextBtn: boolean;
+  openCommentModal: ()=>void;
 }
 
 export default function PostItemUI({
@@ -49,11 +51,13 @@ export default function PostItemUI({
   onClickLike,
   formattedDate,
   userProfile,
-  onChangePostType,
+  changePostMapType,
+  changePostImgType,
   postType,
   onClickMoreText,
   contentTextRef,
-  isShowMoreTextBtn
+  isShowMoreTextBtn,
+  openCommentModal,
 }: IProps) {
   return (
     <>
@@ -66,7 +70,7 @@ export default function PostItemUI({
               userData={{
                 ...userProfile
               }}
-              postData={{ ...data }}
+              data={{ ...data }}
               activeMoreBtn={true}
             />
           </UserInfoWrapper>
@@ -109,12 +113,12 @@ export default function PostItemUI({
           <ActiveMapBtn
             type='button'
             postType={postType}
-            onClick={onChangePostType}
+            onClick={changePostImgType}
           />
           <ActiveImageBtn
             type='button'
             postType={postType}
-            onClick={onChangePostType}
+            onClick={changePostMapType}
           />
           <PostItemButtom>
             <ButtonWrapper>
@@ -127,7 +131,7 @@ export default function PostItemUI({
               <Count>{likeCount}</Count>
             </ButtonWrapper>
             <ButtonWrapper>
-              <CommentBtn type='button' aria-label='댓글' />
+              <CommentBtn type='button' aria-label='댓글' onClick={openCommentModal}/>
               <Count>{data.commentCount}</Count>
             </ButtonWrapper>
             {data.createdAt?.seconds && (
