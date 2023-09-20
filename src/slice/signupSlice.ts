@@ -72,6 +72,7 @@ export const signupSlice = createSlice({
           "알 수 없는 에러가 발생하였습니다.\n잠시후 다시 시도해 주세요.",
           "warning"
         );
+        console.error(state.error);
       }
     });
   }

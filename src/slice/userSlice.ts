@@ -181,6 +181,7 @@ export const userSlice = createSlice({
           "알 수 없는 에러가 발생하였습니다.\n잠시 후 다시 시도해 주세요.",
           "warning"
         );
+        console.error(state.error);
       }
     });
 
@@ -214,6 +215,12 @@ export const userSlice = createSlice({
         state.error.includes("auth/account-exists-with-different-credential")
       ) {
         sweetToast("이미 가입된 이메일 계정입니다!", "warning");
+      } else {
+        sweetToast(
+          "알 수 없는 오류가 발생하였습니다.\n잠시 후 다시 시도해주세요.",
+          "warning"
+        );
+        console.error(state.error);
       }
     });
 
@@ -230,11 +237,11 @@ export const userSlice = createSlice({
       if (action.payload) {
         state.error = action.payload.message;
       }
-      console.log(state.error);
       sweetToast(
         "알 수 없는 오류가 발생하였습니다.\n잠시 후 다시 시도해주세요.",
         "warning"
       );
+      console.log(state.error);
     });
 
     // 비밀번호 변경
@@ -246,6 +253,7 @@ export const userSlice = createSlice({
       state.findPasswordValue = action.payload;
     });
     builder.addCase(thunkFetchChangePassowrd.rejected, (state, action) => {
+      state.isLoading = false;
       if (action.payload) {
         state.error = action.payload.message;
       }
@@ -253,7 +261,7 @@ export const userSlice = createSlice({
         "알 수 없는 오류가 발생하였습니다.\n잠시 후 다시 시도해주세요.",
         "warning"
       );
-      state.isLoading = false;
+      console.log(state.error);
     });
   }
 });

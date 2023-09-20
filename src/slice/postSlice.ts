@@ -321,6 +321,7 @@ export const postSlice = createSlice({
         "알 수 없는 에러가 발생하였습니다.\n잠시 후 다시 시도해 주세요.",
         "warning"
       );
+      console.error(state.error);
     });
 
     // 맛집 지도 검색
@@ -334,6 +335,7 @@ export const postSlice = createSlice({
         "알 수 없는 에러가 발생하였습니다.\n잠시 후 다시 시도해 주세요.",
         "warning"
       );
+      console.error(state.error);
     });
 
     // 게시물 업로드
@@ -354,6 +356,7 @@ export const postSlice = createSlice({
         "알 수 없는 에러가 발생하였습니다.\n잠시 후 다시 시도해 주세요.",
         "warning"
       );
+      console.error(state.error);
     });
 
     // 게시물 조회
@@ -380,6 +383,7 @@ export const postSlice = createSlice({
         "알 수 없는 에러가 발생하였습니다.\n잠시 후 다시 시도해 주세요.",
         "warning"
       );
+      console.error(state.error);
     });
 
     // 게시물 페이징
@@ -418,6 +422,7 @@ export const postSlice = createSlice({
         "알 수 없는 에러가 발생하였습니다.\n잠시 후 다시 시도해 주세요.",
         "warning"
       );
+      console.error(state.error);
     });
 
     // 게시물 삭제
@@ -435,6 +440,7 @@ export const postSlice = createSlice({
         "알 수 없는 에러가 발생하였습니다.\n잠시 후 다시 시도해 주세요.",
         "warning"
       );
+      console.error(state.error);
     });
 
     // 게시물 신고
@@ -448,6 +454,7 @@ export const postSlice = createSlice({
         "알 수 없는 에러가 발생하였습니다.\n잠시 후 다시 시도해 주세요.",
         "warning"
       );
+      console.error(state.error);
     });
 
     // 게시물 좋아요 추가
@@ -458,6 +465,7 @@ export const postSlice = createSlice({
         "알 수 없는 에러가 발생하였습니다.\n잠시 후 다시 시도해 주세요.",
         "warning"
       );
+      console.error(state.error);
     });
 
     // 게시물 좋아요 삭제
@@ -468,6 +476,7 @@ export const postSlice = createSlice({
         "알 수 없는 에러가 발생하였습니다.\n잠시 후 다시 시도해 주세요.",
         "warning"
       );
+      console.error(state.error);
     });
 
     // 게시물 지도 추가
@@ -478,6 +487,7 @@ export const postSlice = createSlice({
         "알 수 없는 에러가 발생하였습니다.\n잠시 후 다시 시도해 주세요.",
         "warning"
       );
+      console.error(state.error);
     });
 
     // 게시물 지도 삭제
@@ -488,6 +498,7 @@ export const postSlice = createSlice({
         "알 수 없는 에러가 발생하였습니다.\n잠시 후 다시 시도해 주세요.",
         "warning"
       );
+      console.error(state.error);
     });
   }
 });
