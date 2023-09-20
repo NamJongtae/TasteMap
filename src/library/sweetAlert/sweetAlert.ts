@@ -4,7 +4,7 @@ import "sweetalert2/dist/sweetalert2.min.css";
 export const sweetToast = (
   title: string,
   icon?: SweetAlertIcon,
-  timer = 2000
+  timer = 1000
 ) => {
   return Swal.fire({
     toast: true,
