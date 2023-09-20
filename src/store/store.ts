@@ -4,7 +4,7 @@ import { signupSlice } from "../slice/signupSlice";
 import { postSlice } from "../slice/postSlice";
 import { profileSlice } from "../slice/profileSlice";
 import { commentSlice } from "../slice/commentSlice";
-
+import { replySlice } from '../slice/replySlice';
 export const store = configureStore({
   reducer: {
     user: userSlice.reducer,
@@ -12,6 +12,7 @@ export const store = configureStore({
     post: postSlice.reducer,
     profile: profileSlice.reducer,
     comment: commentSlice.reducer,
+    reply: replySlice.reducer,
   },
   middleware: getDefaultMiddleware({
     serializableCheck: false
