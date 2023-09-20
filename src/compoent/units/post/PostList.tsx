@@ -10,8 +10,10 @@ import {
 import Loading from "../../commons/loading/Loading";
 import { useInView } from "react-intersection-observer";
 import { thunkFetchUserProfile } from '../../../slice/profileSlice';
+import Comment from './comment/Comment';
 
 export default function PostList() {
+  const isOpenCommentModal = useSelector((state: RootState) => state.comment.isOpenCommentModal);
   const userProfile = useSelector((state: RootState) => state.profile.profileData);
   // 게시물 데이터 목록을 가져옴
   const postListData = useSelector((state: RootState) => state.post.postListData);
@@ -55,6 +57,7 @@ export default function PostList() {
       </Wrapper>
       {postListData.length > 0&&<InfinityScrollTarget ref={ref}></InfinityScrollTarget>}
       {isLoading && <Loading />}
+      {isOpenCommentModal&&<Comment />}
     </>
   );
 }

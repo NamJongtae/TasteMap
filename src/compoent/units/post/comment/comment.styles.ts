@@ -20,7 +20,6 @@ export const Dim = styled.div`
 export const ModalTitleBar = styled.div`
   padding: 12px;
   border-bottom: 1px solid #bdbdbd;
-  background-color: #fff;
 `;
 
 export const ModalTitle = styled.h2`
@@ -33,29 +32,82 @@ export const ModalTitle = styled.h2`
 export const CloseBtn = styled.button`
   position: absolute;
   top: 3px;
-  right: 3px;
+  right: ${(props: { isReply: boolean }) => !props.isReply && "3px"};
+  left: ${(props: { isReply: boolean }) => props.isReply && "3px"};
   width: 30px;
   height: 30px;
-  background: url("/assets/icon-back.svg") no-repeat center / 16px;
-  transform: rotate(180deg);
+  body.webp & {
+    background: url("/assets/webp/icon-back.webp") no-repeat center / 16px;
+  }
+  body.no-webp & {
+    background: url("/assets/icon-back.svg") no-repeat center / 16px;
+  }
+  transform: ${(props: { isReply: boolean }) =>
+    props.isReply ? "rotate(0deg)" : "rotate(180deg)"};
 `;
 
-export const CommentModal = styled.article`
+export const CommentModalWrapper = styled.article`
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   width: 100%;
+  height: 100%;
   max-width: 500px;
-  height: 600px;
   background-color: #fff;
   z-index: 999;
+  animation: ${(props: { isReply: boolean }) =>
+    props.isReply ? "replyActive 1s" : "moveUp 1s"};
+  @keyframes moveUp {
+    from {
+      transform: translate(-50%, 100%);
+      opacity: 0;
+    }
+    to {
+      transform: translate(-50%, -50%);
+      opacity: 1;
+    }
+  }
+
+  @keyframes moveDown {
+    from {
+      transform: translate(-50%, -50%);
+      opacity: 1;
+    }
+    to {
+      transform: translate(-50%, 80%);
+      opacity: 0;
+    }
+  }
+
+  @keyframes replyActive {
+    from {
+      transform: translate(-30%, -50%);
+      opacity: 0;
+    }
+    to {
+      transform: translate(-50%, -50%);
+      opacity: 1;
+    }
+  }
+
+  @keyframes replyInActive {
+    from {
+      transform: translate(-50%, -50%);
+      opacity: 1;
+    }
+    to {
+      transform: translate(-30%, -50%);
+      opacity: 0;
+    }
+  }
 `;
 
-export const CommentList = styled.ul`
+export const CommenWrpper = styled.ul`
   position: relative;
   padding: 20px;
-  max-height: 500px;
+  padding-bottom: 115px;
+  height: 100%;
   overflow-y: scroll;
   ::-webkit-scrollbar {
     display: none;
@@ -64,9 +116,18 @@ export const CommentList = styled.ul`
   scrollbar-width: none;
 `;
 
-export const CommentItem = styled.li`
+export const CommentLi = styled.li`
   :not(:last-child) {
     margin-bottom: 20px;
+  }
+  animation: replyFadeIn 1s;
+  @keyframes replyFadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
   }
 `;
 
@@ -79,12 +140,13 @@ export const CommentText = styled.div`
 `;
 
 export const CommentBottom = styled.div`
-`
+  margin-left: 53px;
+`;
 
 export const CommentDate = styled.time`
   font-size: 12px;
   color: #bdbdbd;
-  margin: 0 5px 5px 53px;
+  margin: 0 5px 5px 0px;
 `;
 
 export const CommentBtn = styled.button`
@@ -95,11 +157,22 @@ export const CommentBtn = styled.button`
 `;
 
 export const UserImg = styled.img`
-  width: 32px;
-  height: 32px;
+  align-self: flex-start;
+  width: 42px;
+  height: 42px;
+  padding: 3px;
   border-radius: 50%;
-  background: none;
+  background: #f5f5f5;
 `;
+
+export const ReplyWrapper = styled.div`
+  display: flex;
+  gap: 5px;
+  width: 100%;
+  margin-top: 20px;
+  padding-left: 45px;
+`;
+
 export const CommentTextAreaWrapper = styled.div`
   position: fixed;
   bottom: 0;
@@ -113,14 +186,19 @@ export const CommentTextAreaWrapper = styled.div`
 `;
 
 export const CommentTextAreaInner = styled.div`
+  position: relative;
   width: 100%;
   height: 100%;
   border-radius: 20px;
   background-color: #f5f5f5;
   padding: 8px 36px 8px 15px;
-`
+  margin-left: ${(props: { type: "write" | "edit" | "reply" }) =>
+    props.type === "edit" && "45px"};
+  max-width: ${(props: { type: "write" | "edit" | "reply" }) =>
+    props.type === "edit" && "424px"};
+`;
 
-export const CommentTextArea = styled.textarea`
+export const TextArea = styled.textarea`
   width: 100%;
   resize: none;
   border: none;
@@ -133,9 +211,35 @@ export const CommentTextArea = styled.textarea`
 export const CommentSubmitBtn = styled.button`
   position: absolute;
   height: 100%;
-  bottom: 21px;
-  right: 20px;
+  bottom: 10px;
+  right: 10px;
   width: 20px;
   height: 20px;
-  background: url("/assets/icon-commentSend.svg") no-repeat center / 16px;
+  body.webp & {
+    background: url("/assets/webp/icon-commentSend.webp") no-repeat center /
+      20px;
+  }
+  body.no-webp & {
+    background: url("/assets/icon-commentSend.svg") no-repeat center / 20px;
+  }
+
+  opacity: ${(props: { disabled: boolean }) => (props.disabled ? "0.3" : "1")};
 `;
+
+export const ReplyCountBtn = styled.button`
+  font-size: 14px;
+  font-weight: 500;
+  color: #065fd4;
+  background: none;
+  margin: 5px 0 0 53px;
+`;
+
+export const LoadingWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+`;
+
+export const LoadingImg = styled.img``;
