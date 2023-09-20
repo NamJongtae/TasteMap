@@ -10,10 +10,10 @@ import {
   UserProfileLink
 } from "./userInfo.styles";
 import { resolveWebp } from "../../../library/webpSupport";
-import { IPostData, IProfileData } from "../../../api/apiType";
+import { ICommentData, IPostData, IProfileData } from "../../../api/apiType";
 interface IProps {
-  userData: IProfileData;
-  postData: IPostData;
+  userData: Pick<IProfileData, "uid" | "displayName" | "photoURL">;
+  data?: IPostData | ICommentData;
   activeMoreBtn: boolean;
   onClickSelect: (e: React.MouseEvent<HTMLButtonElement>) => void;
   isOpenSelect: boolean;
@@ -30,7 +30,7 @@ interface IProps {
 }
 export default function UserInfoUI({
   userData,
-  postData,
+  data,
   activeMoreBtn,
   onClickSelect,
   isOpenSelect,
@@ -42,9 +42,13 @@ export default function UserInfoUI({
   return (
     <UserInfoWrapper>
       <h2 className='a11y-hidden'>유저 프로필</h2>
-      <UserProfileLink to={`profile/${postData.uid}`}>
+      <UserProfileLink to={`profile/${data?.uid || userData.uid}`}>
         <UserImg
-          src={postData.photoURL||userData.photoURL}
+          src={
+            data?.photoURL === ""
+              ? resolveWebp("/assets/webp/icon-defaultProfile.webp", "svg")
+              : data?.photoURL || userData.photoURL
+          }
           alt='프로필 이미지'
           onError={(e: React.SyntheticEvent<HTMLImageElement>) =>
             (e.currentTarget.src = resolveWebp(
@@ -53,12 +57,14 @@ export default function UserInfoUI({
             ))
           }
         />
-        <Username>{userData.displayName||userData.displayName}</Username>
+        <Username>{data?.displayName || userData.displayName}</Username>
       </UserProfileLink>
-      {activeMoreBtn&& <MoreBtn type='button' aria-label='더보기' onClick={onClickSelect} />}
-      {isOpenSelect && (
+      {activeMoreBtn && (
+        <MoreBtn type='button' aria-label='더보기' onClick={onClickSelect} />
+      )}
+      {isOpenSelect && data && (
         <>
-          {userData.uid === postData.uid ? (
+          {userData.uid === data?.uid ? (
             <OptionList ref={opectionListRef}>
               <Option>
                 <OptionBtn
@@ -73,7 +79,7 @@ export default function UserInfoUI({
                 <OptionBtn
                   className='opctionBtn'
                   type='button'
-                  onClick={(e) => onCliceRemove(e, postData)}
+                  onClick={(e) => onCliceRemove(e, data)}
                 >
                   삭제
                 </OptionBtn>

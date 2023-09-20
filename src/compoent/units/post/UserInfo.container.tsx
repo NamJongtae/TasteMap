@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { IPostData, IProfileData } from "../../../api/apiType";
+import { ICommentData, IPostData, IProfileData } from "../../../api/apiType";
 
 import {
   thuckFetchRemovePost,
@@ -16,11 +16,11 @@ import UserInfoUI from "./UserInfo.presenter";
 
 interface IProps {
   userData: IProfileData;
-  postData: IPostData;
+  data?: IPostData | ICommentData;
   activeMoreBtn: boolean;
 }
 
-export default function UserInfo({ userData, postData, activeMoreBtn }: IProps) {
+export default function UserInfo({ userData, data, activeMoreBtn }: IProps) {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const { postId } = useParams();
@@ -32,7 +32,8 @@ export default function UserInfo({ userData, postData, activeMoreBtn }: IProps) 
    * 게시물 수정 페이지 이동
    */
   const onClickEditBtn = () => {
-    navigate(`/post/${postData.id}/edit`);
+    if(data && 'id' in data)
+    navigate(`/post/${data?.id}/edit`);
   };
 
   /**
@@ -128,7 +129,7 @@ export default function UserInfo({ userData, postData, activeMoreBtn }: IProps) 
   return (
     <UserInfoUI
       userData={userData}
-      postData={postData}
+      data={data}
       activeMoreBtn={activeMoreBtn}
       onClickSelect={onClickSelect}
       isOpenSelect={isOpenSelect}
