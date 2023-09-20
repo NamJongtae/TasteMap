@@ -19,7 +19,12 @@ export const Wrapper = styled.header`
 export const UploadLink = styled(Link)`
   width: 24px;
   height: 24px;
-  background: url("/assets/icon-post.svg") no-repeat center / 24px;
+  body.webp & {
+    background: url("/assets/webp/icon-uploadPost.webp") no-repeat center / 24px;
+  }
+  body.no-webp & {
+    background: url("/assets/icon-uploadPost.svg") no-repeat center / 24px;
+  }
 `;
 
 export const LeftSideWrapper = styled.div`
