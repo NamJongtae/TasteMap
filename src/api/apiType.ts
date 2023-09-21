@@ -1,4 +1,4 @@
-import { Timestamp } from 'firebase/firestore';
+import { Timestamp } from "firebase/firestore";
 
 export interface IUserData {
   uid?: string;
@@ -13,17 +13,19 @@ export interface IProfileData {
   email?: string;
   photoURL?: string;
   phone?: string;
-  introduce?:string;
+  introduce?: string;
   createdAt?: Timestamp;
   likeList?: string[];
   postList?: string[];
   storedMapList?: ISearchMapData[];
-  reportList?:string[];
+  reportCommentList?: string[];
+  reportReplyList?: string[];
+  reportPostList?: string[];
 }
 
 export interface IStoredImgData {
-  url?: string[],
-  filename?: string[],
+  url?: string[];
+  filename?: string[];
 }
 
 export interface IPostUploadData {
@@ -80,6 +82,7 @@ export interface ICommentData {
   photoURL?: string;
   replies?: IReplyData[];
   replyCount: number;
+  reportCount: number;
 }
 
 export interface IReplyData {
@@ -92,9 +95,9 @@ export interface IReplyData {
   uid: string;
   displayName?: string;
   photoURL?: string;
+  reportCount: number;
 }
 
 export interface IKnownError {
   message: string;
 }
-
