@@ -10,9 +10,10 @@ import {
   sweetConfirm,
   sweetToast
 } from "../../../library/sweetAlert/sweetAlert";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../../store/store";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../../store/store";
 import UserInfoUI from "./UserInfo.presenter";
+import { profileSlice } from '../../../slice/profileSlice';
 
 interface IProps {
   userData: IProfileData;
@@ -21,6 +22,7 @@ interface IProps {
 }
 
 export default function UserInfo({ userData, data, activeMoreBtn }: IProps) {
+  const profileData = useSelector((state: RootState) => state.profile.profileData);
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const { postId } = useParams();
@@ -66,11 +68,14 @@ export default function UserInfo({ userData, data, activeMoreBtn }: IProps) {
     sweetConfirm("정말 신고 하시겠습니까?", "신고", "취소", () => {
       // 유저 프로필 데이터의 reportList에서 현재 게시물의 id값이 있으면 이미 신고한 게시물 이므로
       // 신고를 하지 못하도록 return
-      if (postData.id && userData.reportList?.includes(postData.id)) {
+      if (postData.id && userData.reportPostList?.includes(postData.id)) {
         return sweetToast("이미 신고한 게시물입니다.", "warning");
       }
       // 게시물 신고 api 비동기 처리
       dispatch(thuckFetchReportPost(postData));
+      // userProfile reportPostList에 신고한 게시물 id 추가
+      const newData = {...profileData, reportPostList:[...profileData.reportPostList||[], postData.id]}
+      dispatch(profileSlice.actions.setprofile(newData));
     });
   };
 

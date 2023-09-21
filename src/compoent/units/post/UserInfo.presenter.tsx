@@ -45,9 +45,7 @@ export default function UserInfoUI({
       <UserProfileLink to={`profile/${data?.uid || userData.uid}`}>
         <UserImg
           src={
-            data?.photoURL === ""
-              ? resolveWebp("/assets/webp/icon-defaultProfile.webp", "svg")
-              : data?.photoURL || userData.photoURL
+            data?.photoURL || userData.photoURL
           }
           alt='프로필 이미지'
           onError={(e: React.SyntheticEvent<HTMLImageElement>) =>
@@ -60,7 +58,7 @@ export default function UserInfoUI({
         <Username>{data?.displayName || userData.displayName}</Username>
       </UserProfileLink>
       {activeMoreBtn && (
-        <MoreBtn type='button' aria-label='더보기' onClick={onClickSelect} />
+        <MoreBtn type='button' aria-label='게시물 메뉴' onClick={onClickSelect} />
       )}
       {isOpenSelect && data && (
         <>
@@ -91,7 +89,7 @@ export default function UserInfoUI({
                 <OptionBtn
                   className='opctionBtn'
                   type='button'
-                  onClick={(e) => onClickReport(e, userData)}
+                  onClick={(e) => onClickReport(e, data)}
                 >
                   신고
                 </OptionBtn>
