@@ -51,7 +51,7 @@ function App() {
           uid: user?.uid,
           displayName: user?.displayName,
           email: user?.email,
-          photoURL: user?.photoURL
+          photoURL: user?.photoURL || process.env.REACT_APP_DEFAULT_PROFILE_IMG
         })
       );
       dispatch(
@@ -59,7 +59,7 @@ function App() {
           uid: user?.uid,
           displayName: user?.displayName,
           email: user?.email,
-          photoURL: user?.photoURL
+          photoURL: user?.photoURL || process.env.REACT_APP_DEFAULT_PROFILE_IMG
         })
       );
     });

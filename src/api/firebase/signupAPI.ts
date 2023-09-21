@@ -20,41 +20,50 @@ export const fetchSignup = async (
   email: string,
   password: string,
   phone: string,
-  introduce: string,
+  introduce: string
 ) => {
-  const res = await createUserWithEmailAndPassword(auth, email, password);
-  const fileName = file && `${uuidv4()}_${file.name}`;
-  const uploadImgURLRes =
-    file &&
-    (await uploadBytes(
-      storageRef(storage, `images/profile/${fileName}`),
-      file
-    ));
-  const photoURL = file && uploadImgURLRes && (await getDownloadURL(uploadImgURLRes.ref));
-  await updateProfile(res.user, {
-    displayName,
-    photoURL
-  });
-
-  const user = collection(db, "user");
-  await setDoc(doc(user, `${res.user.uid}`), {
-    uid: res.user.uid,
-    email: res.user.email,
-    displayName: res.user.displayName,
-    photoURL: res.user.photoURL || "",
-    phone,
-    postList:[],
-    likeList: [],
-    storedMapList: [],
-    reportList: [],
-    photoFileName: fileName || "",
-    introduce,
-    createdAt: Timestamp.fromDate(new Date()),
-  });
-  return {
-    uid: res.user.uid,
-    email: res.user.email,
-    displayName: res.user.displayName,
-    photoURL: res.user.photoURL || ""
-  };
+  try {
+    const res = await createUserWithEmailAndPassword(auth, email, password);
+    const fileName = file && `${uuidv4()}_${file.name}`;
+    const uploadImgURLRes =
+      file &&
+      (await uploadBytes(
+        storageRef(storage, `images/profile/${fileName}`),
+        file
+      ));
+    const photoURL =
+      file && uploadImgURLRes && (await getDownloadURL(uploadImgURLRes.ref)) || process.env.REACT_APP_DEFAULT_PROFILE_IMG;
+    await updateProfile(res.user, {
+      displayName,
+      photoURL
+    });
+  
+    const user = collection(db, "user");
+    await setDoc(doc(user, `${res.user.uid}`), {
+      uid: res.user.uid,
+      email: res.user.email,
+      displayName: res.user.displayName,
+      photoURL: res.user.photoURL || process.env.REACT_APP_DEFAULT_PROFILE_IMG,
+      phone,
+      postList: [],
+      likeList: [],
+      storedMapList: [],
+      reportCommentList: [],
+      reportReplyList: [],
+      reportPostList: [],
+      photoFileName: fileName || "",
+      introduce,
+      createdAt: Timestamp.fromDate(new Date())
+    });
+    return {
+      uid: res.user.uid,
+      email: res.user.email,
+      displayName: res.user.displayName,
+      photoURL: res.user.photoURL || process.env.REACT_APP_DEFAULT_PROFILE_IMG
+    };
+  } catch(error) {
+    console.error(error);
+    throw error;
+  }
+ 
 };
