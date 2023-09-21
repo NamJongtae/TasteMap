@@ -20,7 +20,7 @@ import {
 } from "../../../../slice/replySlice";
 
 interface IProps {
-  type: "write" | "edit" | "reply";
+  textAreaType: "write" | "edit" | "reply";
   isReply: boolean;
   initalvalue: string;
   commentId?: string;
@@ -29,7 +29,7 @@ interface IProps {
 }
 
 export default function CommentTextArea({
-  type,
+  textAreaType,
   isReply,
   initalvalue,
   commentId,
@@ -73,7 +73,7 @@ export default function CommentTextArea({
   };
 
   const onSubmitComment = () => {
-    switch (type) {
+    switch (textAreaType) {
       case "write":
         {
           const commentId = uuid();
@@ -84,6 +84,7 @@ export default function CommentTextArea({
             content: commentValue,
             createdAt: Timestamp.fromDate(new Date()),
             isBlock: false,
+            reportCount: 0,
             replyCount: 0
           };
           dispatch(thunkFetchAddComment(commnetData));
@@ -139,7 +140,8 @@ export default function CommentTextArea({
             uid: userData.uid || "",
             content: commentValue,
             createdAt: Timestamp.fromDate(new Date()),
-            isBlock: false
+            isBlock: false,
+            reportCount: 0
           };
           const newData = [...commentListData];
           const index = newData.findIndex(
@@ -161,7 +163,7 @@ export default function CommentTextArea({
   };
 
   return (
-    <CommentTextAreaInner type={type}>
+    <CommentTextAreaInner textAreaType={textAreaType}>
       <TextArea
         ref={textAreaRef}
         value={commentValue}
@@ -174,7 +176,7 @@ export default function CommentTextArea({
         type='button'
         onClick={onSubmitComment}
         disabled={
-          type === "edit"
+          textAreaType === "edit"
             ? commentValue === initalvalue || !commentValue
             : !commentValue
         }

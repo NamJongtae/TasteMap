@@ -192,10 +192,10 @@ export const CommentTextAreaInner = styled.div`
   border-radius: 20px;
   background-color: #f5f5f5;
   padding: 8px 36px 8px 15px;
-  margin-left: ${(props: { type: "write" | "edit" | "reply" }) =>
-    props.type === "edit" && "45px"};
-  max-width: ${(props: { type: "write" | "edit" | "reply" }) =>
-    props.type === "edit" && "424px"};
+  margin-left: ${(props: { textAreaType: "write" | "edit" | "reply" }) =>
+    props.textAreaType === "edit" && "45px"};
+  max-width: ${(props: { textAreaType: "write" | "edit" | "reply" }) =>
+    props.textAreaType === "edit" && "424px"};
 `;
 
 export const TextArea = styled.textarea`
@@ -234,12 +234,7 @@ export const ReplyCountBtn = styled.button`
   margin: 5px 0 0 53px;
 `;
 
-export const LoadingWrapper = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100%;
+export const InfinityScrollTarget = styled.li`
+  position: relative;
+  bottom: 20px;
 `;
-
-export const LoadingImg = styled.img``;

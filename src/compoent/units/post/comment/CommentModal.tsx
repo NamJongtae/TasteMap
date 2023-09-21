@@ -1,4 +1,4 @@
-import React from "react";
+import React, { SyntheticEvent } from "react";
 import {
   CloseBtn,
   CommentModalWrapper,
@@ -13,7 +13,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../../store/store";
 import CommentList from "./CommentList";
 import CommentTextArea from "./CommentTextArea";
-import { replySlice } from '../../../../slice/replySlice';
+import { replySlice } from "../../../../slice/replySlice";
 
 interface IProps {
   modalRef: React.RefObject<HTMLDivElement>;
@@ -21,7 +21,9 @@ interface IProps {
 }
 
 export default function CommentModal({ modalRef, isReply }: IProps) {
-  const parentCommentId = useSelector((state: RootState) => state.reply.parentCommentId)
+  const parentCommentId = useSelector(
+    (state: RootState) => state.reply.parentCommentId
+  );
   const userData = useSelector((state: RootState) => state.user.data);
   const dispatch = useDispatch<AppDispatch>();
   const closeCommentModal = () => {
@@ -49,19 +51,21 @@ export default function CommentModal({ modalRef, isReply }: IProps) {
       <CommentList isReply={isReply} />
       <CommentTextAreaWrapper>
         <UserImg
-          src={
-            userData.photoURL ||
-            resolveWebp("/assets/webp/icon-defaultProfile.webp", "svg")
-          }
+          src={userData.photoURL}
           alt='프로필 이미지'
-          onError={(e: React.SyntheticEvent<HTMLImageElement>) =>
-            (e.currentTarget.src = resolveWebp(
-              "/assets/webp/icon-defaultProfile.webp",
-              "svg"
-            ))
-          }
+          onError={(e: SyntheticEvent<HTMLImageElement, Event>) => {
+              (e.currentTarget.src = resolveWebp(
+                "/assets/webp/icon-defaultProfile.webp",
+                "svg"
+              ))
+          }}
         />
-        <CommentTextArea initalvalue='' isReply={isReply} type={isReply ? "reply" : "write"} commentId={parentCommentId}/>
+        <CommentTextArea
+          initalvalue=''
+          isReply={isReply}
+          textAreaType={isReply ? "reply" : "write"}
+          commentId={parentCommentId}
+        />
       </CommentTextAreaWrapper>
 
       <CloseBtn
