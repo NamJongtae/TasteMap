@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import PostItem from "./PostItem.container";
 import { InfinityScrollTarget, PostWrapper, Wrapper } from "./postList.styles";
 import { useDispatch, useSelector } from "react-redux";
@@ -9,14 +9,21 @@ import {
 } from "../../../slice/postSlice";
 import Loading from "../../commons/loading/Loading";
 import { useInView } from "react-intersection-observer";
-import { thunkFetchUserProfile } from '../../../slice/profileSlice';
-import Comment from './comment/Comment';
+import { thunkFetchUserProfile } from "../../../slice/profileSlice";
+import Comment from "./comment/Comment";
+import ScrollLoading from "../../commons/loading/ScrollLoading";
 
 export default function PostList() {
-  const isOpenCommentModal = useSelector((state: RootState) => state.comment.isOpenCommentModal);
-  const userProfile = useSelector((state: RootState) => state.profile.profileData);
+  const isOpenCommentModal = useSelector(
+    (state: RootState) => state.comment.isOpenCommentModal
+  );
+  const userProfile = useSelector(
+    (state: RootState) => state.profile.profileData
+  );
   // 게시물 데이터 목록을 가져옴
-  const postListData = useSelector((state: RootState) => state.post.postListData);
+  const postListData = useSelector(
+    (state: RootState) => state.post.postListData
+  );
   // 현재 페이지를 가져옴
   const page = useSelector((state: RootState) => state.post.page);
   // 다음 게시물 여부가 있는지를 판변하는 hasMore를 가져옴
@@ -25,6 +32,8 @@ export default function PostList() {
   const pagePerData = useSelector((state: RootState) => state.post.pagePerData);
   // react-intersection-observer의 customhook 무한 스크롤을 위해 사용
   const [ref, inview] = useInView();
+  // 무한 스크롤시 게시물 추가 로딩
+  const [isScrollLoading, setIsScrollLoading] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
   const isLoading = useSelector((state: RootState) => state.post.isLoading);
 
@@ -33,17 +42,20 @@ export default function PostList() {
     // 첫 게시물 가져오기, 데이터가 존재하지 않을 시
     if (postListData.length === 0) {
       dispatch(thunkFetchFirstPagePostData(pagePerData));
-    } 
+    }
     // 이후 페이지에 따라 게시물 목록 추가로 가져오기
     if (postListData.length > 0 && hasMore && inview) {
-      dispatch(thunkFetchPagingPostData({ page, pagePerData }));
+      (async () => {
+        setIsScrollLoading(true);
+        await dispatch(thunkFetchPagingPostData({ page, pagePerData }));
+        setIsScrollLoading(false);
+      })();
     }
   }, [inview]);
 
-  useEffect(()=>{
+  useEffect(() => {
     dispatch(thunkFetchUserProfile());
-  },[])
-
+  }, []);
 
   return (
     <>
@@ -51,13 +63,28 @@ export default function PostList() {
         <PostWrapper>
           {postListData.length > 0 &&
             postListData.map((item) => {
-              return !item.isBlock && <PostItem key={item.id} data={item} userProfile={userProfile}/>;
+              return (
+                !item.isBlock && (
+                  <PostItem
+                    key={item.id}
+                    data={item}
+                    userProfile={userProfile}
+                  />
+                )
+              );
             })}
         </PostWrapper>
       </Wrapper>
-      {postListData.length > 0&&<InfinityScrollTarget ref={ref}></InfinityScrollTarget>}
+      {postListData.length > 0 && (
+        <InfinityScrollTarget ref={ref}></InfinityScrollTarget>
+      )}
+      {isScrollLoading && (
+        <li>
+          <ScrollLoading />
+        </li>
+      )}
       {isLoading && <Loading />}
-      {isOpenCommentModal&&<Comment />}
+      {isOpenCommentModal && <Comment />}
     </>
   );
 }
