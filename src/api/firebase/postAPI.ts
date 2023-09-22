@@ -14,12 +14,13 @@ import {
   query,
   setDoc,
   startAfter,
-  updateDoc
+  updateDoc,
+  where
 } from "firebase/firestore";
 import { v4 as uuid } from "uuid";
 import { db, storage } from "./setting";
 import { getAuth } from "firebase/auth";
-import { IPostData, IPostUploadData } from "../apiType";
+import { IPostData, IPostUploadData, IUserData } from "../apiType";
 import {
   deleteObject,
   getDownloadURL,
@@ -74,25 +75,21 @@ export const fetchFirstPagePostData = async (pagePerDate: number) => {
     const data = postDocs.docs.map((el) => el.data());
 
     const userRef = collection(db, "user");
-    const userDocs = await getDocs(userRef);
-    const userList = userDocs.docs.map((el) => el.data());
+    const userUid: string[] = [...data].map((item) => item.uid);
+    const userQuery = query(userRef, where("uid", "in", userUid));
+    const res = await getDocs(userQuery);
+    const uidData: IUserData[] = res.docs.map((el) => {
+      return { uid: el.id, ...el.data() };
+    });
 
-    // 유저 db를 담을 Map 생성
-    const userMap = new Map();
-    // 사용자 데이터 목록을 반복하면서 Map에 사용자 UID를 키로 하여 데이터를 저장
-    for (const userData of userList) {
-      userMap.set(userData.uid, userData);
-    }
-
-    // 게시물 데이터 목록을 반복하면서 사용자 데이터를 연결
     for (let i = 0; i < data.length; i++) {
-      const userData = userMap.get(data[i].uid);
-      // 기존 data에 displayName과 photoURL을 추가
+      const userData = uidData.find((userData) => userData.uid === data[i].uid);
       if (userData) {
         data[i].displayName = userData.displayName;
         data[i].photoURL = userData.photoURL;
       }
     }
+
     return { postDocs, data };
   } catch (error) {
     console.error(error);
@@ -119,21 +116,15 @@ export const fetchPagingPostData = async (
     const data = postDocs.docs.map((el) => el.data());
 
     const userRef = collection(db, "user");
-    const userDocs = await getDocs(userRef);
-    const userList = userDocs.docs.map((el) => el.data());
+    const userUid: string[] = [...data].map((item) => item.uid);
+    const userQuery = query(userRef, where("uid", "in", userUid));
+    const res = await getDocs(userQuery);
+    const uidData: IUserData[] = res.docs.map((el) => {
+      return { uid: el.id, ...el.data() };
+    });
 
-    // 유저 db를 담을 Map 생성
-    const userMap = new Map();
-    // 사용자 데이터 목록을 반복하면서 Map에 사용자 UID를 키로 하여 데이터를 저장
-    for (const userData of userList) {
-      userMap.set(userData.uid, userData);
-    }
-
-    // 게시물 데이터 목록을 반복하면서 사용자 데이터를 연결
     for (let i = 0; i < data.length; i++) {
-      const userData = userMap.get(data[i].uid);
-
-      // 기존 data에 displayName과 photoURL을 추가
+      const userData = uidData.find((userData) => userData.uid === data[i].uid);
       if (userData) {
         data[i].displayName = userData.displayName;
         data[i].photoURL = userData.photoURL;
@@ -377,7 +368,7 @@ export const fetchReportPost = async (postData: IPostData) => {
     const postDoc = doc(db, `post/${postData.id}`);
     const removePostPromise = updateDoc(postDoc, {
       reportCount: increment(1),
-      isBlock: postData.reportCount&&postData.reportCount >= 4 ? true : false
+      isBlock: postData.reportCount && postData.reportCount >= 4 ? true : false
     });
     if (!auth.currentUser) return;
     const userDoc = doc(db, `user/${auth.currentUser.uid}`);
