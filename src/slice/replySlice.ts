@@ -151,6 +151,9 @@ export const replySlice = createSlice({
     error: ""
   },
   reducers: {
+    setReplyListData: (state, action) => {
+      state.replyListData = action.payload;
+    },
     setParentCommentId: (state, action) => {
       state.parentCommentId = action.payload;
     },
