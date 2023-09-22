@@ -182,6 +182,10 @@ export const commentSlice = createSlice({
         action.payload.commentDoc.docs[action.payload.commentDoc.docs.length - 1];
       state.hasMore = action.payload.data.length % state.pagePerData === 0;
     });
+    builder.addCase(thunkFetchPagingCommentData.rejected, (state, action) => {
+      if (action.payload) state.error = action.payload?.message;
+      console.error(state.error);
+    });
 
     // 댓글 추가
     builder.addCase(thunkFetchAddComment.fulfilled, (state, action) => {
