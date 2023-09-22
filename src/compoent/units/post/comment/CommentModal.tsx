@@ -1,4 +1,4 @@
-import React, { SyntheticEvent } from "react";
+import React, { SyntheticEvent, useEffect } from "react";
 import {
   CloseBtn,
   CommentModalWrapper,
@@ -14,6 +14,7 @@ import { AppDispatch, RootState } from "../../../../store/store";
 import CommentList from "./CommentList";
 import CommentTextArea from "./CommentTextArea";
 import { replySlice } from "../../../../slice/replySlice";
+import { isMobile } from "react-device-detect";
 
 interface IProps {
   modalRef: React.RefObject<HTMLDivElement>;
@@ -21,6 +22,9 @@ interface IProps {
 }
 
 export default function CommentModal({ modalRef, isReply }: IProps) {
+  const isOpenReplyModal = useSelector(
+    (state: RootState) => state.reply.isOpenReplyModal
+  );
   const parentCommentId = useSelector(
     (state: RootState) => state.reply.parentCommentId
   );
@@ -43,6 +47,29 @@ export default function CommentModal({ modalRef, isReply }: IProps) {
     }
   };
 
+  // 모바일 뒤로가기 구현을 위해 빈 히스토리 생성
+  // 뒤로가기 버튼을 눌러도 현재 페이지가 유지됨
+  useEffect(() => {
+    if (isMobile) {
+      window.history.pushState(null, "", window.location.href);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isMobile) {
+      window.onpopstate = () => {
+        history.go(1);
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        this.handleGoback();
+      };
+      // 뒤로가기 버튼을 눌렀을 경우 실행될 로직: 모달창 닫기
+      window.onpopstate = () => {
+        closeCommentModal();
+      };
+    }
+  }, [isOpenReplyModal]);
+
   return (
     <CommentModalWrapper ref={modalRef} isReply={isReply}>
       <ModalTitleBar>
@@ -54,10 +81,10 @@ export default function CommentModal({ modalRef, isReply }: IProps) {
           src={userData.photoURL}
           alt='프로필 이미지'
           onError={(e: SyntheticEvent<HTMLImageElement, Event>) => {
-              (e.currentTarget.src = resolveWebp(
-                "/assets/webp/icon-defaultProfile.webp",
-                "svg"
-              ))
+            e.currentTarget.src = resolveWebp(
+              "/assets/webp/icon-defaultProfile.webp",
+              "svg"
+            );
           }}
         />
         <CommentTextArea

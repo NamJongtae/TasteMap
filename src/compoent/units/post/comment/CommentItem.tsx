@@ -126,7 +126,6 @@ export default function CommentItem({ data, isReply }: IProps) {
         dispatch(profileSlice.actions.setprofile(newData));
         // 댓글 신고후 블라인드 처리된 경우 게시물의 댓글 카운터 1 감소시킴
         if (data.reportCount >= 4) {
-          console.log("asd",postListData);
           const newData = [...postListData];
           const index = newData.findIndex((item) => item.id === postId);
           newData[index] = {
