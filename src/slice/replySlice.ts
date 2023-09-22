@@ -6,7 +6,6 @@ import {
   fetchFirstPageReplyData,
   fetchPagingReplyData,
   fetchRemoveReply,
-  fetchReplyListData,
   fetchReportReply
 } from "../api/firebase/replyAPI";
 import { sweetToast } from "../library/sweetAlert/sweetAlert";
@@ -57,22 +56,6 @@ export const thunkFetchPagingReplyData = createAsyncThunk<
     }
   }
 );
-
-/**
- * 답글 조회
- */
-export const thunkFetchReplyListData = createAsyncThunk<
-  IReplyData[] | undefined,
-  string,
-  { rejectValue: IKnownError }
->("replySlice/thunkFetchReplyListData", async (parentCommentId, thunkAPI) => {
-  try {
-    const res = await fetchReplyListData(parentCommentId);
-    return res;
-  } catch (error: any) {
-    thunkAPI.rejectWithValue(error);
-  }
-});
 
 /**
  * 답글 추가
