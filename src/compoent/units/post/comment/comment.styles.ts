@@ -238,3 +238,18 @@ export const InfinityScrollTarget = styled.li`
   position: relative;
   bottom: 20px;
 `;
+
+export const RefreshBtn = styled.button`
+  position: absolute;
+  z-index: 99;
+  top: 45px;
+  right: 10px;
+  width: 30px;
+  height: 30px;
+  body.webp & {
+    background: url("/assets/webp/icon-refresh.webp") no-repeat center / 25px;
+  }
+  body.no-webp & {
+    background: url("/assets/icon-refresh.svg") no-repeat center / 25px;
+  }
+`;
