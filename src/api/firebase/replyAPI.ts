@@ -35,19 +35,23 @@ export const fetchFirstPageReplyData = async (
     const replyDoc = await getDocs(q);
     const data = replyDoc.docs.map((el) => el.data());
 
-    const userRef = collection(db, "user");
-    const userUid: string[] = [...data].map((item) => item.uid);
-    const userQuery = query(userRef, where("uid", "in", userUid));
-    const res = await getDocs(userQuery);
-    const uidData: IUserData[] = res.docs.map((el) => {
-      return { uid: el.id, ...el.data() };
-    });
+    if (data.length > 0) {
+      const userRef = collection(db, "user");
+      const userUid: string[] = [...data].map((item) => item.uid);
+      const userQuery = query(userRef, where("uid", "in", userUid));
+      const res = await getDocs(userQuery);
+      const uidData: IUserData[] = res.docs.map((el) => {
+        return { uid: el.id, ...el.data() };
+      });
 
-    for (let i = 0; i < data.length; i++) {
-      const userData = uidData.find((userData) => userData.uid === data[i].uid);
-      if (userData) {
-        data[i].displayName = userData.displayName;
-        data[i].photoURL = userData.photoURL;
+      for (let i = 0; i < data.length; i++) {
+        const userData = uidData.find(
+          (userData) => userData.uid === data[i].uid
+        );
+        if (userData) {
+          data[i].displayName = userData.displayName;
+          data[i].photoURL = userData.photoURL;
+        }
       }
     }
 
@@ -77,57 +81,27 @@ export const fetchPagingReplyData = async (
     );
     const replyDoc = await getDocs(q);
     const data = replyDoc.docs.map((el) => el.data());
+    if (data.length > 0) {
+      const userRef = collection(db, "user");
+      const userUid: string[] = [...data].map((item) => item.uid);
+      const userQuery = query(userRef, where("uid", "in", userUid));
+      const res = await getDocs(userQuery);
+      const uidData: IUserData[] = res.docs.map((el) => {
+        return { uid: el.id, ...el.data() };
+      });
 
-    const userRef = collection(db, "user");
-    const userUid: string[] = [...data].map((item) => item.uid);
-    const userQuery = query(userRef, where("uid", "in", userUid));
-    const res = await getDocs(userQuery);
-    const uidData: IUserData[] = res.docs.map((el) => {
-      return { uid: el.id, ...el.data() };
-    });
-
-    for (let i = 0; i < data.length; i++) {
-      const userData = uidData.find((userData) => userData.uid === data[i].uid);
-      if (userData) {
-        data[i].displayName = userData.displayName;
-        data[i].photoURL = userData.photoURL;
+      for (let i = 0; i < data.length; i++) {
+        const userData = uidData.find(
+          (userData) => userData.uid === data[i].uid
+        );
+        if (userData) {
+          data[i].displayName = userData.displayName;
+          data[i].photoURL = userData.photoURL;
+        }
       }
     }
 
     return { replyDoc, data: data as IReplyData[] };
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
-};
-
-export const fetchReplyListData = async (
-  parentCommentId: string
-): Promise<IReplyData[]> => {
-  try {
-    const commentDoc = doc(db, `comments/${parentCommentId}`);
-    const replyRef = collection(commentDoc, `replies`);
-    const q = query(replyRef, orderBy("createdAt", "desc"));
-    const res = await getDocs(q);
-    const data = res.docs.map((el) => el.data());
-
-    const userRef = collection(db, "user");
-    const userUid: string[] = [...data].map((item) => item.uid);
-    const userQuery = query(userRef, where("uid", "in", userUid));
-    const userRes = await getDocs(userQuery);
-    const uidData: IUserData[] = userRes.docs.map((el) => {
-      return { uid: el.id, ...el.data() };
-    });
-
-    for (let i = 0; i < data.length; i++) {
-      const userData = uidData.find((userData) => userData.uid === data[i].uid);
-      if (userData) {
-        data[i].displayName = userData.displayName;
-        data[i].photoURL = userData.photoURL;
-      }
-    }
-
-    return data as IReplyData[];
   } catch (error) {
     console.error(error);
     throw error;

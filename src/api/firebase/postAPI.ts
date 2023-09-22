@@ -41,22 +41,17 @@ export const fetchPostData = async (
     const res = await getDoc(postDoc);
     const data = res.data();
 
-    const userRef = collection(db, "user");
-    if (!auth.currentUser) return;
-    const userDocs = await getDocs(userRef);
-    const userList = userDocs.docs.map((el) => el.data());
-
-    // 게시물 데이터 목록을 반복하면서 사용자 데이터를 연결
     if (data) {
-      for (let i = 0; i < userList.length; i++) {
-        if (data.uid === userList[i].uid) {
-          data.displayName = userList[i].displayName;
-          data.photoURL = userList[i].photoURL;
-          break;
-        }
-      }
+      const userRef = collection(db, "user");
+      const userQuery = query(userRef, where("uid", "==", data.uid));
+      const res = await getDocs(userQuery);
+      const uidData: IUserData[] = res.docs.map((el) => {
+        return { uid: el.id, ...el.data() };
+      });
+      const userInfo = uidData.find((userData) => userData.uid === data.uid);
+      data.displayName = userInfo?.displayName;
+      data.photoURL = userInfo?.photoURL;
     }
-
     return data;
   } catch (error) {
     console.error(error);
@@ -74,19 +69,23 @@ export const fetchFirstPagePostData = async (pagePerDate: number) => {
     const postDocs = await getDocs(q);
     const data = postDocs.docs.map((el) => el.data());
 
-    const userRef = collection(db, "user");
-    const userUid: string[] = [...data].map((item) => item.uid);
-    const userQuery = query(userRef, where("uid", "in", userUid));
-    const res = await getDocs(userQuery);
-    const uidData: IUserData[] = res.docs.map((el) => {
-      return { uid: el.id, ...el.data() };
-    });
+    if (data.length > 0) {
+      const userRef = collection(db, "user");
+      const userUid: string[] = [...data].map((item) => item.uid);
+      const userQuery = query(userRef, where("uid", "in", userUid));
+      const res = await getDocs(userQuery);
+      const uidData: IUserData[] = res.docs.map((el) => {
+        return { uid: el.id, ...el.data() };
+      });
 
-    for (let i = 0; i < data.length; i++) {
-      const userData = uidData.find((userData) => userData.uid === data[i].uid);
-      if (userData) {
-        data[i].displayName = userData.displayName;
-        data[i].photoURL = userData.photoURL;
+      for (let i = 0; i < data.length; i++) {
+        const userData = uidData.find(
+          (userData) => userData.uid === data[i].uid
+        );
+        if (userData) {
+          data[i].displayName = userData.displayName;
+          data[i].photoURL = userData.photoURL;
+        }
       }
     }
 
@@ -114,20 +113,23 @@ export const fetchPagingPostData = async (
     );
     const postDocs = await getDocs(q);
     const data = postDocs.docs.map((el) => el.data());
+    if (data.length > 0) {
+      const userRef = collection(db, "user");
+      const userUid: string[] = [...data].map((item) => item.uid);
+      const userQuery = query(userRef, where("uid", "in", userUid));
+      const res = await getDocs(userQuery);
+      const uidData: IUserData[] = res.docs.map((el) => {
+        return { uid: el.id, ...el.data() };
+      });
 
-    const userRef = collection(db, "user");
-    const userUid: string[] = [...data].map((item) => item.uid);
-    const userQuery = query(userRef, where("uid", "in", userUid));
-    const res = await getDocs(userQuery);
-    const uidData: IUserData[] = res.docs.map((el) => {
-      return { uid: el.id, ...el.data() };
-    });
-
-    for (let i = 0; i < data.length; i++) {
-      const userData = uidData.find((userData) => userData.uid === data[i].uid);
-      if (userData) {
-        data[i].displayName = userData.displayName;
-        data[i].photoURL = userData.photoURL;
+      for (let i = 0; i < data.length; i++) {
+        const userData = uidData.find(
+          (userData) => userData.uid === data[i].uid
+        );
+        if (userData) {
+          data[i].displayName = userData.displayName;
+          data[i].photoURL = userData.photoURL;
+        }
       }
     }
     return { postDocs, data };

@@ -25,7 +25,8 @@ const auth = getAuth();
  * 댓글 첫 페이지 조회
  */
 export const fetchFirstPageCommentData = async (
-  postId: string, pagePerData:number
+  postId: string,
+  pagePerData: number
 ) => {
   try {
     const commentsRef = collection(db, "comments");
@@ -33,28 +34,31 @@ export const fetchFirstPageCommentData = async (
       commentsRef,
       orderBy("createdAt", "desc"),
       where("postId", "==", postId),
-      limit(pagePerData),
+      limit(pagePerData)
     );
     const commentDoc = await getDocs(q);
     const data = commentDoc.docs.map((el) => el.data());
+    if (data.length > 0) {
+      const userRef = collection(db, "user");
+      const userUid: string[] = [...data].map((item) => item.uid);
+      const userQuery = query(userRef, where("uid", "in", userUid));
+      const res = await getDocs(userQuery);
+      const uidData: IUserData[] = res.docs.map((el) => {
+        return { uid: el.id, ...el.data() };
+      });
 
-    const userRef = collection(db, "user");
-    const userUid: string[] = [...data].map((item) => item.uid);
-    const userQuery = query(userRef, where("uid", "in", userUid));
-    const res = await getDocs(userQuery);
-    const uidData: IUserData[] = res.docs.map((el) => {
-      return { uid: el.id, ...el.data() };
-    });
-
-    for (let i = 0; i < data.length; i++) {
-      const userData = uidData.find((userData) => userData.uid === data[i].uid);
-      if (userData) {
-        data[i].displayName = userData.displayName;
-        data[i].photoURL = userData.photoURL;
+      for (let i = 0; i < data.length; i++) {
+        const userData = uidData.find(
+          (userData) => userData.uid === data[i].uid
+        );
+        if (userData) {
+          data[i].displayName = userData.displayName;
+          data[i].photoURL = userData.photoURL;
+        }
       }
     }
 
-    return {commentDoc, data: data as ICommentData[]};
+    return { commentDoc, data: data as ICommentData[] };
   } catch (error) {
     console.error(error);
     throw error;
@@ -66,7 +70,8 @@ export const fetchFirstPageCommentData = async (
  */
 export const fetchPagingCommentData = async (
   page: QueryDocumentSnapshot<DocumentData, DocumentData>,
-  postId: string, pagePerData:number
+  postId: string,
+  pagePerData: number
 ) => {
   try {
     const commentsRef = collection(db, "comments");
@@ -75,28 +80,32 @@ export const fetchPagingCommentData = async (
       orderBy("createdAt", "desc"),
       where("postId", "==", postId),
       startAfter(page),
-      limit(pagePerData),
+      limit(pagePerData)
     );
     const commentDoc = await getDocs(q);
     const data = commentDoc.docs.map((el) => el.data());
 
-    const userRef = collection(db, "user");
-    const userUid: string[] = [...data].map((item) => item.uid);
-    const userQuery = query(userRef, where("uid", "in", userUid));
-    const res = await getDocs(userQuery);
-    const uidData: IUserData[] = res.docs.map((el) => {
-      return { uid: el.id, ...el.data() };
-    });
+    if (data.length > 0) {
+      const userRef = collection(db, "user");
+      const userUid: string[] = [...data].map((item) => item.uid);
+      const userQuery = query(userRef, where("uid", "in", userUid));
+      const res = await getDocs(userQuery);
+      const uidData: IUserData[] = res.docs.map((el) => {
+        return { uid: el.id, ...el.data() };
+      });
 
-    for (let i = 0; i < data.length; i++) {
-      const userData = uidData.find((userData) => userData.uid === data[i].uid);
-      if (userData) {
-        data[i].displayName = userData.displayName;
-        data[i].photoURL = userData.photoURL;
+      for (let i = 0; i < data.length; i++) {
+        const userData = uidData.find(
+          (userData) => userData.uid === data[i].uid
+        );
+        if (userData) {
+          data[i].displayName = userData.displayName;
+          data[i].photoURL = userData.photoURL;
+        }
       }
     }
 
-    return {commentDoc, data: data as ICommentData[]};
+    return { commentDoc, data: data as ICommentData[] };
   } catch (error) {
     console.error(error);
     throw error;
@@ -182,12 +191,14 @@ export const fetchReportComment = async (
       isBlock: reportCommentData.reportCount >= 4 ? true : false
     });
 
-    const decreaseCommentCountPromise = []
+    const decreaseCommentCountPromise = [];
     if (reportCommentData.reportCount >= 4) {
       const postDoc = doc(db, `post/${reportCommentData.postId}`);
-      decreaseCommentCountPromise.push(updateDoc(postDoc, {
-        commentCount: increment(-1)
-      }));
+      decreaseCommentCountPromise.push(
+        updateDoc(postDoc, {
+          commentCount: increment(-1)
+        })
+      );
     }
     if (!auth.currentUser) return;
     const userDoc = doc(db, `user/${auth.currentUser.uid}`);
