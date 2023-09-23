@@ -1,6 +1,10 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { getAuth } from "firebase/auth";
-import { fetchLogin, fetchSocialLogin } from "../api/firebase/loginAPI";
+import {
+  fetchLogin,
+  fetchLogout,
+  fetchSocialLogin
+} from "../api/firebase/loginAPI";
 import { sweetToast } from "../library/sweetAlert/sweetAlert";
 import {
   fetchChangePassword,
@@ -44,6 +48,19 @@ export const thunkFetchSocialLogin = createAsyncThunk<
     await fetchSocialLogin(type);
   } catch (error: any) {
     return thunkAPI.rejectWithValue(error);
+  }
+});
+
+// 로그아웃
+export const thunkFetchLogout = createAsyncThunk<
+  void,
+  void,
+  { rejectValue: IKnownError }
+>("userSlice/thunkFetchLogout", async (_, thunkAPI) => {
+  try {
+    await fetchLogout();
+  } catch (error: any) {
+    thunkAPI.rejectWithValue(error);
   }
 });
 
@@ -207,9 +224,25 @@ export const userSlice = createSlice({
         })
       );
     });
+
+    // 로그아웃
+    builder.addCase(thunkFetchLogout.fulfilled, (state) => {
+      state.data = {};
+    });
+    builder.addCase(thunkFetchLogout.rejected, (state, action) => {
+      if (action.payload) {
+        state.error = action.payload.message;
+      }
+      sweetToast(
+        "알 수 없는 오류가 발생하였습니다.\n잠시 후 다시 시도해주세요.",
+        "warning"
+      );
+      console.error(state.error);
+    });
+
     builder.addCase(thunkFetchSocialLogin.rejected, (state, action) => {
       if (action.payload) {
-        state.error = action.payload.toString();
+        state.error = action.payload.message;
       }
       if (
         state.error.includes("auth/account-exists-with-different-credential")

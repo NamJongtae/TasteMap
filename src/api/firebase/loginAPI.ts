@@ -5,7 +5,8 @@ import {
   updateProfile,
   signInWithPopup,
   GoogleAuthProvider,
-  GithubAuthProvider
+  GithubAuthProvider,
+  signOut
 } from "firebase/auth";
 import { db } from "./setting";
 import { sweetToast } from "../../library/sweetAlert/sweetAlert";
@@ -73,3 +74,12 @@ export const fetchSocialLogin = async (type: string) => {
     throw error;
   }
 };
+
+export const fetchLogout = async () => {
+  try{
+    await signOut(auth);
+  } catch(error) {
+    console.log(error);
+    throw error;
+  }
+}
