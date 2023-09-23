@@ -304,27 +304,6 @@ export const postSlice = createSlice({
     }
   },
   extraReducers: (builder) => {
-    // 게시물 데이터 조회
-    builder.addCase(thuckFetchPostData.pending, (state) => {
-      document.body.style.overflow = "hidden";
-      state.isLoading = true;
-    });
-    builder.addCase(thuckFetchPostData.fulfilled, (state, action) => {
-      if (action.payload) state.postData = action.payload;
-      document.body.style.overflow = "auto";
-      state.isLoading = false;
-    });
-    builder.addCase(thuckFetchPostData.rejected, (state, action) => {
-      if (action.payload) state.error = action.payload.message;
-      document.body.style.overflow = "auto";
-      state.isLoading = false;
-      sweetToast(
-        "알 수 없는 에러가 발생하였습니다.\n잠시 후 다시 시도해 주세요.",
-        "warning"
-      );
-      console.error(state.error);
-    });
-
     // 맛집 지도 검색
     builder.addCase(thuckFetchSearchMap.fulfilled, (state, action) => {
       state.searchMapData = action.payload;
@@ -398,6 +377,16 @@ export const postSlice = createSlice({
         action.payload.postDocs.docs[action.payload.postDocs.docs.length - 1];
       state.hasMore = action.payload.data.length % state.pagePerData === 0;
     });
+    builder.addCase(thunkFetchPagingPostData.rejected, (state, action) => {
+      if (!action.payload) return;
+      state.isLoading = false;
+      state.error = action.payload.message;
+      sweetToast(
+        "알 수 없는 에러가 발생하였습니다.\n잠시 후 다시 시도해 주세요.",
+        "warning"
+      );
+      console.error(state.error);
+    });
 
     // 게시물 수정
     builder.addCase(thuckFecthEditPost.pending, (state) => {
@@ -447,7 +436,9 @@ export const postSlice = createSlice({
     // 게시물 신고
     builder.addCase(thuckFetchReportPost.fulfilled, (state, action) => {
       if (action.payload?.reportCount && action.payload?.reportCount >= 4) {
-        const newData = [...state.postListData].filter((item)=>item.id!==action.payload?.id);
+        const newData = [...state.postListData].filter(
+          (item) => item.id !== action.payload?.id
+        );
         state.postListData = newData;
         sweetToast("신고가 누적되어 게시물이 블라인드 처리되었습니다.", "info");
       } else {
