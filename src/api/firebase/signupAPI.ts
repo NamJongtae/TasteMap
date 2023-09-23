@@ -51,6 +51,8 @@ export const fetchSignup = async (
       reportCommentList: [],
       reportReplyList: [],
       reportPostList: [],
+      followerList: [],
+      followingList: [],
       photoFileName: fileName || "",
       introduce,
       createdAt: Timestamp.fromDate(new Date())
