@@ -12,6 +12,7 @@ import { userSlice } from "./slice/userSlice";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import PostEdit from "./pages/postEdit/PostEdit";
 import TopButton from "./compoent/commons/topButton/TopButton";
+import Profile from './pages/profile/Profile';
 
 function App() {
   const { pathname } = useLocation();
@@ -104,6 +105,13 @@ function App() {
           >
             <Route path='upload' element={<PostUpload isEdit={false} />} />
             <Route path=':postId/edit' element={<PostEdit />} />
+          </Route>
+          <Route
+            path='/profile'
+            element={!userData.uid ? <Navigate to='/login' /> : <Outlet />}
+          >
+            <Route index element={<Profile />} />
+          <Route path=":uid/" element={<Profile />} />
           </Route>
         </Routes>
       )}

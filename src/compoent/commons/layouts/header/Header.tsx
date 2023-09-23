@@ -7,14 +7,19 @@ import {
   RightSideWrapper,
   Title,
   UploadLink,
-  MypageLink,
+  ProfileLink,
   Wrapper,
   SearchLink,
   SubmitBtn,
-  CancelBtn
+  CancelBtn,
+  LogoutBtn
 } from "./header.styles";
 import { resolveWebp } from "../../../../library/webpSupport";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../../../store/store";
+import { thunkFetchLogout } from "../../../../slice/userSlice";
+import { sweetConfirm } from "../../../../library/sweetAlert/sweetAlert";
 
 interface IParms {
   type: string;
@@ -24,6 +29,13 @@ interface IParms {
 }
 export default function Header({ type, onSubmit, btnText, disabled }: IParms) {
   const navigate = useNavigate();
+  const { uid } = useParams();
+  const dispatch = useDispatch<AppDispatch>();
+  const onClickLogout = () => {
+    sweetConfirm("정말 로그아웃 하시겠습니까?", "확인", "취소", () => {
+      dispatch(thunkFetchLogout());
+    });
+  };
   const setHeader = () => {
     switch (type) {
       case "home":
@@ -43,7 +55,7 @@ export default function Header({ type, onSubmit, btnText, disabled }: IParms) {
             </LeftSideWrapper>
             <RightSideWrapper>
               <SearchLink aria-label='검색' to={"/search"} />
-              <MypageLink aria-label='마이페이지' to={"/mypage"} />
+              <ProfileLink aria-label='프로필' to={"/profile"} />
             </RightSideWrapper>
           </>
         );
@@ -51,10 +63,9 @@ export default function Header({ type, onSubmit, btnText, disabled }: IParms) {
         return (
           <>
             <LeftSideWrapper>
-              <CancelBtn
-                type='button'
-                onClick={()=>navigate("/")}
-              >취소</CancelBtn>
+              <CancelBtn type='button' onClick={() => navigate("/")}>
+                취소
+              </CancelBtn>
               <LogoLink to={"/"}>
                 <Title>
                   <span className='a11y-hidden'>TasteMap</span>
@@ -80,7 +91,11 @@ export default function Header({ type, onSubmit, btnText, disabled }: IParms) {
         return (
           <>
             <LeftSideWrapper>
-              <BackBtn type='button' aria-label='뒤로가기' />
+              <BackBtn
+                type='button'
+                aria-label='뒤로가기'
+                onClick={() => navigate(-1)}
+              />
               <LogoLink to={"/"}>
                 <Title>
                   <span className='a11y-hidden'>TasteMap</span>
@@ -92,15 +107,19 @@ export default function Header({ type, onSubmit, btnText, disabled }: IParms) {
               </LogoLink>
             </LeftSideWrapper>
             <RightSideWrapper>
-              <MypageLink aria-label='마이페이지' to={"/mypage"} />
+              <ProfileLink aria-label='프로필' to={"/profile"} />
             </RightSideWrapper>
           </>
         );
-      case "mypage":
+      case "profile":
         return (
           <>
             <LeftSideWrapper>
-              <BackBtn type='button' aria-label='뒤로가기' />
+              <BackBtn
+                type='button'
+                aria-label='뒤로가기'
+                onClick={() => navigate(-1)}
+              />
               <LogoLink to={"/"}>
                 <Title>
                   <span className='a11y-hidden'>TasteMap</span>
@@ -112,7 +131,14 @@ export default function Header({ type, onSubmit, btnText, disabled }: IParms) {
               </LogoLink>
             </LeftSideWrapper>
             <RightSideWrapper>
-              <SearchLink aria-label='검색' to={"/search"} />
+              {uid ? (
+                <>
+                  <SearchLink aria-label='검색' to={"/search"} />
+                  <ProfileLink aria-label='프로필' to={"/profile"} />
+                </>
+              ) : (
+                <LogoutBtn aria-label='로그아웃' onClick={onClickLogout} />
+              )}
             </RightSideWrapper>
           </>
         );

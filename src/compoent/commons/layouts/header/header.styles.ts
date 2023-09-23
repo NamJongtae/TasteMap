@@ -77,7 +77,7 @@ export const SearchLink = styled(Link)`
   }
 `;
 
-export const MypageLink = styled(Link)`
+export const ProfileLink = styled(Link)`
   width: 30px;
   height: 30px;
   body.webp & {
@@ -87,6 +87,18 @@ export const MypageLink = styled(Link)`
   body.no-webp & {
     background: url("/assets/icon-defaultProfile.svg") no-repeat center / 30px;
   }
+`;
+
+export const LogoutBtn = styled.button`
+  width: 20px;
+  height: 20px;
+  body.webp & {
+    background: url("/assets/webpicon-logout.webp") no-repeat center / cover;
+  }
+  body.no-webp& {
+    background: url("/assets/icon-logout.svg") no-repeat center / cover;
+  }
+  
 `;
 
 export const SubmitBtn = styled.button`
