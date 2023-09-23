@@ -21,6 +21,8 @@ export interface IProfileData {
   reportCommentList?: string[];
   reportReplyList?: string[];
   reportPostList?: string[];
+  followerList?: string[];
+  followingList?: string[];
 }
 
 export interface IStoredImgData {
