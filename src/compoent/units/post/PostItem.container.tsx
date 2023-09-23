@@ -16,10 +16,10 @@ import { commentSlice } from "../../../slice/commentSlice";
 
 interface IProps {
   data: IPostData;
-  userProfile: IProfileData;
+  myProfileData: IProfileData;
 }
 
-export default function PostItem({ data, userProfile }: IProps) {
+export default function PostItem({ data, myProfileData }: IProps) {
   const dispatch = useDispatch<AppDispatch>();
   // 좋아요 유무
   const [isLike, setIsLike] = useState(false);
@@ -68,21 +68,21 @@ export default function PostItem({ data, userProfile }: IProps) {
   };
 
   const onChangeStoredMapList = (map: ISearchMapData) => {
-    if (userProfile.storedMapList) {
+    if (myProfileData.storedMapList) {
       if (!isStoredMap) {
         const newProfile = {
-          ...userProfile,
-          storedMapList: [...userProfile.storedMapList, map]
+          ...myProfileData,
+          storedMapList: [...myProfileData.storedMapList, map]
         };
-        dispatch(profileSlice.actions.setprofile(newProfile));
+        dispatch(profileSlice.actions.setMyprofile(newProfile));
       } else {
         const newProfile = {
-          ...userProfile,
-          storedMapList: [...userProfile.storedMapList].filter(
+          ...myProfileData,
+          storedMapList: [...myProfileData.storedMapList].filter(
             (item) => item.mapx !== map.mapx && item.mapy !== map.mapy
           )
         };
-        dispatch(profileSlice.actions.setprofile(newProfile));
+        dispatch(profileSlice.actions.setMyprofile(newProfile));
       }
     }
   };
@@ -93,7 +93,7 @@ export default function PostItem({ data, userProfile }: IProps) {
   const onClickLike = async (id: string | undefined) => {
     if (!id) return;
     // 자기 자신의 게시물에 좋아요를 누르면 retun
-    if (userProfile.uid === data.uid) {
+    if (myProfileData.uid === data.uid) {
       sweetToast("자신의 게시물은 좋아요할 수 없습니다!", "warning");
       return;
     }
@@ -114,7 +114,7 @@ export default function PostItem({ data, userProfile }: IProps) {
   };
 
   const onClickStoredMap = async (postData: IPostData) => {
-    if (!postData || !userProfile.storedMapList) return;
+    if (!postData || !myProfileData.storedMapList) return;
 
     if (!isStoredMap) {
       // 지도 추가 api 비동기 처리
@@ -134,10 +134,10 @@ export default function PostItem({ data, userProfile }: IProps) {
 
   // userProfile의 likeList 데이터를 이용하여 게시물의 좋아요 유무를 판별
   useEffect(() => {
-    if (userProfile?.likeList && data.id) {
-      setIsLike(userProfile.likeList.includes(data.id));
+    if (myProfileData?.likeList && data.id) {
+      setIsLike(myProfileData.likeList.includes(data.id));
     }
-  }, [userProfile, data]);
+  }, [myProfileData, data]);
 
   useEffect(() => {
     setLikeCount(data.likeCount || 0);
@@ -151,8 +151,8 @@ export default function PostItem({ data, userProfile }: IProps) {
 
   useEffect(() => {
     // 좌표 값이 일치확인
-    if (userProfile?.storedMapList && data.mapData) {
-      userProfile.storedMapList.forEach((item) => {
+    if (myProfileData?.storedMapList && data.mapData) {
+      for(const item of myProfileData.storedMapList) {
         if (
           item.mapx === data.mapData?.mapx &&
           item.mapy === data.mapData?.mapy
@@ -162,14 +162,14 @@ export default function PostItem({ data, userProfile }: IProps) {
         } else {
           setIsStoredMap(false);
         }
-      });
+      }
     }
-  }, [userProfile]);
+  }, [myProfileData]);
 
   return (
     <PostItemUI
       data={data}
-      userProfile={userProfile}
+      myProfileData={myProfileData}
       isLike={isLike}
       likeCount={likeCount}
       onClickLike={onClickLike}
