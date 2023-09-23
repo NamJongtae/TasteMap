@@ -40,8 +40,8 @@ export default function CommentItem({ data, isReply }: IProps) {
     (state: RootState) => state.reply.isOpenReplyModal
   );
   const userData = useSelector((state: RootState) => state.user.data);
-  const profileData = useSelector(
-    (state: RootState) => state.profile.profileData
+  const myProfileData = useSelector(
+    (state: RootState) => state.profile.myProfileData
   );
   const postListData = useSelector(
     (state: RootState) => state.post.postListData
@@ -103,7 +103,7 @@ export default function CommentItem({ data, isReply }: IProps) {
     // 댓글 신고
     if (!isReply && "commentId" in data) {
       // 중복 신고 방지
-      if (profileData.reportCommentList?.includes(data.commentId)) {
+      if (myProfileData.reportCommentList?.includes(data.commentId)) {
         sweetToast("이미 신고한 댓글 입니다.", "warning");
         return;
       }
@@ -117,13 +117,13 @@ export default function CommentItem({ data, isReply }: IProps) {
         );
         // 댓글 신고후 profileData에 reportCommentList 신고한 댓글 id 값 추가
         const newData = {
-          ...profileData,
+          ...myProfileData,
           reportCommentList: [
-            ...(profileData?.reportCommentList || []),
+            ...(myProfileData?.reportCommentList || []),
             data.commentId
           ]
         };
-        dispatch(profileSlice.actions.setprofile(newData));
+        dispatch(profileSlice.actions.setMyprofile(newData));
         // 댓글 신고후 블라인드 처리된 경우 게시물의 댓글 카운터 1 감소시킴
         if (data.reportCount >= 4) {
           const newData = [...postListData];
@@ -138,7 +138,7 @@ export default function CommentItem({ data, isReply }: IProps) {
     } else if (isReply && "replyId" in data) {
       // 답글 신고
       // 중복 신고 방지
-      if (profileData.reportReplyList?.includes(data.replyId)) {
+      if (myProfileData.reportReplyList?.includes(data.replyId)) {
         sweetToast("이미 신고한 답글 입니다.", "warning");
         return;
       }
@@ -164,13 +164,13 @@ export default function CommentItem({ data, isReply }: IProps) {
         }
         // 답글 신고후 profileData에 reportCommentList 신고한 댓글 id 값 추가
         const newData = {
-          ...profileData,
+          ...myProfileData,
           reportReplyList: [
-            ...(profileData?.reportReplyList || []),
+            ...(myProfileData?.reportReplyList || []),
             data.replyId
           ]
         };
-        dispatch(profileSlice.actions.setprofile(newData));
+        dispatch(profileSlice.actions.setMyprofile(newData));
       });
     }
   };
