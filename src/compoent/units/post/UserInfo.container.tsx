@@ -13,7 +13,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../store/store";
 import UserInfoUI from "./UserInfo.presenter";
-import { profileSlice } from '../../../slice/profileSlice';
+import { profileSlice } from "../../../slice/profileSlice";
 
 interface IProps {
   userData: IProfileData;
@@ -22,7 +22,9 @@ interface IProps {
 }
 
 export default function UserInfo({ userData, data, activeMoreBtn }: IProps) {
-  const profileData = useSelector((state: RootState) => state.profile.profileData);
+  const myProfileData = useSelector(
+    (state: RootState) => state.profile.myProfileData
+  );
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const { postId } = useParams();
@@ -34,8 +36,7 @@ export default function UserInfo({ userData, data, activeMoreBtn }: IProps) {
    * 게시물 수정 페이지 이동
    */
   const onClickEditBtn = () => {
-    if(data && 'id' in data)
-    navigate(`/post/${data?.id}/edit`);
+    if (data && "id" in data) navigate(`/post/${data?.id}/edit`);
   };
 
   /**
@@ -73,9 +74,12 @@ export default function UserInfo({ userData, data, activeMoreBtn }: IProps) {
       }
       // 게시물 신고 api 비동기 처리
       dispatch(thuckFetchReportPost(postData));
-      // userProfile reportPostList에 신고한 게시물 id 추가
-      const newData = {...profileData, reportPostList:[...profileData.reportPostList||[], postData.id]}
-      dispatch(profileSlice.actions.setprofile(newData));
+      // myProfileData reportPostList에 신고한 게시물 id 추가
+      const newData = {
+        ...myProfileData,
+        reportPostList: [...(myProfileData.reportPostList || []), postData.id]
+      };
+      dispatch(profileSlice.actions.setMyprofile(newData));
     });
   };
 
@@ -133,7 +137,7 @@ export default function UserInfo({ userData, data, activeMoreBtn }: IProps) {
 
   return (
     <UserInfoUI
-      userData={userData}
+      myProfileData={myProfileData}
       data={data}
       activeMoreBtn={activeMoreBtn}
       onClickSelect={onClickSelect}
