@@ -8,7 +8,7 @@ export default function Home() {
     <>
     <Header type='home'/>
       <Wrapper>
-        <PostList isProfile={false}/>
+        <PostList isProfilePage={false}/>
       </Wrapper>
     </>
   );
