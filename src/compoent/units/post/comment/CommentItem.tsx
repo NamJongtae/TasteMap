@@ -189,6 +189,7 @@ export default function CommentItem({ data, isReply }: IProps) {
             userData={{ ...userData }}
             data={{ ...data }}
             activeMoreBtn={false}
+            isProfilePage={false}
           />
           {isEdit ? (
             <CommentTextArea

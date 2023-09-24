@@ -103,7 +103,7 @@ export const CommentModalWrapper = styled.article`
   }
 `;
 
-export const CommenWrpper = styled.ul`
+export const CommentWrpper = styled.ul`
   position: relative;
   padding: 20px;
   padding-bottom: 115px;

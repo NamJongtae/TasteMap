@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
-  CommenWrpper,
+  CommentWrpper,
   InfinityScrollTarget,
   RefreshBtn,
 } from "./comment.styles";
@@ -162,7 +162,7 @@ export default function CommentList({ isReply }: IProps) {
       ) : (
         <>
           <RefreshBtn onClick={handlerRefresh} />
-          <CommenWrpper>
+          <CommentWrpper>
             {(isReply ? replyListData : commentDataList).map((item) => {
               return (
                 <CommentItem
@@ -186,7 +186,7 @@ export default function CommentList({ isReply }: IProps) {
                 <ScrollLoading />
               </li>
             )}
-          </CommenWrpper>
+          </CommentWrpper>
         </>
       )}
     </>
