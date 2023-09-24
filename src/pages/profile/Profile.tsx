@@ -3,23 +3,29 @@ import { Wrapper } from "./profile.styles";
 import ProfileInfo from "./ProfileInfo";
 import ProfilePost from "./ProfilePost";
 import Header from "../../compoent/commons/layouts/header/Header";
+import FollowModal from "./followModal/FollowModal";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/store";
-import Loading from "../../compoent/commons/loading/Loading";
 
 export default function Profile() {
-  const isLoading = useSelector((state: RootState) => state.profile.isLoading);
+  const isOpenFollowModal = useSelector(
+    (state: RootState) => state.profile.isOpenFollowerModal
+  );
+  const isOpenFollowingModal = useSelector(
+    (state: RootState) => state.profile.isOpenFollowingModal
+  );
+
   return (
     <>
-      {isLoading ? (
-        <Loading />
-      ) : (
+      <>
         <Wrapper>
           <Header type='profile' />
           <ProfileInfo />
           <ProfilePost />
         </Wrapper>
-      )}
+        {isOpenFollowModal && <FollowModal isFollower={true} />}
+        {isOpenFollowingModal && <FollowModal isFollower={false} />}
+      </>
     </>
   );
 }
