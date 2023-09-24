@@ -100,6 +100,11 @@ export interface IReplyData {
   reportCount: number;
 }
 
+export interface IFollowData {
+  uid?:string;
+  displayName?: string;
+  photoURL?: string;
+}
 export interface IKnownError {
   message: string;
 }
