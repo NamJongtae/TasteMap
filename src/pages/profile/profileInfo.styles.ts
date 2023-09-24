@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import styled from "styled-components";
 
 export const ProfileInfoWrapper = styled.section`
@@ -27,13 +26,14 @@ export const UserProfileInfo = styled.div`
   gap: 20px;
 `;
 
-export const FollowerLink = styled(Link)`
+export const FollowerBtn = styled.button`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
+  gap: 5px;
   font-weight: 700;
   font-size: 18px;
+  background: none;
 `;
 
 export const FollowerTag = styled.span`
@@ -41,9 +41,11 @@ export const FollowerTag = styled.span`
   font-size: 12px;
 `;
 
-export const FollowerCount = styled.span``;
+export const FollowerCount = styled.span`
+  font-size: 16px;
+`;
 
-export const FollowingLink = styled(FollowerLink)`
+export const FollowingBtn = styled(FollowerBtn)`
   color: #767676;
 `;
 
