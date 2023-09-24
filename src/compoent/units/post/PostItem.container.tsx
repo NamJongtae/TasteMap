@@ -17,9 +17,10 @@ import { commentSlice } from "../../../slice/commentSlice";
 interface IProps {
   data: IPostData;
   myProfileData: IProfileData;
+  isProfilePage: boolean;
 }
 
-export default function PostItem({ data, myProfileData }: IProps) {
+export default function PostItem({ data, myProfileData, isProfilePage }: IProps) {
   const dispatch = useDispatch<AppDispatch>();
   // 좋아요 유무
   const [isLike, setIsLike] = useState(false);
@@ -152,7 +153,7 @@ export default function PostItem({ data, myProfileData }: IProps) {
   useEffect(() => {
     // 좌표 값이 일치확인
     if (myProfileData?.storedMapList && data.mapData) {
-      for(const item of myProfileData.storedMapList) {
+      for (const item of myProfileData.storedMapList) {
         if (
           item.mapx === data.mapData?.mapx &&
           item.mapy === data.mapData?.mapy
@@ -183,6 +184,7 @@ export default function PostItem({ data, myProfileData }: IProps) {
       contentTextRef={contentTextRef}
       isShowMoreTextBtn={isShowMoreTextBtn}
       openCommentModal={openCommentModal}
+      isProfilePage={isProfilePage}
     />
   );
 }

@@ -34,12 +34,13 @@ interface IProps {
   onClickStoredMap: (postData: IPostData) => void;
   formattedDate: string | undefined;
   changePostMapType: () => void;
-  changePostImgType: ()=>void;
+  changePostImgType: () => void;
   postType: "map" | "image";
   onClickMoreText: () => void;
   contentTextRef: React.RefObject<HTMLParagraphElement>;
   isShowMoreTextBtn: boolean;
-  openCommentModal: ()=>void;
+  openCommentModal: () => void;
+  isProfilePage: boolean;
 }
 
 export default function PostItemUI({
@@ -58,6 +59,7 @@ export default function PostItemUI({
   contentTextRef,
   isShowMoreTextBtn,
   openCommentModal,
+  isProfilePage,
 }: IProps) {
   return (
     <>
@@ -72,16 +74,19 @@ export default function PostItemUI({
               }}
               data={{ ...data }}
               activeMoreBtn={true}
+              isProfilePage={isProfilePage}
             />
           </UserInfoWrapper>
           <ContentWrapper>
             <h3 className='a11y-hidden'>내용</h3>
-            <ContentText ref={contentTextRef}>
-              {data.content}
-            </ContentText>
+            <ContentText ref={contentTextRef}>{data.content}</ContentText>
             <ContentTextLine></ContentTextLine>
             {isShowMoreTextBtn && (
-              <MoreContentBtn type='button' onClick={onClickMoreText} aria-label='더보기'/>
+              <MoreContentBtn
+                type='button'
+                onClick={onClickMoreText}
+                aria-label='더보기'
+              />
             )}
             <KakaoMapWrapper postType={postType}>
               {postType === "map" && (
@@ -131,7 +136,11 @@ export default function PostItemUI({
               <Count>{likeCount}</Count>
             </ButtonWrapper>
             <ButtonWrapper>
-              <CommentBtn type='button' aria-label='댓글' onClick={openCommentModal}/>
+              <CommentBtn
+                type='button'
+                aria-label='댓글'
+                onClick={openCommentModal}
+              />
               <Count>{data.commentCount}</Count>
             </ButtonWrapper>
             {data.createdAt?.seconds && (

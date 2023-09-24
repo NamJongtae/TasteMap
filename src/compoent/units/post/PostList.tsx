@@ -4,6 +4,7 @@ import { InfinityScrollTarget, PostWrapper, Wrapper } from "./postList.styles";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../store/store";
 import {
+  postSlice,
   thunkFetchFirstPagePostData,
   thunkFetchPagingPostData
 } from "../../../slice/postSlice";
@@ -19,9 +20,9 @@ import Comment from "./comment/Comment";
 import ScrollLoading from "../../commons/loading/ScrollLoading";
 import { useParams } from "react-router-dom";
 interface Iprops {
-  isProfile: boolean;
+  isProfilePage: boolean;
 }
-export default function PostList({ isProfile }: Iprops) {
+export default function PostList({ isProfilePage }: Iprops) {
   const { uid } = useParams();
   const userData = useSelector((state: RootState) => state.user.data);
   const isOpenCommentModal = useSelector(
@@ -67,7 +68,7 @@ export default function PostList({ isProfile }: Iprops) {
 
   // 무한스크롤 처리 inview의 상태가 변경될 때 마다 게시물 목록을 추가로 받아옴
   useEffect(() => {
-    if (!isProfile) {
+    if (!isProfilePage) {
       // 첫 게시물 가져오기, postListData 데이터가 존재하지 않을 시
       if (postListData.length === 0) {
         dispatch(thunkFetchFirstPagePostData(pagePerData));
@@ -84,11 +85,14 @@ export default function PostList({ isProfile }: Iprops) {
     }
   }, []);
 
-  // 다른 유저의 프로필일 시 프로필 개사뮬 데이터 초기화
+  // // 다른 유저의 프로필일 시 프로필 개사뮬 데이터 초기화
   useEffect(() => {
     // 프로필 게시물 일때
-    if (isProfile) {
-      if (userProfileData?.uid !== profilePostListData[0]?.uid) {
+    if (isProfilePage) {
+      if (
+        profilePostListData.length > 0 &&
+        userProfileData?.uid !== profilePostListData[0]?.uid
+      ) {
         dispatch(
           thunkFetchProfileFirstPageData({
             uid: uid ? uid : userData.uid || "",
@@ -101,7 +105,7 @@ export default function PostList({ isProfile }: Iprops) {
 
   useEffect(() => {
     // 홈 페이지 게시물
-    if (!isProfile) {
+    if (!isProfilePage) {
       // postListData가 존재, 페이지에 따라 게시물 목록 추가로 가져오기
       if (postListData.length > 0 && hasMore && inview) {
         (async () => {
@@ -133,33 +137,41 @@ export default function PostList({ isProfile }: Iprops) {
     if (userData.uid) dispatch(thunkFetchMyProfile(userData.uid));
   }, []);
 
+  // 언마운트시 게시물 데이터 초기화
   useEffect(() => {
-    return () => {
-      dispatch(profileSlice.actions.setProfilePostListData([]));
-    };
+    if (isProfilePage) {
+      return () => {
+        dispatch(profileSlice.actions.setProfilePostListData([]));
+      };
+    } else {
+      return () => {
+        dispatch(postSlice.actions.setPostListData([]));
+      };
+    }
   }, []);
 
   return (
     <>
       <Wrapper>
         <PostWrapper>
-          {(isProfile
+          {(isProfilePage
             ? profilePostListData.length > 0
             : postListData.length > 0) &&
-            (isProfile ? profilePostListData : postListData).map((item) => {
+            (isProfilePage ? profilePostListData : postListData).map((item) => {
               return (
                 !item.isBlock && (
                   <PostItem
                     key={item.id}
                     data={item}
                     myProfileData={myProfileData}
+                    isProfilePage={isProfilePage}
                   />
                 )
               );
             })}
         </PostWrapper>
       </Wrapper>
-      {(isProfile
+      {(isProfilePage
         ? profilePostListData.length > 0
         : postListData.length > 0) && (
         <InfinityScrollTarget ref={ref}></InfinityScrollTarget>
