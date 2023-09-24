@@ -19,19 +19,27 @@ interface IProps {
   userData: IProfileData;
   data?: IPostData | ICommentData;
   activeMoreBtn: boolean;
+  isProfilePage: boolean;
 }
 
-export default function UserInfo({ userData, data, activeMoreBtn }: IProps) {
+export default function UserInfo({
+  userData,
+  data,
+  activeMoreBtn,
+  isProfilePage
+}: IProps) {
   const myProfileData = useSelector(
     (state: RootState) => state.profile.myProfileData
   );
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const { postId } = useParams();
+  const profilePostListData = useSelector(
+    (state: RootState) => state.profile.profilePostListData
+  );
   const [isOpenSelect, setIsOpenSelect] = useState(false);
   // 더보기 메뉴 ref 메뉴창이 닫힐 때 애니메이션 효과를 바꾸기 위해 사용
   const opectionListRef = useRef<HTMLUListElement>(null);
-
   /**
    * 게시물 수정 페이지 이동
    */
@@ -49,6 +57,12 @@ export default function UserInfo({ userData, data, activeMoreBtn }: IProps) {
     e.stopPropagation();
     setIsOpenSelect(false);
     sweetConfirm("정말 삭제 하시겠습니까?", "삭제", "취소", () => {
+      if (isProfilePage) {
+        const newData = [...profilePostListData].filter(
+          (item) => item.id !== data.id
+        );
+        dispatch(profileSlice.actions.setProfilePostListData(newData));
+      }
       // 게시물 삭제 api 비동기 처리
       dispatch(thuckFetchRemovePost(data));
       if (postId) {
@@ -137,7 +151,7 @@ export default function UserInfo({ userData, data, activeMoreBtn }: IProps) {
 
   return (
     <UserInfoUI
-      myProfileData={myProfileData}
+      userData={userData}
       data={data}
       activeMoreBtn={activeMoreBtn}
       onClickSelect={onClickSelect}
@@ -146,6 +160,7 @@ export default function UserInfo({ userData, data, activeMoreBtn }: IProps) {
       onClickEditBtn={onClickEditBtn}
       onCliceRemove={onCliceRemove}
       onClickReport={onClickReport}
+      isProfilePage={isProfilePage}
     />
   );
 }

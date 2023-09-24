@@ -11,10 +11,9 @@ import {
   UserProfile
 } from "./userInfo.styles";
 import { resolveWebp } from "../../../library/webpSupport";
-import { ICommentData, IPostData, IProfileData } from "../../../api/apiType";
-import { useLocation } from "react-router-dom";
+import { ICommentData, IPostData, IUserData } from "../../../api/apiType";
 interface IProps {
-  myProfileData: Pick<IProfileData, "uid" | "displayName" | "photoURL">;
+  userData: IUserData,
   data?: IPostData | ICommentData;
   activeMoreBtn: boolean;
   onClickSelect: (e: React.MouseEvent<HTMLButtonElement>) => void;
@@ -29,9 +28,10 @@ interface IProps {
     e: React.MouseEvent<HTMLButtonElement>,
     postData: IPostData
   ) => void;
+  isProfilePage: boolean;
 }
 export default function UserInfoUI({
-  myProfileData,
+  userData,
   data,
   activeMoreBtn,
   onClickSelect,
@@ -39,17 +39,16 @@ export default function UserInfoUI({
   opectionListRef,
   onClickEditBtn,
   onCliceRemove,
-  onClickReport
+  onClickReport,
+  isProfilePage
 }: IProps) {
-  const { pathname } = useLocation();
-  const isProfilePage = pathname.includes("profile");
   return (
     <UserInfoWrapper>
       <h2 className='a11y-hidden'>유저 프로필</h2>
       {isProfilePage ? (
         <UserProfile>
           <UserImg
-            src={data?.photoURL || myProfileData.photoURL}
+            src={data?.photoURL || userData.photoURL}
             alt='프로필 이미지'
             onError={(e: React.SyntheticEvent<HTMLImageElement>) =>
               (e.currentTarget.src = resolveWebp(
@@ -58,12 +57,12 @@ export default function UserInfoUI({
               ))
             }
           />
-          <Username>{data?.displayName || myProfileData.displayName}</Username>
+          <Username>{data?.displayName || userData.displayName}</Username>
         </UserProfile>
       ) : (
-        <UserProfileLink to={`/profile/${data?.uid || myProfileData.uid}`}>
+        <UserProfileLink to={`/profile/${data?.uid || userData.uid}`}>
           <UserImg
-            src={data?.photoURL || myProfileData.photoURL}
+            src={data?.photoURL || userData.photoURL}
             alt='프로필 이미지'
             onError={(e: React.SyntheticEvent<HTMLImageElement>) =>
               (e.currentTarget.src = resolveWebp(
@@ -72,7 +71,7 @@ export default function UserInfoUI({
               ))
             }
           />
-          <Username>{data?.displayName || myProfileData.displayName}</Username>
+          <Username>{data?.displayName || userData.displayName}</Username>
         </UserProfileLink>
       )}
 
@@ -85,7 +84,7 @@ export default function UserInfoUI({
       )}
       {isOpenSelect && data && (
         <>
-          {myProfileData.uid === data?.uid ? (
+          {userData.uid === data?.uid ? (
             <OptionList ref={opectionListRef}>
               <Option>
                 <OptionBtn
