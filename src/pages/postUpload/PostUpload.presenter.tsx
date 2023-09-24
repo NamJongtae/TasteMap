@@ -20,7 +20,7 @@ import Kakaomap from "../../compoent/units/kakaomap/Kakaomap.container";
 import SearchModal from "./SearchModal";
 import Loading from "../../compoent/commons/loading/Loading";
 import { IPostData, ISearchMapData, IUserData } from "../../api/apiType";
-import UserInfo from '../../compoent/units/post/UserInfo.container';
+import UserInfo from "../../compoent/units/post/UserInfo.container";
 
 interface IProps {
   postData: IPostData;
@@ -96,7 +96,12 @@ export default function PostUploadUI({
             </h2>
             <Section>
               <SectionTitle className='a11y-hidden'>유저 프로필</SectionTitle>
-              <UserInfo userData={{...userData}} data={{...postData}} activeMoreBtn={false}/>
+              <UserInfo
+                userData={{ ...userData }}
+                data={{ ...postData }}
+                activeMoreBtn={false}
+                isProfilePage={false}
+              />
             </Section>
 
             <Section>

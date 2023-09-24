@@ -10,6 +10,7 @@ import {
   postSlice,
   thuckFecthEditPost,
   thuckFetchPostData,
+  thunkFetchFirstPagePostData,
   thunkFetchUploadPost
 } from "../../slice/postSlice";
 import { imgValidation } from "../../library/imageValidation";
@@ -25,6 +26,9 @@ export default function PostUpload({ isEdit }: IProps) {
   const { postId } = useParams();
   const navigate = useNavigate();
   const postData = useSelector((state: RootState) => state.post.postData);
+  const postListData = useSelector(
+    (state: RootState) => state.post.postListData
+  );
   // 작성자의 프로필을 넣기위해 userData를 가져옴
   const userData = useSelector((state: RootState) => state.user.data);
   // 맛집 검색으로 선택된 맛집 데이터를 가져옴
@@ -153,13 +157,7 @@ export default function PostUpload({ isEdit }: IProps) {
     if (isEdit) {
       const editPostData: Pick<
         IPostUploadData,
-        | "id"
-        | "content"
-        | "rating"
-        | "mapData"
-        | "imgURL"
-        | "imgName"
-        | "img"
+        "id" | "content" | "rating" | "mapData" | "imgURL" | "imgName" | "img"
       > = {
         id: postData.id || "",
         content: contentValue,
@@ -167,7 +165,7 @@ export default function PostUpload({ isEdit }: IProps) {
         mapData: selectedMapData[0],
         imgURL: editImgURL || [],
         imgName: editImgName || [],
-        img: imgFile,
+        img: imgFile
       };
       await dispatch(
         thuckFecthEditPost({
@@ -196,6 +194,9 @@ export default function PostUpload({ isEdit }: IProps) {
       };
       // redux thuck를 이용하여 비동기 처리 서버로 데이터 전송
       await dispatch(thunkFetchUploadPost(uploadData));
+      if (postListData.length === 0) {
+        await dispatch(thunkFetchFirstPagePostData(10));
+      }
       navigate("/");
     }
   };
@@ -212,7 +213,7 @@ export default function PostUpload({ isEdit }: IProps) {
       postData.imgURL &&
       postData.content &&
       postData.rating &&
-      postData.imgName 
+      postData.imgName
     ) {
       setPreview(postData.imgURL);
       setContentValue(postData.content);
@@ -226,8 +227,7 @@ export default function PostUpload({ isEdit }: IProps) {
 
   useEffect(() => {
     handleResizeHeight();
-  },[contentValue]);
-  
+  }, [contentValue]);
 
   return (
     <PostUploadUI
