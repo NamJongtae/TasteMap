@@ -93,7 +93,7 @@ export const LogoutBtn = styled.button`
   width: 20px;
   height: 20px;
   body.webp & {
-    background: url("/assets/webpicon-logout.webp") no-repeat center / cover;
+    background: url("/assets/webp/icon-logout.webp") no-repeat center / cover;
   }
   body.no-webp& {
     background: url("/assets/icon-logout.svg") no-repeat center / cover;
