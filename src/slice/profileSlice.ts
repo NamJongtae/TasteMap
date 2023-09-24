@@ -1,7 +1,16 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { IKnownError, IPostData, IProfileData } from "../api/apiType";
 import {
+  IFollowData,
+  IKnownError,
+  IPostData,
+  IProfileData
+} from "../api/apiType";
+import {
+  fetchFirstpageFollowerData,
+  fetchFirstpageFollowingData,
   fetchFollow,
+  fetchPagingFollowerData,
+  fetchPagingFollowingData,
   fetchProfile,
   fetchProfileFirstPageData,
   fetchProfilePagingData,
@@ -125,6 +134,106 @@ export const thunkFetchProfilePagingData = createAsyncThunk<
   }
 );
 
+/**
+ * 유저 팔로우 첫 페이지 조회
+ */
+export const thunkFetchFirstPageFollowerData = createAsyncThunk<
+  | {
+      followerDocs: QuerySnapshot<DocumentData, DocumentData>;
+      data: IFollowData[];
+    }
+  | undefined,
+  { uid: string; pagePerData: number },
+  { rejectValue: IKnownError }
+>(
+  "profileSlice/thunkFetchFirstPageFollowerData",
+  async ({ uid, pagePerData }, thunkAPI) => {
+    try {
+      const res = await fetchFirstpageFollowerData(uid, pagePerData);
+      return res;
+    } catch (error: any) {
+      thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
+/**
+ * 유저 팔로우 페이징
+ */
+export const thunkFetchPagingFollowerData = createAsyncThunk<
+  | {
+      followerDocs: QuerySnapshot<DocumentData, DocumentData>;
+      data: IFollowData[];
+    }
+  | undefined,
+  {
+    uid: string;
+    page: QueryDocumentSnapshot<DocumentData, DocumentData>;
+    pagePerData: number;
+  },
+  { rejectValue: IKnownError }
+>(
+  "profileSlice/thunkFetchPagingFollowerData",
+  async ({ uid, page, pagePerData }, thunkAPI) => {
+    try {
+      const res = await fetchPagingFollowerData(uid, page, pagePerData);
+      return res;
+    } catch (error: any) {
+      thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
+/**
+ * 유저 팔로잉 첫 페이지 조회
+ */
+export const thunkFetchFirstPageFollowingData = createAsyncThunk<
+  | {
+      followingDocs: QuerySnapshot<DocumentData, DocumentData>;
+      data: IFollowData[];
+    }
+  | undefined,
+  { uid: string; pagePerData: number },
+  { rejectValue: IKnownError }
+>(
+  "profileSlice/thunkFetchFirstPageFollowingData",
+  async ({ uid, pagePerData }, thunkAPI) => {
+    try {
+      const res = await fetchFirstpageFollowingData(uid, pagePerData);
+      return res;
+    } catch (error: any) {
+      thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
+/**
+ * 유저 팔로잉 페이징
+ */
+export const thunkFetchPagingFollowingData = createAsyncThunk<
+  | {
+      followingDocs: QuerySnapshot<DocumentData, DocumentData>;
+      data: IFollowData[];
+    }
+  | undefined,
+  {
+    uid: string;
+    page: QueryDocumentSnapshot<DocumentData, DocumentData>;
+    pagePerData: number;
+  },
+  { rejectValue: IKnownError }
+>(
+  "profileSlice/thunkFetchPagingFollowingData",
+  async ({ uid, page, pagePerData }, thunkAPI) => {
+    try {
+      const res = await fetchPagingFollowingData(uid, page, pagePerData);
+      return res;
+    } catch (error: any) {
+      thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
 export const profileSlice = createSlice({
   name: "profileSlice",
   initialState: {
@@ -134,6 +243,12 @@ export const profileSlice = createSlice({
     page: {} as QueryDocumentSnapshot<DocumentData>,
     hasMore: false,
     pagePerData: 10,
+    isOpenFollowerModal: false,
+    isOpenFollowingModal: false,
+    followListData: [] as IFollowData[],
+    followPage: {} as QueryDocumentSnapshot<DocumentData>,
+    followHasMore: false,
+    followPagePerData: 10,
     isLoading: false,
     error: ""
   },
@@ -147,6 +262,12 @@ export const profileSlice = createSlice({
     setProfilePostListData: (state, action) => {
       state.profilePostListData = action.payload;
     },
+    setIsOpenFollowModal: (state, action) => {
+      state.isOpenFollowerModal = action.payload;
+    },
+    setIsOpenFollowingModal: (state, action) => {
+      state.isOpenFollowingModal = action.payload;
+    }
   },
   extraReducers: (builder) => {
     // 자신의 프로필 데이터 조회
@@ -182,9 +303,21 @@ export const profileSlice = createSlice({
         newData.followerList?.push(action.payload.userUid);
         state.myProfileData = newData;
 
-        const newUserProfile = { ...state.userProfileData };
-        newUserProfile.followingList?.push(action.payload.myUid);
-        state.userProfileData = newUserProfile;
+        // 팔로우/팔로잉 모달창이 열렸을 경우에는 현재 유저 데이터와 자신의 uid 같을 경우에만 followingList를 변경
+        // 현재 페이지의 유저의 팔로잉 리스트가 모달창에서 팔로우 버튼을 누르면 계속 늘어나는 문제해결을 위해 사용
+        if (state.isOpenFollowerModal || state.isOpenFollowingModal) {
+          if (state.userProfileData.uid === action.payload.myUid) {
+            const newUserProfile = { ...state.userProfileData };
+            newUserProfile.followingList?.push(action.payload.myUid);
+            state.userProfileData = newUserProfile;
+          }
+        } else {
+          // 팔로우/팔로잉 모달창이 닫힌 경우
+          // followingList 바로 변경
+          const newUserProfile = { ...state.userProfileData };
+          newUserProfile.followingList?.push(action.payload.myUid);
+          state.userProfileData = newUserProfile;
+        }
       }
     });
     builder.addCase(thunkFetchFollow.rejected, (state, action) => {
@@ -200,16 +333,29 @@ export const profileSlice = createSlice({
     builder.addCase(thunkFetchUnfollow.fulfilled, (state, action) => {
       if (action.payload) {
         const newData = { ...state.myProfileData };
-        newData.followerList = newData.followingList?.filter(
+        newData.followerList = newData.followerList?.filter(
           (item) => item !== action.payload?.userUid
         );
         state.myProfileData = newData;
-
-        const newUserProfile = { ...state.userProfileData };
-        newUserProfile.followingList = newUserProfile.followingList?.filter(
-          (item) => item !== action.payload?.myUid
-        );
-        state.userProfileData = newUserProfile;
+        // 팔로우/팔로잉 모달창이 열렸을 경우에는 현재 유저 데이터와 자신의 uid 같을 경우에만 followingList를 변경
+        // 현재 페이지의 유저의 팔로잉 리스트가 모달창에서 팔로우 버튼을 누르면 계속 줄어드는 문제해결을 위해 사용
+        if (state.isOpenFollowerModal || state.isOpenFollowingModal) {
+          if (state.userProfileData.uid === action.payload.myUid) {
+            const newUserProfile = { ...state.userProfileData };
+            newUserProfile.followingList = newUserProfile.followingList?.filter(
+              (item) => item !== action.payload?.myUid
+            );
+            state.userProfileData = newUserProfile;
+          }
+        } else {
+          // 팔로우/팔로잉 모달창이 닫힌 경우
+          // followingList 바로 변경
+          const newUserProfile = { ...state.userProfileData };
+          newUserProfile.followingList = newUserProfile.followingList?.filter(
+            (item) => item !== action.payload?.myUid
+          );
+          state.userProfileData = newUserProfile;
+        }
       }
     });
 
@@ -270,6 +416,121 @@ export const profileSlice = createSlice({
       state.hasMore = action.payload.data.length % state.pagePerData === 0;
     });
     builder.addCase(thunkFetchProfilePagingData.rejected, (state, action) => {
+      if (!action.payload) return;
+      state.isLoading = false;
+      state.error = action.payload.message;
+      sweetToast(
+        "알 수 없는 에러가 발생하였습니다.\n잠시 후 다시 시도해 주세요.",
+        "warning"
+      );
+      console.error(state.error);
+    });
+
+    // 유저 팔로우 첫 페이지 조회
+    builder.addCase(
+      thunkFetchFirstPageFollowerData.fulfilled,
+      (state, action) => {
+        if (action.payload) {
+          state.followListData = action.payload.data;
+          state.followHasMore =
+            (action.payload.data as IFollowData[]).length %
+              state.followPagePerData ===
+            0;
+          state.followPage =
+            action.payload.followerDocs.docs[
+              action.payload.followerDocs.docs.length - 1
+            ];
+        }
+      }
+    );
+    builder.addCase(
+      thunkFetchFirstPageFollowerData.rejected,
+      (state, action) => {
+        if (!action.payload) return;
+        state.isLoading = false;
+        state.error = action.payload.message;
+        sweetToast(
+          "알 수 없는 에러가 발생하였습니다.\n잠시 후 다시 시도해 주세요.",
+          "warning"
+        );
+        console.error(state.error);
+      }
+    );
+
+    // 유저 팔로우 페이징
+    builder.addCase(thunkFetchPagingFollowerData.fulfilled, (state, action) => {
+      if (!action.payload) return;
+      state.followListData = [
+        ...state.followListData,
+        ...(action.payload?.data as IFollowData[])
+      ];
+      state.followPage =
+        action.payload.followerDocs.docs[
+          action.payload.followerDocs.docs.length - 1
+        ];
+      state.followHasMore =
+        action.payload.data.length % state.followPagePerData === 0;
+    });
+    builder.addCase(thunkFetchPagingFollowerData.rejected, (state, action) => {
+      if (!action.payload) return;
+      state.isLoading = false;
+      state.error = action.payload.message;
+      sweetToast(
+        "알 수 없는 에러가 발생하였습니다.\n잠시 후 다시 시도해 주세요.",
+        "warning"
+      );
+      console.error(state.error);
+    });
+
+    // 유저 팔로잉 첫 페이지 조회
+    builder.addCase(
+      thunkFetchFirstPageFollowingData.fulfilled,
+      (state, action) => {
+        if (action.payload) {
+          state.followListData = action.payload.data;
+          state.followHasMore =
+            (action.payload.data as IFollowData[]).length %
+              state.followPagePerData ===
+            0;
+          state.followPage =
+            action.payload.followingDocs.docs[
+              action.payload.followingDocs.docs.length - 1
+            ];
+        }
+      }
+    );
+    builder.addCase(
+      thunkFetchFirstPageFollowingData.rejected,
+      (state, action) => {
+        if (!action.payload) return;
+        state.isLoading = false;
+        state.error = action.payload.message;
+        sweetToast(
+          "알 수 없는 에러가 발생하였습니다.\n잠시 후 다시 시도해 주세요.",
+          "warning"
+        );
+        console.error(state.error);
+      }
+    );
+
+    // 유저 팔로잉 페이징
+    builder.addCase(
+      thunkFetchPagingFollowingData.fulfilled,
+      (state, action) => {
+        if (!action.payload) return;
+        state.followListData = [
+          ...state.followListData,
+          ...(action.payload?.data as IFollowData[])
+        ];
+        state.followPage =
+          action.payload.followingDocs.docs[
+            action.payload.followingDocs.docs.length - 1
+          ];
+        state.followHasMore =
+          action.payload.data.length % state.followPagePerData === 0;
+      }
+    );
+    builder.addCase(thunkFetchPagingFollowingData.rejected, (state, action) => {
       if (!action.payload) return;
       state.isLoading = false;
       state.error = action.payload.message;
