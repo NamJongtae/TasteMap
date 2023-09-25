@@ -9,12 +9,17 @@ import {
 import { IFollowData } from "../../../api/apiType";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../store/store";
-import { thunkFetchFollow, thunkFetchUnfollow } from "../../../slice/profileSlice";
+import {
+  profileSlice,
+  thunkFetchFollow,
+  thunkFetchUnfollow
+} from "../../../slice/profileSlice";
 
 interface IProps {
   data: IFollowData;
+  isFollower: boolean;
 }
-export default function FollowItem({ data }: IProps) {
+export default function FollowItem({ data, isFollower }: IProps) {
   const myProfileData = useSelector(
     (state: RootState) => state.profile.myProfileData
   );
@@ -22,7 +27,7 @@ export default function FollowItem({ data }: IProps) {
   const [isFollow, setIsFollow] = useState(false);
 
   const onClickUnFollow = () => {
-    if (myProfileData.uid&&data.uid) {
+    if (myProfileData.uid && data.uid) {
       dispatch(
         thunkFetchUnfollow({ myUid: myProfileData.uid, userUid: data.uid })
       );
@@ -31,7 +36,7 @@ export default function FollowItem({ data }: IProps) {
   };
 
   const onClickFollow = () => {
-    if (myProfileData.uid&&data.uid) {
+    if (myProfileData.uid && data.uid) {
       dispatch(
         thunkFetchFollow({ myUid: myProfileData.uid, userUid: data.uid })
       );
@@ -39,8 +44,18 @@ export default function FollowItem({ data }: IProps) {
     }
   };
 
+  const onClickProfileLink = () => {
+    document.body.style.overflow = "auto";
+    if(isFollower){
+      dispatch(profileSlice.actions.setIsOpenFollowerModal(false));
+    } else {
+      dispatch(profileSlice.actions.setIsOpenFollowingModal(false));
+    }
+    
+  };
+
   useEffect(() => {
-    if (data.uid&&myProfileData.followerList?.includes(data.uid)) {
+    if (data.uid && myProfileData.followerList?.includes(data.uid)) {
       setIsFollow(true);
     } else {
       setIsFollow(false);
@@ -49,7 +64,7 @@ export default function FollowItem({ data }: IProps) {
 
   return (
     <FollowLi>
-      <UserLink to={`/profile/${data.uid}`}>
+      <UserLink to={`/profile/${data.uid}`} onClick={onClickProfileLink}>
         <UserImg src={data.photoURL} alt='유저 프로필 이미지' />
         <UserName>{data.displayName}</UserName>
       </UserLink>

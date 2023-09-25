@@ -74,7 +74,7 @@ export default function FollowList({ isFollower }: IProps) {
   return (
     <FollowUl>
       {followListData.map((item) => {
-        return <FollowItem key={item.uid} data={item} />;
+        return <FollowItem key={item.uid} data={item} isFollower={isFollower} />;
       })}
 
       <InfinityScrollTarget ref={ref}></InfinityScrollTarget>

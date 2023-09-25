@@ -25,7 +25,7 @@ export default function FollowModal({ isFollower }: IProps) {
     setTimeout(() => {
       document.body.style.overflow = "auto";
       if (isFollower) {
-        dispatch(profileSlice.actions.setIsOpenFollowModal(false));
+        dispatch(profileSlice.actions.setIsOpenFollowerModal(false));
       } else {
         dispatch(profileSlice.actions.setIsOpenFollowingModal(false));
       }
