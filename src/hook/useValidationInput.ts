@@ -81,7 +81,7 @@ export const useValidationInput = (
       // 프로필 변경시 기존 자신의 닉네임은 중복검사 제외 하기 위해 사용
       const storedUser = localStorage.getItem("user");
       const user: IUserData = storedUser ? JSON.parse(storedUser) : "";
-      if (isDulplcation && user?.displayName !== value) {
+      if (isDulplcation && user?.displayName !== value.toLowerCase()) {
         setValid({
           errorMsg: typeInfo.duplicationMsg,
           valid: false
