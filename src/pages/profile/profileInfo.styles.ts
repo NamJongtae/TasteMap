@@ -1,3 +1,4 @@
+import { isMobile } from "react-device-detect";
 import styled from "styled-components";
 
 export const ProfileInfoWrapper = styled.section`
@@ -65,16 +66,33 @@ export const UserName = styled.strong`
 `;
 
 export const Introduce = styled.p`
-  margin-bottom: 20px;
-  white-space: nowrap;
-  word-break: break-all;
+  margin-bottom: 10px;
   line-height: 1.5;
   max-width: 300px;
-  text-overflow: ellipsis;
-  overflow: hidden;
   font-size: 14px;
   font-weight: 500;
   color: #767676;
+  white-space: pre-wrap;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+`;
+
+export const IntroduceTextLine = styled.div`
+  width: calc(100% - 32px);
+  max-width: 300px;
+  margin: 0 auto 10px auto;
+  height: 1px;
+  border-bottom: 1px solid #bdbdbd;
+`;
+export const MoreTextBtn = styled.button`
+  display: block;
+  background: url("/assets/icon-moreTextBtn.svg") no-repeat right 2px top 7px /
+    9px;
+  padding-right: 16px;
+  margin-bottom: 10px;
+  font-weight: 500;
 `;
 
 export const ButtonWrapper = styled.div``;
@@ -88,8 +106,19 @@ export const ProfileBtn = styled.button`
   font-size: 14px;
   font-weight: 400;
   color: #767676;
+  :hover {
+    background-color: ${isMobile ? "" : "#208AFA"};
+    color: ${isMobile ? "" : "#fff"};
+    transition: all 0.3s;
+  }
 `;
 export const ProfileFollowBtn = styled(ProfileBtn)`
-  background-color: ${(props: {isFollow:boolean})=>props.isFollow ? "#fff":"#208AFA"};
-  color: ${(props: {isFollow:boolean})=>props.isFollow ? "#767676" : "#fff"}
+  background-color: ${(props: { isFollow: boolean }) =>
+    props.isFollow ? "#fff" : "#208AFA"};
+  color: ${(props: { isFollow: boolean }) =>
+    props.isFollow ? "#767676" : "#fff"};
+  :hover {
+    background-color: ${(props: { isFollow: boolean }) =>
+      props.isFollow && !isMobile ? "coral" : ""};
+  }
 `;

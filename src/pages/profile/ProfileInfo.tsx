@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import {
   ButtonWrapper,
   FollowerBtn,
@@ -7,6 +7,8 @@ import {
   FollowingBtn,
   FollowingCount,
   Introduce,
+  IntroduceTextLine,
+  MoreTextBtn,
   ProfileBtn,
   ProfileFollowBtn,
   ProfileInfoWrapper,
@@ -38,24 +40,9 @@ export default function ProfileInfo() {
     (state: RootState) => state.profile.userProfileData
   );
   const dispatch = useDispatch<AppDispatch>();
-
+  const introduecRef = useRef<HTMLParagraphElement>(null);
   const [isFollow, setIsFollow] = useState(false);
-
-  useEffect(() => {
-    if (
-      userProfileData.uid &&
-      myProfileData.followerList?.includes(userProfileData.uid)
-    ) {
-      setIsFollow(true);
-    } else {
-      setIsFollow(false);
-    }
-  }, [userProfileData]);
-
-  useEffect(() => {
-    dispatch(thunkFetchUserProfile(uid || userData.uid || ""));
-    dispatch(thunkFetchMyProfile(userData.uid || ""));
-  }, [uid]);
+  const [isShowMoreTextBtn, setIsShowMoreTextBtn] = useState(false);
 
   const onClickFollow = async () => {
     if (userData.uid && userProfileData.uid) {
@@ -88,6 +75,44 @@ export default function ProfileInfo() {
     dispatch(profileSlice.actions.setIsOpenFollowingModal(true));
   };
 
+  const onClickProfileEdit = () => {
+    document.body.style.overflow = "hidden";
+    dispatch(profileSlice.actions.setIsOpenProfileEditModal(true));
+  };
+
+  const onClickMoreText = () => {
+    if (introduecRef.current) {
+      introduecRef.current.style.display = "block";
+      setIsShowMoreTextBtn(false);
+    }
+  };
+
+  useEffect(() => {
+    if (
+      userProfileData.uid &&
+      myProfileData.followerList?.includes(userProfileData.uid)
+    ) {
+      setIsFollow(true);
+    } else {
+      setIsFollow(false);
+    }
+  }, [userProfileData]);
+
+  useEffect(() => {
+    dispatch(thunkFetchUserProfile(uid || userData.uid || ""));
+    dispatch(thunkFetchMyProfile(userData.uid || ""));
+  }, [uid]);
+
+  useLayoutEffect(() => {
+    if (introduecRef.current) {
+      if (introduecRef.current?.clientHeight >= 63) {
+        setIsShowMoreTextBtn(true);
+      } else {
+        setIsShowMoreTextBtn(false);
+      }
+    }
+  }, [isLoading]);
+
   return (
     <>
       {isLoading ? (
@@ -107,7 +132,7 @@ export default function ProfileInfo() {
                 <FollowerTag>Followers</FollowerTag>
               </FollowerBtn>
               <UserProfileImg
-                src={userProfileData.photoURL}
+                src={uid ? userProfileData.photoURL : myProfileData.photoURL}
                 alt='프로필 이미지'
                 onError={(e: React.SyntheticEvent<HTMLImageElement>) =>
                   (e.currentTarget.src = resolveWebp(
@@ -126,11 +151,24 @@ export default function ProfileInfo() {
                 <FollowerTag>Following</FollowerTag>
               </FollowingBtn>
             </UserWrapper>
-            <UserName>{userProfileData.displayName}</UserName>
-            <Introduce>{userProfileData.introduce}</Introduce>
+            <UserName>
+              {uid ? userProfileData.displayName : myProfileData.displayName}
+            </UserName>
+            <Introduce ref={introduecRef}>
+              {uid ? userProfileData.introduce : myProfileData.introduce}
+            </Introduce>
+
+            {isShowMoreTextBtn && (
+              <>
+                <IntroduceTextLine></IntroduceTextLine>
+                <MoreTextBtn onClick={onClickMoreText}>더보기</MoreTextBtn>
+              </>
+            )}
             <ButtonWrapper>
               {userProfileData.uid === userData.uid ? (
-                <ProfileBtn>프로필 수정</ProfileBtn>
+                <ProfileBtn onClick={onClickProfileEdit}>
+                  프로필 수정
+                </ProfileBtn>
               ) : (
                 <ProfileFollowBtn
                   isFollow={isFollow}
