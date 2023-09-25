@@ -282,7 +282,7 @@ export const profileSlice = createSlice({
     setProfilePostListData: (state, action) => {
       state.profilePostListData = action.payload;
     },
-    setIsOpenFollowModal: (state, action) => {
+    setIsOpenFollowerModal: (state, action) => {
       state.isOpenFollowerModal = action.payload;
     },
     setIsOpenFollowingModal: (state, action) => {

@@ -67,7 +67,7 @@ export default function ProfileInfo() {
 
   const onClickFollower = () => {
     document.body.style.overflow = "hidden";
-    dispatch(profileSlice.actions.setIsOpenFollowModal(true));
+    dispatch(profileSlice.actions.setIsOpenFollowerModal(true));
   };
 
   const onClickFollowing = () => {
@@ -154,7 +154,7 @@ export default function ProfileInfo() {
             <UserName>
               {uid ? userProfileData.displayName : myProfileData.displayName}
             </UserName>
-            <Introduce ref={introduecRef}>
+            <Introduce ref={introduecRef} isShowMoreTextBtn={isShowMoreTextBtn}>
               {uid ? userProfileData.introduce : myProfileData.introduce}
             </Introduce>
 

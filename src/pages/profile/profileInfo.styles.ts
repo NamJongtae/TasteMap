@@ -66,7 +66,8 @@ export const UserName = styled.strong`
 `;
 
 export const Introduce = styled.p`
-  margin-bottom: 10px;
+  margin-bottom: ${(props: { isShowMoreTextBtn: boolean }) =>
+    props.isShowMoreTextBtn ? "10px" : "20px"};
   line-height: 1.5;
   max-width: 300px;
   font-size: 14px;
