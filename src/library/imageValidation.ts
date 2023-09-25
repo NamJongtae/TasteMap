@@ -8,7 +8,7 @@ export const imgValidation = (file:File) => {
   }
   // 파일 사이즈 확인
   if (file.size > 1024 * 1024 * 10) {
-    sweetToast("이미지 파일의 크기를 초과하였습니다.(최대 10MB)", "warning");
+    sweetToast("이미지 파일의 크기를 초과하였습니다.\n(최대 10MB)", "warning");
     return false;
   }
   // 이미지 지원 형식 확인
