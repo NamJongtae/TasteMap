@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useValidationInput } from "../../hook/useValidationInput";
-import DefaultInfoUI from './DefaultInfo.presenter';
+import DefaultInfoUI from "./DefaultInfo.presenter";
 import { useSelector } from "react-redux";
-import { RootState } from '../../store/store';
+import { RootState } from "../../store/store";
+import { useNavigate } from "react-router-dom";
 
 export default function DefaultInfo() {
+  const navigate = useNavigate();
   const isLoading = useSelector((state: RootState) => state.signup.isLoading);
   const [defaultInfo, setDefaultInfo] = useState(false);
   const [profile, setProfile] = useState(false);
@@ -29,7 +31,7 @@ export default function DefaultInfo() {
     passwordChkValid,
     ,
     setPasswordChkValue,
-    setPasswordChkValid,
+    setPasswordChkValid
   ] = useValidationInput("", "password", true);
 
   // 휴대폰 유효성 input
@@ -48,11 +50,15 @@ export default function DefaultInfo() {
     if (passwordValue !== e.target.value) {
       setPasswordChkValid({
         errorMsg: "비밀번호가 일치하지 않습니다.",
-        valid: false,
+        valid: false
       });
     } else {
       setPasswordChkValid({ errorMsg: "", valid: true });
     }
+  };
+
+  const onClickCancel = () => {
+    navigate("/");
   };
 
   // 전체 input이 유효하다면 버튼 활성화
@@ -96,6 +102,7 @@ export default function DefaultInfo() {
       setPercentage={setPercentage}
       setNext={setNext}
       isLoading={isLoading}
+      onClickCancel={onClickCancel}
     />
   );
 }

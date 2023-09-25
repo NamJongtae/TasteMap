@@ -1,5 +1,6 @@
 import React from "react";
 import {
+  CancelBtn,
   FormWrapper,
   InputWrapper,
   ProgressBar,
@@ -52,6 +53,7 @@ interface IProps {
   setPercentage: React.Dispatch<React.SetStateAction<string>>;
   setNext: React.Dispatch<React.SetStateAction<boolean>>;
   isLoading: boolean;
+  onClickCancel: () => void;
 }
 
 export default function DefaultInfoUI({
@@ -75,7 +77,8 @@ export default function DefaultInfoUI({
   setProfile,
   setPercentage,
   setNext,
-  isLoading
+  isLoading,
+  onClickCancel
 }: IProps) {
   return (
     <Wrapper>
@@ -164,6 +167,7 @@ export default function DefaultInfoUI({
             >
               다음
             </SignupBtn>
+            <CancelBtn onClick={onClickCancel}>취소</CancelBtn>
           </SignupForm>
         ) : (
           <ProfileSetting

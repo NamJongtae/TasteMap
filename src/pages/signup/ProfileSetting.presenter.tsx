@@ -4,6 +4,7 @@ import {
   PrevBtn,
   ProfileImg,
   ProfileImgButton,
+  ProfileImgButtonWrapper,
   ProfileImgDesc,
   ProfileImgDescList,
   ProfileImgInput,
@@ -65,24 +66,27 @@ export default function ProfileSettingUI({
           onChange={onChangeImg}
           accept='image/jpg,image/jpeg, image/png, image/bmp, image/tif, image/heic'
         />
-        <ProfileImgButton
-          type='button'
-          onClick={() => imgInputRef.current && imgInputRef.current.click()}
-        >
-          <ProfileImg
-            src={previewImg}
-            alt='유저 프로필 이미지'
-            onError={(e: any) =>
-              (e.target.value = resolveWebp(
-                "/assets/webp/icon-defaultProfile.svg",
-                "svg"
-              ))
-            }
-          />
-        </ProfileImgButton>
-        <ProfileImgResetBtn type='button' onClick={onClickImgReset}>
-          <span className='a11y-hidden'>초기화</span>
-        </ProfileImgResetBtn>
+        <ProfileImgButtonWrapper>
+          <ProfileImgButton
+            type='button'
+            onClick={() => imgInputRef.current && imgInputRef.current.click()}
+          >
+            <ProfileImg
+              src={previewImg}
+              alt='유저 프로필 이미지'
+              onError={(e: any) =>
+                (e.target.value = resolveWebp(
+                  "/assets/webp/icon-defaultProfile.svg",
+                  "svg"
+                ))
+              }
+            />
+          </ProfileImgButton>
+          <ProfileImgResetBtn type='button' onClick={onClickImgReset}>
+            <span className='a11y-hidden'>초기화</span>
+          </ProfileImgResetBtn>
+        </ProfileImgButtonWrapper>
+
         <ProfileImgDescList>
           <ProfileImgDesc>
             이미지를 설정하지 않을 경우 기본 이미지가 적용됩니다.

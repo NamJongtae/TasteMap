@@ -37,20 +37,22 @@ export const ProfileImgButton = styled.button`
   border-radius: 50%;
   position: relative;
   border: 2px solid #bdbdbd;
-  ::after{
+  ::after {
     content: "";
     position: absolute;
-    right: -10px;
-    bottom: -5px;
-    width: 45px;
-    height: 45px;
+    right: -12px;
+    bottom: -3px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
   }
   body.no-webp &::after {
-    background: url("/assets/icon-uploadImg.svg") no-repeat center / 25px #79A7FF;
+    background: url("/assets/icon-uploadProfile.svg") no-repeat center / 20px
+      #79a7ff;
   }
   body.webp &::after {
-    background: url("/assets/webp/icon-uploadImg.webp") no-repeat center / 25px #79A7FF;
+    background: url("/assets/webp/icon-uploadProfile.webp") no-repeat center /
+      20px #79a7ff;
   }
 `;
 
@@ -60,18 +62,26 @@ export const ProfileImg = styled.img`
   height: 100%;
   border-radius: 50%;
 `;
+
+export const ProfileImgButtonWrapper = styled.div`
+  position: relative;
+  max-width: 130px;
+  margin: 0 auto;
+`;
+
 export const ProfileImgResetBtn = styled.button`
   position: absolute;
+  top: -3px;
+  right: 0px;
   width: 20px;
   height: 20px;
-  top: -10px;
-  right: calc(100% - 70%);
-  body.no-webp &{
-    background: url("/assets/icon-close.svg") no-repeat center / 20px;
-  }
-  
+  border-radius: 50%;
   body.webp & {
-    background: url("/assets/webp/icon-close.webp") no-repeat center / 20px;
+    background: url("/assets/webp/icon-close.webp") no-repeat center top 2px /
+      16px #767676;
+  }
+  body.no-webp & {
+    background: url("/assets/icon-close.svg") no-repeat center top 2px/ 16px #767676;
   }
 `;
 export const ProfileImgDescList = styled.ul`
@@ -81,15 +91,14 @@ export const ProfileImgDescList = styled.ul`
 export const ProfileImgDesc = styled.li`
   color: #4c4d4f;
   list-style-type: disc;
-  margin-left: 30px;
+  margin-left: 50px;
   line-height: 1.5;
   font-size: 12px;
 `;
 
 export const SignupBtn = styled.button`
   width: 100%;
-  background-color: ${(props) =>
-    props.disabled ? "#cbcbcb" : "gold"};
+  background-color: ${(props) => (props.disabled ? "#cbcbcb" : "gold")};
   cursor: ${(props) => (props.disabled ? "default" : "cursor")};
   padding: 14px 0;
   border-radius: 4px;
@@ -108,3 +117,5 @@ export const PrevBtn = styled.button`
   font-weight: 500;
   color: #111;
 `;
+
+

@@ -120,8 +120,7 @@ export const InputWrapper = styled.div`
 
 export const SignupBtn = styled.button`
   width: 100%;
-  background-color: ${(props) =>
-    props.disabled ? "#cbcbcb" : "gold"};
+  background-color: ${(props) => (props.disabled ? "#cbcbcb" : "gold")};
   cursor: ${(props) => (props.disabled ? "default" : "cursor")};
   padding: 14px 0;
   border-radius: 4px;
@@ -129,4 +128,14 @@ export const SignupBtn = styled.button`
   font-weight: 500;
   margin-top: 10px;
   transition: all 0.5s;
+`;
+
+export const CancelBtn = styled.button`
+  width: 100%;
+  background-color: #eee;
+  padding: 14px 0;
+  border-radius: 4px;
+  font-size: 16px;
+  font-weight: 500;
+  color: #111;
 `;
