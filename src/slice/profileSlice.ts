@@ -1,11 +1,13 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import {
+  IEditProfileData,
   IFollowData,
   IKnownError,
   IPostData,
   IProfileData
 } from "../api/apiType";
 import {
+  fetchEditProfile,
   fetchFirstpageFollowerData,
   fetchFirstpageFollowingData,
   fetchFollow,
@@ -233,6 +235,23 @@ export const thunkFetchPagingFollowingData = createAsyncThunk<
     }
   }
 );
+/**
+ * 프로필 수정
+ */
+export const thunkFetchEditProfile = createAsyncThunk<
+  void,
+  IEditProfileData,
+  { rejectValue: IKnownError }
+>(
+  "profileSlice/thunkFetchEditProfile",
+  async (editProfileData: IEditProfileData, thunkAPI) => {
+    try {
+      await fetchEditProfile(editProfileData);
+    } catch (error: any) {
+      thunkAPI.rejectWithValue(error);
+    }
+  }
+);
 
 export const profileSlice = createSlice({
   name: "profileSlice",
@@ -245,6 +264,7 @@ export const profileSlice = createSlice({
     pagePerData: 10,
     isOpenFollowerModal: false,
     isOpenFollowingModal: false,
+    isOpenProfileEditModal: false,
     followListData: [] as IFollowData[],
     followPage: {} as QueryDocumentSnapshot<DocumentData>,
     followHasMore: false,
@@ -267,6 +287,9 @@ export const profileSlice = createSlice({
     },
     setIsOpenFollowingModal: (state, action) => {
       state.isOpenFollowingModal = action.payload;
+    },
+    setIsOpenProfileEditModal: (state, action) => {
+      state.isOpenProfileEditModal = action.payload;
     }
   },
   extraReducers: (builder) => {
@@ -531,6 +554,25 @@ export const profileSlice = createSlice({
       }
     );
     builder.addCase(thunkFetchPagingFollowingData.rejected, (state, action) => {
+      if (!action.payload) return;
+      state.isLoading = false;
+      state.error = action.payload.message;
+      sweetToast(
+        "알 수 없는 에러가 발생하였습니다.\n잠시 후 다시 시도해 주세요.",
+        "warning"
+      );
+      console.error(state.error);
+    });
+
+    // 프로필 수정
+    builder.addCase(thunkFetchEditProfile.pending, (state) => {
+      state.isOpenProfileEditModal = false;
+      state.isLoading = true;
+    });
+    builder.addCase(thunkFetchEditProfile.fulfilled, (state) => {
+      state.isLoading = false;
+    });
+    builder.addCase(thunkFetchEditProfile.rejected, (state, action) => {
       if (!action.payload) return;
       state.isLoading = false;
       state.error = action.payload.message;
