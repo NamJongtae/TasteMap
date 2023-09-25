@@ -59,7 +59,7 @@ export default function PostItemUI({
   contentTextRef,
   isShowMoreTextBtn,
   openCommentModal,
-  isProfilePage,
+  isProfilePage
 }: IProps) {
   return (
     <>
@@ -80,13 +80,18 @@ export default function PostItemUI({
           <ContentWrapper>
             <h3 className='a11y-hidden'>내용</h3>
             <ContentText ref={contentTextRef}>{data.content}</ContentText>
-            <ContentTextLine></ContentTextLine>
+
             {isShowMoreTextBtn && (
-              <MoreContentBtn
-                type='button'
-                onClick={onClickMoreText}
-                aria-label='더보기'
-              />
+              <>
+                <ContentTextLine></ContentTextLine>
+                <MoreContentBtn
+                  type='button'
+                  onClick={onClickMoreText}
+                  aria-label='더보기'
+                >
+                  더보기
+                </MoreContentBtn>
+              </>
             )}
             <KakaoMapWrapper postType={postType}>
               {postType === "map" && (

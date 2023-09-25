@@ -108,24 +108,17 @@ export const ContentText = styled.p`
 
 export const ContentTextLine = styled.div`
   width: calc(100% - 32px);
-  margin: 0  auto 16px auto;
+  margin: 0  auto 10px auto;
   height: 1px;
   border-bottom: 1px solid #bdbdbd;
 `
 
 export const MoreContentBtn = styled.button`
-  width: calc(100% - 32px);
-  height: 14px;
   display: block;
   margin: 0 auto 16px auto;
+  background: url("/assets/icon-moreTextBtn.svg") no-repeat right 2px top 7px / 9px;
+  padding-right: 16px;
   font-weight: 500;
-  body.webp & {
-    background: url("/assets/webp/icon-moreTextBtn.webp") no-repeat center /
-      15px 11px;
-  }
-  body.no-webp & {
-    background: url("/assets/icon-moreTextBtn.svg") no-repeat center/ 19px 14px;
-  }
 `;
 
 export const StoredMapBtn = styled.button`

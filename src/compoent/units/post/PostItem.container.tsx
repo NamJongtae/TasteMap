@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../../store/store";
 import {
@@ -46,7 +46,7 @@ export default function PostItem({ data, myProfileData, isProfilePage }: IProps)
     dispatch(commentSlice.actions.setPostId(data.id));
   };
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (contentTextRef.current) {
       if (contentTextRef.current.clientHeight >= 105) {
         setIsShowMoreTextBtn(true);

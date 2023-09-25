@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from "react";
-import PostItem from "./PostItem.container";
-import { InfinityScrollTarget, PostWrapper, Wrapper } from "./postList.styles";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../store/store";
 import {
@@ -8,7 +6,7 @@ import {
   thunkFetchFirstPagePostData,
   thunkFetchPagingPostData
 } from "../../../slice/postSlice";
-import Loading from "../../commons/loading/Loading";
+
 import { useInView } from "react-intersection-observer";
 import {
   profileSlice,
@@ -16,9 +14,9 @@ import {
   thunkFetchProfileFirstPageData,
   thunkFetchProfilePagingData
 } from "../../../slice/profileSlice";
-import Comment from "./comment/Comment";
-import ScrollLoading from "../../commons/loading/ScrollLoading";
+
 import { useParams } from "react-router-dom";
+import PostListUI from "./PostList.presenter";
 interface Iprops {
   isProfilePage: boolean;
 }
@@ -151,38 +149,15 @@ export default function PostList({ isProfilePage }: Iprops) {
   }, []);
 
   return (
-    <>
-      <Wrapper>
-        <PostWrapper>
-          {(isProfilePage
-            ? profilePostListData.length > 0
-            : postListData.length > 0) &&
-            (isProfilePage ? profilePostListData : postListData).map((item) => {
-              return (
-                !item.isBlock && (
-                  <PostItem
-                    key={item.id}
-                    data={item}
-                    myProfileData={myProfileData}
-                    isProfilePage={isProfilePage}
-                  />
-                )
-              );
-            })}
-        </PostWrapper>
-      </Wrapper>
-      {(isProfilePage
-        ? profilePostListData.length > 0
-        : postListData.length > 0) && (
-        <InfinityScrollTarget ref={ref}></InfinityScrollTarget>
-      )}
-      {isScrollLoading && (
-        <li>
-          <ScrollLoading />
-        </li>
-      )}
-      {isLoading && <Loading />}
-      {isOpenCommentModal && <Comment />}
-    </>
+    <PostListUI
+      isProfilePage={isProfilePage}
+      profilePostListData={profilePostListData}
+      postListData={postListData}
+      myProfileData={myProfileData}
+      isScrollLoading={isScrollLoading}
+      isLoading={isLoading}
+      isOpenCommentModal={isOpenCommentModal}
+      intinityScrollRef={ref}
+    />
   );
 }
