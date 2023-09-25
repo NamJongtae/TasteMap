@@ -105,6 +105,13 @@ export interface IFollowData {
   displayName?: string;
   photoURL?: string;
 }
+
+export interface IEditProfileData {
+  displayName?: string;
+  file?: File | string;
+  introduce?: string;
+}
+
 export interface IKnownError {
   message: string;
 }

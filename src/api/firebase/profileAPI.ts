@@ -14,10 +14,26 @@ import {
   setDoc,
   deleteDoc,
   arrayUnion,
-  arrayRemove,
+  arrayRemove
 } from "firebase/firestore";
-import { db } from "./setting";
-import { IProfileData, IPostData, IUserData, IFollowData } from "../apiType";
+import { v4 as uuid } from "uuid";
+
+import { db, storage } from "./setting";
+import {
+  IProfileData,
+  IPostData,
+  IUserData,
+  IFollowData,
+  IEditProfileData
+} from "../apiType";
+import {
+  UploadResult,
+  deleteObject,
+  getDownloadURL,
+  ref as storageRef,
+  uploadBytes
+} from "firebase/storage";
+import { getAuth, updateProfile } from "firebase/auth";
 
 /**
  * 유저 프로필 조회
@@ -322,3 +338,83 @@ export const fetchPagingFollowingData = async (
 
   return { followingDocs, data: data as IFollowData[] };
 };
+
+/**
+ * 프로필 수정
+ */
+const auth = getAuth();
+export const fetchEditProfile = async (editProfileData: IEditProfileData) => {
+  try{
+    // 이미지 파일 존재시 이미지 파일을 업로드
+      const fileName =
+      typeof editProfileData.file !== "string"&&editProfileData.file && `${uuid()}_${editProfileData.file.name}`;
+      const ImgRes =
+      typeof editProfileData.file !== "string"&& editProfileData.file &&
+        (await uploadBytes(
+          storageRef(storage, `images/profile/${fileName}`),
+          editProfileData.file
+        ));
+    
+
+    const promise = [];
+    const uploadfileUrl =
+      typeof editProfileData.file !== "string" &&
+      editProfileData.file &&
+      (await getDownloadURL((ImgRes as UploadResult).ref));
+    console.log(editProfileData);
+    if (!auth.currentUser) return;
+    // 유저 데이터 가져오기
+    const userDoc = doc(db, `user/${auth.currentUser.uid}`);
+    const userRes = await getDoc(userDoc);
+    const user = userRes.data();
+
+    // 이미지 파일 존재 시 기존 프로필 이미지 삭제
+    if (
+      (typeof editProfileData.file !== "string"|| editProfileData.file === "defaultImg") &&
+      user &&
+      user.photoFileName
+    ) {
+      if (user.photoURL !== process.env.REACT_APP_DEFAULT_PROFILE_IMG)
+        promise.push(
+          deleteObject(
+            storageRef(storage, `images/profile/${String(user.photoFileName)}`)
+          )
+        );
+    }
+    // 수정할 필드를 담을 빈 객체를 만듭니다.
+    const updateFields: {
+      displayName?: string;
+      photoFileName?: string;
+      photoURL?: string;
+      introduce?: string;
+    } = {};
+    // displayName 속성이 editProfileData에 존재하면 업데이트 객체에 추가합니다.
+    if (editProfileData.displayName) {
+      updateFields.displayName = editProfileData.displayName;
+    }
+
+    // photoURL 속성이 uploadfileUrl에 존재하면 업데이트 객체에 추가합니다.
+    if (uploadfileUrl) {
+      updateFields.photoURL = uploadfileUrl;
+    } else if(editProfileData.file==="defaultImg") {
+      updateFields.photoURL =process.env.REACT_APP_DEFAULT_PROFILE_IMG;
+    }
+    promise.push(updateProfile(auth.currentUser, updateFields));
+    // photoFileName 속성이 fileName에 존재하면 업데이트 객체에 추가합니다.
+    if (fileName) {
+      updateFields.photoFileName = fileName;
+    } else if(editProfileData.file==="defaultImg") {
+      updateFields.photoFileName = "icon-defaultProfileImg.png";
+    }
+
+    // introduce 속성이 editProfileData에 존재하면 업데이트 객체에 추가합니다.
+    if (editProfileData.introduce || editProfileData.introduce === "") {
+      updateFields.introduce = editProfileData.introduce;
+    }
+    promise.push(updateDoc(userDoc, updateFields));
+    await Promise.all(promise);
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
