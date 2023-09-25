@@ -1,14 +1,14 @@
 import React from "react";
-import PostList from "../../compoent/units/post/PostList";
+import PostList from "../../compoent/units/post/PostList.container";
 import { Wrapper } from "./home.styles";
-import Header from '../../compoent/commons/layouts/header/Header';
+import Header from "../../compoent/commons/layouts/header/Header";
 
 export default function Home() {
   return (
     <>
-    <Header type='home'/>
+      <Header type='home' />
       <Wrapper>
-        <PostList isProfilePage={false}/>
+        <PostList isProfilePage={false} />
       </Wrapper>
     </>
   );
