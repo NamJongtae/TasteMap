@@ -3,8 +3,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import { ICommentData, IPostData, IProfileData } from "../../../api/apiType";
 
 import {
-  thuckFetchRemovePost,
-  thuckFetchReportPost
+  thunkFetchRemovePost,
+  thunkFetchReportPost
 } from "../../../slice/postSlice";
 import {
   sweetConfirm,
@@ -64,7 +64,7 @@ export default function UserInfo({
         dispatch(profileSlice.actions.setProfilePostListData(newData));
       }
       // 게시물 삭제 api 비동기 처리
-      dispatch(thuckFetchRemovePost(data));
+      dispatch(thunkFetchRemovePost(data));
       if (postId) {
         navigate("/");
       }
@@ -87,7 +87,7 @@ export default function UserInfo({
         return sweetToast("이미 신고한 게시물입니다.", "warning");
       }
       // 게시물 신고 api 비동기 처리
-      dispatch(thuckFetchReportPost(postData));
+      dispatch(thunkFetchReportPost(postData));
       // myProfileData reportPostList에 신고한 게시물 id 추가
       const newData = {
         ...myProfileData,

@@ -8,8 +8,8 @@ import { IPostUploadData } from "../../api/apiType";
 import { Timestamp } from "firebase/firestore";
 import {
   postSlice,
-  thuckFecthEditPost,
-  thuckFetchPostData,
+  thunkFecthEditPost,
+  thunkFetchPostData,
   thunkFetchFirstPagePostData,
   thunkFetchUploadPost
 } from "../../slice/postSlice";
@@ -168,7 +168,7 @@ export default function PostUpload({ isEdit }: IProps) {
         img: imgFile
       };
       await dispatch(
-        thuckFecthEditPost({
+        thunkFecthEditPost({
           prevPostData: postData,
           editPostData: editPostData
         })
@@ -192,7 +192,7 @@ export default function PostUpload({ isEdit }: IProps) {
         imgURL: [],
         rating: ratingValue
       };
-      // redux thuck를 이용하여 비동기 처리 서버로 데이터 전송
+      // redux thunk를 이용하여 비동기 처리 서버로 데이터 전송
       await dispatch(thunkFetchUploadPost(uploadData));
       if (postListData.length === 0) {
         await dispatch(thunkFetchFirstPagePostData(10));
@@ -203,7 +203,7 @@ export default function PostUpload({ isEdit }: IProps) {
 
   useEffect(() => {
     if (isEdit && postId) {
-      dispatch(thuckFetchPostData(postId));
+      dispatch(thunkFetchPostData(postId));
     }
   }, []);
 
