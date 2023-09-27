@@ -107,7 +107,7 @@ export default function PostItemUI({
               </h3>
               {postType === "map"
                 ? data.mapData?.mapx && (
-                    <Kakaomap items={[{ ...data.mapData }]} />
+                    <Kakaomap items={[{ ...data.mapData }]} isTasteMapPage={false}/>
                   )
                 : data.imgURL &&
                   data.imgURL.length > 0 && (

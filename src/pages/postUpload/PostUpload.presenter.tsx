@@ -85,7 +85,7 @@ export default function PostUploadUI({
                   (postData.content === contentValue &&
                     postData.imgURL === preview &&
                     postData.rating === ratingValue &&
-                    postData.mapData === selectedMapData[0])
+                    postData.mapData?.address === selectedMapData[0].address)
                 : !contentValue || !selectedMapData.length || !ratingValue
             }
             onSubmit={onSubmitUpload}
@@ -109,7 +109,7 @@ export default function PostUploadUI({
               <SearchModalBtn onClick={openSearchModal}>
                 맛집 검색
               </SearchModalBtn>
-              <Kakaomap items={[...selectedMapData]} />
+              <Kakaomap items={[...selectedMapData]} isTasteMapPage={false}/>
             </Section>
 
             <Section>
