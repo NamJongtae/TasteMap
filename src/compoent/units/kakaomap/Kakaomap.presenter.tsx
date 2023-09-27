@@ -10,12 +10,12 @@ import {
   Title,
   Wrapper,
   ZoomInBtn,
-  ZoomOutBtn
+  ZoomOutBtn,
 } from "./kakaomap.styles";
 import { ISearchMapData } from "../../../api/apiType";
 
 interface IProps {
-  items: ISearchMapData[];
+  data: ISearchMapData[];
   mapRef: React.RefObject<HTMLDivElement>;
   roadview: boolean;
   setRoadview: React.Dispatch<React.SetStateAction<boolean>>;
@@ -23,20 +23,22 @@ interface IProps {
   zoomOut: () => void;
   rvWrapperRef: React.RefObject<HTMLDivElement>;
   roadViewRef: React.RefObject<HTMLDivElement>;
+  isTasteMapPage: boolean;
 }
 export default function KakaomapUI({
-  items,
+  data,
   mapRef,
   roadview,
   setRoadview,
   zoomIn,
   zoomOut,
   rvWrapperRef,
-  roadViewRef
+  roadViewRef,
+  isTasteMapPage,
 }: IProps) {
   return (
     <>
-      {items.length > 0 ? (
+      {data.length > 0 ? (
         <Wrapper>
           <Title className='a11y-hidden'>맛집 지도</Title>
           <MapContainer ref={mapRef}>
@@ -60,7 +62,9 @@ export default function KakaomapUI({
       ) : (
         <NoKakaoMap>
           <NoKakaoMapText>
-            {"선택된 맛집이 없습니다.\n맛집 검색을 통해 맛집을 선택해주세요."}
+            {isTasteMapPage
+              ? "저장된 맛집이 없습니다.\n맛집 추가을 통해 맛집을 추가해주세요."
+              : "선택된 맛집이 없습니다.\n맛집 검색을 통해 맛집을 선택해주세요."}
           </NoKakaoMapText>
         </NoKakaoMap>
       )}
