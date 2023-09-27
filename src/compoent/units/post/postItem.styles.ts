@@ -156,8 +156,8 @@ export const ActiveMapBtn = styled.button`
         ? 'url("/assets/webp/icon-thumbnailMapBtnActive.webp") no-repeat center / 30px'
         : 'url("/assets/icon-thumbnailMapBtnActive.svg") no-repeat center / 30px'
       : document.body.classList.contains("webp")
-      ? 'url("/assets/webp/icon-thumbnailMapBtn.webp") no-repeat center / 30px'
-      : 'url("/assets/icon-thumbnailMapBtn.svg") no-repeat center / 30px'};
+      ? 'url("/assets/webp/icon-thumbnailMapBtn.webp") no-repeat center / 18px #E9E9E9'
+      : 'url("/assets/icon-thumbnailMapBtn.svg") no-repeat center / 18px #E9E9E9'};
 `;
 
 export const ActiveImageBtn = styled.button`

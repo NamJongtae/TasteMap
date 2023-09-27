@@ -1,11 +1,17 @@
-import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import React, {
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState
+} from "react";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../../store/store";
 import {
-  thuckFetchAddPostLike,
-  thuckFetchAddPostMap,
-  thuckFetchRemovePostLike,
-  thuckFetchRemovePostMap
+  thunkFetchAddPostLike,
+  thunkFetchAddPostMap,
+  thunkFetchRemovePostLike,
+  thunkFetchRemovePostMap
 } from "../../../slice/postSlice";
 import { sweetToast } from "../../../library/sweetAlert/sweetAlert";
 import { IPostData, IProfileData, ISearchMapData } from "../../../api/apiType";
@@ -20,7 +26,11 @@ interface IProps {
   isProfilePage: boolean;
 }
 
-export default function PostItem({ data, myProfileData, isProfilePage }: IProps) {
+export default function PostItem({
+  data,
+  myProfileData,
+  isProfilePage
+}: IProps) {
   const dispatch = useDispatch<AppDispatch>();
   // 좋아요 유무
   const [isLike, setIsLike] = useState(false);
@@ -103,12 +113,12 @@ export default function PostItem({ data, myProfileData, isProfilePage }: IProps)
       // 좋아요 상태가 아닐경우 해당 게시물 좋아요 수를 1 늘림
       setLikeCount((prev) => (prev as number) + 1);
       // 좋아요 추가 api 비동기 처리
-      dispatch(thuckFetchAddPostLike(id));
+      dispatch(thunkFetchAddPostLike(id));
     } else {
       // 좋아요 상태가 아닐경우 해당 게시물 좋아요 수를 1 줄임
       setLikeCount((prev) => (prev as number) - 1);
       // 좋아요 제거 api 비동기 처리
-      dispatch(thuckFetchRemovePostLike(id));
+      dispatch(thunkFetchRemovePostLike(id));
     }
     // 좋아요 유무 변경
     setIsLike(!isLike);
@@ -119,12 +129,19 @@ export default function PostItem({ data, myProfileData, isProfilePage }: IProps)
 
     if (!isStoredMap) {
       // 지도 추가 api 비동기 처리
-      dispatch(thuckFetchAddPostMap(postData));
-      sweetToast("나의 맛집 지도에 맛집이 추가 되었습니다", "success");
+      if (postData.mapData) {
+        if(myProfileData.storedMapList.length > 20) {
+          sweetToast("저장 가능한 맛집 수를 초과하였습니다\n(최대 20개)")
+        }
+        dispatch(thunkFetchAddPostMap(postData.mapData));
+        sweetToast("나의 맛집 지도에 맛집이 추가 되었습니다", "success");
+      }
     } else {
       // 지도 제거 api 비동기 처리
-      dispatch(thuckFetchRemovePostMap(postData));
-      sweetToast("나의 맛집 지도에 맛집이 삭제 되었습니다", "success");
+      if (postData.mapData) {
+        dispatch(thunkFetchRemovePostMap(postData.mapData));
+        sweetToast("나의 맛집 지도에 맛집이 삭제 되었습니다", "success");
+      }
     }
     if (postData.mapData) {
       onChangeStoredMapList(postData.mapData);
