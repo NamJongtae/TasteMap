@@ -20,7 +20,12 @@ import {
 import { v4 as uuid } from "uuid";
 import { db, storage } from "./setting";
 import { getAuth } from "firebase/auth";
-import { IPostData, IPostUploadData, IUserData } from "../apiType";
+import {
+  IPostData,
+  IPostUploadData,
+  ISearchMapData,
+  IUserData
+} from "../apiType";
 import {
   deleteObject,
   getDownloadURL,
@@ -321,19 +326,13 @@ export const fetchRemovePostLike = async (id: string) => {
 /**
  * 맛집 지도 추가
  */
-export const fetchAddPostMap = async (postData: IPostData) => {
+export const fetchAddPostMap = async (mapData: ISearchMapData) => {
   try {
-    const postRef = doc(db, `post/${postData.id}`);
-    const addLMapCountPromise = updateDoc(postRef, {
-      storedMapCount: increment(1)
-    });
-
     if (!auth.currentUser) return;
     const userRef = doc(db, `user/${auth.currentUser.uid}`);
-    const addUserMapListPromise = updateDoc(userRef, {
-      storedMapList: arrayUnion(postData.mapData)
+    await updateDoc(userRef, {
+      storedMapList: arrayUnion(mapData)
     });
-    await Promise.all([addLMapCountPromise, addUserMapListPromise]);
   } catch (error) {
     console.error(error);
     throw error;
@@ -343,19 +342,13 @@ export const fetchAddPostMap = async (postData: IPostData) => {
 /**
  * 맛집 지도 삭제
  */
-export const fetchRemovePostMap = async (postData: IPostData) => {
+export const fetchRemovePostMap = async (mapData: ISearchMapData) => {
   try {
-    const postRef = doc(db, `post/${postData.id}`);
-    const removeMapCountPromise = updateDoc(postRef, {
-      storedMapCount: increment(-1)
-    });
-
     if (!auth.currentUser) return;
     const userRef = doc(db, `user/${auth.currentUser.uid}`);
-    const removeUserMapListPromise = updateDoc(userRef, {
-      storedMapList: arrayRemove(postData.mapData)
+    await updateDoc(userRef, {
+      storedMapList: arrayRemove(mapData)
     });
-    await Promise.all([removeMapCountPromise, removeUserMapListPromise]);
   } catch (error) {
     console.error(error);
     throw error;
