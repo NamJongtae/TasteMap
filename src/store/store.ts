@@ -5,6 +5,7 @@ import { postSlice } from "../slice/postSlice";
 import { profileSlice } from "../slice/profileSlice";
 import { commentSlice } from "../slice/commentSlice";
 import { replySlice } from '../slice/replySlice';
+import { tasteMapSlice } from '../slice/tasteMapSlice';
 export const store = configureStore({
   reducer: {
     user: userSlice.reducer,
@@ -13,6 +14,7 @@ export const store = configureStore({
     profile: profileSlice.reducer,
     comment: commentSlice.reducer,
     reply: replySlice.reducer,
+    tasteMap: tasteMapSlice.reducer,
   },
   middleware: getDefaultMiddleware({
     serializableCheck: false
