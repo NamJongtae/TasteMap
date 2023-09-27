@@ -16,7 +16,7 @@ import {
   UserProfileImg,
   UserWrapper
 } from "./profileInfo.styles";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store/store";
 import {
@@ -39,6 +39,7 @@ export default function ProfileInfo() {
   const userProfileData = useSelector(
     (state: RootState) => state.profile.userProfileData
   );
+  const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const introduecRef = useRef<HTMLParagraphElement>(null);
   const [isFollow, setIsFollow] = useState(false);
@@ -85,6 +86,10 @@ export default function ProfileInfo() {
       introduecRef.current.style.display = "block";
       setIsShowMoreTextBtn(false);
     }
+  };
+
+  const onClickTasteMap = () => {
+    navigate(`/profile/tasteMap`);
   };
 
   useEffect(() => {
@@ -178,7 +183,7 @@ export default function ProfileInfo() {
                 </ProfileFollowBtn>
               )}
 
-              <ProfileBtn>맛집 지도</ProfileBtn>
+              <ProfileBtn onClick={onClickTasteMap}>맛집 지도</ProfileBtn>
             </ButtonWrapper>
           </ProfileInfoWrapper>
         )
