@@ -22,9 +22,7 @@ import { AppDispatch, RootState } from "../../store/store";
 import {
   profileSlice,
   thunkFetchFollow,
-  thunkFetchMyProfile,
   thunkFetchUnfollow,
-  thunkFetchUserProfile
 } from "../../slice/profileSlice";
 import { resolveWebp } from "../../library/webpSupport";
 import Loading from "../../compoent/commons/loading/Loading";
@@ -42,6 +40,7 @@ export default function ProfileInfo() {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const introduecRef = useRef<HTMLParagraphElement>(null);
+
   const [isFollow, setIsFollow] = useState(false);
   const [isShowMoreTextBtn, setIsShowMoreTextBtn] = useState(false);
 
@@ -102,11 +101,6 @@ export default function ProfileInfo() {
       setIsFollow(false);
     }
   }, [userProfileData]);
-
-  useEffect(() => {
-    dispatch(thunkFetchUserProfile(uid || userData.uid || ""));
-    dispatch(thunkFetchMyProfile(userData.uid || ""));
-  }, [uid]);
 
   useLayoutEffect(() => {
     if (introduecRef.current) {
