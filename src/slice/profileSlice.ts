@@ -269,6 +269,7 @@ export const profileSlice = createSlice({
     followPage: {} as QueryDocumentSnapshot<DocumentData>,
     followHasMore: false,
     followPagePerData: 10,
+    isInvalidPage: false,
     isLoading: false,
     error: ""
   },
@@ -295,7 +296,9 @@ export const profileSlice = createSlice({
   extraReducers: (builder) => {
     // 자신의 프로필 데이터 조회
     builder.addCase(thunkFetchMyProfile.fulfilled, (state, action) => {
-      if (action.payload) state.myProfileData = action.payload;
+      if (action.payload) {
+        state.myProfileData = action.payload;
+      }
     });
     builder.addCase(thunkFetchMyProfile.rejected, (state, action) => {
       if (action.payload) state.error = action.payload.message;
@@ -308,7 +311,12 @@ export const profileSlice = createSlice({
 
     // 유저의 프로필 데이터 조회
     builder.addCase(thunkFetchUserProfile.fulfilled, (state, action) => {
-      if (action.payload) state.userProfileData = action.payload;
+      if (action.payload) {
+        state.isInvalidPage = false;
+        state.userProfileData = action.payload;
+      } else {
+        state.isInvalidPage = true;
+      }
     });
     builder.addCase(thunkFetchUserProfile.rejected, (state, action) => {
       if (action.payload) state.error = action.payload.message;
