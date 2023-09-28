@@ -71,7 +71,7 @@ export default function PostUploadUI({
   isEdit,
   invalidPage
 }: IProps) {
-  return invalidPage ? (
+  return isEdit&&invalidPage ? (
     <>
       <Header type='upload' btnText="수정" disabled={true}/>
       <InvalidPage text='유효하지 않은 게시물입니다.' />
