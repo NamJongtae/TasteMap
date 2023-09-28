@@ -14,6 +14,7 @@ import PostEdit from "./pages/postEdit/PostEdit";
 import TopButton from "./compoent/commons/topButton/TopButton";
 import Profile from "./pages/profile/Profile";
 import MyTasteMap from "./pages/profile/myTasteMap/MyTasteMap";
+import NotFound from "./pages/404/NotFound";
 
 function App() {
   const { pathname } = useLocation();
@@ -120,6 +121,7 @@ function App() {
               }
             />
           </Route>
+          <Route path='*' element={<NotFound />} />
         </Routes>
       )}
     </>
