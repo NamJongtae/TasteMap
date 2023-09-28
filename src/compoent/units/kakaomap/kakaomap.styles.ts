@@ -24,10 +24,11 @@ export const NoKakaoMap = styled(MapContainer)`
   text-align: center;
   line-height: 1.5;
   body.no-webp & {
-    background: url("/assets/icon-plate.svg") no-repeat center 60px #f2f2f2;
+    background: url("/assets/webp/icon-searchMap.webp") no-repeat center 70px / 100px
+      #f2f2f2;
   }
   body.webp & {
-    background: url("/assets/webp/icon-plate.webp") no-repeat center 60px
+    background: url("/assets/icon-searchMap.svg") no-repeat center 70px / 100px
       #f2f2f2;
   }
   @media screen and (max-width: 468px) {
@@ -84,7 +85,7 @@ export const ZoomOutBtn = styled(ZoomBtn)`
 `;
 
 export const RoadViewBtn = styled(ZoomBtn)`
- transition: all 0.3s;
+  transition: all 0.3s;
   background: ${(props: { roadview: boolean }) =>
     props.roadview
       ? document.body.classList.contains("webp")
