@@ -14,6 +14,7 @@ export const Wrapper = styled.main`
 export const InvalidImg = styled.img`
   width: 120px;
   height: 120px;
+  margin-bottom: 10px;
 `;
 
 export const Title = styled.h2`
