@@ -187,7 +187,7 @@ export const CommentTextAreaWrapper = styled.div`
 
 export const CommentTextAreaInner = styled.div`
   position: relative;
-  width: 100%;
+  width: calc(100% - 45px);
   height: 100%;
   border-radius: 20px;
   background-color: #f5f5f5;

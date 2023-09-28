@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import {
   CommentWrpper,
   InfinityScrollTarget,
-  RefreshBtn,
+  RefreshBtn
 } from "./comment.styles";
 import {
   commentSlice,
@@ -20,6 +20,7 @@ import {
   thunkFetchPagingReplyData
 } from "../../../../slice/replySlice";
 import ScrollLoading from "../../../commons/loading/ScrollLoading";
+import NoData from "../../../commons/noData/NoData";
 
 interface IProps {
   isReply: boolean;
@@ -158,35 +159,39 @@ export default function CommentList({ isReply }: IProps) {
   return (
     <>
       {(isReply && replyLoading) || (!isReply && commentLoading) ? (
-          <ScrollLoading />
+        <ScrollLoading />
       ) : (
         <>
           <RefreshBtn onClick={handlerRefresh} />
-          <CommentWrpper>
-            {(isReply ? replyListData : commentDataList).map((item) => {
-              return (
-                <CommentItem
-                  key={
-                    isReply
-                      ? (item as IReplyData).replyId
-                      : (item as ICommentData).commentId
-                  }
-                  data={item}
-                  isReply={isReply}
-                />
-              );
-            })}
-            {(!isReply
-              ? commentDataList.length > 0
-              : replyListData.length > 0) && (
-              <InfinityScrollTarget ref={ref}></InfinityScrollTarget>
-            )}
-            {isScrollLoading && (
-              <li>
-                <ScrollLoading />
-              </li>
-            )}
-          </CommentWrpper>
+          {(isReply ? replyListData.length > 0 : commentDataList.length > 0) ? (
+            <CommentWrpper>
+              {(isReply ? replyListData : commentDataList).map((item) => {
+                return (
+                  <CommentItem
+                    key={
+                      isReply
+                        ? (item as IReplyData).replyId
+                        : (item as ICommentData).commentId
+                    }
+                    data={item}
+                    isReply={isReply}
+                  />
+                );
+              })}
+              {(!isReply
+                ? commentDataList.length > 0
+                : replyListData.length > 0) && (
+                <InfinityScrollTarget ref={ref}></InfinityScrollTarget>
+              )}
+              {isScrollLoading && (
+                <li>
+                  <ScrollLoading />
+                </li>
+              )}
+            </CommentWrpper>
+          ) : (
+            <NoData />
+          )}
         </>
       )}
     </>
