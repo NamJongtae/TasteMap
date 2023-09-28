@@ -11,6 +11,7 @@ import {
 } from "../../../slice/profileSlice";
 import { useParams } from "react-router-dom";
 import { useInView } from "react-intersection-observer";
+import NoData from "../../../compoent/commons/noData/NoData";
 
 interface IProps {
   isFollower: boolean;
@@ -72,12 +73,20 @@ export default function FollowList({ isFollower }: IProps) {
   }, [inview]);
 
   return (
-    <FollowUl>
-      {followListData.map((item) => {
-        return <FollowItem key={item.uid} data={item} isFollower={isFollower} />;
-      })}
+    <>
+      {followListData.length > 0 ? (
+        <FollowUl>
+          {followListData.map((item) => {
+            return (
+              <FollowItem key={item.uid} data={item} isFollower={isFollower} />
+            );
+          })}
 
-      <InfinityScrollTarget ref={ref}></InfinityScrollTarget>
-    </FollowUl>
+          <InfinityScrollTarget ref={ref}></InfinityScrollTarget>
+        </FollowUl>
+      ) : (
+        <NoData />
+      )}
+    </>
   );
 }
