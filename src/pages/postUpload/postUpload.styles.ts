@@ -64,6 +64,7 @@ export const TextArea = styled.textarea`
   :focus {
     outline: none;
   }
+  overflow: hidden;
 `;
 
 export const RatingWrapper = styled.div`

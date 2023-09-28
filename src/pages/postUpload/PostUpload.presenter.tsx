@@ -21,6 +21,7 @@ import SearchModal from "./SearchModal";
 import Loading from "../../compoent/commons/loading/Loading";
 import { IPostData, ISearchMapData, IUserData } from "../../api/apiType";
 import UserInfo from "../../compoent/units/post/UserInfo.container";
+import InvalidPage from "../../compoent/commons/invalidPage/InvalidPage";
 
 interface IProps {
   postData: IPostData;
@@ -71,7 +72,10 @@ export default function PostUploadUI({
   invalidPage
 }: IProps) {
   return invalidPage ? (
-    <div>이미 삭제 됬거나 유효하지 않은 게시물 입니다.</div>
+    <>
+      <Header type='upload' btnText="수정" disabled={true}/>
+      <InvalidPage text='유효하지 않은 게시물입니다.' />
+    </>
   ) : (
     <>
       {(isEdit && postData.id) || !isEdit ? (
@@ -109,7 +113,7 @@ export default function PostUploadUI({
               <SearchModalBtn onClick={openSearchModal}>
                 맛집 검색
               </SearchModalBtn>
-              <Kakaomap items={[...selectedMapData]} isTasteMapPage={false}/>
+              <Kakaomap items={[...selectedMapData]} isTasteMapPage={false} />
             </Section>
 
             <Section>

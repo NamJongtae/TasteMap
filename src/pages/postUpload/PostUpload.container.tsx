@@ -202,6 +202,15 @@ export default function PostUpload({ isEdit }: IProps) {
   };
 
   useEffect(() => {
+    if (isEdit) {
+      if (postData.uid && postData.uid !== userData.uid) {
+        sweetToast("다른 사용자의 게시물은 수정할 수 없습니다!", "warning");
+        navigate("/");
+      }
+    }
+  }, [postData]);
+
+  useEffect(() => {
     if (isEdit && postId) {
       dispatch(thunkFetchPostData(postId));
     }
