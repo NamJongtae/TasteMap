@@ -5,6 +5,7 @@ import Comment from "./comment/Comment";
 import ScrollLoading from "../../commons/loading/ScrollLoading";
 import { InfinityScrollTarget, PostWrapper, Wrapper } from "./postList.styles";
 import { IPostData, IProfileData } from "../../../api/apiType";
+import NoData from "../../commons/noData/NoData";
 interface IProps {
   isProfilePage: boolean;
   profilePostListData: IPostData[];
@@ -23,41 +24,49 @@ export default function PostListUI({
   isScrollLoading,
   isLoading,
   isOpenCommentModal,
-  intinityScrollRef
+  intinityScrollRef,
 }: IProps) {
   return (
     <>
-      <Wrapper>
-        <PostWrapper>
-          {(isProfilePage
-            ? profilePostListData.length > 0
-            : postListData.length > 0) &&
-            (isProfilePage ? profilePostListData : postListData).map((item) => {
-              return (
-                !item.isBlock && (
-                  <PostItem
-                    key={item.id}
-                    data={item}
-                    myProfileData={myProfileData}
-                    isProfilePage={isProfilePage}
-                  />
-                )
-              );
-            })}
-        </PostWrapper>
-      </Wrapper>
-      {(isProfilePage
-        ? profilePostListData.length > 0
-        : postListData.length > 0) && (
-        <InfinityScrollTarget ref={intinityScrollRef}></InfinityScrollTarget>
+      {isLoading ? (
+        <Loading />
+      ) : (
+        <>
+          <Wrapper>
+            {(
+              isProfilePage ? profilePostListData.length === 0 : postListData.length===0
+            ) ? (
+              <NoData />
+            ) : (
+              <PostWrapper>
+                {(isProfilePage ? profilePostListData : postListData).map(
+                  (item) => {
+                    return (
+                      !item.isBlock && (
+                        <PostItem
+                          key={item.id}
+                          data={item}
+                          myProfileData={myProfileData}
+                          isProfilePage={isProfilePage}
+                        />
+                      )
+                    );
+                  }
+                )}
+                <InfinityScrollTarget
+                  ref={intinityScrollRef}
+                ></InfinityScrollTarget>
+                {isScrollLoading && (
+                  <li>
+                    <ScrollLoading />
+                  </li>
+                )}
+              </PostWrapper>
+            )}
+          </Wrapper>
+          {isOpenCommentModal && <Comment />}
+        </>
       )}
-      {isScrollLoading && (
-        <li>
-          <ScrollLoading />
-        </li>
-      )}
-      {isLoading && <Loading />}
-      {isOpenCommentModal && <Comment />}
     </>
   );
 }

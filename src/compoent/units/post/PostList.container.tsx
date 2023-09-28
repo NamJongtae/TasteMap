@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../store/store";
 import {
-  postSlice,
   thunkFetchFirstPagePostData,
   thunkFetchPagingPostData
 } from "../../../slice/postSlice";
@@ -83,7 +82,7 @@ export default function PostList({ isProfilePage }: Iprops) {
     }
   }, []);
 
-  // // 다른 유저의 프로필일 시 프로필 개사뮬 데이터 초기화
+  // 다른 유저의 프로필일 시 프로필 개사뮬 데이터 초기화
   useEffect(() => {
     // 프로필 게시물 일때
     if (isProfilePage) {
@@ -143,7 +142,7 @@ export default function PostList({ isProfilePage }: Iprops) {
       };
     } else {
       return () => {
-        dispatch(postSlice.actions.setPostListData([]));
+        dispatch(thunkFetchFirstPagePostData(pagePerData));
       };
     }
   }, []);
