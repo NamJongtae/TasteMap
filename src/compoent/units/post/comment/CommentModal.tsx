@@ -8,13 +8,17 @@ import {
   UserImg
 } from "./comment.styles";
 import { resolveWebp } from "../../../../library/webpSupport";
-import { commentSlice } from "../../../../slice/commentSlice";
+import {
+  commentSlice,
+  thunkUpdateReplyCount
+} from "../../../../slice/commentSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../../store/store";
 import CommentList from "./CommentList";
 import CommentTextArea from "./CommentTextArea";
 import { replySlice } from "../../../../slice/replySlice";
 import { isMobile } from "react-device-detect";
+import { thunkUpdatePostCommentCount } from "../../../../slice/postSlice";
 
 interface IProps {
   modalRef: React.RefObject<HTMLDivElement>;
@@ -30,15 +34,21 @@ export default function CommentModal({ modalRef, isReply }: IProps) {
   );
   const userData = useSelector((state: RootState) => state.user.data);
   const dispatch = useDispatch<AppDispatch>();
+  const postId = useSelector((state: RootState) => state.comment.postId);
+  const commentId = useSelector(
+    (state: RootState) => state.reply.parentCommentId
+  );
   const closeCommentModal = () => {
     if (modalRef.current) {
       if (!isReply) {
+        dispatch(thunkUpdatePostCommentCount(postId));
         modalRef.current.style.animation = "moveDown 1s";
         setTimeout(() => {
           document.body.style.overflow = "auto";
           dispatch(commentSlice.actions.setIsOpenCommentModal(false));
         }, 800);
       } else {
+        dispatch(thunkUpdateReplyCount(commentId));
         modalRef.current.style.animation = "replyInActive 1s";
         setTimeout(() => {
           dispatch(replySlice.actions.setIsOpenReplyModal(false));

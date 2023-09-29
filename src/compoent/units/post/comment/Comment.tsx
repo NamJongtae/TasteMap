@@ -6,17 +6,20 @@ import { AppDispatch, RootState } from "../../../../store/store";
 import { commentSlice } from "../../../../slice/commentSlice";
 import CommentModal from "./CommentModal";
 import { replySlice } from "../../../../slice/replySlice";
+import { thunkUpdatePostCommentCount } from "../../../../slice/postSlice";
 
 export default function Comment() {
   const isOpenReplyModal = useSelector(
     (state: RootState) => state.reply.isOpenReplyModal
   );
   const dispatch = useDispatch<AppDispatch>();
+  const postId = useSelector((state: RootState) => state.comment.postId);
   const commentModalRef = useRef<HTMLDivElement>(null);
   const ReplyModalRef = useRef<HTMLDivElement>(null);
   const closeCommentModal = () => {
     if (commentModalRef.current) {
       if (!isOpenReplyModal) {
+        dispatch(thunkUpdatePostCommentCount(postId));
         commentModalRef.current.style.animation = "moveDown 1s";
         setTimeout(() => {
           document.body.style.overflow = "auto";

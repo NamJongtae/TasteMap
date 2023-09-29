@@ -15,9 +15,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../../store/store";
 import { postSlice } from "../../../../slice/postSlice";
 import {
+  replySlice,
   thunkFetchAddReply,
   thunkFetchEditReply
 } from "../../../../slice/replySlice";
+import { ICommentData, IKnownError, IReplyData } from "../../../../api/apiType";
 
 interface IProps {
   textAreaType: "write" | "edit" | "reply";
@@ -41,6 +43,9 @@ export default function CommentTextArea({
   );
   const commentListData = useSelector(
     (state: RootState) => state.comment.commentListData
+  );
+  const replyListData = useSelector(
+    (state: RootState) => state.reply.replyListData
   );
   const postId = useSelector((state: RootState) => state.comment.postId);
   const userData = useSelector((state: RootState) => state.user.data);
@@ -72,6 +77,56 @@ export default function CommentTextArea({
     }
   };
 
+  const commentError = (type: "noPost" | "noComment") => {
+    if (type === "noPost") {
+      // 댓글 모달창 닫기
+      document.body.style.overflow = "auto";
+      dispatch(commentSlice.actions.setIsOpenCommentModal(false));
+
+      // 해당 게시물 삭제
+      const newData = [...postListData].filter((item) => item.id !== postId);
+      dispatch(postSlice.actions.setPostListData(newData));
+    } else if (type === "noComment") {
+      // 해당 댓글 삭제
+      const newCommentListData = [...commentListData].filter(
+        (item) => item.commentId !== commentId
+      );
+      dispatch(commentSlice.actions.setCommentListData(newCommentListData));
+
+      // 답글 모달창 닫기
+      dispatch(commentSlice.actions.setIsOpenCommentModal(false));
+    }
+  };
+
+  const replyError = (type: "noReply" | "noPost" | "noComment") => {
+    if (type === "noReply") {
+      // 해당 답글 삭제
+      const newReplyData = [...replyListData].filter(
+        (item) => item.replyId !== replyId
+      );
+      dispatch(replySlice.actions.setReplyListData(newReplyData));
+    } else if (type === "noComment") {
+      // 해당 댓글 삭제
+      const newCommentListData = [...commentListData].filter(
+        (item) => item.commentId !== commentId
+      );
+      dispatch(commentSlice.actions.setCommentListData(newCommentListData));
+
+      // 답글 모달창 닫기
+      dispatch(replySlice.actions.setIsOpenReplyModal(false));
+    } else if (type === "noPost") {
+      // 댓글 모달창 닫기
+      document.body.style.overflow = "auto";
+      dispatch(commentSlice.actions.setIsOpenCommentModal(false));
+      // 답글 모달창 닫기
+      dispatch(replySlice.actions.setIsOpenReplyModal(false));
+
+      // 게시물 삭제
+      const newData = [...postListData].filter((item) => item.id !== postId);
+      dispatch(postSlice.actions.setPostListData(newData));
+    }
+  };
+
   const onSubmitComment = () => {
     switch (textAreaType) {
       case "write":
@@ -85,17 +140,24 @@ export default function CommentTextArea({
             createdAt: Timestamp.fromDate(new Date()),
             isBlock: false,
             reportCount: 0,
-            replyCount: 0
+            replyCount: 0,
+            reportUidList: []
           };
-          dispatch(thunkFetchAddComment(commnetData));
-          const newData = [...postListData];
-          const index = newData.findIndex((item) => item.id === postId);
-          newData[index] = {
-            ...newData[index],
-            commentCount: (newData[index].commentCount || 0) + 1
-          };
-          dispatch(postSlice.actions.setPostListData(newData));
-          setCommentValue("");
+          dispatch(thunkFetchAddComment(commnetData)).then((result) => {
+            if (result.payload) {
+              // 추가할 댓글의 게시물이 유효하다면 postData 수정 로직 수행
+              if ((result.payload as ICommentData).commentId) {
+                setCommentValue("");
+              } else if (
+                // 추가할 댓글의 게시물이 유효하지 않다면 댓글 모달창을 닫고 해당 게시물 삭제 처리
+                (result.payload as IKnownError).message.includes(
+                  "게시물이 존재하지 않습니다."
+                )
+              ) {
+                commentError("noPost");
+              }
+            }
+          });
         }
         break;
 
@@ -106,11 +168,39 @@ export default function CommentTextArea({
             if (!commentId) return;
             const commentEditData = {
               commentId,
-              content: commentValue
+              content: commentValue,
+              postId
             };
             (async () => {
-              await dispatch(thunkFetchEditComment(commentEditData));
-              if (closeTextArea) closeTextArea();
+              await dispatch(thunkFetchEditComment(commentEditData)).then(
+                (result) => {
+                  if (result.payload) {
+                    // 수정할 댓글의 게시물이 유효하다면 textarear 닫기
+                    if (
+                      (
+                        result.payload as Pick<
+                          ICommentData,
+                          "content" | "commentId"
+                        >
+                      ).commentId
+                    ) {
+                      if (closeTextArea) closeTextArea();
+                    } else if (
+                      // 수정할 댓글이 존재하지 않는다면 해당 댓글 삭제, 게시물의 댓글 카운터 감소 처리
+                      (result.payload as IKnownError).message ===
+                      "댓글이 존재하지 않습니다."
+                    ) {
+                      commentError("noComment");
+                    } else if (
+                      // 수정할 댓글의 게시물이 유효하지 않다면 댓글 모달창을 닫고 해당 게시물 삭제 처리
+                      (result.payload as IKnownError).message ===
+                      "게시물이 존재하지 않습니다."
+                    ) {
+                      commentError("noPost");
+                    }
+                  }
+                }
+              );
             })();
           } else {
             // 타입 가드
@@ -118,11 +208,43 @@ export default function CommentTextArea({
             const replyEditData = {
               replyId,
               parentCommentId: commentId,
-              content: commentValue
+              content: commentValue,
+              postId: postId
             };
             (async () => {
-              await dispatch(thunkFetchEditReply(replyEditData));
-              if (closeTextArea) closeTextArea();
+              dispatch(thunkFetchEditReply(replyEditData)).then((result) => {
+                if (result.payload) {
+                  // 수정할 답글의 댓글, 게시물이 유효하다면 textarear 닫기
+                  if (
+                    (
+                      result.payload as Pick<
+                        IReplyData,
+                        "content" | "parentCommentId" | "replyId"
+                      >
+                    ).replyId
+                  ) {
+                    if (closeTextArea) closeTextArea();
+                  } else if (
+                    // 수정할 답글이 존재하지 않는다면 해당 답글 삭제 댓글 답글 카운터 감소 처리
+                    (result.payload as IKnownError).message ===
+                    "답글이 존재하지 않습니다."
+                  ) {
+                    replyError("noReply");
+                  } else if (
+                    // 수정할 답글의 댓글이 존재하지 않는다면 답글 모달창울 닫고 해당 댓글 삭제 처리 게시물 댓글 카운터 감소 처리
+                    (result.payload as IKnownError).message ===
+                    "댓글이 존재하지 않습니다."
+                  ) {
+                    replyError("noComment");
+                  } else if (
+                    // 수정할 답글의 게시물이 유효하지 않다면 댓글/답글 모달창을 닫고 해당 게시물 삭제
+                    (result.payload as IKnownError).message ===
+                    "게시물이 존재하지 않습니다."
+                  ) {
+                    replyError("noPost");
+                  }
+                }
+              });
             })();
           }
         }
@@ -141,18 +263,28 @@ export default function CommentTextArea({
             content: commentValue,
             createdAt: Timestamp.fromDate(new Date()),
             isBlock: false,
-            reportCount: 0
+            reportCount: 0,
+            reportUidList: []
           };
-          const newData = [...commentListData];
-          const index = newData.findIndex(
-            (item) => item.commentId === commentId
-          );
-          newData[index] = {
-            ...newData[index],
-            replyCount: (newData[index].replyCount || 0) + 1
-          };
-          dispatch(commentSlice.actions.setCommentListData(newData));
-          dispatch(thunkFetchAddReply(replyData));
+
+          dispatch(thunkFetchAddReply(replyData)).then((result) => {
+            if (result.payload) {
+              // 추가할 답글의 댓글이나 게시물이 유효하다면 commentListData 수정
+              if (
+                // 추가할 답글의 부모 댓글이 존재하지 않는다면 답글 모달창울 닫고 해당 댓글 삭제 처리 게시물 댓글 카운터 감소 처리
+                (result.payload as IKnownError).message ===
+                "댓글이 존재하지 않습니다."
+              ) {
+                replyError("noComment");
+              } else if (
+                // 추가할 답글의 게시물이 존재하지 않다면 댓글 모달창을 닫고 해당 게시물 삭제 처리
+                (result.payload as IKnownError).message ===
+                "게시물이 존재하지 않습니다."
+              ) {
+                replyError("noPost");
+              }
+            }
+          });
           setCommentValue("");
         }
         break;

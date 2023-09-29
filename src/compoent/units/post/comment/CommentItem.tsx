@@ -10,7 +10,7 @@ import {
 import UserInfo from "../UserInfo.container";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../../store/store";
-import { ICommentData, IReplyData } from "../../../../api/apiType";
+import { ICommentData, IKnownError, IReplyData } from "../../../../api/apiType";
 import { setDateFormat } from "../../../../library/setDateFormat";
 import {
   commentSlice,
@@ -28,7 +28,6 @@ import {
   thunkFetchRemoveReply,
   thunkFetchReportReply
 } from "../../../../slice/replySlice";
-import { profileSlice } from "../../../../slice/profileSlice";
 
 interface IProps {
   data: ICommentData | IReplyData;
@@ -40,14 +39,14 @@ export default function CommentItem({ data, isReply }: IProps) {
     (state: RootState) => state.reply.isOpenReplyModal
   );
   const userData = useSelector((state: RootState) => state.user.data);
-  const myProfileData = useSelector(
-    (state: RootState) => state.profile.myProfileData
-  );
   const postListData = useSelector(
     (state: RootState) => state.post.postListData
   );
   const commentListData = useSelector(
     (state: RootState) => state.comment.commentListData
+  );
+  const replyListData = useSelector(
+    (state: RootState) => state.reply.replyListData
   );
   const dispatch = useDispatch<AppDispatch>();
   const [isEdit, setIsEdit] = useState(false);
@@ -66,34 +65,113 @@ export default function CommentItem({ data, isReply }: IProps) {
     }
   };
 
+  const commentError = (type: "noPost" | "noComment") => {
+    if (type === "noPost") {
+      // 댓글 모달창 닫기
+      document.body.style.overflow = "auto";
+      dispatch(commentSlice.actions.setIsOpenCommentModal(false));
+
+      // 해당 게시물 삭제
+      const newData = [...postListData].filter(
+        (item) => item.id !== (data as ICommentData).postId
+      );
+      dispatch(postSlice.actions.setPostListData(newData));
+    } else if (type === "noComment") {
+      // 해당 댓글 삭제
+      const newCommentListData = [...commentListData].filter(
+        (item) => item.commentId !== (data as ICommentData).commentId
+      );
+      dispatch(commentSlice.actions.setCommentListData(newCommentListData));
+
+      // 답글 모달창 닫기
+      dispatch(commentSlice.actions.setIsOpenCommentModal(false));
+    }
+  };
+
+  const replyError = (type: "noReply" | "noPost" | "noComment") => {
+    if (type === "noReply") {
+      // 해당 답글 삭제
+      const newReplyData = [...replyListData].filter(
+        (item) => item.replyId !== (data as IReplyData).replyId
+      );
+      dispatch(replySlice.actions.setReplyListData(newReplyData));
+    } else if (type === "noComment") {
+      // 해당 댓글 삭제
+      const newCommentListData = [...commentListData].filter(
+        (item) => item.commentId !== (data as IReplyData).parentCommentId
+      );
+      dispatch(commentSlice.actions.setCommentListData(newCommentListData));
+
+      // 답글 모달창 닫기
+      dispatch(replySlice.actions.setIsOpenReplyModal(false));
+    } else if (type === "noPost") {
+      // 댓글 모달창 닫기
+      document.body.style.overflow = "auto";
+      dispatch(commentSlice.actions.setIsOpenCommentModal(false));
+      // 답글 모달창 닫기
+      dispatch(replySlice.actions.setIsOpenReplyModal(false));
+
+      // 게시물 삭제
+      const newData = [...postListData].filter(
+        (item) => item.id !== (data as IReplyData).postId
+      );
+      dispatch(postSlice.actions.setPostListData(newData));
+    }
+  };
+
   const onClickRemove = () => {
     if (data) {
       sweetConfirm("정말 삭제하겠습니까?", "삭제", "취소", () => {
         if (!isReply) {
-          dispatch(thunkFetchRemoveComment(data as ICommentData));
-          const newData = [...postListData];
-          const index = newData.findIndex((item) => item.id === data.postId);
-          newData[index] = {
-            ...newData[index],
-            commentCount: (newData[index].commentCount || 0) - 1
-          };
-          dispatch(postSlice.actions.setPostListData(newData));
+          dispatch(thunkFetchRemoveComment(data as ICommentData)).then(
+            (result) => {
+              if (result.payload) {
+                if (
+                  // 삭제할 댓글이 존재하지 않는다면 해당 댓글 삭제, 게시물의 댓글 카운터 감소 처리
+                  (result.payload as IKnownError).message ===
+                  "댓글이 존재하지 않습니다."
+                ) {
+                  commentError("noComment");
+                } else if (
+                  // 삭제할 댓글의 게시물이 유효하지 않다면 댓글 모달창을 닫고 해당 게시물 삭제 처리
+                  (result.payload as IKnownError).message ===
+                  "게시물이 존재하지 않습니다."
+                ) {
+                  commentError("noPost");
+                }
+              }
+            }
+          );
         } else {
           dispatch(
             thunkFetchRemoveReply({
               parentCommentId: (data as IReplyData).parentCommentId,
-              replyId: (data as IReplyData).replyId
+              replyId: (data as IReplyData).replyId,
+              postId: data.postId
             })
-          );
-          const newData = [...commentListData];
-          const index = newData.findIndex(
-            (item) => item.commentId === (data as IReplyData).parentCommentId
-          );
-          newData[index] = {
-            ...newData[index],
-            replyCount: (newData[index].replyCount || 0) - 1
-          };
-          dispatch(commentSlice.actions.setCommentListData(newData));
+          ).then((result) => {
+            if (result.payload) {
+              if (
+                // 삭제할 답글이 존재하지 않는다면 해당 답글 삭제 댓글의 답글 가운터 감소 처리
+                (result.payload as IKnownError).message ===
+                "답글이 존재하지 않습니다."
+              ) {
+                replyError("noReply");
+              } else if (
+                // 삭제할 답글의 댓글이 존재하지 않는다면 답글 모달창울 닫고 해당 댓글 삭제 게시물의 댓글 수 감소 처리
+                (result.payload as IKnownError).message ===
+                "댓글이 존재하지 않습니다."
+              ) {
+                replyError("noComment");
+              } else if (
+                // 삭제할 답글의 게시물이 유효하지 않다면 댓글 모달창 및 답글 모달창을 닫고, 해당 게시물 삭제 처리
+                (result.payload as IKnownError).message ===
+                "게시물이 존재하지 않습니다."
+              ) {
+                replyError("noPost");
+              }
+            }
+          });
         }
       });
     }
@@ -103,7 +181,7 @@ export default function CommentItem({ data, isReply }: IProps) {
     // 댓글 신고
     if (!isReply && "commentId" in data) {
       // 중복 신고 방지
-      if (myProfileData.reportCommentList?.includes(data.commentId)) {
+      if (userData.uid && data.reportUidList.includes(userData.uid)) {
         sweetToast("이미 신고한 댓글 입니다.", "warning");
         return;
       }
@@ -114,31 +192,43 @@ export default function CommentItem({ data, isReply }: IProps) {
             reportCount: data.reportCount,
             postId
           })
-        );
-        // 댓글 신고후 profileData에 reportCommentList 신고한 댓글 id 값 추가
-        const newData = {
-          ...myProfileData,
-          reportCommentList: [
-            ...(myProfileData?.reportCommentList || []),
-            data.commentId
-          ]
-        };
-        dispatch(profileSlice.actions.setMyprofile(newData));
-        // 댓글 신고후 블라인드 처리된 경우 게시물의 댓글 카운터 1 감소시킴
-        if (data.reportCount >= 4) {
-          const newData = [...postListData];
-          const index = newData.findIndex((item) => item.id === postId);
-          newData[index] = {
-            ...newData[index],
-            commentCount: (newData[index].commentCount || 0) - 1
-          };
-          dispatch(postSlice.actions.setPostListData(newData));
-        }
+        ).then((result) => {
+          if (result.payload) {
+            if ("postId" in result.payload) {
+              if (userData.uid) {
+                const newData = [...commentListData];
+                const index = newData.findIndex(
+                  (item) => item.commentId === (data as ICommentData).commentId
+                );
+                newData[index] = {
+                  ...newData[index],
+                  reportUidList: [
+                    ...(newData[index].reportUidList || []),
+                    userData.uid
+                  ]
+                };
+                dispatch(commentSlice.actions.setCommentListData(newData));
+              }
+            } else if (
+              // 신고할 댓글이 존재하지 않는다면 해당 댓글 삭제, 게시물의 댓글 카운터 감소 처리
+              (result.payload as IKnownError).message ===
+              "댓글이 존재하지 않습니다."
+            ) {
+              commentError("noComment");
+            } else if (
+              // 신고할 댓글의 게시물이 유효하지 않다면 댓글 모달창을 닫고 해당 게시물 삭제 처리
+              (result.payload as IKnownError).message ===
+              "게시물이 존재하지 않습니다."
+            ) {
+              commentError("noPost");
+            }
+          }
+        });
       });
     } else if (isReply && "replyId" in data) {
       // 답글 신고
       // 중복 신고 방지
-      if (myProfileData.reportReplyList?.includes(data.replyId)) {
+      if (userData.uid && data.reportUidList.includes(userData.uid)) {
         sweetToast("이미 신고한 답글 입니다.", "warning");
         return;
       }
@@ -147,30 +237,53 @@ export default function CommentItem({ data, isReply }: IProps) {
           thunkFetchReportReply({
             parentCommentId: data.parentCommentId,
             replyId: data.replyId,
-            reportCount: data.reportCount
+            reportCount: data.reportCount,
+            postId: data.postId
           })
-        );
-        // 답글 신고후 블라인드 처리된 경우 댓글의 답글 카운터 1 감소시킴
-        if (data.reportCount >= 4) {
-          const newData = [...commentListData];
-          const index = newData.findIndex(
-            (item) => item.commentId === data.parentCommentId
-          );
-          newData[index] = {
-            ...newData[index],
-            replyCount: (newData[index].replyCount || 0) - 1
-          };
-          dispatch(commentSlice.actions.setCommentListData(newData));
-        }
-        // 답글 신고후 profileData에 reportCommentList 신고한 댓글 id 값 추가
-        const newData = {
-          ...myProfileData,
-          reportReplyList: [
-            ...(myProfileData?.reportReplyList || []),
-            data.replyId
-          ]
-        };
-        dispatch(profileSlice.actions.setMyprofile(newData));
+        ).then((result) => {
+          if (result.payload) {
+            if (
+              (
+                result.payload as Pick<
+                  IReplyData,
+                  "reportCount" | "parentCommentId" | "replyId"
+                >
+              ).replyId
+            ) {
+              if (userData.uid) {
+                const newData = [...replyListData];
+                const index = newData.findIndex(
+                  (item) => item.replyId === (data as IReplyData).replyId
+                );
+                newData[index] = {
+                  ...newData[index],
+                  reportUidList: [
+                    ...(newData[index].reportUidList || []),
+                    userData.uid
+                  ]
+                };
+                dispatch(replySlice.actions.setReplyListData(newData));
+              }
+            } else if (
+              // 신고할 답글이 존재하지 않는다면 해당 답글 삭제 처리 댓글의 답글 카운터 감소 처리
+              (result.payload as IKnownError).message ===
+              "답글이 존재하지 않습니다."
+            ) {
+              replyError("noReply");
+            } else if (
+              // 신고할 답글의 댓글이 존재하지 않는다면 답글 모달창울 닫고 해당 댓글 삭제, 게시물의 댓글 카운터 감소 처리
+              (result.payload as IKnownError).message ===
+              "댓글이 존재하지 않습니다."
+            ) {
+              replyError("noComment");
+            } else if (
+              (result.payload as IKnownError).message ===
+              "게시물이 존재하지 않습니다."
+            ) {
+              replyError("noPost");
+            }
+          }
+        });
       });
     }
   };
@@ -217,7 +330,15 @@ export default function CommentItem({ data, isReply }: IProps) {
               </CommentBtn>
             ) : (
               <>
-                {data.createdAt && <CommentDate dateTime={new Date(data.createdAt?.seconds * 1000).toISOString()}>{formattedDate}</CommentDate>}
+                {data.createdAt && (
+                  <CommentDate
+                    dateTime={new Date(
+                      data.createdAt?.seconds * 1000
+                    ).toISOString()}
+                  >
+                    {formattedDate}
+                  </CommentDate>
+                )}
                 {!isReply && (
                   <CommentBtn onClick={onClickReply}>답글</CommentBtn>
                 )}

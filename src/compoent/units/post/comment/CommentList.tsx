@@ -12,7 +12,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../../store/store";
 import CommentItem from "./CommentItem";
-import { ICommentData, IReplyData } from "../../../../api/apiType";
+import { ICommentData, IKnownError, IReplyData } from "../../../../api/apiType";
 import { useInView } from "react-intersection-observer";
 import {
   replySlice,
@@ -21,12 +21,16 @@ import {
 } from "../../../../slice/replySlice";
 import ScrollLoading from "../../../commons/loading/ScrollLoading";
 import NoData from "../../../commons/noData/NoData";
+import { postSlice } from "../../../../slice/postSlice";
 
 interface IProps {
   isReply: boolean;
 }
 export default function CommentList({ isReply }: IProps) {
   const dispatch = useDispatch<AppDispatch>();
+  const postListData = useSelector(
+    (state: RootState) => state.post.postListData
+  );
   // 댓글 데이터 목록
   const commentDataList = useSelector(
     (state: RootState) => state.comment.commentListData
@@ -94,7 +98,18 @@ export default function CommentList({ isReply }: IProps) {
             postId,
             pagePerData: commentPagePerData
           })
-        );
+        ).then((result) => {
+          if (
+            (result.payload as IKnownError).message ===
+            "게시물이 존재하지 않습니다."
+          ) {
+            dispatch(commentSlice.actions.setIsOpenCommentModal(false));
+            const newData = [...postListData].filter(
+              (item) => item.id !== postId
+            );
+            dispatch(postSlice.actions.setPostListData(newData));
+          }
+        });
       }
       // 이후 페이지에 따라 댓글 목록 추가로 가져오기
       if (
@@ -124,7 +139,18 @@ export default function CommentList({ isReply }: IProps) {
             parentCommentId,
             pagePerData: replyPagePerData
           })
-        );
+        ).then((result) => {
+          if (
+            (result.payload as IKnownError).message ===
+            "댓글이 존재하지 않습니다."
+          ) {
+            dispatch(replySlice.actions.setIsOpenReplyModal(false));
+            const newData = [...commentDataList].filter(
+              (item) => item.commentId !== parentCommentId
+            );
+            dispatch(commentSlice.actions.setCommentListData(newData));
+          }
+        });
       } // 이후 페이지에 따라 답글 목록 추가로 가져오기
       if (replyListData.length > 0 && replyHasMore && inview && replyPage) {
         dispatch(
