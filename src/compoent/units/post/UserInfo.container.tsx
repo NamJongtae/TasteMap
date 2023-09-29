@@ -1,8 +1,14 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ICommentData, IPostData, IProfileData } from "../../../api/apiType";
+import {
+  ICommentData,
+  IKnownError,
+  IPostData,
+  IProfileData
+} from "../../../api/apiType";
 
 import {
+  postSlice,
   thunkFetchRemovePost,
   thunkFetchReportPost
 } from "../../../slice/postSlice";
@@ -28,9 +34,10 @@ export default function UserInfo({
   activeMoreBtn,
   isProfilePage
 }: IProps) {
-  const myProfileData = useSelector(
-    (state: RootState) => state.profile.myProfileData
+  const postListData = useSelector(
+    (state: RootState) => state.post.postListData
   );
+
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const { postId } = useParams();
@@ -80,20 +87,51 @@ export default function UserInfo({
   ) => {
     e.stopPropagation();
     setIsOpenSelect(false);
+    // 유저 프로필 데이터의 reportList에서 현재 게시물의 id값이 있으면 이미 신고한 게시물 이므로
+    // 신고를 하지 못하도록 return
+    if (userData.uid && postData.reportUidList?.includes(userData.uid)) {
+      return sweetToast("이미 신고한 게시물입니다.", "warning");
+    }
     sweetConfirm("정말 신고 하시겠습니까?", "신고", "취소", () => {
-      // 유저 프로필 데이터의 reportList에서 현재 게시물의 id값이 있으면 이미 신고한 게시물 이므로
-      // 신고를 하지 못하도록 return
-      if (postData.id && userData.reportPostList?.includes(postData.id)) {
-        return sweetToast("이미 신고한 게시물입니다.", "warning");
-      }
       // 게시물 신고 api 비동기 처리
-      dispatch(thunkFetchReportPost(postData));
-      // myProfileData reportPostList에 신고한 게시물 id 추가
-      const newData = {
-        ...myProfileData,
-        reportPostList: [...(myProfileData.reportPostList || []), postData.id]
-      };
-      dispatch(profileSlice.actions.setMyprofile(newData));
+      dispatch(thunkFetchReportPost(postData)).then((result) => {
+        // 신고한 게시물이 유효한지 체크
+        if (result.payload) {
+          // 신고한 게시물이 유효하다면 신고 후 postData 수정 로직 수행
+          if ((result.payload as IPostData).id) {
+            if (userData.uid) {
+              const newData = [...postListData];
+              const index = newData.findIndex(
+                (item) => item.id === postData.id
+              );
+              newData[index] = {
+                ...newData[index],
+                reportUidList: [
+                  ...(newData[index].reportUidList || []),
+                  userData.uid
+                ]
+              };
+              dispatch(postSlice.actions.setPostListData(newData));
+            }
+          } else if (
+            // 신고한 게시물이 유효하지 않다면 모달창을 닫고 첫 페이지 게시물 가져오기
+            (result.payload as IKnownError).message ===
+            "게시물이 존재하지 않습니다."
+          ) {
+            if (!isProfilePage) {
+              const newData = [...postListData].filter(
+                (item) => item.id !== postData.id
+              );
+              dispatch(postSlice.actions.setPostListData(newData));
+            } else {
+              const newData = [...profilePostListData].filter(
+                (item) => item.id !== postData.id
+              );
+              dispatch(profileSlice.actions.setProfilePostListData(newData));
+            }
+          }
+        }
+      });
     });
   };
 
