@@ -46,6 +46,20 @@ export const thunkFetchPostData = createAsyncThunk<
   }
 });
 
+// 게시물 댓글 수 업데이트
+export const thunkUpdatePostCommentCount = createAsyncThunk<
+  IPostData | undefined,
+  string,
+  { rejectValue: IKnownError }
+>("postSlice/thunkUpdatePostCommentCount", async (postId: string, thunkAPI) => {
+  try {
+    const res = await fetchPostData(postId);
+    return res;
+  } catch (error: any) {
+    thunkAPI.rejectWithValue(error);
+  }
+});
+
 // 맛집 검색
 export const thunkFetchSearchMap = createAsyncThunk(
   "postSlice/thunkFetchSearchMap",
@@ -325,6 +339,34 @@ export const postSlice = createSlice({
       console.error(state.error);
     });
 
+    // 게시물 댓글 수 업데이트
+    builder.addCase(thunkUpdatePostCommentCount.fulfilled, (state, action) => {
+      if (action.payload) {
+        const newData = [...state.postListData];
+        const index = newData.findIndex(
+          (item) => item.id === (action.payload as IPostData).id
+        );
+        newData[index] = {
+          ...newData[index],
+          commentCount: action.payload.commentCount
+        };
+        // 댓글 수를 비교했을때 변경된 경우에만 업데이트
+        if (
+          state.postListData[index].commentCount !== newData[index].commentCount
+        )
+          state.postListData = newData;
+      }
+    });
+    builder.addCase(thunkUpdatePostCommentCount.rejected, (state, action) => {
+      if (!action.payload) return;
+      state.error = action.payload.message;
+      sweetToast(
+        "알 수 없는 에러가 발생하였습니다.\n잠시 후 다시 시도해 주세요.",
+        "warning"
+      );
+      console.error(state.error);
+    });
+
     // 맛집 지도 검색
     builder.addCase(thunkFetchSearchMap.fulfilled, (state, action) => {
       state.searchMapData = action.payload;
@@ -352,7 +394,7 @@ export const postSlice = createSlice({
     builder.addCase(thunkFetchUploadPost.rejected, (state, action) => {
       if (!action.payload) return;
       state.isLoading = false;
-      state.error = action.payload.toString();
+      state.error = action.payload.message;
       sweetToast(
         "알 수 없는 에러가 발생하였습니다.\n잠시 후 다시 시도해 주세요.",
         "warning"
@@ -469,10 +511,14 @@ export const postSlice = createSlice({
     builder.addCase(thunkFetchReportPost.rejected, (state, action) => {
       if (!action.payload) return;
       state.error = action.payload.message;
-      sweetToast(
-        "알 수 없는 에러가 발생하였습니다.\n잠시 후 다시 시도해 주세요.",
-        "warning"
-      );
+      if (action.payload.message === "게시물이 존재하지 않습니다.") {
+        sweetToast("삭제된 게시물입니다.", "warning");
+      } else {
+        sweetToast(
+          "알 수 없는 에러가 발생하였습니다.\n잠시 후 다시 시도해 주세요.",
+          "warning"
+        );
+      }
       console.error(state.error);
     });
 
