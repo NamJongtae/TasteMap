@@ -186,6 +186,7 @@ export default function PostUpload({ isEdit }: IProps) {
         likeCount: 0,
         commentCount: 0,
         reportCount: 0,
+        reportUidList: [],
         mapData: selectedMapData[0],
         isBlock: false,
         imgName: [],
