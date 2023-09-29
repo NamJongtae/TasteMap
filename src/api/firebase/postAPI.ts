@@ -272,7 +272,22 @@ export const fetchRemovePost = async (postData: IPostData) => {
     const postDoc = doc(db, `post/${postData.id}`);
     const removePost = deleteDoc(postDoc);
 
-    await Promise.all([...removeImgPromise, removeUserPostList, removePost]);
+    // comments collection에서 postId와 일치하는 문서 삭제
+    const commentQuery = query(
+      collection(db, "comments"),
+      where("postId", "==", postData.id)
+    );
+    const commentDocs = await getDocs(commentQuery);
+    const deleteCommentPromises = commentDocs.docs.map((doc) =>
+      deleteDoc(doc.ref)
+    );
+
+    await Promise.all([
+      ...removeImgPromise,
+      removeUserPostList,
+      removePost,
+      ...deleteCommentPromises
+    ]);
   } catch (error) {
     console.error(error);
     throw error;
@@ -360,20 +375,22 @@ export const fetchRemovePostMap = async (mapData: ISearchMapData) => {
  */
 export const fetchReportPost = async (postData: IPostData) => {
   try {
-    const postDoc = doc(db, `post/${postData.id}`);
-    const removePostPromise = updateDoc(postDoc, {
-      reportCount: increment(1),
-      isBlock: postData.reportCount && postData.reportCount >= 4 ? true : false
-    });
     if (!auth.currentUser) return;
-    const userDoc = doc(db, `user/${auth.currentUser.uid}`);
-    const addUserReportListPromise = updateDoc(userDoc, {
-      reportPostList: arrayUnion(postData.id)
-    });
+    const postDoc = doc(db, `post/${postData.id}`);
 
-    await Promise.all([removePostPromise, addUserReportListPromise]);
+    const postDocSnapshot = await getDoc(postDoc);
+    if(!postDocSnapshot.exists()){
+      throw new Error("게시물이 존재하지 않습니다.");
+    }
+    await updateDoc(postDoc, {
+      reportCount: increment(1),
+      isBlock: postData.reportCount && postData.reportCount >= 4 ? true : false,
+      reportUidList: arrayUnion(auth.currentUser.uid)
+    });
   } catch (error) {
     console.error(error);
     throw error;
   }
 };
+
+
