@@ -9,7 +9,11 @@ import {
   fetchReportReply
 } from "../api/firebase/replyAPI";
 import { sweetToast } from "../library/sweetAlert/sweetAlert";
-import { DocumentData, QueryDocumentSnapshot, QuerySnapshot } from 'firebase/firestore';
+import {
+  DocumentData,
+  QueryDocumentSnapshot,
+  QuerySnapshot
+} from "firebase/firestore";
 
 // 답글 첫 페이지 조회
 export const thunkFetchFirstPageReplyData = createAsyncThunk<
@@ -27,12 +31,12 @@ export const thunkFetchFirstPageReplyData = createAsyncThunk<
       const res = await fetchFirstPageReplyData(parentCommentId, pagePerData);
       return res;
     } catch (error: any) {
-      thunkAPI.rejectWithValue(error);
+      return thunkAPI.rejectWithValue(error);
     }
   }
 );
 
-// 답글 페이징 
+// 답글 페이징
 export const thunkFetchPagingReplyData = createAsyncThunk<
   | {
       replyDoc: QuerySnapshot<DocumentData, DocumentData>;
@@ -49,10 +53,14 @@ export const thunkFetchPagingReplyData = createAsyncThunk<
   "replySlice/thunkFetchPagingReplyData",
   async ({ page, parentCommentId, pagePerData }, thunkAPI) => {
     try {
-      const res = await fetchPagingReplyData(page, parentCommentId, pagePerData);
+      const res = await fetchPagingReplyData(
+        page,
+        parentCommentId,
+        pagePerData
+      );
       return res;
     } catch (error: any) {
-      thunkAPI.rejectWithValue(error);
+      return thunkAPI.rejectWithValue(error);
     }
   }
 );
@@ -69,7 +77,7 @@ export const thunkFetchAddReply = createAsyncThunk<
     await fetchAddReply(replyData);
     return replyData;
   } catch (error: any) {
-    thunkAPI.rejectWithValue(error);
+    return thunkAPI.rejectWithValue(error);
   }
 });
 
@@ -78,14 +86,14 @@ export const thunkFetchAddReply = createAsyncThunk<
  */
 export const thunkFetchEditReply = createAsyncThunk<
   Pick<IReplyData, "parentCommentId" | "replyId" | "content"> | undefined,
-  Pick<IReplyData, "parentCommentId" | "replyId" | "content">,
+  Pick<IReplyData, "parentCommentId" | "replyId" | "content" | "postId">,
   { rejectValue: IKnownError }
 >("replySlice/thunkFetchEditReply", async (replyEditData, thunkAPI) => {
   try {
     await fetchEditReply(replyEditData);
     return replyEditData;
   } catch (error: any) {
-    thunkAPI.rejectWithValue(error);
+    return thunkAPI.rejectWithValue(error);
   }
 });
 
@@ -94,14 +102,14 @@ export const thunkFetchEditReply = createAsyncThunk<
  */
 export const thunkFetchRemoveReply = createAsyncThunk<
   Pick<IReplyData, "parentCommentId" | "replyId"> | undefined,
-  Pick<IReplyData, "parentCommentId" | "replyId">,
+  Pick<IReplyData, "parentCommentId" | "replyId" | "postId">,
   { rejectValue: IKnownError }
 >("replySlice/thunkFetchRemoveReply", async (replyRemoveData, thunkAPI) => {
   try {
     await fetchRemoveReply(replyRemoveData);
     return replyRemoveData;
   } catch (error: any) {
-    thunkAPI.rejectWithValue(error);
+    return thunkAPI.rejectWithValue(error);
   }
 });
 
@@ -110,14 +118,14 @@ export const thunkFetchRemoveReply = createAsyncThunk<
  */
 export const thunkFetchReportReply = createAsyncThunk<
   Pick<IReplyData, "replyId" | "parentCommentId" | "reportCount"> | undefined,
-  Pick<IReplyData, "replyId" | "parentCommentId" | "reportCount">,
+  Pick<IReplyData, "replyId" | "parentCommentId" | "reportCount" | "postId">,
   { rejectValue: IKnownError }
 >("replySlice/thunkFetchReportReply", async (reportReplyData, thunkAPI) => {
   try {
     await fetchReportReply(reportReplyData);
     return reportReplyData;
   } catch (error: any) {
-    thunkAPI.rejectWithValue(error);
+    return thunkAPI.rejectWithValue(error);
   }
 });
 
@@ -149,31 +157,30 @@ export const replySlice = createSlice({
     builder.addCase(thunkFetchFirstPageReplyData.pending, (state) => {
       state.isLoading = true;
     });
-    builder.addCase(
-      thunkFetchFirstPageReplyData.fulfilled,
-      (state, action) => {
-        if (action.payload) {
-          state.replyListData = action.payload.data as IReplyData[];
-          state.hasMore =
-            (action.payload?.data as IReplyData[]).length %
-              state.pagePerData ===
-            0;
-          state.page =
-            action.payload.replyDoc.docs[
-              action.payload.replyDoc.docs.length - 1
-            ];
-        }
-        state.isLoading = false;
+    builder.addCase(thunkFetchFirstPageReplyData.fulfilled, (state, action) => {
+      if (action.payload) {
+        state.replyListData = action.payload.data as IReplyData[];
+        state.hasMore =
+          (action.payload?.data as IReplyData[]).length % state.pagePerData ===
+          0;
+        state.page =
+          action.payload.replyDoc.docs[action.payload.replyDoc.docs.length - 1];
       }
-    );
-    builder.addCase(
-      thunkFetchFirstPageReplyData.rejected,
-      (state, action) => {
-        if (action.payload) state.error = action.payload?.message;
-        console.error(state.error);
-        state.isLoading = false;
+      state.isLoading = false;
+    });
+    builder.addCase(thunkFetchFirstPageReplyData.rejected, (state, action) => {
+      if (action.payload) state.error = action.payload?.message;
+      if (action.payload?.message === "댓글이 존재하지 않습니다.") {
+        sweetToast("삭제된 댓글입니다.", "warning");
+      } else {
+        sweetToast(
+          "알 수 없는 에러가 발생하였습니다.\n잠시 후 다시 시도해 주세요.",
+          "warning"
+        );
       }
-    );
+      state.isLoading = false;
+      console.error(state.error);
+    });
 
     // 답글 페이징
     builder.addCase(thunkFetchPagingReplyData.fulfilled, (state, action) => {
@@ -186,6 +193,14 @@ export const replySlice = createSlice({
         action.payload.replyDoc.docs[action.payload.replyDoc.docs.length - 1];
       state.hasMore = action.payload.data.length % state.pagePerData === 0;
     });
+    builder.addCase(thunkFetchPagingReplyData.rejected, (state, action) => {
+      if (action.payload) state.error = action.payload?.message;
+      console.error(state.error);
+      sweetToast(
+        "알 수 없는 에러가 발생하였습니다.\n잠시 후 다시 시도해 주세요.",
+        "warning"
+      );
+    });
 
     // 답글 추가
     builder.addCase(thunkFetchAddReply.fulfilled, (state, action) => {
@@ -194,10 +209,18 @@ export const replySlice = createSlice({
       sweetToast("작성이 완료되었습니다.", "success");
     });
     builder.addCase(thunkFetchAddReply.rejected, (state, action) => {
-      if (action.payload) {
-        state.error = action.payload.message;
-        console.error(state.error);
+      if (action.payload) state.error = action.payload?.message;
+      if (action.payload?.message === "댓글이 존재하지 않습니다") {
+        sweetToast("삭제된 댓글입니다.", "warning");
+      } else if (action.payload?.message === "게시물이 존재하지 않습니다") {
+        sweetToast("삭제된 게시물입니다.", "warning");
+      } else {
+        sweetToast(
+          "알 수 없는 에러가 발생하였습니다.\n잠시 후 다시 시도해 주세요.",
+          "warning"
+        );
       }
+      console.error(state.error);
     });
 
     // 답글 수정
@@ -216,10 +239,20 @@ export const replySlice = createSlice({
       }
     });
     builder.addCase(thunkFetchEditReply.rejected, (state, action) => {
-      if (action.payload) {
-        state.error = action.payload.message;
-        console.error(state.error);
+      if (action.payload) state.error = action.payload?.message;
+      if (action.payload?.message === "댓글이 존재하지 않습니다") {
+        sweetToast("삭제된 댓글입니다.", "warning");
+      } else if (action.payload?.message === "게시물이 존재하지 않습니다") {
+        sweetToast("삭제된 게시물입니다.", "warning");
+      } else if (action.payload?.message === "답글이 존재하지 않습니다.") {
+        sweetToast("삭제된 답글입니다.", "warning");
+      } else {
+        sweetToast(
+          "알 수 없는 에러가 발생하였습니다.\n잠시 후 다시 시도해 주세요.",
+          "warning"
+        );
       }
+      console.error(state.error);
     });
 
     // 답글 삭제
@@ -233,10 +266,20 @@ export const replySlice = createSlice({
       }
     });
     builder.addCase(thunkFetchRemoveReply.rejected, (state, action) => {
-      if (action.payload) {
-        state.error = action.payload.message;
-        console.error(state.error);
+      if (action.payload) state.error = action.payload?.message;
+      if (action.payload?.message === "댓글이 존재하지 않습니다") {
+        sweetToast("삭제된 댓글입니다.", "warning");
+      } else if (action.payload?.message === "답글이 존재하지 않습니다.") {
+        sweetToast("삭제된 답글입니다.", "warning");
+      } else if (action.payload?.message === "게시물이 존재하지 않습니다") {
+        sweetToast("삭제된 게시물입니다.", "warning");
+      } else {
+        sweetToast(
+          "알 수 없는 에러가 발생하였습니다.\n잠시 후 다시 시도해 주세요.",
+          "warning"
+        );
       }
+      console.error(state.error);
     });
 
     // 답글 신고
@@ -256,10 +299,20 @@ export const replySlice = createSlice({
       }
     });
     builder.addCase(thunkFetchReportReply.rejected, (state, action) => {
-      if (action.payload) {
-        state.error = action.payload.message;
-        console.error(state.error);
+      if (action.payload) state.error = action.payload?.message;
+      if (action.payload?.message === "댓글이 존재하지 않습니다") {
+        sweetToast("삭제된 댓글입니다.", "warning");
+      } else if (action.payload?.message === "답글이 존재하지 않습니다.") {
+        sweetToast("삭제된 답글입니다.", "warning");
+      } else if (action.payload?.message === "게시물이 존재하지 않습니다") {
+        sweetToast("삭제된 게시물입니다.", "warning");
+      } else {
+        sweetToast(
+          "알 수 없는 에러가 발생하였습니다.\n잠시 후 다시 시도해 주세요.",
+          "warning"
+        );
       }
+      console.error(state.error);
     });
   }
 });
