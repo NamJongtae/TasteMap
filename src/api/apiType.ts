@@ -18,9 +18,6 @@ export interface IProfileData {
   likeList?: string[];
   postList?: string[];
   storedMapList?: ISearchMapData[];
-  reportCommentList?: string[];
-  reportReplyList?: string[];
-  reportPostList?: string[];
   followerList?: string[];
   followingList?: string[];
 }
@@ -39,6 +36,7 @@ export interface IPostUploadData {
   likeCount: number;
   commentCount: number;
   reportCount: number;
+  reportUidList: string[];
   mapData: ISearchMapData;
   isBlock: boolean;
   imgName: string[];
@@ -58,6 +56,7 @@ export interface IPostData {
   likeCount?: number;
   commentCount?: number;
   reportCount?: number;
+  reportUidList?: string[];
   mapData?: ISearchMapData;
   isBlock?: boolean;
   rating?: number;
@@ -85,6 +84,7 @@ export interface ICommentData {
   replies?: IReplyData[];
   replyCount: number;
   reportCount: number;
+  reportUidList: string[];
 }
 
 export interface IReplyData {
@@ -98,6 +98,7 @@ export interface IReplyData {
   displayName?: string;
   photoURL?: string;
   reportCount: number;
+  reportUidList: string[];
 }
 
 export interface IFollowData {
