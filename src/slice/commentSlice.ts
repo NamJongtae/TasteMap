@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { ICommentData, IKnownError } from "../api/apiType";
 import {
   fetchAddComment,
+  fetchCommentData,
   fetchEditComment,
   fetchFirstPageCommentData,
   fetchPagingCommentData,
@@ -14,6 +15,22 @@ import {
   QueryDocumentSnapshot,
   QuerySnapshot
 } from "firebase/firestore";
+
+/**
+ * 댓글 답글 수 업데이트
+ */
+export const thunkUpdateReplyCount = createAsyncThunk<
+  ICommentData | undefined,
+  string,
+  { rejectValue: IKnownError }
+>("commentSlice/thunkUpdateReplyCount", async (commentId: string, thunkAPI) => {
+  try {
+    const res = await fetchCommentData(commentId);
+    return res;
+  } catch (error: any) {
+    thunkAPI.rejectWithValue(error);
+  }
+});
 
 // 댓글 첫 페이지 조회
 export const thunkFetchFirstPageCommentData = createAsyncThunk<
@@ -31,12 +48,12 @@ export const thunkFetchFirstPageCommentData = createAsyncThunk<
       const res = await fetchFirstPageCommentData(postId, pagePerData);
       return res;
     } catch (error: any) {
-      thunkAPI.rejectWithValue(error);
+      return thunkAPI.rejectWithValue(error);
     }
   }
 );
 
-// 댓글 페이징 
+// 댓글 페이징
 export const thunkFetchPagingCommentData = createAsyncThunk<
   | {
       commentDoc: QuerySnapshot<DocumentData, DocumentData>;
@@ -56,7 +73,7 @@ export const thunkFetchPagingCommentData = createAsyncThunk<
       const res = await fetchPagingCommentData(page, postId, pagePerData);
       return res;
     } catch (error: any) {
-      thunkAPI.rejectWithValue(error);
+      return thunkAPI.rejectWithValue(error);
     }
   }
 );
@@ -70,20 +87,20 @@ export const thunkFetchAddComment = createAsyncThunk<
     await fetchAddComment(commentData);
     return commentData;
   } catch (error: any) {
-    thunkAPI.rejectWithValue(error);
+    return thunkAPI.rejectWithValue(error);
   }
 });
 
 export const thunkFetchEditComment = createAsyncThunk<
   Pick<ICommentData, "commentId" | "content"> | undefined,
-  Pick<ICommentData, "commentId" | "content">,
+  Pick<ICommentData, "commentId" | "content" | "postId">,
   { rejectValue: IKnownError }
 >("commentSlice/thunkFetchEditComment", async (commentEditData, thunkAPI) => {
   try {
     await fetchEditComment(commentEditData);
     return commentEditData;
   } catch (error: any) {
-    thunkAPI.rejectWithValue(error);
+    return thunkAPI.rejectWithValue(error);
   }
 });
 
@@ -96,7 +113,7 @@ export const thunkFetchRemoveComment = createAsyncThunk<
     await fetchRemoveComment(commentData);
     return commentData.commentId;
   } catch (error: any) {
-    thunkAPI.rejectWithValue(error);
+    return thunkAPI.rejectWithValue(error);
   }
 });
 
@@ -112,7 +129,7 @@ export const thunkFetchReportComment = createAsyncThunk<
       await fetchReportComment(reportCommentData);
       return reportCommentData;
     } catch (error: any) {
-      thunkAPI.rejectWithValue(error);
+      return thunkAPI.rejectWithValue(error);
     }
   }
 );
@@ -141,6 +158,39 @@ export const commentSlice = createSlice({
     }
   },
   extraReducers: (builder) => {
+    // 댓글 답글 수 업데이트
+    builder.addCase(thunkUpdateReplyCount.fulfilled, (state, action) => {
+      if (action.payload) {
+        const newData = [...state.commentListData];
+        const index = newData.findIndex(
+          (item) => item.commentId === action.payload?.commentId
+        );
+        newData[index] = {
+          ...newData[index],
+          replyCount: action.payload?.replyCount
+        };
+
+        // 답글 카운터를 비교했을때 변경된 경우에만 업데이트
+        if (
+          state.commentListData[index] &&
+          state.commentListData[index].replyCount !== newData[index].replyCount
+        ) {
+          state.commentListData = newData;
+        }
+      }
+    });
+    builder.addCase(
+      thunkUpdateReplyCount.rejected,
+      (state, action) => {
+        if (action.payload) state.error = action.payload?.message;
+        console.error(state.error);
+        sweetToast(
+          "알 수 없는 에러가 발생하였습니다.\n잠시 후 다시 시도해 주세요.",
+          "warning"
+        );
+      }
+    );
+
     // 댓글 첫 페이지 조회
     builder.addCase(thunkFetchFirstPageCommentData.pending, (state) => {
       state.isLoading = true;
@@ -166,7 +216,16 @@ export const commentSlice = createSlice({
       thunkFetchFirstPageCommentData.rejected,
       (state, action) => {
         if (action.payload) state.error = action.payload?.message;
+        if(action.payload?.message==="게시물이 존재하지 않습니다."){
+          sweetToast("삭제된 게시물 입니다.", "warning");
+        } else {
+          sweetToast(
+            "알 수 없는 에러가 발생하였습니다.\n잠시 후 다시 시도해 주세요.",
+            "warning"
+          );
+        }
         console.error(state.error);
+        
         state.isLoading = false;
       }
     );
@@ -179,11 +238,17 @@ export const commentSlice = createSlice({
         ...(action.payload?.data as ICommentData[])
       ];
       state.page =
-        action.payload.commentDoc.docs[action.payload.commentDoc.docs.length - 1];
+        action.payload.commentDoc.docs[
+          action.payload.commentDoc.docs.length - 1
+        ];
       state.hasMore = action.payload.data.length % state.pagePerData === 0;
     });
     builder.addCase(thunkFetchPagingCommentData.rejected, (state, action) => {
       if (action.payload) state.error = action.payload?.message;
+      sweetToast(
+        "알 수 없는 에러가 발생하였습니다.\n잠시 후 다시 시도해 주세요.",
+        "warning"
+      );
       console.error(state.error);
     });
 
@@ -194,7 +259,18 @@ export const commentSlice = createSlice({
       sweetToast("작성이 완료되었습니다.", "success");
     });
     builder.addCase(thunkFetchAddComment.rejected, (state, action) => {
-      if (action.payload) state.error = action.payload?.message;
+      if (!action.payload) return;
+      state.error = action.payload.message;
+      if (action.payload?.message === "댓글이 존재하지 않습니다.") {
+        sweetToast("삭제된 댓글입니다.", "warning");
+      } else if (action.payload?.message === "게시물이 존재하지 않습니다.") {
+        sweetToast("삭제된 게시물입니다.", "warning");
+      } else {
+        sweetToast(
+          "알 수 없는 에러가 발생하였습니다.\n잠시 후 다시 시도해 주세요.",
+          "warning"
+        );
+      }
       console.error(state.error);
     });
 
@@ -213,6 +289,21 @@ export const commentSlice = createSlice({
         sweetToast("수정이 완료되었습니다.", "success");
       }
     });
+    builder.addCase(thunkFetchEditComment.rejected, (state, action) => {
+      if (!action.payload) return;
+      state.error = action.payload.message;
+      if (action.payload?.message === "댓글이 존재하지 않습니다.") {
+        sweetToast("삭제된 댓글입니다.", "warning");
+      } else if (action.payload?.message === "게시물이 존재하지 않습니다.") {
+        sweetToast("삭제된 게시물입니다.", "warning");
+      } else {
+        sweetToast(
+          "알 수 없는 에러가 발생하였습니다.\n잠시 후 다시 시도해 주세요.",
+          "warning"
+        );
+      }
+      console.error(state.error);
+    });
 
     // 댓글 삭제
     builder.addCase(thunkFetchRemoveComment.fulfilled, (state, action) => {
@@ -226,10 +317,19 @@ export const commentSlice = createSlice({
     });
 
     builder.addCase(thunkFetchRemoveComment.rejected, (state, action) => {
-      if (action.payload) {
-        state.error = action.payload.message;
-        console.error(state.error);
+      if (!action.payload) return;
+      state.error = action.payload.message;
+      if (action.payload?.message === "댓글이 존재하지 않습니다.") {
+        sweetToast("삭제된 댓글입니다.", "warning");
+      } else if (action.payload?.message === "게시물이 존재하지 않습니다.") {
+        sweetToast("삭제된 게시물입니다.", "warning");
+      } else {
+        sweetToast(
+          "알 수 없는 에러가 발생하였습니다.\n잠시 후 다시 시도해 주세요.",
+          "warning"
+        );
       }
+      console.error(state.error);
     });
 
     // 댓글 신고
@@ -249,10 +349,19 @@ export const commentSlice = createSlice({
       }
     });
     builder.addCase(thunkFetchReportComment.rejected, (state, action) => {
-      if (action.payload) {
-        state.error = action.payload.message;
-        console.error(state.error);
+      if (!action.payload) return;
+      state.error = action.payload.message;
+      if (action.payload?.message === "댓글이 존재하지 않습니다.") {
+        sweetToast("삭제된 댓글입니다.", "warning");
+      } else if (action.payload?.message === "게시물이 존재하지 않습니다.") {
+        sweetToast("삭제된 게시물입니다.", "warning");
+      } else {
+        sweetToast(
+          "알 수 없는 에러가 발생하였습니다.\n잠시 후 다시 시도해 주세요.",
+          "warning"
+        );
       }
+      console.error(state.error);
     });
   }
 });
