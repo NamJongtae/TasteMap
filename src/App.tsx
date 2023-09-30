@@ -15,6 +15,7 @@ import TopButton from "./compoent/commons/topButton/TopButton";
 import Profile from "./pages/profile/Profile";
 import MyTasteMap from "./pages/profile/myTasteMap/MyTasteMap";
 import NotFound from "./pages/404/NotFound";
+import Search from './compoent/units/search/Search';
 
 function App() {
   const { pathname } = useLocation();
@@ -121,6 +122,7 @@ function App() {
               }
             />
           </Route>
+          <Route path='/search' element={<Search/>}/>
           <Route path='*' element={<NotFound />} />
         </Routes>
       )}
