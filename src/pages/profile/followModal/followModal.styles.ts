@@ -80,6 +80,9 @@ export const FollowModalWrapper = styled.article`
 `;
 
 export const FollowUl = styled.ul`
+  width: 100%;
+  height: 100%;
+  overflow-y: scroll;
   padding: 20px;
 `;
 
@@ -120,5 +123,5 @@ export const FollowBtn = styled.button`
 
 export const InfinityScrollTarget = styled.li`
   position: relative;
-  bottom: 20px;
+  bottom: 21px;
 `;

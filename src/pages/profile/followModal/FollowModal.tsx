@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import {
   CloseBtn,
   Dim,
@@ -31,6 +31,13 @@ export default function FollowModal({ isFollower }: IProps) {
       }
     }, 700);
   };
+
+  useEffect(()=>{
+    return()=>{
+      dispatch(profileSlice.actions.setFollowListData([]));
+    }
+  },[])
+
   return (
     <Wrapper>
       <Dim onClick={closeModal}></Dim>

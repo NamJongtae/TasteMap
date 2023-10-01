@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useLayoutEffect, useState } from "react";
 import {
   FollowBtn,
   FollowLi,
@@ -14,14 +14,19 @@ import {
   thunkFetchFollow,
   thunkFetchUnfollow
 } from "../../../slice/profileSlice";
+import { useParams } from "react-router-dom";
 
 interface IProps {
   data: IFollowData;
   isFollower: boolean;
 }
 export default function FollowItem({ data, isFollower }: IProps) {
+  const { uid } = useParams();
   const myProfileData = useSelector(
     (state: RootState) => state.profile.myProfileData
+  );
+  const userProfileData = useSelector(
+    (state: RootState) => state.profile.userProfileData
   );
   const dispatch = useDispatch<AppDispatch>();
   const [isFollow, setIsFollow] = useState(false);
@@ -46,16 +51,20 @@ export default function FollowItem({ data, isFollower }: IProps) {
 
   const onClickProfileLink = () => {
     document.body.style.overflow = "auto";
-    if(isFollower){
+    if (isFollower) {
       dispatch(profileSlice.actions.setIsOpenFollowerModal(false));
     } else {
       dispatch(profileSlice.actions.setIsOpenFollowingModal(false));
     }
-    
   };
 
-  useEffect(() => {
-    if (data.uid && myProfileData.followerList?.includes(data.uid)) {
+  useLayoutEffect(() => {
+    if (
+      data.uid &&
+      ((uid && userProfileData) || myProfileData).followerList?.includes(
+        data.uid
+      )
+    ) {
       setIsFollow(true);
     } else {
       setIsFollow(false);
@@ -68,7 +77,7 @@ export default function FollowItem({ data, isFollower }: IProps) {
         <UserImg src={data.photoURL} alt='유저 프로필 이미지' />
         <UserName>{data.displayName}</UserName>
       </UserLink>
-      {myProfileData.uid !== data.uid && (
+      {((uid && userProfileData) || myProfileData).uid !== data.uid && (
         <FollowBtn
           isFollow={isFollow}
           onClick={isFollow ? onClickUnFollow : onClickFollow}
