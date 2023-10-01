@@ -133,12 +133,36 @@ export default function Header({ type, onSubmit, btnText, disabled }: IParms) {
             <RightSideWrapper>
               {uid ? (
                 <>
-                  <SearchLink aria-label='검색' to={"/search"} />
                   <ProfileLink aria-label='프로필' to={"/profile"} />
                 </>
               ) : (
                 <LogoutBtn aria-label='로그아웃' onClick={onClickLogout} />
               )}
+            </RightSideWrapper>
+          </>
+        );
+
+      case "tasteMap":
+        return (
+          <>
+            <LeftSideWrapper>
+              <BackBtn
+                type='button'
+                aria-label='뒤로가기'
+                onClick={() => navigate(-1)}
+              />
+              <LogoLink to={"/"}>
+                <Title>
+                  <span className='a11y-hidden'>TasteMap</span>
+                  <LogoImg
+                    src={resolveWebp("/assets/webp/icon-logo.webp", "svg")}
+                    alt=''
+                  />
+                </Title>
+              </LogoLink>
+            </LeftSideWrapper>
+            <RightSideWrapper>
+              <ProfileLink aria-label='프로필' to={"/profile"} />
             </RightSideWrapper>
           </>
         );

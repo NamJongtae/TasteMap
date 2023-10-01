@@ -96,7 +96,7 @@ export default function MyTasteMap() {
         <Loading />
       ) : (
         <>
-          <Header type='home' />
+          <Header type='tasteMap' />
           {myProfileData.storedMapList.length > 0 && (
             <ContetnTypeBtnWrapper>
               <MapBtn onClick={onClickMapType} contentType={contentType}>
