@@ -313,7 +313,7 @@ export const fetchPagingFollowingData = async (
   pagePerData: number
 ) => {
   const userDoc = doc(db, `user/${uid}`);
-  const followingRef = collection(userDoc, "follower");
+  const followingRef = collection(userDoc, "following");
   const q = query(followingRef, startAfter(page), limit(pagePerData));
   const followingDocs = await getDocs(q);
   const data = followingDocs.docs.map((el) => el.data());
