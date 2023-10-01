@@ -5,7 +5,7 @@ import {
   IPostUploadData,
   ISearchMapData
 } from "../api/apiType";
-import { fetchSearchData } from "../api/naverSearchAPI/naverSearchAPI";
+import { fetchSearchMapData } from "../api/naverSearchAPI/naverSearchAPI";
 import {
   fetchAddPostLike,
   fetchAddPostMap,
@@ -65,7 +65,7 @@ export const thunkFetchSearchMap = createAsyncThunk(
   "postSlice/thunkFetchSearchMap",
   async (keyword: string, thunkAPI) => {
     try {
-      const res = await fetchSearchData(keyword);
+      const res = await fetchSearchMapData(keyword);
       return res;
     } catch (error: any) {
       return thunkAPI.rejectWithValue(error);
