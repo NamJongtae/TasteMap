@@ -62,34 +62,20 @@ export default function PostList({ isProfilePage }: Iprops) {
   const [isScrollLoading, setIsScrollLoading] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
   const isLoading = useSelector((state: RootState) => state.post.isLoading);
-
+  const profilePostIsLoading = useSelector((state: RootState) => state.profile.profilePostIsLoading);
   // 무한스크롤 처리 inview의 상태가 변경될 때 마다 게시물 목록을 추가로 받아옴
   useEffect(() => {
     if (!isProfilePage) {
-      // 첫 게시물 가져오기, postListData 데이터가 존재하지 않을 시
-      if (postListData.length === 0) {
-        dispatch(thunkFetchFirstPagePostData(pagePerData));
-      }
-    } else {
-      if (profilePostListData.length === 0) {
-        dispatch(
-          thunkFetchProfileFirstPageData({
-            uid: uid ? uid : userData.uid || "",
-            pagePerData: profilePagePerData
-          })
-        );
-      }
+      // 첫 페이지 게시물 가져오기
+      dispatch(thunkFetchFirstPagePostData(pagePerData));
     }
   }, []);
 
-  // 다른 유저의 프로필일 시 프로필 개사뮬 데이터 초기화
+  // 다른 유저의 프로필일 시 프로필 게시물 첫 페이지 가져오기 
   useEffect(() => {
     // 프로필 게시물 일때
     if (isProfilePage) {
-      if (
-        profilePostListData.length > 0 &&
-        userProfileData?.uid !== profilePostListData[0]?.uid
-      ) {
+      if (userProfileData?.uid !== profilePostListData[0]?.uid) {
         dispatch(
           thunkFetchProfileFirstPageData({
             uid: uid ? uid : userData.uid || "",
@@ -98,7 +84,7 @@ export default function PostList({ isProfilePage }: Iprops) {
         );
       }
     }
-  }, [userProfileData]);
+  }, [userProfileData, uid]);
 
   useEffect(() => {
     // 홈 페이지 게시물
@@ -131,7 +117,7 @@ export default function PostList({ isProfilePage }: Iprops) {
   }, [inview]);
 
   useEffect(() => {
-    if (userData.uid) dispatch(thunkFetchMyProfile(userData.uid));
+    if (userData.uid&&!isProfilePage) dispatch(thunkFetchMyProfile(userData.uid));
   }, []);
 
   // 언마운트시 게시물 데이터 초기화
@@ -155,6 +141,7 @@ export default function PostList({ isProfilePage }: Iprops) {
       myProfileData={myProfileData}
       isScrollLoading={isScrollLoading}
       isLoading={isLoading}
+      profilePostIsLoading={profilePostIsLoading}
       isOpenCommentModal={isOpenCommentModal}
       intinityScrollRef={ref}
     />
