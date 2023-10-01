@@ -268,7 +268,7 @@ export const profileSlice = createSlice({
     followListData: [] as IFollowData[],
     followPage: {} as QueryDocumentSnapshot<DocumentData>,
     followHasMore: false,
-    followPagePerData: 10,
+    followPagePerData: 20,
     isInvalidPage: false,
     isLoading: false,
     profilePostIsLoading: false,
@@ -295,7 +295,7 @@ export const profileSlice = createSlice({
     },
     setIsOpenProfileEditModal: (state, action) => {
       state.isOpenProfileEditModal = action.payload;
-    },
+    }
   },
   extraReducers: (builder) => {
     // 자신의 프로필 데이터 조회
@@ -314,7 +314,11 @@ export const profileSlice = createSlice({
     });
 
     // 유저의 프로필 데이터 조회
+    builder.addCase(thunkFetchUserProfile.pending, (state) => {
+      state.isLoading = true;
+    });
     builder.addCase(thunkFetchUserProfile.fulfilled, (state, action) => {
+      state.isLoading = false;
       if (action.payload) {
         state.isInvalidPage = false;
         state.userProfileData = action.payload;
@@ -323,6 +327,7 @@ export const profileSlice = createSlice({
       }
     });
     builder.addCase(thunkFetchUserProfile.rejected, (state, action) => {
+      state.isLoading = false;
       if (action.payload) state.error = action.payload.message;
       sweetToast(
         "알 수 없는 에러가 발생하였습니다.\n잠시 후 다시 시도해 주세요.",
