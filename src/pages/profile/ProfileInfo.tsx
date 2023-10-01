@@ -22,7 +22,9 @@ import { AppDispatch, RootState } from "../../store/store";
 import {
   profileSlice,
   thunkFetchFollow,
+  thunkFetchMyProfile,
   thunkFetchUnfollow,
+  thunkFetchUserProfile
 } from "../../slice/profileSlice";
 import { resolveWebp } from "../../library/webpSupport";
 import Loading from "../../compoent/commons/loading/Loading";
@@ -31,6 +33,9 @@ export default function ProfileInfo() {
   const { uid } = useParams();
   const userData = useSelector((state: RootState) => state.user.data);
   const isLoading = useSelector((state: RootState) => state.profile.isLoading);
+  const profilePostIsLoading = useSelector(
+    (state: RootState) => state.profile.profilePostIsLoading
+  );
   const myProfileData = useSelector(
     (state: RootState) => state.profile.myProfileData
   );
@@ -100,7 +105,7 @@ export default function ProfileInfo() {
     } else {
       setIsFollow(false);
     }
-  }, [userProfileData]);
+  }, [userProfileData, myProfileData]);
 
   useLayoutEffect(() => {
     if (introduecRef.current) {
@@ -110,11 +115,17 @@ export default function ProfileInfo() {
         setIsShowMoreTextBtn(false);
       }
     }
-  }, [isLoading]);
+  }, [userProfileData]);
+
+  useEffect(() => {
+    dispatch(thunkFetchUserProfile(uid || userData.uid || ""));
+    dispatch(thunkFetchMyProfile(userData.uid || ""));
+  }, [uid]);
+  
 
   return (
     <>
-      {isLoading ? (
+      {isLoading || profilePostIsLoading ? (
         <Loading />
       ) : (
         userProfileData.displayName && (
