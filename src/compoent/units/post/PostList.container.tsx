@@ -62,6 +62,7 @@ export default function PostList({ isProfilePage }: Iprops) {
   const [isScrollLoading, setIsScrollLoading] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
   const isLoading = useSelector((state: RootState) => state.post.isLoading);
+  const profileIsLoading = useSelector((state: RootState) => state.profile.isLoading);
   const profilePostIsLoading = useSelector((state: RootState) => state.profile.profilePostIsLoading);
   // 무한스크롤 처리 inview의 상태가 변경될 때 마다 게시물 목록을 추가로 받아옴
   useEffect(() => {
@@ -141,6 +142,7 @@ export default function PostList({ isProfilePage }: Iprops) {
       myProfileData={myProfileData}
       isScrollLoading={isScrollLoading}
       isLoading={isLoading}
+      profileIsLoading={profileIsLoading}
       profilePostIsLoading={profilePostIsLoading}
       isOpenCommentModal={isOpenCommentModal}
       intinityScrollRef={ref}

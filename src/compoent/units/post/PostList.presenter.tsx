@@ -13,6 +13,7 @@ interface IProps {
   myProfileData: IProfileData;
   isScrollLoading: boolean;
   isLoading: boolean;
+  profileIsLoading: boolean;
   profilePostIsLoading: boolean;
   isOpenCommentModal: boolean;
   intinityScrollRef: (node?: Element | null | undefined) => void;
@@ -24,13 +25,14 @@ export default function PostListUI({
   myProfileData,
   isScrollLoading,
   isLoading,
+  profileIsLoading,
   profilePostIsLoading,
   isOpenCommentModal,
   intinityScrollRef,
 }: IProps) {
   return (
     <>
-      {isLoading || profilePostIsLoading? (
+      {(!isProfilePage ? isLoading : (profileIsLoading || profilePostIsLoading)) ? (
         <Loading />
       ) : (
         <>
