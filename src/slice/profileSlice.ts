@@ -137,7 +137,7 @@ export const thunkFetchProfilePagingData = createAsyncThunk<
 );
 
 /**
- * 유저 팔로우 첫 페이지 조회
+ * 유저 팔로워 첫 페이지 조회
  */
 export const thunkFetchFirstPageFollowerData = createAsyncThunk<
   | {
@@ -160,7 +160,7 @@ export const thunkFetchFirstPageFollowerData = createAsyncThunk<
 );
 
 /**
- * 유저 팔로우 페이징
+ * 유저 팔로워 페이징
  */
 export const thunkFetchPagingFollowerData = createAsyncThunk<
   | {
@@ -271,6 +271,7 @@ export const profileSlice = createSlice({
     followPagePerData: 10,
     isInvalidPage: false,
     isLoading: false,
+    profilePostIsLoading: false,
     error: ""
   },
   reducers: {
@@ -283,6 +284,9 @@ export const profileSlice = createSlice({
     setProfilePostListData: (state, action) => {
       state.profilePostListData = action.payload;
     },
+    setFollowListData: (state, action) => {
+      state.followListData = action.payload;
+    },
     setIsOpenFollowerModal: (state, action) => {
       state.isOpenFollowerModal = action.payload;
     },
@@ -291,7 +295,7 @@ export const profileSlice = createSlice({
     },
     setIsOpenProfileEditModal: (state, action) => {
       state.isOpenProfileEditModal = action.payload;
-    }
+    },
   },
   extraReducers: (builder) => {
     // 자신의 프로필 데이터 조회
@@ -402,13 +406,13 @@ export const profileSlice = createSlice({
     // 프로필 게시물 데이터 첫 페이지
     builder.addCase(thunkFetchProfileFirstPageData.pending, (state) => {
       document.body.style.overflow = "hidden";
-      state.isLoading = true;
+      state.profilePostIsLoading = true;
     });
     builder.addCase(
       thunkFetchProfileFirstPageData.fulfilled,
       (state, action) => {
         document.body.style.overflow = "auto";
-        state.isLoading = false;
+        state.profilePostIsLoading = false;
         if (action.payload) {
           state.profilePostListData = action.payload?.data;
           state.hasMore =
@@ -425,7 +429,7 @@ export const profileSlice = createSlice({
       thunkFetchProfileFirstPageData.rejected,
       (state, action) => {
         if (!action.payload) return;
-        state.isLoading = false;
+        state.profilePostIsLoading = false;
         state.error = action.payload.message;
         sweetToast(
           "알 수 없는 에러가 발생하였습니다.\n잠시 후 다시 시도해 주세요.",
@@ -448,7 +452,6 @@ export const profileSlice = createSlice({
     });
     builder.addCase(thunkFetchProfilePagingData.rejected, (state, action) => {
       if (!action.payload) return;
-      state.isLoading = false;
       state.error = action.payload.message;
       sweetToast(
         "알 수 없는 에러가 발생하였습니다.\n잠시 후 다시 시도해 주세요.",
@@ -478,7 +481,6 @@ export const profileSlice = createSlice({
       thunkFetchFirstPageFollowerData.rejected,
       (state, action) => {
         if (!action.payload) return;
-        state.isLoading = false;
         state.error = action.payload.message;
         sweetToast(
           "알 수 없는 에러가 발생하였습니다.\n잠시 후 다시 시도해 주세요.",
@@ -504,7 +506,6 @@ export const profileSlice = createSlice({
     });
     builder.addCase(thunkFetchPagingFollowerData.rejected, (state, action) => {
       if (!action.payload) return;
-      state.isLoading = false;
       state.error = action.payload.message;
       sweetToast(
         "알 수 없는 에러가 발생하였습니다.\n잠시 후 다시 시도해 주세요.",
@@ -534,7 +535,6 @@ export const profileSlice = createSlice({
       thunkFetchFirstPageFollowingData.rejected,
       (state, action) => {
         if (!action.payload) return;
-        state.isLoading = false;
         state.error = action.payload.message;
         sweetToast(
           "알 수 없는 에러가 발생하였습니다.\n잠시 후 다시 시도해 주세요.",
@@ -563,7 +563,6 @@ export const profileSlice = createSlice({
     );
     builder.addCase(thunkFetchPagingFollowingData.rejected, (state, action) => {
       if (!action.payload) return;
-      state.isLoading = false;
       state.error = action.payload.message;
       sweetToast(
         "알 수 없는 에러가 발생하였습니다.\n잠시 후 다시 시도해 주세요.",
