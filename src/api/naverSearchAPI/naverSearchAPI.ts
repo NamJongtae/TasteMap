@@ -4,7 +4,9 @@ import { ISearchMapData } from "../apiType";
 /**
  * 네이버 지역 검색 API 사용 함수
  */
-export const fetchSearchData = async (
+export const 
+
+fetchSearchMapData = async (
   keyword: string
 ): Promise<ISearchMapData[]> => {
   try {
