@@ -332,6 +332,7 @@ export const postSlice = createSlice({
     searchMapData: [] as ISearchMapData[], // 검색 데이터
     seletedMapData: [] as ISearchMapData[], // 선택한 검색 데이터,
     invalidPage: false,
+    isNoPostData: false,
     error: "",
     isLoading: false
   },
@@ -454,12 +455,19 @@ export const postSlice = createSlice({
     builder.addCase(thunkFetchFirstPagePostData.fulfilled, (state, action) => {
       document.body.style.overflow = "auto";
       state.isLoading = false;
-      state.postListData = action.payload?.data as IPostData[];
-      state.hasMore =
-        (action.payload?.data as IPostData[]).length % state.pagePerData === 0;
       if (action.payload) {
+        state.isNoPostData = false;
+        state.postListData = action.payload?.data as IPostData[];
+        state.hasMore =
+          (action.payload?.data as IPostData[]).length % state.pagePerData ===
+          0;
         state.page =
           action.payload.postDocs.docs[action.payload.postDocs.docs.length - 1];
+        if (action.payload?.data.length > 0) {
+          state.isNoPostData = false;
+        } else {
+          state.isNoPostData = true;
+        }
       }
     });
     builder.addCase(thunkFetchFirstPagePostData.rejected, (state, action) => {
@@ -503,12 +511,18 @@ export const postSlice = createSlice({
     builder.addCase(thunkFetchFirstPageFeedData.fulfilled, (state, action) => {
       document.body.style.overflow = "auto";
       state.isLoading = false;
-      state.postListData = action.payload?.data as IPostData[];
-      state.hasMore =
-        (action.payload?.data as IPostData[]).length % state.pagePerData === 0;
       if (action.payload) {
+        state.postListData = action.payload?.data as IPostData[];
+        state.hasMore =
+          (action.payload?.data as IPostData[]).length % state.pagePerData ===
+          0;
         state.page =
           action.payload.postDocs.docs[action.payload.postDocs.docs.length - 1];
+        if (action.payload?.data.length > 0) {
+          state.isNoPostData = false;
+        } else {
+          state.isNoPostData = true;
+        }
       }
     });
     builder.addCase(thunkFetchFirstPageFeedData.rejected, (state, action) => {
