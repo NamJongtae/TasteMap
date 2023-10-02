@@ -77,7 +77,7 @@ export default function FollowItem({ data, isFollower }: IProps) {
         <UserImg src={data.photoURL} alt='유저 프로필 이미지' />
         <UserName>{data.displayName}</UserName>
       </UserLink>
-      {((uid && userProfileData) || myProfileData).uid !== data.uid && (
+      {myProfileData.uid !== data.uid && (
         <FollowBtn
           isFollow={isFollow}
           onClick={isFollow ? onClickUnFollow : onClickFollow}
