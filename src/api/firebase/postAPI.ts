@@ -145,6 +145,96 @@ export const fetchPagingPostData = async (
 };
 
 /**
+ * 게시물 피드 첫 페이지
+ */
+export const fetchFirstPageFeedData = async (
+  pagePerDate: number,
+  followerList: string[]
+) => {
+  try {
+    const postRef = collection(db, "post");
+    const q = query(
+      postRef,
+      orderBy("createdAt", "desc"),
+      where("uid", "in", followerList),
+      limit(pagePerDate)
+    );
+    const postDocs = await getDocs(q);
+    const data = postDocs.docs.map((el) => el.data());
+
+    if (data.length > 0) {
+      const userRef = collection(db, "user");
+      const userUid: string[] = [...data].map((item) => item.uid);
+      const userQuery = query(userRef, where("uid", "in", userUid));
+      const res = await getDocs(userQuery);
+      const uidData: IUserData[] = res.docs.map((el) => {
+        return { uid: el.id, ...el.data() };
+      });
+
+      for (let i = 0; i < data.length; i++) {
+        const userData = uidData.find(
+          (userData) => userData.uid === data[i].uid
+        );
+        if (userData) {
+          data[i].displayName = userData.displayName;
+          data[i].photoURL = userData.photoURL;
+        }
+      }
+    }
+
+    return { postDocs, data };
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+/**
+ * 게시물 피드 페이징 데이터
+ */
+export const fetchPagingFeedData = async (
+  page: QueryDocumentSnapshot<DocumentData, DocumentData>,
+  pagePerDate: number,
+  followerList: string[]
+) => {
+  try {
+    const postRef = collection(db, "post");
+    const q = query(
+      postRef,
+      orderBy("createdAt", "desc"),
+      where("uid", "in", followerList),
+      startAfter(page),
+      limit(pagePerDate)
+    );
+    const postDocs = await getDocs(q);
+    const data = postDocs.docs.map((el) => el.data());
+    if (data.length > 0) {
+      const userRef = collection(db, "user");
+      const userUid: string[] = [...data].map((item) => item.uid);
+      const userQuery = query(userRef, where("uid", "in", userUid));
+      const res = await getDocs(userQuery);
+      const uidData: IUserData[] = res.docs.map((el) => {
+        return { uid: el.id, ...el.data() };
+      });
+
+      for (let i = 0; i < data.length; i++) {
+        const userData = uidData.find(
+          (userData) => userData.uid === data[i].uid
+        );
+        if (userData) {
+          data[i].displayName = userData.displayName;
+          data[i].photoURL = userData.photoURL;
+        }
+      }
+    }
+    return { postDocs, data };
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+/**
  * 게시물 업로드 함수
  */
 export const fetchUploadPost = async (
@@ -379,7 +469,7 @@ export const fetchReportPost = async (postData: IPostData) => {
     const postDoc = doc(db, `post/${postData.id}`);
 
     const postDocSnapshot = await getDoc(postDoc);
-    if(!postDocSnapshot.exists()){
+    if (!postDocSnapshot.exists()) {
       throw new Error("게시물이 존재하지 않습니다.");
     }
     await updateDoc(postDoc, {
@@ -392,5 +482,3 @@ export const fetchReportPost = async (postData: IPostData) => {
     throw error;
   }
 };
-
-
