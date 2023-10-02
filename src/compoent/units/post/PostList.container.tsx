@@ -41,6 +41,8 @@ export default function PostList({ isProfilePage, postType }: Iprops) {
   const hasMore = useSelector((state: RootState) => state.post.hasMore);
   // 페이징 최대 게시물 수
   const pagePerData = useSelector((state: RootState) => state.post.pagePerData);
+  // 게시물 데이터가 있는지 확인
+  const isNoPostData = useSelector((state: RootState) => state.post.isNoPostData);
 
   // 유저 프로필 게시물 목록
   const profilePostListData = useSelector(
@@ -56,6 +58,8 @@ export default function PostList({ isProfilePage, postType }: Iprops) {
   const profilePostHasMore = useSelector(
     (state: RootState) => state.profile.hasMore
   );
+  // 유저 프로필 게시물 데이터가 있는지 확인
+  const isNoProfilePostData = useSelector((state: RootState) => state.profile.isNoProfilePostData);
   const userProfileData = useSelector(
     (state: RootState) => state.profile.userProfileData
   );
@@ -65,9 +69,6 @@ export default function PostList({ isProfilePage, postType }: Iprops) {
   const [isScrollLoading, setIsScrollLoading] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
   const isLoading = useSelector((state: RootState) => state.post.isLoading);
-  const profileIsLoading = useSelector(
-    (state: RootState) => state.profile.isLoading
-  );
   const profilePostIsLoading = useSelector(
     (state: RootState) => state.profile.profilePostIsLoading
   );
@@ -173,10 +174,11 @@ export default function PostList({ isProfilePage, postType }: Iprops) {
       myProfileData={myProfileData}
       isScrollLoading={isScrollLoading}
       isLoading={isLoading}
-      profileIsLoading={profileIsLoading}
       profilePostIsLoading={profilePostIsLoading}
       isOpenCommentModal={isOpenCommentModal}
       intinityScrollRef={ref}
+      isNoPostData={isNoPostData}
+      isNoProfilePostData={isNoProfilePostData}
     />
   );
 }

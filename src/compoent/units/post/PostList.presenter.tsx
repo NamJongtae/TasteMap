@@ -13,10 +13,11 @@ interface IProps {
   myProfileData: IProfileData;
   isScrollLoading: boolean;
   isLoading: boolean;
-  profileIsLoading: boolean;
   profilePostIsLoading: boolean;
   isOpenCommentModal: boolean;
   intinityScrollRef: (node?: Element | null | undefined) => void;
+  isNoPostData: boolean;
+  isNoProfilePostData: boolean;
 }
 export default function PostListUI({
   isProfilePage,
@@ -25,27 +26,20 @@ export default function PostListUI({
   myProfileData,
   isScrollLoading,
   isLoading,
-  profileIsLoading,
   profilePostIsLoading,
   isOpenCommentModal,
-  intinityScrollRef
+  intinityScrollRef,
+  isNoPostData,
+  isNoProfilePostData
 }: IProps) {
   return (
     <>
       {
         <>
           <Wrapper>
-            {(
-              !isProfilePage
-                ? isLoading
-                : profileIsLoading || profilePostIsLoading
-            ) ? (
+            {(!isProfilePage ? isLoading : profilePostIsLoading) ? (
               <ScrollLoading />
-            ) : (
-                isProfilePage
-                  ? profilePostListData.length === 0
-                  : postListData.length === 0
-              ) ? (
+            ) : (isProfilePage ? isNoProfilePostData : isNoPostData) ? (
               <NoData />
             ) : (
               <PostWrapper>
