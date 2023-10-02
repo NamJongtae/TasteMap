@@ -110,6 +110,7 @@ export const UserImg = styled.img`
 export const UserName = styled.strong``;
 
 export const FollowBtn = styled.button`
+  width: 77px;
   border-radius: 20px;
   border: 1px solid #bdbdbd;
   padding: 7px 16px;
