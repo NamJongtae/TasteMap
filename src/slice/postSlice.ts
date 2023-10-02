@@ -10,7 +10,9 @@ import {
   fetchAddPostLike,
   fetchAddPostMap,
   fetchEditPost,
+  fetchFirstPageFeedData,
   fetchFirstPagePostData,
+  fetchPagingFeedData,
   fetchPagingPostData,
   fetchPostData,
   fetchPostImg,
@@ -142,6 +144,48 @@ export const thunkFetchPagingPostData = createAsyncThunk<
     } catch (error: any) {
       return thunkAPI.rejectWithValue(error);
     }
+  }
+);
+
+/**
+ * 게시물 피드 첫 페이지 조회
+ */
+export const thunkFetchFirstPageFeedData = createAsyncThunk<
+  | {
+      postDocs: QuerySnapshot<DocumentData, DocumentData>;
+      data: DocumentData[];
+    }
+  | undefined,
+  { pagePerData: number; followerList: string[] },
+  { rejectValue: IKnownError }
+>(
+  "postSlice/thunkFetchFirstPageFeedData",
+  async ({ pagePerData, followerList }) => {
+    const res = await fetchFirstPageFeedData(pagePerData, followerList);
+    return res;
+  }
+);
+
+/**
+ * 게시물 피드 페이징 조회
+ */
+export const thunkFetchPagingFeedData = createAsyncThunk<
+  | {
+      postDocs: QuerySnapshot<DocumentData, DocumentData>;
+      data: DocumentData[];
+    }
+  | undefined,
+  {
+    page: QueryDocumentSnapshot<DocumentData, DocumentData>;
+    pagePerData: number;
+    followerList: string[];
+  },
+  { rejectValue: IKnownError }
+>(
+  "postSlice/thunkFetchPagingFeedData",
+  async ({ pagePerData, page, followerList }) => {
+    const res = await fetchPagingFeedData(page, pagePerData, followerList);
+    return res;
   }
 );
 
@@ -441,6 +485,55 @@ export const postSlice = createSlice({
       state.hasMore = action.payload.data.length % state.pagePerData === 0;
     });
     builder.addCase(thunkFetchPagingPostData.rejected, (state, action) => {
+      if (!action.payload) return;
+      state.isLoading = false;
+      state.error = action.payload.message;
+      sweetToast(
+        "알 수 없는 에러가 발생하였습니다.\n잠시 후 다시 시도해 주세요.",
+        "warning"
+      );
+      console.error(state.error);
+    });
+
+    // 게시물 피드 첫 페이지 조회
+    builder.addCase(thunkFetchFirstPageFeedData.pending, (state) => {
+      document.body.style.overflow = "hidden";
+      state.isLoading = true;
+    });
+    builder.addCase(thunkFetchFirstPageFeedData.fulfilled, (state, action) => {
+      document.body.style.overflow = "auto";
+      state.isLoading = false;
+      state.postListData = action.payload?.data as IPostData[];
+      state.hasMore =
+        (action.payload?.data as IPostData[]).length % state.pagePerData === 0;
+      if (action.payload) {
+        state.page =
+          action.payload.postDocs.docs[action.payload.postDocs.docs.length - 1];
+      }
+    });
+    builder.addCase(thunkFetchFirstPageFeedData.rejected, (state, action) => {
+      if (!action.payload) return;
+      state.isLoading = false;
+      state.error = action.payload.message;
+      sweetToast(
+        "알 수 없는 에러가 발생하였습니다.\n잠시 후 다시 시도해 주세요.",
+        "warning"
+      );
+      console.error(state.error);
+    });
+
+    // 게시물 피드 페이징
+    builder.addCase(thunkFetchPagingFeedData.fulfilled, (state, action) => {
+      if (!action.payload) return;
+      state.postListData = [
+        ...state.postListData,
+        ...(action.payload?.data as IPostData[])
+      ];
+      state.page =
+        action.payload.postDocs.docs[action.payload.postDocs.docs.length - 1];
+      state.hasMore = action.payload.data.length % state.pagePerData === 0;
+    });
+    builder.addCase(thunkFetchPagingFeedData.rejected, (state, action) => {
       if (!action.payload) return;
       state.isLoading = false;
       state.error = action.payload.message;
