@@ -16,6 +16,6 @@ export const Title = styled.h2`
 
 export const NoDataImg = styled.img`
   width: 50px;
-  height: 50px;
+
   vertical-align: top;
 `;
