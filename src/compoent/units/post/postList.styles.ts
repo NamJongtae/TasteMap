@@ -8,7 +8,7 @@ export const Wrapper = styled.div`
 export const PostWrapper = styled.ul`
   width: 100%;
   max-width: 360px;
-  padding: 20px;
+  padding: 10px 20px 20px 20px;
 `;
 
 export const InfinityScrollTarget = styled.div`

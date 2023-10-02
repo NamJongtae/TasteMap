@@ -1,6 +1,6 @@
 import React from "react";
 import PostItem from "./PostItem.container";
-import Loading from "../../commons/loading/Loading";
+// import Loading from "../../commons/loading/Loading";
 import Comment from "./comment/Comment";
 import ScrollLoading from "../../commons/loading/ScrollLoading";
 import { InfinityScrollTarget, PostWrapper, Wrapper } from "./postList.styles";
@@ -28,18 +28,24 @@ export default function PostListUI({
   profileIsLoading,
   profilePostIsLoading,
   isOpenCommentModal,
-  intinityScrollRef,
+  intinityScrollRef
 }: IProps) {
   return (
     <>
-      {(!isProfilePage ? isLoading : (profileIsLoading || profilePostIsLoading)) ? (
-        <Loading />
-      ) : (
+      {
         <>
           <Wrapper>
             {(
-              isProfilePage ? profilePostListData.length === 0 : postListData.length===0
+              !isProfilePage
+                ? isLoading
+                : profileIsLoading || profilePostIsLoading
             ) ? (
+              <ScrollLoading />
+            ) : (
+                isProfilePage
+                  ? profilePostListData.length === 0
+                  : postListData.length === 0
+              ) ? (
               <NoData />
             ) : (
               <PostWrapper>
@@ -70,7 +76,7 @@ export default function PostListUI({
           </Wrapper>
           {isOpenCommentModal && <Comment />}
         </>
-      )}
+      }
     </>
   );
 }

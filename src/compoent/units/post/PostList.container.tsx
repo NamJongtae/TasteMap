@@ -2,7 +2,9 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../store/store";
 import {
+  thunkFetchFirstPageFeedData,
   thunkFetchFirstPagePostData,
+  thunkFetchPagingFeedData,
   thunkFetchPagingPostData
 } from "../../../slice/postSlice";
 
@@ -18,8 +20,9 @@ import { useParams } from "react-router-dom";
 import PostListUI from "./PostList.presenter";
 interface Iprops {
   isProfilePage: boolean;
+  postType?: "home" | "feed";
 }
-export default function PostList({ isProfilePage }: Iprops) {
+export default function PostList({ isProfilePage, postType }: Iprops) {
   const { uid } = useParams();
   const userData = useSelector((state: RootState) => state.user.data);
   const isOpenCommentModal = useSelector(
@@ -62,17 +65,30 @@ export default function PostList({ isProfilePage }: Iprops) {
   const [isScrollLoading, setIsScrollLoading] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
   const isLoading = useSelector((state: RootState) => state.post.isLoading);
-  const profileIsLoading = useSelector((state: RootState) => state.profile.isLoading);
-  const profilePostIsLoading = useSelector((state: RootState) => state.profile.profilePostIsLoading);
+  const profileIsLoading = useSelector(
+    (state: RootState) => state.profile.isLoading
+  );
+  const profilePostIsLoading = useSelector(
+    (state: RootState) => state.profile.profilePostIsLoading
+  );
   // 무한스크롤 처리 inview의 상태가 변경될 때 마다 게시물 목록을 추가로 받아옴
   useEffect(() => {
     if (!isProfilePage) {
-      // 첫 페이지 게시물 가져오기
-      dispatch(thunkFetchFirstPagePostData(pagePerData));
+      if (postType === "home") {
+        // 첫 페이지 게시물 가져오기
+        dispatch(thunkFetchFirstPagePostData(pagePerData));
+      } else {
+        dispatch(
+          thunkFetchFirstPageFeedData({
+            pagePerData,
+            followerList: myProfileData.followerList || []
+          })
+        );
+      }
     }
-  }, []);
+  }, [postType]);
 
-  // 다른 유저의 프로필일 시 프로필 게시물 첫 페이지 가져오기 
+  // 다른 유저의 프로필일 시 프로필 게시물 첫 페이지 가져오기
   useEffect(() => {
     // 프로필 게시물 일때
     if (isProfilePage) {
@@ -92,11 +108,25 @@ export default function PostList({ isProfilePage }: Iprops) {
     if (!isProfilePage) {
       // postListData가 존재, 페이지에 따라 게시물 목록 추가로 가져오기
       if (postListData.length > 0 && hasMore && inview) {
-        (async () => {
-          setIsScrollLoading(true);
-          await dispatch(thunkFetchPagingPostData({ page, pagePerData }));
-          setIsScrollLoading(false);
-        })();
+        if (postType === "home") {
+          (async () => {
+            setIsScrollLoading(true);
+            await dispatch(thunkFetchPagingPostData({ page, pagePerData }));
+            setIsScrollLoading(false);
+          })();
+        } else {
+          (async () => {
+            setIsScrollLoading(true);
+            await dispatch(
+              thunkFetchPagingFeedData({
+                page,
+                pagePerData,
+                followerList: myProfileData.followerList || []
+              })
+            );
+            setIsScrollLoading(false);
+          })();
+        }
       }
     } else {
       // 프로필 페이지 게시물
@@ -118,7 +148,8 @@ export default function PostList({ isProfilePage }: Iprops) {
   }, [inview]);
 
   useEffect(() => {
-    if (userData.uid&&!isProfilePage) dispatch(thunkFetchMyProfile(userData.uid));
+    if (userData.uid && !isProfilePage)
+      dispatch(thunkFetchMyProfile(userData.uid));
   }, []);
 
   // 언마운트시 게시물 데이터 초기화
