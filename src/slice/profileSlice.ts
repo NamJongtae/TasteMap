@@ -270,6 +270,7 @@ export const profileSlice = createSlice({
     followHasMore: false,
     followPagePerData: 20,
     isInvalidPage: false,
+    isNoProfilePostData: false,
     isLoading: false,
     profilePostIsLoading: false,
     error: ""
@@ -427,6 +428,11 @@ export const profileSlice = createSlice({
             action.payload.postDocs.docs[
               action.payload.postDocs.docs.length - 1
             ];
+          if (action.payload?.data.length > 0) {
+            state.isNoProfilePostData = false;
+          } else {
+            state.isNoProfilePostData = true;
+          }
         }
       }
     );
