@@ -33,9 +33,6 @@ export default function ProfileInfo() {
   const { uid } = useParams();
   const userData = useSelector((state: RootState) => state.user.data);
   const isLoading = useSelector((state: RootState) => state.profile.isLoading);
-  const profilePostIsLoading = useSelector(
-    (state: RootState) => state.profile.profilePostIsLoading
-  );
   const myProfileData = useSelector(
     (state: RootState) => state.profile.myProfileData
   );
@@ -125,7 +122,7 @@ export default function ProfileInfo() {
 
   return (
     <>
-      {isLoading || profilePostIsLoading ? (
+      {isLoading  ? (
         <Loading />
       ) : (
         userProfileData.displayName && (
