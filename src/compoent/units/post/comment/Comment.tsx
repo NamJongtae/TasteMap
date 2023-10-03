@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../../store/store";
 
 import { commentSlice } from "../../../../slice/commentSlice";
-import CommentModal from "./CommentModal";
+import CommentModal from "./CommentModal.container";
 import { replySlice } from "../../../../slice/replySlice";
 import { thunkUpdatePostCommentCount } from "../../../../slice/postSlice";
 

@@ -1,24 +1,15 @@
-import React, { SyntheticEvent, useEffect } from "react";
-import {
-  CloseBtn,
-  CommentModalWrapper,
-  CommentTextAreaWrapper,
-  ModalTitle,
-  ModalTitleBar,
-  UserImg
-} from "./comment.styles";
-import { resolveWebp } from "../../../../library/webpSupport";
+import React, { useEffect } from "react";
+
 import {
   commentSlice,
   thunkUpdateReplyCount
 } from "../../../../slice/commentSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../../store/store";
-import CommentList from "./CommentList";
-import CommentTextArea from "./CommentTextArea";
 import { replySlice } from "../../../../slice/replySlice";
 import { isMobile } from "react-device-detect";
 import { thunkUpdatePostCommentCount } from "../../../../slice/postSlice";
+import CommentModalUI from "./CommentModal.presenter";
 
 interface IProps {
   modalRef: React.RefObject<HTMLDivElement>;
@@ -26,6 +17,9 @@ interface IProps {
 }
 
 export default function CommentModal({ modalRef, isReply }: IProps) {
+  const isOpenCommnetModal = useSelector(
+    (state: RootState) => state.comment.isOpenCommentModal
+  );
   const isOpenReplyModal = useSelector(
     (state: RootState) => state.reply.isOpenReplyModal
   );
@@ -40,6 +34,11 @@ export default function CommentModal({ modalRef, isReply }: IProps) {
   );
   const closeCommentModal = () => {
     if (modalRef.current) {
+      if(isMobile) {
+        window.onpopstate= () => {
+          history.back();
+        }
+      }
       if (!isReply) {
         dispatch(thunkUpdatePostCommentCount(postId));
         modalRef.current.style.animation = "moveDown 1s";
@@ -66,7 +65,7 @@ export default function CommentModal({ modalRef, isReply }: IProps) {
   }, []);
 
   useEffect(() => {
-    if (isMobile) {
+    if ((isMobile && isOpenReplyModal) || isOpenCommnetModal) {
       window.onpopstate = () => {
         history.go(1);
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -78,39 +77,15 @@ export default function CommentModal({ modalRef, isReply }: IProps) {
         closeCommentModal();
       };
     }
-  }, [isOpenReplyModal]);
+  }, [isOpenReplyModal, isOpenCommnetModal]);
 
   return (
-    <CommentModalWrapper ref={modalRef} isReply={isReply}>
-      <ModalTitleBar>
-        <ModalTitle>{isReply ? "답글" : "댓글"}</ModalTitle>
-      </ModalTitleBar>
-      <CommentList isReply={isReply} />
-      <CommentTextAreaWrapper>
-        <UserImg
-          src={userData.photoURL}
-          alt='프로필 이미지'
-          onError={(e: SyntheticEvent<HTMLImageElement, Event>) => {
-            e.currentTarget.src = resolveWebp(
-              "/assets/webp/icon-defaultProfile.webp",
-              "svg"
-            );
-          }}
-        />
-        <CommentTextArea
-          initalvalue=''
-          isReply={isReply}
-          textAreaType={isReply ? "reply" : "write"}
-          commentId={parentCommentId}
-        />
-      </CommentTextAreaWrapper>
-
-      <CloseBtn
-        type='button'
-        aria-label='닫기'
-        onClick={closeCommentModal}
-        isReply={isReply}
-      />
-    </CommentModalWrapper>
+    <CommentModalUI
+      isReply={isReply}
+      modalRef={modalRef}
+      userData={userData}
+      parentCommentId={parentCommentId}
+      closeCommentModal={closeCommentModal}
+    />
   );
 }

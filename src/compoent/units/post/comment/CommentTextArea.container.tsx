@@ -1,10 +1,6 @@
 import React, { useRef, useState } from "react";
 import { v4 as uuid } from "uuid";
-import {
-  CommentSubmitBtn,
-  CommentTextAreaInner,
-  TextArea
-} from "./comment.styles";
+
 import { Timestamp } from "firebase/firestore";
 import {
   commentSlice,
@@ -20,6 +16,7 @@ import {
   thunkFetchEditReply
 } from "../../../../slice/replySlice";
 import { ICommentData, IKnownError, IReplyData } from "../../../../api/apiType";
+import CommentTextAreaUI from "./CommentTextArea.presenter";
 
 interface IProps {
   textAreaType: "write" | "edit" | "reply";
@@ -295,24 +292,15 @@ export default function CommentTextArea({
   };
 
   return (
-    <CommentTextAreaInner textAreaType={textAreaType}>
-      <TextArea
-        ref={textAreaRef}
-        value={commentValue}
-        onChange={onChangeCommentValue}
-        onKeyDown={preventKeydownEnter}
-        placeholder={isReply ? "답글을 입력하세요" : "댓글을 입력하세요."}
-        rows={1}
-      />
-      <CommentSubmitBtn
-        type='button'
-        onClick={onSubmitComment}
-        disabled={
-          textAreaType === "edit"
-            ? commentValue === initalvalue || !commentValue
-            : !commentValue
-        }
-      />
-    </CommentTextAreaInner>
+    <CommentTextAreaUI
+      textAreaType={textAreaType}
+      textAreaRef={textAreaRef}
+      initalvalue={initalvalue}
+      commentValue={commentValue}
+      onChangeCommentValue={onChangeCommentValue}
+      preventKeydownEnter={preventKeydownEnter}
+      isReply={isReply}
+      onSubmitComment={onSubmitComment}
+    />
   );
 }

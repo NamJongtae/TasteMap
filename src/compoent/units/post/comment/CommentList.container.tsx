@@ -1,27 +1,21 @@
 import React, { useEffect, useState } from "react";
 import {
-  CommentWrpper,
-  InfinityScrollTarget,
-  RefreshBtn
-} from "./comment.styles";
-import {
   commentSlice,
   thunkFetchFirstPageCommentData,
   thunkFetchPagingCommentData
 } from "../../../../slice/commentSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../../store/store";
-import CommentItem from "./CommentItem";
-import { ICommentData, IKnownError, IReplyData } from "../../../../api/apiType";
+import { IKnownError } from "../../../../api/apiType";
 import { useInView } from "react-intersection-observer";
 import {
   replySlice,
   thunkFetchFirstPageReplyData,
   thunkFetchPagingReplyData
 } from "../../../../slice/replySlice";
-import ScrollLoading from "../../../commons/loading/ScrollLoading";
-import NoData from "../../../commons/noData/NoData";
+
 import { postSlice } from "../../../../slice/postSlice";
+import CommentListUI from "./CommentList.presenter";
 
 interface IProps {
   isReply: boolean;
@@ -183,43 +177,15 @@ export default function CommentList({ isReply }: IProps) {
   };
 
   return (
-    <>
-      {(isReply && replyLoading) || (!isReply && commentLoading) ? (
-        <ScrollLoading />
-      ) : (
-        <>
-          <RefreshBtn onClick={handlerRefresh} />
-          {(isReply ? replyListData.length > 0 : commentDataList.length > 0) ? (
-            <CommentWrpper>
-              {(isReply ? replyListData : commentDataList).map((item) => {
-                return (
-                  <CommentItem
-                    key={
-                      isReply
-                        ? (item as IReplyData).replyId
-                        : (item as ICommentData).commentId
-                    }
-                    data={item}
-                    isReply={isReply}
-                  />
-                );
-              })}
-              {(!isReply
-                ? commentDataList.length > 0
-                : replyListData.length > 0) && (
-                <InfinityScrollTarget ref={ref}></InfinityScrollTarget>
-              )}
-              {isScrollLoading && (
-                <li>
-                  <ScrollLoading />
-                </li>
-              )}
-            </CommentWrpper>
-          ) : (
-            <NoData />
-          )}
-        </>
-      )}
-    </>
+    <CommentListUI
+      isReply={isReply}
+      replyLoading={replyLoading}
+      commentLoading={commentLoading}
+      handlerRefresh={handlerRefresh}
+      replyListData={replyListData}
+      commentDataList={commentDataList}
+      infiniteScrollRef={ref}
+      isScrollLoading={isScrollLoading}
+    />
   );
 }
