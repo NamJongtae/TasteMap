@@ -13,7 +13,7 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 import PostEdit from "./pages/postEdit/PostEdit";
 import TopButton from "./compoent/commons/topButton/TopButton";
 import Profile from "./pages/profile/Profile";
-import MyTasteMap from "./pages/profile/myTasteMap/MyTasteMap";
+import MyTasteMap from "./pages/profile/myTasteMap/MyTasteMap.container";
 import NotFound from "./pages/404/NotFound";
 import Search from './compoent/units/search/Search';
 

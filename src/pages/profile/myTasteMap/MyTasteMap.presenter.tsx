@@ -1,9 +1,4 @@
-import React, { useEffect, useState } from "react";
-import Kakaomap from "../../../compoent/units/kakaomap/Kakaomap.container";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../../../store/store";
-import Header from "../../../compoent/commons/layouts/header/Header";
-import MyTasteMapList from "./MyTasteMapList";
+import React from "react";
 import {
   BtnWrapper,
   ContetnTypeBtnWrapper,
@@ -19,77 +14,36 @@ import {
   RemoveBtn,
   Wrapper
 } from "./myTasteMap.styles";
-import { profileSlice, thunkFetchMyProfile } from "../../../slice/profileSlice";
 import { SearchModalBtn } from "../../postUpload/postUpload.styles";
-import SearchModal from "../../postUpload/SearchModal";
+import Header from "../../../compoent/commons/layouts/header/Header";
+import Kakaomap from "../../../compoent/units/kakaomap/Kakaomap.container";
+import MyTasteMapList from "./MyTasteMapList";
+import SearchModal from "../../postUpload/SearchModal.container";
 import Loading from "../../../compoent/commons/loading/Loading";
-import { thunkFetchRemovePostMap } from "../../../slice/postSlice";
-import {
-  sweetConfirm,
-  sweetToast
-} from "../../../library/sweetAlert/sweetAlert";
-import { tasteMapSlice } from "../../../slice/tasteMapSlice";
+import { IProfileData, ISearchMapData } from "../../../api/apiType";
+interface IProps {
+  myProfileData: IProfileData;
+  onClickMapType: () => void;
+  contentType: "map" | "list";
+  onClickListType: () => void;
+  openSearchModal: () => void;
+  clickMarkerData: ISearchMapData;
+  isOpenModal: boolean;
+  closeSearchModal: () => void;
+  removeMap: () => void;
+}
 
-export default function MyTasteMap() {
-  const userData = useSelector((state: RootState) => state.user.data);
-  const myProfileData = useSelector(
-    (state: RootState) => state.profile.myProfileData
-  );
-  const contentType = useSelector(
-    (state: RootState) => state.tasteMap.contentType
-  );
-  const dispatch = useDispatch<AppDispatch>();
-  // 검색 모달창 오픈 여부
-  const [isOpenModal, setIsOpenModal] = useState(false);
-  const clickMarkerData = useSelector(
-    (state: RootState) => state.tasteMap.clickMarkerData
-  );
-  useEffect(() => {
-    if (userData.uid) {
-      dispatch(thunkFetchMyProfile(userData.uid));
-      // 초기 clickMarkerData 섷정 저장된 값중 제일 첫번째 요소로 지정
-    }
-  }, []);
-
-  const openSearchModal = () => {
-    setIsOpenModal(true);
-  };
-
-  const closeSearchModal = () => {
-    setIsOpenModal(false);
-  };
-
-  const onClickMapType = () => {
-    dispatch(tasteMapSlice.actions.setContentType("map"));
-  };
-
-  const onClickListType = () => {
-    dispatch(tasteMapSlice.actions.setContentType("list"));
-  };
-
-  const removeMap = () => {
-    sweetConfirm("정말 삭제하시겠습니까?", "삭제", "취소", () => {
-      dispatch(thunkFetchRemovePostMap(clickMarkerData));
-      const newData = {
-        ...myProfileData,
-        storedMapList: myProfileData.storedMapList?.filter(
-          (item) =>
-            item.mapx !== clickMarkerData.mapx &&
-            item.mapy !== clickMarkerData.mapy
-        )
-      };
-      dispatch(profileSlice.actions.setMyprofile(newData));
-      sweetToast("삭제가 완료되었습니다.", "success");
-      dispatch(tasteMapSlice.actions.setClickMarkerData({}));
-    });
-  };
-
-  useEffect(() => {
-    return () => {
-      dispatch(tasteMapSlice.actions.setClickMarkerData({}));
-    };
-  }, []);
-
+export default function MyTasteMapUI({
+  myProfileData,
+  onClickMapType,
+  contentType,
+  onClickListType,
+  openSearchModal,
+  clickMarkerData,
+  isOpenModal,
+  closeSearchModal,
+  removeMap,
+}: IProps) {
   return (
     <>
       {!myProfileData.storedMapList ? (
@@ -146,7 +100,7 @@ export default function MyTasteMap() {
                   <ItemLink
                     to={clickMarkerData.link || "#"}
                     target='
-                  _blank'
+                _blank'
                   >
                     {clickMarkerData.link}
                   </ItemLink>
@@ -156,7 +110,6 @@ export default function MyTasteMap() {
                 </BtnWrapper>
               </ItemSingleList>
             )}
-            {}
             {contentType === "list" && (
               <MyTasteMapList items={myProfileData.storedMapList} />
             )}
