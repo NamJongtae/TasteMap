@@ -27,11 +27,6 @@ export default function FollowModal({ isFollower }: IProps) {
   );
   const closeModal = () => {
     if (modalRef.current) {
-      if (isMobile) {
-        window.onpopstate = () => {
-          history.back();
-        };
-      }
       modalRef.current.style.animation = "FollowModalmoveDown 1s";
       setTimeout(() => {
         document.body.style.overflow = "auto";
@@ -74,13 +69,28 @@ export default function FollowModal({ isFollower }: IProps) {
 
   return (
     <Wrapper>
-      <Dim onClick={closeModal}></Dim>
+      <Dim
+        onClick={() => {
+          if (isMobile) {
+            // 빈 히스토리를 없애기 위해 뒤로가기
+            history.back();
+          }
+          closeModal();
+        }}
+      ></Dim>
       <FollowModalWrapper ref={modalRef}>
         <ModalTitleBar>
           <ModalTitle>{isFollower ? "팔로워" : "팔로잉"}</ModalTitle>
         </ModalTitleBar>
         <FollowList isFollower={isFollower} />
-        <CloseBtn onClick={closeModal} />
+        <CloseBtn
+          onClick={() => {
+            if (isMobile) {
+              history.back();
+            }
+            closeModal();
+          }}
+        />
       </FollowModalWrapper>
     </Wrapper>
   );
