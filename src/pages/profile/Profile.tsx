@@ -1,5 +1,5 @@
 import { Wrapper } from "./profile.styles";
-import ProfileInfo from "./ProfileInfo";
+import ProfileInfo from "./ProfileInfo.container";
 import ProfilePost from "./ProfilePost";
 import Header from "../../compoent/commons/layouts/header/Header";
 import FollowModal from "./followModal/FollowModal";

@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import React from "react";
 import {
   ButtonWrapper,
   FollowerBtn,
@@ -16,113 +16,46 @@ import {
   UserProfileImg,
   UserWrapper
 } from "./profileInfo.styles";
-import { useNavigate, useParams } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../../store/store";
-import {
-  profileSlice,
-  thunkFetchFollow,
-  thunkFetchMyProfile,
-  thunkFetchUnfollow,
-  thunkFetchUserProfile
-} from "../../slice/profileSlice";
 import { resolveWebp } from "../../library/webpSupport";
 import Loading from "../../compoent/commons/loading/Loading";
-
-export default function ProfileInfo() {
-  const { uid } = useParams();
-  const userData = useSelector((state: RootState) => state.user.data);
-  const isLoading = useSelector((state: RootState) => state.profile.isLoading);
-  const myProfileData = useSelector(
-    (state: RootState) => state.profile.myProfileData
-  );
-  const userProfileData = useSelector(
-    (state: RootState) => state.profile.userProfileData
-  );
-  const navigate = useNavigate();
-  const dispatch = useDispatch<AppDispatch>();
-  const introduecRef = useRef<HTMLParagraphElement>(null);
-
-  const [isFollow, setIsFollow] = useState(false);
-  const [isShowMoreTextBtn, setIsShowMoreTextBtn] = useState(false);
-
-  const onClickFollow = async () => {
-    if (userData.uid && userProfileData.uid) {
-      dispatch(
-        thunkFetchFollow({ myUid: userData.uid, userUid: userProfileData.uid })
-      );
-      setIsFollow(true);
-    }
-  };
-
-  const onClickUnfollow = async () => {
-    if (userData.uid && userProfileData.uid) {
-      dispatch(
-        thunkFetchUnfollow({
-          myUid: userData.uid,
-          userUid: userProfileData.uid
-        })
-      );
-      setIsFollow(false);
-    }
-  };
-
-  const onClickFollower = () => {
-    document.body.style.overflow = "hidden";
-    dispatch(profileSlice.actions.setIsOpenFollowerModal(true));
-  };
-
-  const onClickFollowing = () => {
-    document.body.style.overflow = "hidden";
-    dispatch(profileSlice.actions.setIsOpenFollowingModal(true));
-  };
-
-  const onClickProfileEdit = () => {
-    document.body.style.overflow = "hidden";
-    dispatch(profileSlice.actions.setIsOpenProfileEditModal(true));
-  };
-
-  const onClickMoreText = () => {
-    if (introduecRef.current) {
-      introduecRef.current.style.display = "block";
-      setIsShowMoreTextBtn(false);
-    }
-  };
-
-  const onClickTasteMap = () => {
-    navigate(`/profile/tasteMap`);
-  };
-
-  useEffect(() => {
-    if (
-      userProfileData.uid &&
-      myProfileData.followerList?.includes(userProfileData.uid)
-    ) {
-      setIsFollow(true);
-    } else {
-      setIsFollow(false);
-    }
-  }, [userProfileData, myProfileData]);
-
-  useLayoutEffect(() => {
-    if (introduecRef.current) {
-      if (introduecRef.current?.clientHeight >= 63) {
-        setIsShowMoreTextBtn(true);
-      } else {
-        setIsShowMoreTextBtn(false);
-      }
-    }
-  }, [userProfileData]);
-
-  useEffect(() => {
-    dispatch(thunkFetchUserProfile(uid || userData.uid || ""));
-    dispatch(thunkFetchMyProfile(userData.uid || ""));
-  }, [uid]);
-  
-
+import { IProfileData, IUserData } from "../../api/apiType";
+interface IProps {
+  isLoading: boolean;
+  userData: IUserData;
+  userProfileData: IProfileData;
+  myProfileData: IProfileData;
+  onClickFollower: () => void;
+  onClickFollowing: () => void;
+  uid: string | undefined;
+  introduecRef: React.RefObject<HTMLParagraphElement>;
+  isShowMoreTextBtn: boolean;
+  onClickMoreText: () => void;
+  onClickProfileEdit: () => void;
+  isFollow: boolean;
+  onClickFollow: () => Promise<void>;
+  onClickUnfollow: () => Promise<void>;
+  onClickTasteMap: () => void;
+}
+export default function ProfileInfoUI({
+  isLoading,
+  userData,
+  userProfileData,
+  myProfileData,
+  onClickFollower,
+  onClickFollowing,
+  uid,
+  introduecRef,
+  isShowMoreTextBtn,
+  onClickMoreText,
+  onClickProfileEdit,
+  isFollow,
+  onClickFollow,
+  onClickUnfollow,
+  onClickTasteMap
+}: IProps) {
   return (
     <>
-      {isLoading  ? (
+      {isLoading ? (
         <Loading />
       ) : (
         userProfileData.displayName && (

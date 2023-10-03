@@ -74,6 +74,7 @@ export const Introduce = styled.p`
   font-weight: 500;
   color: #767676;
   white-space: pre-wrap;
+  word-break: break-all;
   overflow: hidden;
   display: -webkit-box;
   -webkit-box-orient: vertical;
