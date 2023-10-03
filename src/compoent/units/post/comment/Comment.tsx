@@ -7,6 +7,7 @@ import { commentSlice } from "../../../../slice/commentSlice";
 import CommentModal from "./CommentModal.container";
 import { replySlice } from "../../../../slice/replySlice";
 import { thunkUpdatePostCommentCount } from "../../../../slice/postSlice";
+import { isMobile } from "react-device-detect";
 
 export default function Comment() {
   const isOpenReplyModal = useSelector(
@@ -15,7 +16,11 @@ export default function Comment() {
   const dispatch = useDispatch<AppDispatch>();
   const postId = useSelector((state: RootState) => state.comment.postId);
   const commentModalRef = useRef<HTMLDivElement>(null);
-  const ReplyModalRef = useRef<HTMLDivElement>(null);
+  const replyModalRef = useRef<HTMLDivElement>(null);
+
+  /**
+   * Dim(모달창 어두운 배경) 클릭 시 모달창 닫기
+   */
   const closeCommentModal = () => {
     if (commentModalRef.current) {
       if (!isOpenReplyModal) {
@@ -27,8 +32,8 @@ export default function Comment() {
         }, 800);
       } else {
         commentModalRef.current.style.animation = "moveDown 1s";
-        if (ReplyModalRef.current) {
-          ReplyModalRef.current.style.animation = "moveDown 1s";
+        if (replyModalRef.current) {
+          replyModalRef.current.style.animation = "moveDown 1s";
         }
         setTimeout(() => {
           document.body.style.overflow = "auto";
@@ -36,15 +41,25 @@ export default function Comment() {
           dispatch(replySlice.actions.setIsOpenReplyModal(false));
         }, 800);
       }
+      // 모바일일 시 빈 히스토리를 없애기 위해 
+      if (isMobile) history.back();
     }
   };
 
   return (
     <Wrapper>
       <Dim onClick={closeCommentModal}></Dim>
-      <CommentModal modalRef={commentModalRef} isReply={false} />
+      <CommentModal
+        commentModalRef={commentModalRef}
+        replyModalRef={replyModalRef}
+        isReply={false}
+      />
       {isOpenReplyModal && (
-        <CommentModal modalRef={ReplyModalRef} isReply={true} />
+        <CommentModal
+          commentModalRef={commentModalRef}
+          replyModalRef={replyModalRef}
+          isReply={true}
+        />
       )}
     </Wrapper>
   );
