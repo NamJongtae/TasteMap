@@ -17,7 +17,7 @@ import {
 } from "./postUpload.styles";
 import Header from "../../compoent/commons/layouts/header/Header";
 import Kakaomap from "../../compoent/units/kakaomap/Kakaomap.container";
-import SearchModal from "./SearchModal";
+import SearchModal from "./SearchModal.container";
 import Loading from "../../compoent/commons/loading/Loading";
 import { IPostData, ISearchMapData, IUserData } from "../../api/apiType";
 import UserInfo from "../../compoent/units/post/UserInfo.container";
@@ -71,9 +71,9 @@ export default function PostUploadUI({
   isEdit,
   invalidPage
 }: IProps) {
-  return isEdit&&invalidPage ? (
+  return isEdit && invalidPage ? (
     <>
-      <Header type='upload' btnText="수정" disabled={true}/>
+      <Header type='upload' btnText='수정' disabled={true} />
       <InvalidPage text='유효하지 않은 게시물입니다.' />
     </>
   ) : (
