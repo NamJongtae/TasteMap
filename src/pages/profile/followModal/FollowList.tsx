@@ -50,12 +50,16 @@ export default function FollowList({ isFollower }: IProps) {
         setIsScrollLoading(false);
       })();
     } else {
-      dispatch(
-        thunkFetchFirstPageFollowingData({
-          uid: uid || userData.uid || "",
-          pagePerData
-        })
-      );
+      (async () => {
+        setIsScrollLoading(true);
+        await dispatch(
+          thunkFetchFirstPageFollowingData({
+            uid: uid || userData.uid || "",
+            pagePerData
+          })
+        );
+        setIsScrollLoading(false);
+      })();
     }
   }, []);
 
@@ -93,27 +97,31 @@ export default function FollowList({ isFollower }: IProps) {
 
   return (
     <>
-      <>
-        {followListData.length > 0 ? (
-          <>
-            <FollowUl>
-              {followListData.map((item) => {
-                return (
-                  <FollowItem
-                    key={item.uid}
-                    data={item}
-                    isFollower={isFollower}
-                  />
-                );
-              })}
-              <InfinityScrollTarget ref={ref}></InfinityScrollTarget>
-              {isScrollLoading && <ScrollLoading />}
-            </FollowUl>
-          </>
-        ) : (
-          <NoData />
-        )}
-      </>
+      {isScrollLoading && followListData.length === 0 ? (
+        <ScrollLoading />
+      ) : (
+        <>
+          {followListData.length > 0 ? (
+            <>
+              <FollowUl>
+                {followListData.map((item) => {
+                  return (
+                    <FollowItem
+                      key={item.uid}
+                      data={item}
+                      isFollower={isFollower}
+                    />
+                  );
+                })}
+                <InfinityScrollTarget ref={ref}></InfinityScrollTarget>
+                {isScrollLoading && <ScrollLoading />}
+              </FollowUl>
+            </>
+          ) : (
+            <NoData />
+          )}
+        </>
+      )}
     </>
   );
 }
