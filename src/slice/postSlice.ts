@@ -160,9 +160,13 @@ export const thunkFetchFirstPageFeedData = createAsyncThunk<
   { rejectValue: IKnownError }
 >(
   "postSlice/thunkFetchFirstPageFeedData",
-  async ({ pagePerData, followerList }) => {
-    const res = await fetchFirstPageFeedData(pagePerData, followerList);
-    return res;
+  async ({ pagePerData, followerList }, thunkAPI) => {
+    try {
+      const res = await fetchFirstPageFeedData(pagePerData, followerList);
+      return res;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(error);
+    }
   }
 );
 
@@ -183,9 +187,13 @@ export const thunkFetchPagingFeedData = createAsyncThunk<
   { rejectValue: IKnownError }
 >(
   "postSlice/thunkFetchPagingFeedData",
-  async ({ pagePerData, page, followerList }) => {
-    const res = await fetchPagingFeedData(page, pagePerData, followerList);
-    return res;
+  async ({ pagePerData, page, followerList }, thunkAPI) => {
+    try {
+      const res = await fetchPagingFeedData(page, pagePerData, followerList);
+      return res;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(error);
+    }
   }
 );
 
@@ -327,7 +335,7 @@ export const postSlice = createSlice({
     postData: {} as IPostData,
     postListData: [] as IPostData[], // 게시물 데이터
     page: {} as QueryDocumentSnapshot<DocumentData>,
-    pagePerData: 10,
+    pagePerData: 5,
     hasMore: false,
     searchMapData: [] as ISearchMapData[], // 검색 데이터
     seletedMapData: [] as ISearchMapData[], // 선택한 검색 데이터,
@@ -455,7 +463,8 @@ export const postSlice = createSlice({
     builder.addCase(thunkFetchFirstPagePostData.fulfilled, (state, action) => {
       document.body.style.overflow = "auto";
       state.isLoading = false;
-      if (action.payload) {
+      if (!action.payload) return;
+      if (action.payload.data.length > 0) {
         state.isNoPostData = false;
         state.postListData = action.payload?.data as IPostData[];
         state.hasMore =
@@ -484,13 +493,15 @@ export const postSlice = createSlice({
     // 게시물 페이징
     builder.addCase(thunkFetchPagingPostData.fulfilled, (state, action) => {
       if (!action.payload) return;
-      state.postListData = [
-        ...state.postListData,
-        ...(action.payload?.data as IPostData[])
-      ];
-      state.page =
-        action.payload.postDocs.docs[action.payload.postDocs.docs.length - 1];
-      state.hasMore = action.payload.data.length % state.pagePerData === 0;
+      if (action.payload.data.length > 0) {
+        state.postListData = [
+          ...state.postListData,
+          ...(action.payload?.data as IPostData[])
+        ];
+        state.page =
+          action.payload.postDocs.docs[action.payload.postDocs.docs.length - 1];
+        state.hasMore = action.payload.data.length % state.pagePerData === 0;
+      }
     });
     builder.addCase(thunkFetchPagingPostData.rejected, (state, action) => {
       if (!action.payload) return;
@@ -511,18 +522,17 @@ export const postSlice = createSlice({
     builder.addCase(thunkFetchFirstPageFeedData.fulfilled, (state, action) => {
       document.body.style.overflow = "auto";
       state.isLoading = false;
-      if (action.payload) {
+      if (!action.payload) return;
+      if (action.payload?.data.length > 0) {
+        state.isNoPostData = false;
         state.postListData = action.payload?.data as IPostData[];
         state.hasMore =
           (action.payload?.data as IPostData[]).length % state.pagePerData ===
           0;
         state.page =
           action.payload.postDocs.docs[action.payload.postDocs.docs.length - 1];
-        if (action.payload?.data.length > 0) {
-          state.isNoPostData = false;
-        } else {
-          state.isNoPostData = true;
-        }
+      } else {
+        state.isNoPostData = true;
       }
     });
     builder.addCase(thunkFetchFirstPageFeedData.rejected, (state, action) => {
@@ -539,13 +549,15 @@ export const postSlice = createSlice({
     // 게시물 피드 페이징
     builder.addCase(thunkFetchPagingFeedData.fulfilled, (state, action) => {
       if (!action.payload) return;
-      state.postListData = [
-        ...state.postListData,
-        ...(action.payload?.data as IPostData[])
-      ];
-      state.page =
-        action.payload.postDocs.docs[action.payload.postDocs.docs.length - 1];
-      state.hasMore = action.payload.data.length % state.pagePerData === 0;
+      if (action.payload.data.length > 0) {
+        state.postListData = [
+          ...state.postListData,
+          ...(action.payload?.data as IPostData[])
+        ];
+        state.page =
+          action.payload.postDocs.docs[action.payload.postDocs.docs.length - 1];
+        state.hasMore = action.payload.data.length % state.pagePerData === 0;
+      }
     });
     builder.addCase(thunkFetchPagingFeedData.rejected, (state, action) => {
       if (!action.payload) return;
