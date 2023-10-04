@@ -70,6 +70,8 @@ export const MapInfoList = styled.ul`
   margin: 0 auto;
   border: 1px solid #bdbdbd;
   margin-top: 50px;
+  max-height: 500px;
+  overflow-y: scroll;
 `;
 
 export const MapInfoItem = styled.li`
