@@ -261,7 +261,7 @@ export const profileSlice = createSlice({
     profilePostListData: [] as IPostData[],
     page: {} as QueryDocumentSnapshot<DocumentData>,
     hasMore: false,
-    pagePerData: 10,
+    pagePerData: 5,
     isOpenFollowerModal: false,
     isOpenFollowingModal: false,
     isOpenProfileEditModal: false,
@@ -419,7 +419,8 @@ export const profileSlice = createSlice({
       (state, action) => {
         document.body.style.overflow = "auto";
         state.profilePostIsLoading = false;
-        if (action.payload) {
+        if (!action.payload) return;
+        if (action.payload.data.length > 0) {
           state.profilePostListData = action.payload?.data;
           state.hasMore =
             (action.payload?.data as IPostData[]).length % state.pagePerData ===
@@ -453,13 +454,15 @@ export const profileSlice = createSlice({
     // 게시물 페이징
     builder.addCase(thunkFetchProfilePagingData.fulfilled, (state, action) => {
       if (!action.payload) return;
-      state.profilePostListData = [
-        ...state.profilePostListData,
-        ...(action.payload?.data as IPostData[])
-      ];
-      state.page =
-        action.payload.postDocs.docs[action.payload.postDocs.docs.length - 1];
-      state.hasMore = action.payload.data.length % state.pagePerData === 0;
+      if (action.payload.data.length > 0) {
+        state.profilePostListData = [
+          ...state.profilePostListData,
+          ...(action.payload?.data as IPostData[])
+        ];
+        state.page =
+          action.payload.postDocs.docs[action.payload.postDocs.docs.length - 1];
+        state.hasMore = action.payload.data.length % state.pagePerData === 0;
+      }
     });
     builder.addCase(thunkFetchProfilePagingData.rejected, (state, action) => {
       if (!action.payload) return;
