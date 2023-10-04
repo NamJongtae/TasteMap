@@ -16,6 +16,7 @@ import Profile from "./pages/profile/Profile";
 import MyTasteMap from "./pages/profile/myTasteMap/MyTasteMap.container";
 import NotFound from "./pages/404/NotFound";
 import Search from './compoent/units/search/Search';
+import ShareTasteMap from './pages/shareTasteMap/ShareTasteMap';
 
 function App() {
   const { pathname } = useLocation();
@@ -122,6 +123,7 @@ function App() {
               }
             />
           </Route>
+          <Route path='/tasteMap/share/:uid' element={<ShareTasteMap/>}/>
           <Route path='/search' element={<Search/>}/>
           <Route path='*' element={<NotFound />} />
         </Routes>

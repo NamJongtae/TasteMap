@@ -12,6 +12,7 @@ import {
   ListBtn,
   MapBtn,
   RemoveBtn,
+  ShareBtn,
   Wrapper
 } from "./myTasteMap.styles";
 import { SearchModalBtn } from "../../postUpload/postUpload.styles";
@@ -31,6 +32,7 @@ interface IProps {
   isOpenModal: boolean;
   closeSearchModal: () => void;
   removeMap: () => void;
+  onClickShare: () => Promise<void>;
 }
 
 export default function MyTasteMapUI({
@@ -43,6 +45,7 @@ export default function MyTasteMapUI({
   isOpenModal,
   closeSearchModal,
   removeMap,
+  onClickShare
 }: IProps) {
   return (
     <>
@@ -51,7 +54,8 @@ export default function MyTasteMapUI({
       ) : (
         <>
           <Header type='tasteMap' />
-          {myProfileData.storedMapList.length > 0 && (
+          <Wrapper>
+            <h2 className='a11y-hidden'>나의 맛집 지도</h2>
             <ContetnTypeBtnWrapper>
               <MapBtn onClick={onClickMapType} contentType={contentType}>
                 지도
@@ -59,12 +63,10 @@ export default function MyTasteMapUI({
               <ListBtn onClick={onClickListType} contentType={contentType}>
                 목록
               </ListBtn>
+              {contentType === "map" && (
+                <ShareBtn onClick={onClickShare} aria-label='공유' />
+              )}
             </ContetnTypeBtnWrapper>
-          )}
-
-          <Wrapper>
-            <h2 className='a11y-hidden'>나의 맛집 지도</h2>
-
             <KakaomapWrapper contentType={contentType}>
               <SearchModalBtn onClick={openSearchModal}>
                 맛집 추가
@@ -111,7 +113,10 @@ export default function MyTasteMapUI({
               </ItemSingleList>
             )}
             {contentType === "list" && (
-              <MyTasteMapList items={myProfileData.storedMapList} />
+              <MyTasteMapList
+                items={myProfileData.storedMapList}
+                isShareTasteMap={false}
+              />
             )}
             {isOpenModal && <SearchModal closeSearchModal={closeSearchModal} />}
           </Wrapper>

@@ -50,6 +50,18 @@ export default function MyTasteMap() {
     dispatch(tasteMapSlice.actions.setContentType("list"));
   };
 
+  const onClickShare = async () => {
+    const textarea = document.createElement("textarea");
+    document.body.appendChild(textarea);
+    const url =
+      window.document.location.host + `/tasteMap/share/${myProfileData.uid}`;
+    textarea.value = url;
+    textarea.select();
+    document.execCommand("copy");
+    document.body.removeChild(textarea);
+    sweetToast("맛집 지도 공유 링크가 복사되었습니다.", "success");
+  };
+
   const removeMap = () => {
     sweetConfirm("정말 삭제하시겠습니까?", "삭제", "취소", () => {
       dispatch(thunkFetchRemovePostMap(clickMarkerData));
@@ -84,6 +96,7 @@ export default function MyTasteMap() {
       isOpenModal={isOpenModal}
       closeSearchModal={closeSearchModal}
       removeMap={removeMap}
+      onClickShare={onClickShare}
     />
   );
 }

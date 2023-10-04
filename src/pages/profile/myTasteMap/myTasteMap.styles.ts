@@ -23,6 +23,22 @@ export const KakaomapWrapper = styled.div`
     props.contentType === "map" ? "block" : "none"};
 `;
 
+export const ShareBtn = styled.button`
+  position: absolute;
+  right: 15px;
+  top: 50px;
+  width: 30px;
+  height: 30px;
+  body.webp & {
+    background: url("/assets/webp/icon-share.webp") no-repeat center #f0f0f0;
+  }
+  body.no-webp & {
+    background: url("/assets/icon-share.svg") no-repeat center #f0f0f0;
+  }
+  border-radius: 5px;
+  border: 1px solid #bdbdbd;
+`;
+
 export const ContetnTypeBtnWrapper = styled.div`
   position: relative;
   width: calc(100% - 20px);
@@ -32,7 +48,7 @@ export const ContetnTypeBtnWrapper = styled.div`
 
 export const MapBtn = styled.button`
   position: absolute;
-  top: 30px;
+  top: 3px;
   right: 50px;
   padding: 3px 6px;
   border: 1px solid #bdbdbd;
@@ -49,7 +65,7 @@ export const MapBtn = styled.button`
 
 export const ListBtn = styled.button`
   position: absolute;
-  top: 30px;
+  top: 3px;
   right: 15px;
   padding: 3px 6px;
   border: 1px solid #bdbdbd;
@@ -57,6 +73,7 @@ export const ListBtn = styled.button`
   border-radius: 0 5px 5px 0;
   font-size: 12px;
   font-weight: 500;
+  transition: all 0.3s;
   color: ${(props: { contentType: "map" | "list" }) =>
     props.contentType === "list" ? "#fff" : "none"};
   background-color: ${(props: { contentType: "map" | "list" }) =>
