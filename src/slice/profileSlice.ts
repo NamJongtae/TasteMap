@@ -421,6 +421,7 @@ export const profileSlice = createSlice({
         state.profilePostIsLoading = false;
         if (!action.payload) return;
         if (action.payload.data.length > 0) {
+          state.isNoProfilePostData = false;
           state.profilePostListData = action.payload?.data;
           state.hasMore =
             (action.payload?.data as IPostData[]).length % state.pagePerData ===
@@ -429,11 +430,8 @@ export const profileSlice = createSlice({
             action.payload.postDocs.docs[
               action.payload.postDocs.docs.length - 1
             ];
-          if (action.payload?.data.length > 0) {
-            state.isNoProfilePostData = false;
-          } else {
-            state.isNoProfilePostData = true;
-          }
+        } else {
+          state.isNoProfilePostData = true;
         }
       }
     );
