@@ -1,4 +1,4 @@
-import { collection, doc, setDoc, getDoc } from "firebase/firestore";
+import { collection, doc, setDoc, getDoc, Timestamp } from "firebase/firestore";
 import {
   getAuth,
   signInWithEmailAndPassword,
@@ -58,28 +58,38 @@ export const fetchSocialLogin = async (type: string) => {
           uid: user.uid,
           email: user.email,
           displayName: user.displayName,
-          photoURL: user.photoURL || "",
-          phone: user.phoneNumber,
-          introduce: "",
+          photoURL: user.photoURL || process.env.REACT_APP_DEFAULT_PROFILE_IMG,
+          phone: "",
+          postList: [],
           likeList: [],
-          tasteCoords: [],
-          postReportList: [],
-          commentReportList: [],
-          photoFileName: ""
+          storedMapList: [],
+          followerList: [],
+          followingList: [],
+          photoFileName: "",
+          introduce: "",
+          createdAt: Timestamp.fromDate(new Date())
         });
       }
     }
-  } catch (error) {
+  } catch (error: any) {
+    if (
+      error.message.includes(
+        "Firebase: Error (auth/cancelled-popup-request)."
+      ) ||
+      error.message.includes("Firebase: Error (auth/popup-closed-by-user).")
+    ) {
+      return;
+    }
     console.log(error);
     throw error;
   }
 };
 
 export const fetchLogout = async () => {
-  try{
+  try {
     await signOut(auth);
-  } catch(error) {
+  } catch (error) {
     console.log(error);
     throw error;
   }
-}
+};
