@@ -19,12 +19,13 @@ import {
 import { profileSlice } from "../../../slice/profileSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../store/store";
-import { tasteMapSlice } from '../../../slice/tasteMapSlice';
+import { tasteMapSlice } from "../../../slice/tasteMapSlice";
 
 interface IProps {
   item: ISearchMapData;
+  isShareTasteMap: boolean;
 }
-export default function MyTasteMapItem({ item }: IProps) {
+export default function MyTasteMapItem({ item, isShareTasteMap }: IProps) {
   const dispatch = useDispatch<AppDispatch>();
   const myProfileData = useSelector(
     (state: RootState) => state.profile.myProfileData
@@ -41,9 +42,8 @@ export default function MyTasteMapItem({ item }: IProps) {
       dispatch(profileSlice.actions.setMyprofile(newData));
       sweetToast("삭제가 완료되었습니다.", "success");
       dispatch(tasteMapSlice.actions.setClickMarkerData({}));
-      if(newData.storedMapList&&newData.storedMapList.length===0){
+      if (newData.storedMapList && newData.storedMapList.length === 0) {
         dispatch(tasteMapSlice.actions.setContentType("map"));
-        
       }
     });
   };
@@ -78,8 +78,8 @@ export default function MyTasteMapItem({ item }: IProps) {
           </ItemLink>
         </Item>
         <BtnWrapper>
-          <FocusMapBtn onClick={onClickFocusMap} title={"지도로 보기"}/>
-          <RemoveBtn onClick={removeMap} title={"삭제"}/>
+          <FocusMapBtn onClick={onClickFocusMap} title={"지도로 보기"} />
+          {!isShareTasteMap&&<RemoveBtn onClick={removeMap} title={"삭제"} />}
         </BtnWrapper>
       </ItemList>
     </MapInfoItem>

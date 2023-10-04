@@ -5,8 +5,9 @@ import MyTasteMapItem from "./MyTasteMapItem";
 
 interface IProps {
   items: ISearchMapData[];
+  isShareTasteMap:boolean;
 }
-export default function myTasteMapList({ items }: IProps) {
+export default function myTasteMapList({ items, isShareTasteMap }: IProps) {
   return (
     <MapInfoList>
       {items.map((item) => {
@@ -14,6 +15,7 @@ export default function myTasteMapList({ items }: IProps) {
           <MyTasteMapItem
             key={item.address}
             item={item}
+            isShareTasteMap={isShareTasteMap}
           />
         );
       })}
