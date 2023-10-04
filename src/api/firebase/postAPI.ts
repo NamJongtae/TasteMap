@@ -1,6 +1,7 @@
 import {
   DocumentData,
   QueryDocumentSnapshot,
+  QuerySnapshot,
   arrayRemove,
   arrayUnion,
   collection,
@@ -152,6 +153,12 @@ export const fetchFirstPageFeedData = async (
   followerList: string[]
 ) => {
   try {
+    if (followerList.length === 0) {
+      return {
+        postDocs: {} as QuerySnapshot<DocumentData, DocumentData>,
+        data: [] as DocumentData[]
+      };
+    }
     const postRef = collection(db, "post");
     const q = query(
       postRef,
