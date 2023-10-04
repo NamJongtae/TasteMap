@@ -265,11 +265,6 @@ function Kakaomap({ items, isTasteMapPage }: IProps) {
   };
 
   useEffect(() => {
-    // 선댁한 검색한 결과 데이터 초기화
-    dispatch(postSlice.actions.resetSelectedMapData());
-  }, []);
-
-  useEffect(() => {
     // map이 없을 시 리턴 맵 중복 생성 방지
     if (myMap === null || data.length === 0) {
       return;
@@ -481,6 +476,12 @@ function Kakaomap({ items, isTasteMapPage }: IProps) {
       }
     }
   }, [seletedMapData]);
+
+  useEffect(() => {
+    return () => {
+      dispatch(postSlice.actions.resetSelectedMapData());
+    };
+  }, []);
 
   useEffect(() => {
     if (isTasteMapPage) {
