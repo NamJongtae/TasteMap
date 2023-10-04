@@ -53,6 +53,7 @@ export const FollowModalWrapper = styled.article`
   width: 100%;
   height: 100%;
   max-width: 500px;
+  min-height: 300px;
   background-color: #fff;
   z-index: 999;
   animation: FollowModalmoveUp 1s;
