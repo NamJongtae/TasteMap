@@ -86,14 +86,18 @@ export const ProfileImgResetBtn = styled.button`
 `;
 export const ProfileImgDescList = styled.ul`
   padding: 20px 10px;
+  display: table;
+  margin: 0 auto;
 `;
 
 export const ProfileImgDesc = styled.li`
   color: #4c4d4f;
-  list-style-type: disc;
-  margin-left: 50px;
   line-height: 1.5;
   font-size: 12px;
+  word-break: keep-all;
+  @media screen and (max-width:362px){
+    font-size: 11px;
+  }
 `;
 
 export const SignupBtn = styled.button`
@@ -117,5 +121,3 @@ export const PrevBtn = styled.button`
   font-weight: 500;
   color: #111;
 `;
-
-

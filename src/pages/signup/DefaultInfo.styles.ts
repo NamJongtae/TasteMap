@@ -4,9 +4,9 @@ export const Wrapper = styled.main`
   width: 100%;
   height: 100vh;
   display: flex;
-  overflow: auto;
   justify-content: center;
   align-items: center;
+  overflow-x: hidden;
   background-color: #f5f5f5;
 `;
 
@@ -61,7 +61,6 @@ export const ProgressCheck = styled.div`
   border-radius: 50%;
   border: ${(props: { active: boolean }) =>
     props.active ? "2px solid #627af5" : "2px solid #bdbdbd"};
-
   flex-shrink: 0;
   background: ${(props) =>
       props.active
@@ -109,7 +108,6 @@ export const SignupForm = styled.form`
   flex-direction: column;
   gap: 20px;
   width: 100%;
-  padding-bottom: 30px;
 `;
 
 export const InputWrapper = styled.div`
