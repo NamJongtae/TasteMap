@@ -63,106 +63,103 @@ export default function PostItemUI({
 }: IProps) {
   return (
     <>
-      {myProfileData.uid && (
-        <Wrapper>
-          <h2 className='a11y-hidden'>홈</h2>
-          <UserInfoWrapper>
-            <h3 className='a11y-hidden'>유저 프로필</h3>
-            <UserInfo
-              userData={{
-                ...myProfileData
-              }}
-              data={{ ...data }}
-              activeMoreBtn={true}
-              isProfilePage={isProfilePage}
-            />
-          </UserInfoWrapper>
-          <ContentWrapper>
-            <h3 className='a11y-hidden'>내용</h3>
-            <ContentText ref={contentTextRef}>{data.content}</ContentText>
+      <Wrapper>
+        <h2 className='a11y-hidden'>홈</h2>
+        <UserInfoWrapper>
+          <h3 className='a11y-hidden'>유저 프로필</h3>
+          <UserInfo
+            userData={{
+              ...myProfileData
+            }}
+            data={{ ...data }}
+            activeMoreBtn={true}
+            isProfilePage={isProfilePage}
+          />
+        </UserInfoWrapper>
+        <ContentWrapper>
+          <h3 className='a11y-hidden'>내용</h3>
+          <ContentText ref={contentTextRef}>{data.content}</ContentText>
 
-            {isShowMoreTextBtn && (
-              <>
-                <ContentTextLine></ContentTextLine>
-                <MoreContentBtn
-                  type='button'
-                  onClick={onClickMoreText}
-                  aria-label='더보기'
-                >
-                  더보기
-                </MoreContentBtn>
-              </>
-            )}
-            <KakaoMapWrapper postType={postType}>
-              {postType === "map" && (
-                <StoredMapBtn
-                  type='button'
-                  aria-label={isStoredMap ? "맛집 삭제" : "맛집 추가"}
-                  storedMap={isStoredMap}
-                  onClick={() => onClickStoredMap(data)}
-                  title={isStoredMap ? "맛집 삭제" : "맛집 추가"}
-                />
-              )}
-              <h3 className='a11y-hidden'>
-                {postType === "map" ? "지도" : "이미지"}
-              </h3>
-              {postType === "map"
-                ? data.mapData?.mapx && (
-                    <Kakaomap items={[{ ...data.mapData }]} isTasteMapPage={false}/>
-                  )
-                : data.imgURL &&
-                  data.imgURL.length > 0 && (
-                    <ImgSlider imgArray={data.imgURL} />
-                  )}
-            </KakaoMapWrapper>
-            <RatingWrapper>
-              <h3 className='a11y-hidden'>평점</h3>
-              <Rating value={data.rating} disabled={true} allowHalf />{" "}
-              <RatingCount>{data.rating}</RatingCount>
-            </RatingWrapper>
-          </ContentWrapper>
-          <ActiveMapBtn
-            type='button'
-            postType={postType}
-            onClick={changePostImgType}
-            aria-label='지도'
-          />
-          <ActiveImageBtn
-            type='button'
-            postType={postType}
-            onClick={changePostMapType}
-            aria-label='이미지'
-          />
-          <PostItemButtom>
-            <ButtonWrapper>
-              <LikeBtn
+          {isShowMoreTextBtn && (
+            <>
+              <ContentTextLine></ContentTextLine>
+              <MoreContentBtn
                 type='button'
-                aria-label='좋아요'
-                onClick={() => onClickLike(data.id)}
-                like={isLike}
-              />
-              <Count>{likeCount}</Count>
-            </ButtonWrapper>
-            <ButtonWrapper>
-              <CommentBtn
-                type='button'
-                aria-label='댓글'
-                onClick={openCommentModal}
-              />
-              <Count>{data.commentCount}</Count>
-            </ButtonWrapper>
-            {data.createdAt?.seconds && (
-              <PostDate
-                dateTime={new Date(
-                  data.createdAt?.seconds * 1000
-                ).toISOString()}
+                onClick={onClickMoreText}
+                aria-label='더보기'
               >
-                {formattedDate}
-              </PostDate>
+                더보기
+              </MoreContentBtn>
+            </>
+          )}
+          <KakaoMapWrapper postType={postType}>
+            {postType === "map" && (
+              <StoredMapBtn
+                type='button'
+                aria-label={isStoredMap ? "맛집 삭제" : "맛집 추가"}
+                storedMap={isStoredMap}
+                onClick={() => onClickStoredMap(data)}
+                title={isStoredMap ? "맛집 삭제" : "맛집 추가"}
+              />
             )}
-          </PostItemButtom>
-        </Wrapper>
-      )}
+            <h3 className='a11y-hidden'>
+              {postType === "map" ? "지도" : "이미지"}
+            </h3>
+            {postType === "map"
+              ? data.mapData?.mapx && (
+                  <Kakaomap
+                    items={[{ ...data.mapData }]}
+                    isTasteMapPage={false}
+                  />
+                )
+              : data.imgURL &&
+                data.imgURL.length > 0 && <ImgSlider imgArray={data.imgURL} />}
+          </KakaoMapWrapper>
+          <RatingWrapper>
+            <h3 className='a11y-hidden'>평점</h3>
+            <Rating value={data.rating} disabled={true} allowHalf />{" "}
+            <RatingCount>{data.rating}</RatingCount>
+          </RatingWrapper>
+        </ContentWrapper>
+        <ActiveMapBtn
+          type='button'
+          postType={postType}
+          onClick={changePostImgType}
+          aria-label='지도'
+        />
+        <ActiveImageBtn
+          type='button'
+          postType={postType}
+          onClick={changePostMapType}
+          aria-label='이미지'
+        />
+        <PostItemButtom>
+          <ButtonWrapper>
+            <LikeBtn
+              type='button'
+              aria-label='좋아요'
+              onClick={() => onClickLike(data.id)}
+              like={isLike}
+            />
+            <Count>{likeCount}</Count>
+          </ButtonWrapper>
+          <ButtonWrapper>
+            <CommentBtn
+              type='button'
+              aria-label='댓글'
+              onClick={openCommentModal}
+            />
+            <Count>{data.commentCount}</Count>
+          </ButtonWrapper>
+          {data.createdAt?.seconds && (
+            <PostDate
+              dateTime={new Date(data.createdAt?.seconds * 1000).toISOString()}
+            >
+              {formattedDate}
+            </PostDate>
+          )}
+        </PostItemButtom>
+      </Wrapper>
     </>
   );
 }
