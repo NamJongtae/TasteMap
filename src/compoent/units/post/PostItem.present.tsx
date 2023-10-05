@@ -97,6 +97,7 @@ export default function PostItemUI({
               {postType === "map" && (
                 <StoredMapBtn
                   type='button'
+                  aria-label={isStoredMap ? "맛집 삭제" : "맛집 추가"}
                   storedMap={isStoredMap}
                   onClick={() => onClickStoredMap(data)}
                   title={isStoredMap ? "맛집 삭제" : "맛집 추가"}
@@ -124,11 +125,13 @@ export default function PostItemUI({
             type='button'
             postType={postType}
             onClick={changePostImgType}
+            aria-label='지도'
           />
           <ActiveImageBtn
             type='button'
             postType={postType}
             onClick={changePostMapType}
+            aria-label='이미지'
           />
           <PostItemButtom>
             <ButtonWrapper>
