@@ -42,7 +42,7 @@ export default function Header({ type, onSubmit, btnText, disabled }: IParms) {
         return (
           <>
             <LeftSideWrapper>
-              <UploadLink to={"/post/upload"}></UploadLink>
+              <UploadLink to={"/post/upload"} aria-label='작성'></UploadLink>
               <LogoLink to={"/"}>
                 <Title>
                   <span className='a11y-hidden'>TasteMap</span>
