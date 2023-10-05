@@ -53,9 +53,10 @@ export default function PostUpload({ isEdit }: IProps) {
   const hiddenUploadBtnRef = useRef<HTMLInputElement>(null);
   // 이미지 업로드 페이지 wrapper
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const imgListRef = useRef<HTMLUListElement>(null);
   // 별점
   const [ratingValue, setRatingValue] = useState(0);
-
+  const [isImgLoading, setIsImgLoading] = useState(false);
   /**
    * 검색 모달창 열기 */
   const openSearchModal = () => {
@@ -113,14 +114,18 @@ export default function PostUpload({ isEdit }: IProps) {
       return;
     }
     // 모바일의 경우 이미지 미리보기 업로드 속도가 느려 로딩창 활성화
-    isMobile && dispatch(postSlice.actions.setIsLoading(true));
+    if (isMobile) {
+      setIsImgLoading(true);
+    }
     // 이미지 압축
     const compressdImg = (await getCompressionImg(file, "post")) as {
       compressedFile: File;
       compressedPreview: string;
     };
     // 로딩창 비활성화
-    isMobile && dispatch(postSlice.actions.setIsLoading(false));
+    if (isMobile) {
+      setIsImgLoading(false);
+    }
     // 이미지 타입이 undefined일 때 예외처리
     if (!compressdImg?.compressedFile || !compressdImg?.compressedPreview)
       return;
@@ -203,6 +208,13 @@ export default function PostUpload({ isEdit }: IProps) {
   };
 
   useEffect(() => {
+    if (imgListRef.current && postData.imgURL !== preview) {
+      imgListRef.current.scrollLeft =
+        imgListRef.current.clientWidth * preview.length;
+    }
+  }, [preview]);
+
+  useEffect(() => {
     if (isEdit) {
       if (postData.uid && postData.uid !== userData.uid) {
         sweetToast("다른 사용자의 게시물은 수정할 수 없습니다!", "warning");
@@ -215,6 +227,9 @@ export default function PostUpload({ isEdit }: IProps) {
     if (isEdit && postId) {
       dispatch(thunkFetchPostData(postId));
     }
+    return () => {
+      dispatch(postSlice.actions.setPostData([]));
+    };
   }, []);
 
   useEffect(() => {
@@ -247,6 +262,7 @@ export default function PostUpload({ isEdit }: IProps) {
       ratingValue={ratingValue}
       onSubmitUpload={onSubmitUpload}
       wrapperRef={wrapperRef}
+      imgListRef={imgListRef}
       userData={userData}
       openSearchModal={openSearchModal}
       setRatingValue={setRatingValue}
@@ -261,6 +277,7 @@ export default function PostUpload({ isEdit }: IProps) {
       closeSearchModal={closeSearchModal}
       isOpenModal={isOpenModal}
       isLoading={isLoading}
+      isImgLoading={isImgLoading}
       isEdit={isEdit}
       invalidPage={invalidPage}
     />

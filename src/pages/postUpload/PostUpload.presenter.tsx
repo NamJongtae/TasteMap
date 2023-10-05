@@ -22,6 +22,7 @@ import Loading from "../../compoent/commons/loading/Loading";
 import { IPostData, ISearchMapData, IUserData } from "../../api/apiType";
 import UserInfo from "../../compoent/units/post/UserInfo.container";
 import InvalidPage from "../../compoent/commons/invalidPage/InvalidPage";
+import ScrollLoading from '../../compoent/commons/loading/ScrollLoading';
 
 interface IProps {
   postData: IPostData;
@@ -30,6 +31,7 @@ interface IProps {
   ratingValue: number;
   onSubmitUpload: () => Promise<void>;
   wrapperRef: React.RefObject<HTMLDivElement>;
+  imgListRef: React.RefObject<HTMLUListElement>;
   userData: IUserData;
   openSearchModal: () => void;
   setRatingValue: React.Dispatch<React.SetStateAction<number>>;
@@ -44,6 +46,7 @@ interface IProps {
   closeSearchModal: () => void;
   isOpenModal: boolean;
   isLoading: boolean;
+  isImgLoading: boolean;
   isEdit: boolean;
   invalidPage: boolean;
 }
@@ -55,6 +58,7 @@ export default function PostUploadUI({
   ratingValue,
   onSubmitUpload,
   wrapperRef,
+  imgListRef,
   userData,
   openSearchModal,
   setRatingValue,
@@ -68,6 +72,7 @@ export default function PostUploadUI({
   closeSearchModal,
   isOpenModal,
   isLoading,
+  isImgLoading,
   isEdit,
   invalidPage
 }: IProps) {
@@ -151,19 +156,23 @@ export default function PostUploadUI({
               >
                 이미지 업로드
               </ImgUploadBtn>
-              <ImgList>
-                {preview.map((item, idx) => {
-                  return (
-                    <ImgItem key={item}>
-                      <Img src={item} alt='업로드 이미지' />
-                      <RemoveImgBtn
-                        type='button'
-                        onClick={() => onClickRemoveImg(idx)}
-                      />
-                    </ImgItem>
-                  );
-                })}
-              </ImgList>
+              {isImgLoading ? (
+                <ScrollLoading />
+              ) : (
+                <ImgList ref={imgListRef}>
+                  {preview.map((item, idx) => {
+                    return (
+                      <ImgItem key={item}>
+                        <Img src={item} alt='업로드 이미지' />
+                        <RemoveImgBtn
+                          type='button'
+                          onClick={() => onClickRemoveImg(idx)}
+                        />
+                      </ImgItem>
+                    );
+                  })}
+                </ImgList>
+              )}
             </Section>
           </Wrapper>
 
