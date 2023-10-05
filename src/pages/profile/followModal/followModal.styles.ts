@@ -85,6 +85,9 @@ export const FollowUl = styled.ul`
   height: 100%;
   overflow-y: scroll;
   padding: 20px;
+  li:last-child{
+  padding-bottom: 20px;
+ }
 `;
 
 export const FollowLi = styled.li`
