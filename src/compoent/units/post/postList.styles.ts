@@ -13,7 +13,7 @@ export const PostWrapper = styled.ul`
   padding: 10px 20px 20px 20px;
 `;
 
-export const InfinityScrollTarget = styled.div`
+export const InfinityScrollTarget = styled.li`
   position: relative;
   bottom: 20px;
 `;
