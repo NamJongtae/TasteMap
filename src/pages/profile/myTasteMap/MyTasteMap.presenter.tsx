@@ -64,13 +64,15 @@ export default function MyTasteMapUI({
                 목록
               </ListBtn>
               {contentType === "map" && (
+                <SearchModalBtn onClick={openSearchModal}>
+                  맛집 추가
+                </SearchModalBtn>
+              )}
+              {contentType === "map" && (
                 <ShareBtn onClick={onClickShare} aria-label='공유' />
               )}
             </ContetnTypeBtnWrapper>
             <KakaomapWrapper contentType={contentType}>
-              <SearchModalBtn onClick={openSearchModal}>
-                맛집 추가
-              </SearchModalBtn>
               <Desc>마커 클릭 시 맛집 정보가 지도 아래 표시 됩니다.</Desc>
               {myProfileData.storedMapList && (
                 <Kakaomap

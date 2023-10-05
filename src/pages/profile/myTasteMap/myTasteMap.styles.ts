@@ -23,12 +23,19 @@ export const KakaomapWrapper = styled.div`
     props.contentType === "map" ? "block" : "none"};
 `;
 
+export const ContetnTypeBtnWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  position: relative;
+  width: calc(100% - 20px);
+  max-width: 500px;
+  margin: 0 auto;
+`;
+
 export const ShareBtn = styled.button`
-  position: absolute;
-  right: 15px;
-  top: 50px;
-  width: 30px;
-  height: 30px;
+  width: 35px;
+  height: 35px;
   body.webp & {
     background: url("/assets/webp/icon-share.webp") no-repeat center #f0f0f0;
   }
@@ -36,14 +43,7 @@ export const ShareBtn = styled.button`
     background: url("/assets/icon-share.svg") no-repeat center #f0f0f0;
   }
   border-radius: 5px;
-  border: 1px solid #bdbdbd;
-`;
-
-export const ContetnTypeBtnWrapper = styled.div`
-  position: relative;
-  width: calc(100% - 20px);
-  max-width: 500px;
-  margin: 0 auto;
+  margin-bottom: 20px;
 `;
 
 export const MapBtn = styled.button`
