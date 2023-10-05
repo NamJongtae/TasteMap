@@ -348,6 +348,9 @@ export const postSlice = createSlice({
     setPostListData: (state, action) => {
       state.postListData = action.payload;
     },
+    setPostData: (state, action)=> {
+      state.postData = action.payload;
+    },
     setSelectedMapData: (state, action) => {
       state.seletedMapData = [action.payload];
     },
