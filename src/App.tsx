@@ -15,8 +15,9 @@ import TopButton from "./compoent/commons/topButton/TopButton";
 import Profile from "./pages/profile/Profile";
 import MyTasteMap from "./pages/profile/myTasteMap/MyTasteMap.container";
 import NotFound from "./pages/404/NotFound";
-import Search from './compoent/units/search/Search';
-import ShareTasteMap from './pages/shareTasteMap/ShareTasteMap';
+import Search from "./compoent/units/search/Search";
+import ShareTasteMap from "./pages/shareTasteMap/ShareTasteMap";
+import { Helmet } from "react-helmet-async";
 
 function App() {
   const { pathname } = useLocation();
@@ -72,6 +73,19 @@ function App() {
 
   return (
     <>
+      <Helmet>
+        <meta property='og:title' content='TasteMap' />
+        <meta property='og:type' content='webpsite' />
+        <meta property='og:url' content='https://tasteMap.site/' />
+        <meta
+          property='og:image'
+          content='https://firebasestorage.googleapis.com/v0/b/tastemap-c9a2a.appspot.com/o/images%2Fog%2Fog-img.png?alt=media&token=d4503b8e-af9e-4d6b-9367-268973d3104d&_gl=1*179wgyn*_ga*MTY1NzkxNDYxOC4xNjg4NTU5ODMy*_ga_CW55HF8NVT*MTY5NjQyMTkyOS4yMDEuMS4xNjk2NDIxOTcyLjE3LjAuMA..'
+        />
+        <meta
+          property='og:description'
+          content={'맛집을 공유하고 자신의 맛집 지도를 완성시켜가는 SNS 플랫폼\n나만의 맛집 지도를 만들고 공유해 보세요.'}
+        />
+      </Helmet>
       {webpChecked && (
         <Routes>
           <Route
@@ -123,8 +137,8 @@ function App() {
               }
             />
           </Route>
-          <Route path='/tasteMap/share/:uid' element={<ShareTasteMap/>}/>
-          <Route path='/search' element={<Search/>}/>
+          <Route path='/tasteMap/share/:uid' element={<ShareTasteMap />} />
+          <Route path='/search' element={<Search />} />
           <Route path='*' element={<NotFound />} />
         </Routes>
       )}
