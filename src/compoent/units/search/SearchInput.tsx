@@ -20,7 +20,6 @@ export default function SearchInput() {
   const [keyword, setKeyword] = useState(searchKeyword);
 
   const onChangeKeyword = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(e.target.value);
     setKeyword(e.target.value.trim());
     searchDebounce(e.target.value.trim());
   };
