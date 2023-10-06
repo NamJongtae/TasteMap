@@ -187,7 +187,7 @@ export default function CommentItem({ data, isReply }: IProps) {
           if (result.payload) {
             if ("postId" in result.payload) {
               if (userData.uid) {
-                const newData = [...commentListData];
+                let newData = [...commentListData];
                 const index = newData.findIndex(
                   (item) => item.commentId === (data as ICommentData).commentId
                 );
@@ -198,6 +198,11 @@ export default function CommentItem({ data, isReply }: IProps) {
                     userData.uid
                   ]
                 };
+                if (data.reportCount >= 4) {
+                  newData = newData.filter(
+                    (item) => item.commentId !== data.commentId
+                  );
+                }
                 dispatch(commentSlice.actions.setCommentListData(newData));
               }
             } else if (
@@ -242,7 +247,7 @@ export default function CommentItem({ data, isReply }: IProps) {
               ).replyId
             ) {
               if (userData.uid) {
-                const newData = [...replyListData];
+                let newData = [...replyListData];
                 const index = newData.findIndex(
                   (item) => item.replyId === (data as IReplyData).replyId
                 );
@@ -253,6 +258,11 @@ export default function CommentItem({ data, isReply }: IProps) {
                     userData.uid
                   ]
                 };
+                if (data.reportCount >= 4) {
+                  newData = newData.filter(
+                    (item) => item.replyId !== data.replyId
+                  );
+                }
                 dispatch(replySlice.actions.setReplyListData(newData));
               }
             } else if (

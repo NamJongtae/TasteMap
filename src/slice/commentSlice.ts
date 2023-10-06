@@ -254,9 +254,11 @@ export const commentSlice = createSlice({
 
     // 댓글 추가
     builder.addCase(thunkFetchAddComment.fulfilled, (state, action) => {
-      if (action.payload)
+      if (action.payload){
         state.commentListData = [action.payload, ...state.commentListData];
-      sweetToast("작성이 완료되었습니다.", "success");
+        sweetToast("작성이 완료되었습니다.", "success");
+      }
+       
     });
     builder.addCase(thunkFetchAddComment.rejected, (state, action) => {
       if (!action.payload) return;
@@ -335,10 +337,6 @@ export const commentSlice = createSlice({
     // 댓글 신고
     builder.addCase(thunkFetchReportComment.fulfilled, (state, action) => {
       if (action.payload && action.payload?.reportCount >= 4) {
-        const newData = [...state.commentListData].filter(
-          (item) => item.commentId !== action.payload?.commentId
-        );
-        state.commentListData = newData;
         sweetToast(
           "신고가 누적되어 댓글이 블라인드 처리되었습니다.",
           "info",

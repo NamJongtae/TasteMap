@@ -204,9 +204,11 @@ export const replySlice = createSlice({
 
     // 답글 추가
     builder.addCase(thunkFetchAddReply.fulfilled, (state, action) => {
-      if (action.payload)
+      if (action.payload){
         state.replyListData = [action.payload, ...state.replyListData];
-      sweetToast("작성이 완료되었습니다.", "success");
+        sweetToast("작성이 완료되었습니다.", "success");
+      }
+    
     });
     builder.addCase(thunkFetchAddReply.rejected, (state, action) => {
       if (action.payload) state.error = action.payload?.message;
@@ -285,10 +287,6 @@ export const replySlice = createSlice({
     // 답글 신고
     builder.addCase(thunkFetchReportReply.fulfilled, (state, action) => {
       if (action.payload && action.payload?.reportCount >= 4) {
-        const newData = [...state.replyListData].filter(
-          (item) => item.replyId !== action.payload?.replyId
-        );
-        state.replyListData = newData;
         sweetToast(
           "신고가 누적되어 답글이 블라인드 처리되었습니다.",
           "info",
