@@ -361,7 +361,6 @@ export const fetchEditProfile = async (editProfileData: IEditProfileData) => {
       typeof editProfileData.file !== "string" &&
       editProfileData.file &&
       (await getDownloadURL((ImgRes as UploadResult).ref));
-    console.log(editProfileData);
     if (!auth.currentUser) return;
     // 유저 데이터 가져오기
     const userDoc = doc(db, `user/${auth.currentUser.uid}`);
