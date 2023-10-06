@@ -167,7 +167,7 @@ export default function DefaultInfoUI({
             >
               다음
             </SignupBtn>
-            <CancelBtn onClick={onClickCancel}>취소</CancelBtn>
+            <CancelBtn type='button' onClick={onClickCancel}>취소</CancelBtn>
           </SignupForm>
         ) : (
           <ProfileSetting

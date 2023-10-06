@@ -67,7 +67,7 @@ export default function ProfileSetting({
     e.preventDefault();
     dispatch(
       thunkFetchSignup({
-        displayNameValue,
+        displayNameValue: displayNameValue.toLowerCase(),
         uploadImg,
         emailValue,
         passwordValue,
