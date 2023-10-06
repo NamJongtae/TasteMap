@@ -112,7 +112,7 @@ export const ItemSingleList = styled(ItemList)`
   position: relative;
   margin-top: 20px;
   border: 1px solid #bdbdbd;
-  padding: 20px 50px 20px 20px;
+  padding: 10px 50px 10px 20px;
   margin: 20px auto 0 auto;
   display: ${(props: { contentType: "map" | "list" }) =>
     props.contentType === "map" ? "flex" : "none"};
