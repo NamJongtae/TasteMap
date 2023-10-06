@@ -621,10 +621,6 @@ export const postSlice = createSlice({
     // 게시물 신고
     builder.addCase(thunkFetchReportPost.fulfilled, (state, action) => {
       if (action.payload?.reportCount && action.payload?.reportCount >= 4) {
-        const newData = [...state.postListData].filter(
-          (item) => item.id !== action.payload?.id
-        );
-        state.postListData = newData;
         sweetToast("신고가 누적되어 게시물이 블라인드 처리되었습니다.", "info");
       } else {
         sweetToast("신고가 완료되었습니다.", "success");

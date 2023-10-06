@@ -100,7 +100,7 @@ export default function UserInfo({
           // 신고한 게시물이 유효하다면 신고 후 postData 수정 로직 수행
           if ((result.payload as IPostData).id) {
             if (userData.uid) {
-              const newData = [...postListData];
+              let newData = [...postListData];
               const index = newData.findIndex(
                 (item) => item.id === postData.id
               );
@@ -111,6 +111,10 @@ export default function UserInfo({
                   userData.uid
                 ]
               };
+
+              if (postData && (postData?.reportCount as number) >= 4) {
+                newData = newData.filter((item) => item.id !== postData?.id);
+              }
               dispatch(postSlice.actions.setPostListData(newData));
             }
           } else if (
