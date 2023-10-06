@@ -10,11 +10,14 @@ import {
   profileSlice,
   thunkFetchEditProfile,
   thunkFetchMyProfile,
-  thunkFetchProfileFirstPageData
+  thunkFetchProfileFirstPageData,
+  thunkFetchUserProfile
 } from "../../../slice/profileSlice";
 import ProfileEditModalUI from "./ProfileEditModal.presenter";
+import { useParams } from "react-router-dom";
 
 export default function ProfileEditModal() {
+  const { uid } = useParams();
   const myProfileData = useSelector(
     (state: RootState) => state.profile.myProfileData
   );
@@ -89,13 +92,14 @@ export default function ProfileEditModal() {
   const onClickSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const IEditProfileData = {
-      displayName: displayNameValue,
+      displayName: displayNameValue.toLowerCase(),
       file: uploadImg,
       introduce: introduceValue
     };
     await dispatch(thunkFetchEditProfile(IEditProfileData));
     if (userData.uid) {
       dispatch(thunkFetchMyProfile(userData.uid));
+      if (userData.uid === uid) dispatch(thunkFetchUserProfile(userData.uid));
       dispatch(
         thunkFetchProfileFirstPageData({ uid: userData.uid, pagePerData: 10 })
       );

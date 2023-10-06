@@ -104,13 +104,13 @@ export default function ProfileEditModalUI({
 
             <ProfileImgDescList>
               <ProfileImgDesc>
-                이미지를 설정하지 않을 경우 기본 이미지가 적용됩니다.
+              ⦁ 이미지를 설정하지 않을 경우 기본 이미지가 적용됩니다.
               </ProfileImgDesc>
               <ProfileImgDesc>
-                업로드 가능한 최대 이미지 용량은 10MB 입니다.
+              ⦁  업로드 가능한 최대 이미지 용량은 10MB 입니다.
               </ProfileImgDesc>
               <ProfileImgDesc>
-                .jpg, .jpge, .png, .bmp 이미지 형식을 지원합니다.
+              ⦁ .jpg, .jpge, .png, .bmp 이미지 형식을 지원합니다.
               </ProfileImgDesc>
             </ProfileImgDescList>
           </ProfileImgWrapper>

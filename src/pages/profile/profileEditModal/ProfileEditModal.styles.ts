@@ -138,8 +138,8 @@ export const ProfileImgButton = styled.button`
       #79a7ff;
   }
   body.webp &::after {
-    background: url("/assets/webp/icon-uploadProfile.webp") no-repeat center / 20px
-      #79a7ff;
+    background: url("/assets/webp/icon-uploadProfile.webp") no-repeat center /
+      20px #79a7ff;
   }
 `;
 
@@ -166,14 +166,18 @@ export const ProfileImgResetBtn = styled.button`
 `;
 export const ProfileImgDescList = styled.ul`
   padding: 20px 10px;
+  display: table;
+  margin: 0 auto;
 `;
 
 export const ProfileImgDesc = styled.li`
   color: #4c4d4f;
-  list-style-type: disc;
-  margin-left: 50px;
   line-height: 1.5;
   font-size: 12px;
+  word-break: keep-all;
+  @media screen and (max-width: 362px) {
+    font-size: 11px;
+  }
 `;
 
 export const IntroTextArea = styled.textarea`
@@ -184,7 +188,7 @@ export const IntroTextArea = styled.textarea`
   box-sizing: content-box;
   border-bottom: 1px solid #bdbdbd;
   line-height: 1.6;
-  max-height: 100px; 
+  max-height: 100px;
   ::placeholder {
     font-weight: 500;
     color: #d0d0d0;
