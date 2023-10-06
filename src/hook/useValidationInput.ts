@@ -8,7 +8,7 @@ export const useValidationInput = (
   type: string,
   checkDuplication: boolean
 ) => {
-  const displayNameReg = /^[a-zA-z0-9]{4,10}$/;
+  const displayNameReg = /^[a-z0-9]{4,10}$/;
   const emailReg = /[a-z0-9]+@[a-z]+\.[a-z]{2,3}/;
   const passwordReg = /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,16}$/;
   const phoneReg = /01[016789]-[^0][0-9]{2,3}-[0-9]{3,4}/;
@@ -25,7 +25,7 @@ export const useValidationInput = (
   useEffect(() => {
     if (type === "displayName") {
       setTypeInfo({
-        errorMsg: "4-10자 영문, 영문+숫자를 입력해주세요.",
+        errorMsg: "4-10자 영문 소문자, 영문 소문자+숫자를 입력해주세요.",
         duplicationMsg: "중복된 닉네임입니다.",
         reg: displayNameReg
       });
