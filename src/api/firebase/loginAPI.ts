@@ -23,7 +23,7 @@ export const fetchLogin = async (email: string, password: string) => {
     sweetToast(
       `${auth.currentUser.displayName}님 환영합니다.`,
       "success",
-      2000
+      1500
     );
   } catch (error) {
     console.error(error);
@@ -49,7 +49,7 @@ export const fetchSocialLogin = async (type: string) => {
       const isUser = isUserRes.data();
       if (!isUser) {
         await updateProfile(result.user, {
-          displayName,
+          displayName: displayName?.toLowerCase(),
           photoURL
         });
 
@@ -57,7 +57,7 @@ export const fetchSocialLogin = async (type: string) => {
         await setDoc(doc(userRef, `${user.uid}`), {
           uid: user.uid,
           email: user.email,
-          displayName: user.displayName,
+          displayName: user.displayName?.toLowerCase(),
           photoURL: user.photoURL || process.env.REACT_APP_DEFAULT_PROFILE_IMG,
           phone: "",
           postList: [],
