@@ -7,6 +7,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../store/store";
 import ProfileEditModal from "./profileEditModal/ProfileEditModal.container";
 import InvalidPage from "../../compoent/commons/invalidPage/InvalidPage";
+import TopButton from '../../compoent/commons/topButton/TopButton';
 
 export default function Profile() {
   const isOpenFollowModal = useSelector(
@@ -35,6 +36,7 @@ export default function Profile() {
             <Header type='profile' />
             <ProfileInfo />
             <ProfilePost />
+            <TopButton/>
           </Wrapper>
           {isOpenFollowModal && <FollowModal isFollower={true} />}
           {isOpenFollowingModal && <FollowModal isFollower={false} />}

@@ -77,7 +77,7 @@ export default function ProfileInfo() {
     navigate(`/profile/tasteMap`);
   };
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (
       userProfileData.uid &&
       myProfileData.followerList?.includes(userProfileData.uid)
@@ -96,7 +96,7 @@ export default function ProfileInfo() {
         setIsShowMoreTextBtn(false);
       }
     }
-  }, [userProfileData, myProfileData]);
+  }, [userProfileData.introduce, myProfileData.introduce]);
 
   useEffect(() => {
     dispatch(thunkFetchUserProfile(uid || userData.uid || ""));
