@@ -48,7 +48,9 @@ export default function CommentModal({
         document.body.style.overflow = "auto";
         dispatch(commentSlice.actions.setIsOpenCommentModal(false));
         // 빈 히스토리를 없애기 위해 뒤로가기
-        history.back();
+        if (isMobile) {
+          history.back();
+        }
       }, 800);
     } else if (replyModalRef.current) {
       dispatch(thunkUpdateReplyCount(commentId));
@@ -84,29 +86,28 @@ export default function CommentModal({
       }
     }
   };
-
   // 모바일 뒤로가기 구현을 위해 빈 히스토리 생성
   // 뒤로가기 버튼을 눌러도 현재 페이지가 유지됨
   useEffect(() => {
-    if (isMobile && isOpenCommnetModal && !isOpenReplyModal) {
+    if (isMobile && !isReply) {
       window.history.pushState(null, "", window.location.href);
     }
-  }, [isOpenCommnetModal]);
+  }, []);
 
   useEffect(() => {
-    if (isMobile && (isOpenReplyModal || isOpenCommnetModal)) {
-      window.onpopstate = () => {
-        history.go(1);
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        this.handleGoback();
-      };
-      // 뒤로가기 버튼을 눌렀을 경우 실행될 로직: 모달창 닫기
-      window.onpopstate = () => {
+    if (isMobile && isOpenCommnetModal) {
+      const handlePopState = () => {
         closeModalMobile();
       };
+
+      window.onpopstate = handlePopState;
+
+      return () => {
+        // 컴포넌트가 언마운트될 때 이벤트 핸들러를 삭제
+        window.onpopstate = null;
+      };
     }
-  }, [isOpenReplyModal, isOpenCommnetModal]);
+  }, []);
 
   return (
     <CommentModalUI

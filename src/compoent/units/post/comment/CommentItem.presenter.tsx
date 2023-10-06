@@ -5,11 +5,14 @@ import {
   CommentDate,
   CommentLi,
   CommentText,
-  ReplyCountBtn
+  ReplyCountBtn,
+  UserLink,
+  UserName
 } from "./comment.styles";
-import UserInfo from "../UserInfo.container";
 import CommentTextArea from "./CommentTextArea.container";
 import { ICommentData, IReplyData, IUserData } from "../../../../api/apiType";
+import { UserImg } from "../userInfo.styles";
+import { isMobile } from 'react-device-detect';
 interface IProps {
   data: ICommentData | IReplyData;
   userData: IUserData;
@@ -21,6 +24,7 @@ interface IProps {
   formattedDate: string | undefined;
   onClickRemove: () => void;
   onClickReport: () => void;
+  onClickProfileLink: () => void;
 }
 export default function CommentItemUI({
   data,
@@ -29,21 +33,26 @@ export default function CommentItemUI({
   isReply,
   onClickEdit,
   onClickReply,
-  isOpenReplyModal,
   formattedDate,
   onClickRemove,
-  onClickReport
+  onClickReport,
+  onClickProfileLink
 }: IProps) {
   return (
     <>
       {!data.isBlock && (
         <CommentLi>
-          <UserInfo
-            userData={{ ...userData }}
-            data={{ ...data }}
-            activeMoreBtn={false}
-            isProfilePage={false}
-          />
+          <UserLink
+            to={`/profile/${data.uid}`}
+            replace={isMobile}
+            onClick={onClickProfileLink}
+          >
+            <UserImg
+              src={data.photoURL || userData.photoURL}
+              alt='유저 프로필 이미지'
+            />
+            <UserName>{data.displayName || userData.displayName}</UserName>
+          </UserLink>
           {isEdit ? (
             <CommentTextArea
               initalvalue={data.content}
@@ -64,7 +73,6 @@ export default function CommentItemUI({
             {isEdit ? (
               <CommentBtn
                 onClick={isEdit ? onClickEdit : onClickReply}
-                style={{ marginLeft: isOpenReplyModal ? "50px" : "5px" }}
               >
                 취소
               </CommentBtn>

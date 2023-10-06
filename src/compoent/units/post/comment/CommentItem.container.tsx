@@ -289,6 +289,17 @@ export default function CommentItem({ data, isReply }: IProps) {
     }
   };
 
+  // 유저 프로필 클릭 시 프로필 페이지 이동 전 모달 창 닫기
+  const onClickProfileLink = () => {
+    document.body.style.overflow = "auto";
+    if (!isReply) {
+      dispatch(commentSlice.actions.setIsOpenCommentModal(false));
+    } else {
+      dispatch(commentSlice.actions.setIsOpenCommentModal(false));
+      dispatch(replySlice.actions.setIsOpenReplyModal(false));
+    }
+  };
+
   const formattedDate = useMemo(() => {
     if (data.createdAt?.seconds) {
       return setDateFormat(data.createdAt?.seconds * 1000);
@@ -307,6 +318,7 @@ export default function CommentItem({ data, isReply }: IProps) {
       formattedDate={formattedDate}
       onClickRemove={onClickRemove}
       onClickReport={onClickReport}
+      onClickProfileLink={onClickProfileLink}
     />
   );
 }

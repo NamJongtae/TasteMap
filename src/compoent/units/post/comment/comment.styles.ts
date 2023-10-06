@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import styled from "styled-components";
 
 export const Wrapper = styled.div`
@@ -131,6 +132,25 @@ export const CommentLi = styled.li`
   }
 `;
 
+export const UserLink = styled(Link)`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+`;
+
+export const UserImg = styled.img`
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #f2f2f2;
+  padding: 3px;
+`;
+
+export const UserName = styled.strong`
+  font-size: 16px;
+  font-weight: 500;
+`;
+
 export const CommentText = styled.div`
   margin: 0 0 5px 53px;
   font-size: 14px;
@@ -154,15 +174,6 @@ export const CommentBtn = styled.button`
   color: #bdbdbd;
   background: none;
   margin-left: 5px;
-`;
-
-export const UserImg = styled.img`
-  align-self: flex-start;
-  width: 42px;
-  height: 42px;
-  padding: 3px;
-  border-radius: 50%;
-  background: #f5f5f5;
 `;
 
 export const ReplyWrapper = styled.div`

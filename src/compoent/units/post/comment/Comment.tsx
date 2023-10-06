@@ -10,6 +10,9 @@ import { thunkUpdatePostCommentCount } from "../../../../slice/postSlice";
 import { isMobile } from "react-device-detect";
 
 export default function Comment() {
+  const isOpenCommentModal = useSelector(
+    (state: RootState) => state.comment.isOpenCommentModal
+  );
   const isOpenReplyModal = useSelector(
     (state: RootState) => state.reply.isOpenReplyModal
   );
@@ -41,7 +44,7 @@ export default function Comment() {
           dispatch(replySlice.actions.setIsOpenReplyModal(false));
         }, 800);
       }
-      // 모바일일 시 빈 히스토리를 없애기 위해 
+      // 모바일일 시 빈 히스토리를 없애기 위해
       if (isMobile) history.back();
     }
   };
@@ -49,11 +52,13 @@ export default function Comment() {
   return (
     <Wrapper>
       <Dim onClick={closeCommentModal}></Dim>
-      <CommentModal
-        commentModalRef={commentModalRef}
-        replyModalRef={replyModalRef}
-        isReply={false}
-      />
+      {isOpenCommentModal && (
+        <CommentModal
+          commentModalRef={commentModalRef}
+          replyModalRef={replyModalRef}
+          isReply={false}
+        />
+      )}
       {isOpenReplyModal && (
         <CommentModal
           commentModalRef={commentModalRef}
