@@ -8,8 +8,8 @@ import {
   Wrapper
 } from "./followModal.styles";
 import FollowList from "./FollowList";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../../../store/store";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../../store/store";
 import { profileSlice } from "../../../slice/profileSlice";
 import { isMobile } from "react-device-detect";
 
@@ -19,12 +19,6 @@ interface IProps {
 export default function FollowModal({ isFollower }: IProps) {
   const dispatch = useDispatch<AppDispatch>();
   const modalRef = useRef<HTMLDivElement>(null);
-  const isOpenFollowerModal = useSelector(
-    (state: RootState) => state.profile.isOpenFollowerModal
-  );
-  const isOpenFollowingModal = useSelector(
-    (state: RootState) => state.profile.isOpenFollowingModal
-  );
   const closeModal = () => {
     if (modalRef.current) {
       modalRef.current.style.animation = "FollowModalmoveDown 1s";
@@ -54,18 +48,18 @@ export default function FollowModal({ isFollower }: IProps) {
 
   useEffect(() => {
     if (isMobile) {
-      window.onpopstate = () => {
-        history.go(1);
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        this.handleGoback();
-      };
-      // 뒤로가기 버튼을 눌렀을 경우 실행될 로직: 모달창 닫기
-      window.onpopstate = () => {
-        closeModal();
+        const handlePopState = () => {
+          closeModal();
+        };
+
+        window.onpopstate = handlePopState;
+
+        return () => {
+          // 컴포넌트가 언마운트될 때 이벤트 핸들러를 삭제
+          window.onpopstate = null;
       };
     }
-  }, [isOpenFollowerModal, isOpenFollowingModal]);
+  }, []);
 
   return (
     <Wrapper>

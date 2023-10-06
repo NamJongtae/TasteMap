@@ -14,19 +14,15 @@ import {
   thunkFetchFollow,
   thunkFetchUnfollow
 } from "../../../slice/profileSlice";
-import { useParams } from "react-router-dom";
+import { isMobile } from 'react-device-detect';
 
 interface IProps {
   data: IFollowData;
   isFollower: boolean;
 }
 export default function FollowItem({ data, isFollower }: IProps) {
-  const { uid } = useParams();
   const myProfileData = useSelector(
     (state: RootState) => state.profile.myProfileData
-  );
-  const userProfileData = useSelector(
-    (state: RootState) => state.profile.userProfileData
   );
   const dispatch = useDispatch<AppDispatch>();
   const [isFollow, setIsFollow] = useState(false);
@@ -61,9 +57,8 @@ export default function FollowItem({ data, isFollower }: IProps) {
   useLayoutEffect(() => {
     if (
       data.uid &&
-      ((uid && userProfileData) || myProfileData).followerList?.includes(
-        data.uid
-      )
+      myProfileData
+      .followerList?.includes(data.uid)
     ) {
       setIsFollow(true);
     } else {
@@ -73,7 +68,11 @@ export default function FollowItem({ data, isFollower }: IProps) {
 
   return (
     <FollowLi>
-      <UserLink to={`/profile/${data.uid}`} onClick={onClickProfileLink}>
+      <UserLink
+        to={`/profile/${data.uid}`}
+        replace={isMobile}
+        onClick={onClickProfileLink}
+      >
         <UserImg src={data.photoURL} alt='유저 프로필 이미지' />
         <UserName>{data.displayName}</UserName>
       </UserLink>
