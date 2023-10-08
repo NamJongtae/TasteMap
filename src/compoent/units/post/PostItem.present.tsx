@@ -18,7 +18,8 @@ import {
   ActiveImageBtn,
   StoredMapBtn,
   MoreContentBtn,
-  ContentTextLine
+  ContentTextLine,
+  Placeholder
 } from "./postItem.styles";
 import ImgSlider from "../imgSlider/ImgSlider";
 import { IPostData, IProfileData } from "../../../api/apiType";
@@ -41,6 +42,8 @@ interface IProps {
   isShowMoreTextBtn: boolean;
   openCommentModal: () => void;
   isProfilePage: boolean;
+  kakaomapRef: (node?: Element | null | undefined) => void;
+  inview: boolean;
 }
 
 export default function PostItemUI({
@@ -59,7 +62,9 @@ export default function PostItemUI({
   contentTextRef,
   isShowMoreTextBtn,
   openCommentModal,
-  isProfilePage
+  isProfilePage,
+  kakaomapRef,
+  inview
 }: IProps) {
   return (
     <>
@@ -92,29 +97,32 @@ export default function PostItemUI({
               </MoreContentBtn>
             </>
           )}
-          <KakaoMapWrapper postType={postType}>
-            {postType === "map" && (
-              <StoredMapBtn
-                type='button'
-                aria-label={isStoredMap ? "맛집 삭제" : "맛집 추가"}
-                storedMap={isStoredMap}
-                onClick={() => onClickStoredMap(data)}
-                title={isStoredMap ? "맛집 삭제" : "맛집 추가"}
-              />
-            )}
-            <h3 className='a11y-hidden'>
-              {postType === "map" ? "지도" : "이미지"}
-            </h3>
-            {postType === "map"
-              ? data.mapData?.mapx && (
-                  <Kakaomap
-                    items={[{ ...data.mapData }]}
-                    isTasteMapPage={false}
-                  />
-                )
-              : data.imgURL &&
-                data.imgURL.length > 0 && <ImgSlider imgArray={data.imgURL} />}
-          </KakaoMapWrapper>
+          
+            <KakaoMapWrapper postType={postType} ref={kakaomapRef}>
+              {postType === "map" && (
+                <StoredMapBtn
+                  type='button'
+                  aria-label={isStoredMap ? "맛집 삭제" : "맛집 추가"}
+                  storedMap={isStoredMap}
+                  onClick={() => onClickStoredMap(data)}
+                  title={isStoredMap ? "맛집 삭제" : "맛집 추가"}
+                />
+              )}
+              <h3 className='a11y-hidden'>
+                {postType === "map" ? "지도" : "이미지"}
+              </h3>
+              {postType === "map"
+                ? data.mapData?.mapx && (
+                    inview? <Kakaomap
+                      items={[{ ...data.mapData }]}
+                      isTasteMapPage={false}
+                    /> : <Placeholder></Placeholder>
+                  )
+                : data.imgURL &&
+                  data.imgURL.length > 0 && (
+                    <ImgSlider imgArray={data.imgURL} />
+                  )}
+            </KakaoMapWrapper>
           <RatingWrapper>
             <h3 className='a11y-hidden'>평점</h3>
             <Rating value={data.rating} disabled={true} allowHalf />{" "}

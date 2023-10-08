@@ -19,6 +19,7 @@ import PostItemUI from "./PostItem.present";
 import { setDateFormat } from "../../../library/setDateFormat";
 import { profileSlice } from "../../../slice/profileSlice";
 import { commentSlice } from "../../../slice/commentSlice";
+import { useInView } from 'react-intersection-observer';
 
 interface IProps {
   data: IPostData;
@@ -42,7 +43,7 @@ export default function PostItem({
   const [postType, setType] = useState<"map" | "image">("map");
   const [isShowMoreTextBtn, setIsShowMoreTextBtn] = useState(false);
   const contentTextRef = useRef<HTMLParagraphElement>(null);
-
+  const [kakaomapRef, inview] = useInView();
   const onClickMoreText = () => {
     if (contentTextRef.current) {
       contentTextRef.current.style.display = "block";
@@ -202,6 +203,8 @@ export default function PostItem({
       isShowMoreTextBtn={isShowMoreTextBtn}
       openCommentModal={openCommentModal}
       isProfilePage={isProfilePage}
+      kakaomapRef={kakaomapRef}
+      inview={inview}
     />
   );
 }

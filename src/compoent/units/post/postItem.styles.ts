@@ -108,15 +108,16 @@ export const ContentText = styled.p`
 
 export const ContentTextLine = styled.div`
   width: calc(100% - 32px);
-  margin: 0  auto 10px auto;
+  margin: 0 auto 10px auto;
   height: 1px;
   border-bottom: 1px solid #bdbdbd;
-`
+`;
 
 export const MoreContentBtn = styled.button`
   display: block;
   margin: 0 auto 16px auto;
-  background: url("/assets/icon-moreTextBtn.svg") no-repeat right 2px top 7px / 9px;
+  background: url("/assets/icon-moreTextBtn.svg") no-repeat right 2px top 7px /
+    9px;
   padding-right: 16px;
   font-weight: 500;
 `;
@@ -234,4 +235,10 @@ export const Count = styled.span`
 export const PostDate = styled.time`
   font-size: 12px;
   color: #888;
+`;
+
+export const Placeholder = styled.div`
+  width: 100%;
+  max-width: 320px;
+  height: 300px;
 `;
