@@ -24,6 +24,7 @@ import {
   QueryDocumentSnapshot,
   QuerySnapshot
 } from "firebase/firestore";
+import { fetchPostData } from "../api/firebase/postAPI";
 
 /**
  * 자신의 프로필 조회
@@ -247,6 +248,25 @@ export const thunkFetchEditProfile = createAsyncThunk<
   async (editProfileData: IEditProfileData, thunkAPI) => {
     try {
       await fetchEditProfile(editProfileData);
+    } catch (error: any) {
+      thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
+/**
+ * 프로필 게시물 댓글 수 업데이트
+ **/
+export const thunkUpdateProfilePostCommentCount = createAsyncThunk<
+  IPostData | undefined,
+  string,
+  { rejectValue: IKnownError }
+>(
+  "postSlice/thunkUpdateProfilePostCommentCount",
+  async (postId: string, thunkAPI) => {
+    try {
+      const res = await fetchPostData(postId);
+      return res;
     } catch (error: any) {
       thunkAPI.rejectWithValue(error);
     }
@@ -601,5 +621,40 @@ export const profileSlice = createSlice({
       );
       console.error(state.error);
     });
+
+    // 게시물 댓글 수 업데이트
+    builder.addCase(
+      thunkUpdateProfilePostCommentCount.fulfilled,
+      (state, action) => {
+        if (action.payload) {
+          const newData = [...state.profilePostListData];
+          const index = newData.findIndex(
+            (item) => item.id === (action.payload as IPostData).id
+          );
+          newData[index] = {
+            ...newData[index],
+            commentCount: action.payload.commentCount
+          };
+          // 댓글 수를 비교했을때 변경된 경우에만 업데이트
+          if (
+            state.profilePostListData[index].commentCount !==
+            newData[index].commentCount
+          )
+            state.profilePostListData = newData;
+        }
+      }
+    );
+    builder.addCase(
+      thunkUpdateProfilePostCommentCount.rejected,
+      (state, action) => {
+        if (!action.payload) return;
+        state.error = action.payload.message;
+        sweetToast(
+          "알 수 없는 에러가 발생하였습니다.\n잠시 후 다시 시도해 주세요.",
+          "warning"
+        );
+        console.error(state.error);
+      }
+    );
   }
 });
