@@ -133,7 +133,7 @@ export const CommentLi = styled.li`
 `;
 
 export const UserLink = styled(Link)`
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 10px;
 `;
@@ -194,6 +194,7 @@ export const CommentTextAreaWrapper = styled.div`
   padding: 10px;
   background-color: #fff;
   border-top: 1px solid #bdbdbd;
+  z-index: 990;
 `;
 
 export const CommentTextAreaInner = styled.div`

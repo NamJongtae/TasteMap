@@ -6,33 +6,36 @@ import {
 } from "./comment.styles";
 interface IProps {
   textAreaType: "write" | "edit" | "reply";
-  textAreaRef: React.RefObject<HTMLTextAreaElement>;
   initalvalue: string;
   commentValue: string;
   onChangeCommentValue: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
   preventKeydownEnter: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
   isReply: boolean;
   onSubmitComment: () => void;
+  textareaRef: React.RefObject<HTMLTextAreaElement>;
+  closeBtnRef: React.RefObject<HTMLButtonElement>;
 }
 export default function CommentTextAreaUI({
   textAreaType,
-  textAreaRef,
   initalvalue,
   commentValue,
   onChangeCommentValue,
   preventKeydownEnter,
   isReply,
-  onSubmitComment
+  onSubmitComment,
+  textareaRef,
 }: IProps) {
   return (
     <CommentTextAreaInner textAreaType={textAreaType}>
       <TextArea
-        ref={textAreaRef}
+        ref={textareaRef}
         value={commentValue}
         onChange={onChangeCommentValue}
-        onKeyDown={preventKeydownEnter}
         placeholder={isReply ? "답글을 입력하세요" : "댓글을 입력하세요."}
         rows={1}
+        onKeyDown={(e: React.KeyboardEvent<HTMLTextAreaElement>)=>{
+          preventKeydownEnter(e);
+        }}
       />
       <CommentSubmitBtn
         type='button'

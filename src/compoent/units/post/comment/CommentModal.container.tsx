@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 
 import {
   commentSlice,
@@ -10,6 +10,8 @@ import { replySlice } from "../../../../slice/replySlice";
 import { isMobile } from "react-device-detect";
 import { thunkUpdatePostCommentCount } from "../../../../slice/postSlice";
 import CommentModalUI from "./CommentModal.presenter";
+import { useLocation } from "react-router-dom";
+import { thunkUpdateProfilePostCommentCount } from "../../../../slice/profileSlice";
 
 interface IProps {
   commentModalRef: React.RefObject<HTMLDivElement>;
@@ -22,6 +24,7 @@ export default function CommentModal({
   replyModalRef,
   isReply
 }: IProps) {
+  const { pathname } = useLocation();
   const isOpenCommnetModal = useSelector(
     (state: RootState) => state.comment.isOpenCommentModal
   );
@@ -37,12 +40,20 @@ export default function CommentModal({
   const commentId = useSelector(
     (state: RootState) => state.reply.parentCommentId
   );
+  const closeBtnRef = useRef<HTMLButtonElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const firstItemLinkRef = useRef<HTMLAnchorElement>(null);
   /**
    * 모달창 닫기 버튼 클릭 시 모달창 닫기
    */
   const closeCommentModal = () => {
     if (commentModalRef.current && !isOpenReplyModal) {
-      dispatch(thunkUpdatePostCommentCount(postId));
+      if (pathname === "/") {
+        dispatch(thunkUpdatePostCommentCount(postId));
+      } else {
+        dispatch(thunkUpdateProfilePostCommentCount(postId));
+      }
+
       commentModalRef.current.style.animation = "moveDown 1s";
       setTimeout(() => {
         document.body.style.overflow = "auto";
@@ -116,6 +127,9 @@ export default function CommentModal({
       userData={userData}
       parentCommentId={parentCommentId}
       closeCommentModal={closeCommentModal}
+      closeBtnRef={closeBtnRef}
+      textareaRef={textareaRef}
+      firstItemLinkRef={firstItemLinkRef}
     />
   );
 }

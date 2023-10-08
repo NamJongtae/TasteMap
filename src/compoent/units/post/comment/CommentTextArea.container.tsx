@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import { v4 as uuid } from "uuid";
 
 import { Timestamp } from "firebase/firestore";
@@ -25,6 +25,8 @@ interface IProps {
   commentId?: string;
   replyId?: string;
   closeTextArea?: () => void;
+  closeBtnRef: React.RefObject<HTMLButtonElement>;
+  textareaRef: React.RefObject<HTMLTextAreaElement>;
 }
 
 export default function CommentTextArea({
@@ -33,7 +35,9 @@ export default function CommentTextArea({
   initalvalue,
   commentId,
   replyId,
-  closeTextArea
+  closeTextArea,
+  closeBtnRef,
+  textareaRef
 }: IProps) {
   const postListData = useSelector(
     (state: RootState) => state.post.postListData
@@ -47,14 +51,13 @@ export default function CommentTextArea({
   const postId = useSelector((state: RootState) => state.comment.postId);
   const userData = useSelector((state: RootState) => state.user.data);
   const dispatch = useDispatch<AppDispatch>();
-  const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const [commentValue, setCommentValue] = useState(initalvalue);
 
   const handleResizeHeight = () => {
-    if (textAreaRef.current) {
-      textAreaRef.current.style.height = "auto";
-      textAreaRef.current.style.height =
-        textAreaRef.current.scrollHeight + "px";
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto";
+      textareaRef.current.style.height =
+        textareaRef.current.scrollHeight + "px";
     }
   };
 
@@ -294,13 +297,14 @@ export default function CommentTextArea({
   return (
     <CommentTextAreaUI
       textAreaType={textAreaType}
-      textAreaRef={textAreaRef}
       initalvalue={initalvalue}
       commentValue={commentValue}
       onChangeCommentValue={onChangeCommentValue}
       preventKeydownEnter={preventKeydownEnter}
       isReply={isReply}
       onSubmitComment={onSubmitComment}
+      textareaRef={textareaRef}
+      closeBtnRef={closeBtnRef}
     />
   );
 }

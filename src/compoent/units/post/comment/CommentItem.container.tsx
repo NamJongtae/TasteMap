@@ -22,9 +22,20 @@ import CommentItemUI from "./CommentItem.presenter";
 
 interface IProps {
   data: ICommentData | IReplyData;
+  idx: number;
   isReply: boolean;
+  closeBtnRef: React.RefObject<HTMLButtonElement>;
+  textareaRef: React.RefObject<HTMLTextAreaElement>;
+  firstItemLinkRef: React.RefObject<HTMLAnchorElement>;
 }
-export default function CommentItem({ data, isReply }: IProps) {
+export default function CommentItem({
+  data,
+  idx,
+  isReply,
+  closeBtnRef,
+  textareaRef,
+  firstItemLinkRef
+}: IProps) {
   const postId = useSelector((state: RootState) => state.comment.postId);
   const isOpenReplyModal = useSelector(
     (state: RootState) => state.reply.isOpenReplyModal
@@ -309,6 +320,7 @@ export default function CommentItem({ data, isReply }: IProps) {
   return (
     <CommentItemUI
       data={data}
+      idx={idx}
       userData={userData}
       isEdit={isEdit}
       isReply={isReply}
@@ -319,6 +331,9 @@ export default function CommentItem({ data, isReply }: IProps) {
       onClickRemove={onClickRemove}
       onClickReport={onClickReport}
       onClickProfileLink={onClickProfileLink}
+      closeBtnRef={closeBtnRef}
+      textareaRef={textareaRef}
+      firstItemLinkRef={firstItemLinkRef}
     />
   );
 }

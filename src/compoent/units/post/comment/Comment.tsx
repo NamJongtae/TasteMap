@@ -26,6 +26,14 @@ export default function Comment() {
    */
   const closeCommentModal = () => {
     if (commentModalRef.current) {
+      if (commentModalRef.current) {
+        const animation = window
+          .getComputedStyle(commentModalRef.current)
+          .getPropertyValue("animation");
+        if (!animation.includes("moveUp")) {
+          return;
+        }
+      }
       if (!isOpenReplyModal) {
         dispatch(thunkUpdatePostCommentCount(postId));
         commentModalRef.current.style.animation = "moveDown 1s";
@@ -50,7 +58,13 @@ export default function Comment() {
   };
 
   return (
-    <Wrapper>
+    <Wrapper
+      onKeyDown={(e: React.KeyboardEvent<HTMLDivElement>) => {
+        if (e.keyCode === 27) {
+          closeCommentModal();
+        }
+      }}
+    >
       <Dim onClick={closeCommentModal}></Dim>
       {isOpenCommentModal && (
         <CommentModal

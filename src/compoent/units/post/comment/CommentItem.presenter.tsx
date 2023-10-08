@@ -12,9 +12,11 @@ import {
 import CommentTextArea from "./CommentTextArea.container";
 import { ICommentData, IReplyData, IUserData } from "../../../../api/apiType";
 import { UserImg } from "../userInfo.styles";
-import { isMobile } from 'react-device-detect';
+import { isMobile } from "react-device-detect";
+import { optModalTabFocus } from "../../../../library/optModalTabFocus";
 interface IProps {
   data: ICommentData | IReplyData;
+  idx: number;
   userData: IUserData;
   isEdit: boolean;
   isReply: boolean;
@@ -25,9 +27,13 @@ interface IProps {
   onClickRemove: () => void;
   onClickReport: () => void;
   onClickProfileLink: () => void;
+  closeBtnRef: React.RefObject<HTMLButtonElement>;
+  textareaRef: React.RefObject<HTMLTextAreaElement>;
+  firstItemLinkRef: React.RefObject<HTMLAnchorElement>;
 }
 export default function CommentItemUI({
   data,
+  idx,
   userData,
   isEdit,
   isReply,
@@ -36,7 +42,10 @@ export default function CommentItemUI({
   formattedDate,
   onClickRemove,
   onClickReport,
-  onClickProfileLink
+  onClickProfileLink,
+  closeBtnRef,
+  textareaRef,
+  firstItemLinkRef
 }: IProps) {
   return (
     <>
@@ -46,6 +55,12 @@ export default function CommentItemUI({
             to={`/profile/${data.uid}`}
             replace={isMobile}
             onClick={onClickProfileLink}
+            ref={idx === 0 ? firstItemLinkRef : null}
+            onKeyDown={(e: React.KeyboardEvent<HTMLAnchorElement>) => {
+              if (idx === 0) {
+                optModalTabFocus(e, closeBtnRef.current);
+              }
+            }}
           >
             <UserImg
               src={data.photoURL || userData.photoURL}
@@ -65,15 +80,15 @@ export default function CommentItemUI({
               }
               replyId={(data as IReplyData).replyId}
               closeTextArea={onClickEdit}
+              closeBtnRef={closeBtnRef}
+              textareaRef={textareaRef}
             />
           ) : (
             <CommentText>{data.content}</CommentText>
           )}
           <CommentBottom>
             {isEdit ? (
-              <CommentBtn
-                onClick={isEdit ? onClickEdit : onClickReply}
-              >
+              <CommentBtn onClick={isEdit ? onClickEdit : onClickReply}>
                 취소
               </CommentBtn>
             ) : (

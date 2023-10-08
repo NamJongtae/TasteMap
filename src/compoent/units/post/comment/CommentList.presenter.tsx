@@ -17,6 +17,10 @@ interface IProps {
   commentDataList: ICommentData[];
   infiniteScrollRef: (node?: Element | null | undefined) => void;
   isScrollLoading: boolean;
+  closeBtnRef: React.RefObject<HTMLButtonElement>;
+  textareaRef: React.RefObject<HTMLTextAreaElement>;
+  CommentListRef: React.RefObject<HTMLUListElement>;
+  firstItemLinkRef: React.RefObject<HTMLAnchorElement>;
 }
 export default function CommentListUI({
   isReply,
@@ -26,7 +30,11 @@ export default function CommentListUI({
   replyListData,
   commentDataList,
   infiniteScrollRef,
-  isScrollLoading
+  isScrollLoading,
+  closeBtnRef,
+  textareaRef,
+  CommentListRef,
+  firstItemLinkRef,
 }: IProps) {
   return (
     <>
@@ -34,10 +42,9 @@ export default function CommentListUI({
         <ScrollLoading />
       ) : (
         <>
-          <RefreshBtn onClick={handlerRefresh} />
           {(isReply ? replyListData.length > 0 : commentDataList.length > 0) ? (
-            <CommentWrpper>
-              {(isReply ? replyListData : commentDataList).map((item) => {
+            <CommentWrpper ref={CommentListRef} tabIndex={-1}>
+              {(isReply ? replyListData : commentDataList).map((item, idx) => {
                 return (
                   <CommentItem
                     key={
@@ -46,7 +53,11 @@ export default function CommentListUI({
                         : (item as ICommentData).commentId
                     }
                     data={item}
+                    idx={idx}
                     isReply={isReply}
+                    closeBtnRef={closeBtnRef}
+                    textareaRef={textareaRef}
+                    firstItemLinkRef={firstItemLinkRef}
                   />
                 );
               })}
@@ -66,6 +77,7 @@ export default function CommentListUI({
           ) : (
             <NoData />
           )}
+          <RefreshBtn onClick={handlerRefresh} />
         </>
       )}
     </>

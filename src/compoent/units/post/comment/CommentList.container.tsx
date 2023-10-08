@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   commentSlice,
   thunkFetchFirstPageCommentData,
@@ -19,8 +19,16 @@ import CommentListUI from "./CommentList.presenter";
 
 interface IProps {
   isReply: boolean;
+  closeBtnRef: React.RefObject<HTMLButtonElement>;
+  textareaRef: React.RefObject<HTMLTextAreaElement>;
+  firstItemLinkRef: React.RefObject<HTMLAnchorElement>;
 }
-export default function CommentList({ isReply }: IProps) {
+export default function CommentList({
+  isReply,
+  closeBtnRef,
+  textareaRef,
+  firstItemLinkRef
+}: IProps) {
   const dispatch = useDispatch<AppDispatch>();
   const postListData = useSelector(
     (state: RootState) => state.post.postListData
@@ -68,6 +76,7 @@ export default function CommentList({ isReply }: IProps) {
   const [isScrollLoading, setIsScrollLoading] = useState(false);
   // react-intersection-observer 라이브러리
   const [ref, inview] = useInView();
+  const CommentListRef = useRef<HTMLUListElement>(null);
 
   useEffect(() => {
     // 모달창이 사라질 때 commenDataList 및 ReplyDataList 초기화
@@ -176,6 +185,12 @@ export default function CommentList({ isReply }: IProps) {
     }
   };
 
+  useEffect(() => {
+    if (CommentListRef.current) {
+      CommentListRef.current.focus();
+    }
+  }, [CommentListRef.current]);
+
   return (
     <CommentListUI
       isReply={isReply}
@@ -186,6 +201,10 @@ export default function CommentList({ isReply }: IProps) {
       commentDataList={commentDataList}
       infiniteScrollRef={ref}
       isScrollLoading={isScrollLoading}
+      closeBtnRef={closeBtnRef}
+      textareaRef={textareaRef}
+      CommentListRef={CommentListRef}
+      firstItemLinkRef={firstItemLinkRef}
     />
   );
 }
