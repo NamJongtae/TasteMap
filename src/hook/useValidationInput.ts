@@ -1,14 +1,15 @@
 import { debounce } from "lodash";
 import { ChangeEvent, useCallback, useEffect, useState } from "react";
 import { fetchDuplication } from "../api/firebase/validationAPI";
-import { IUserData } from '../api/apiType';
+import { IUserData } from "../api/apiType";
 
 export const useValidationInput = (
   initialValue: string,
   type: string,
   checkDuplication: boolean
 ) => {
-  const displayNameReg = /^[a-z0-9]{4,10}$/;
+  const displayNameReg = /^(?=.*[a-zA-Z])([a-zA-Z0-9]{4,10})$/;
+
   const emailReg = /[a-z0-9]+@[a-z]+\.[a-z]{2,3}/;
   const passwordReg = /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,16}$/;
   const phoneReg = /01[016789]-[^0][0-9]{2,3}-[0-9]{3,4}/;
