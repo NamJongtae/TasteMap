@@ -25,6 +25,7 @@ import {
 } from "./searchModal.styles";
 import { SweetAlertResult } from "sweetalert2";
 import { ISearchMapData } from "../../api/apiType";
+import { optModalTabFocus } from "../../library/optModalTabFocus";
 interface IProps {
   closeSearchModal: () => void;
   onSubmitSearch: (
@@ -33,6 +34,8 @@ interface IProps {
   inputValue: string;
   onChangeValue: (e: React.ChangeEvent<HTMLInputElement>) => void;
   inputRef: React.RefObject<HTMLInputElement>;
+  closeBtnRef: React.RefObject<HTMLButtonElement>;
+  lastItemSelectBtn: React.RefObject<HTMLButtonElement>;
   isSarch: boolean;
   searchMapData: ISearchMapData[];
   onClickSelected: (item: ISearchMapData) => void;
@@ -44,13 +47,21 @@ export default function SearchModalUI({
   inputValue,
   onChangeValue,
   inputRef,
+  closeBtnRef,
+  lastItemSelectBtn,
   isSarch,
   searchMapData,
   onClickSelected,
   searchKeyword
 }: IProps) {
   return (
-    <Wrapper>
+    <Wrapper
+      onKeyDown={(e: React.KeyboardEvent<HTMLDivElement>) => {
+        if (e.keyCode === 27) {
+          closeSearchModal();
+        }
+      }}
+    >
       <Dim onClick={closeSearchModal}></Dim>
       <Modal>
         <ModalTitleBar>
@@ -63,6 +74,9 @@ export default function SearchModalUI({
             onChange={onChangeValue}
             placeholder='가게명, 상호명 검색'
             ref={inputRef}
+            onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+              optModalTabFocus(e, closeBtnRef.current);
+            }}
           />
         </SearchInputForm>
         {isSarch ? (
@@ -96,6 +110,11 @@ export default function SearchModalUI({
                     <SelectBtn
                       type='button'
                       onClick={() => onClickSelected(item)}
+                      ref={
+                        idx === searchMapData.length - 1
+                          ? lastItemSelectBtn
+                          : null
+                      }
                     >
                       선택
                     </SelectBtn>
@@ -130,7 +149,18 @@ export default function SearchModalUI({
           </SerachTip>
         )}
 
-        <CloseBtn type='button' onClick={closeSearchModal} />
+        <CloseBtn
+          type='button'
+          onClick={closeSearchModal}
+          ref={closeBtnRef}
+          onKeyDown={(e: React.KeyboardEvent<HTMLButtonElement>) => {
+            optModalTabFocus(
+              e,
+              lastItemSelectBtn.current || inputRef.current,
+              inputRef.current
+            );
+          }}
+        />
       </Modal>
     </Wrapper>
   );

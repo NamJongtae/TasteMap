@@ -18,6 +18,8 @@ export default function SearchModal({ closeSearchModal }: IProps) {
   );
   const dispatch = useDispatch<AppDispatch>();
   const inputRef = useRef<HTMLInputElement>(null);
+  const closeBtnRef = useRef<HTMLButtonElement>(null);
+  const lastItemSelectBtn = useRef<HTMLButtonElement>(null);
   // 검색어
   const [inputValue, setInputValue] = useState("");
   // 검색을 했는지 초기상태를 체크 초기 툴팁을 표시하기위해
@@ -70,6 +72,8 @@ export default function SearchModal({ closeSearchModal }: IProps) {
       inputValue={inputValue}
       onChangeValue={onChangeValue}
       inputRef={inputRef}
+      closeBtnRef={closeBtnRef}
+      lastItemSelectBtn={lastItemSelectBtn}
       isSarch={isSarch}
       searchMapData={searchMapData}
       onClickSelected={onClickSelected}
