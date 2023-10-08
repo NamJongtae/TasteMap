@@ -14,13 +14,27 @@ import {
   thunkFetchFollow,
   thunkFetchUnfollow
 } from "../../../slice/profileSlice";
-import { isMobile } from 'react-device-detect';
+import { isMobile } from "react-device-detect";
+import { optModalTabFocus } from "../../../library/optModalTabFocus";
 
 interface IProps {
   data: IFollowData;
+  idx: number;
+  isLastItem: boolean;
   isFollower: boolean;
+  closeBtnRef: React.RefObject<HTMLButtonElement>;
+  firstItemLinkRef: React.RefObject<HTMLAnchorElement>;
+  lastItemFollowBtnRef: React.RefObject<HTMLButtonElement>;
 }
-export default function FollowItem({ data, isFollower }: IProps) {
+export default function FollowItem({
+  data,
+  idx,
+  isLastItem,
+  isFollower,
+  closeBtnRef,
+  firstItemLinkRef,
+  lastItemFollowBtnRef
+}: IProps) {
   const myProfileData = useSelector(
     (state: RootState) => state.profile.myProfileData
   );
@@ -55,11 +69,7 @@ export default function FollowItem({ data, isFollower }: IProps) {
   };
 
   useLayoutEffect(() => {
-    if (
-      data.uid &&
-      myProfileData
-      .followerList?.includes(data.uid)
-    ) {
+    if (data.uid && myProfileData.followerList?.includes(data.uid)) {
       setIsFollow(true);
     } else {
       setIsFollow(false);
@@ -72,6 +82,12 @@ export default function FollowItem({ data, isFollower }: IProps) {
         to={`/profile/${data.uid}`}
         replace={isMobile}
         onClick={onClickProfileLink}
+        ref={idx === 0 ? firstItemLinkRef : null}
+        onKeyDown={(e: React.KeyboardEvent<HTMLAnchorElement>) => {
+          if (idx === 0) {
+            optModalTabFocus(e, closeBtnRef.current);
+          }
+        }}
       >
         <UserImg src={data.photoURL} alt='유저 프로필 이미지' />
         <UserName>{data.displayName}</UserName>
@@ -80,6 +96,7 @@ export default function FollowItem({ data, isFollower }: IProps) {
         <FollowBtn
           isFollow={isFollow}
           onClick={isFollow ? onClickUnFollow : onClickFollow}
+          ref={isLastItem ? lastItemFollowBtnRef : null}
         >
           {isFollow ? "언팔로우" : "팔로우"}
         </FollowBtn>

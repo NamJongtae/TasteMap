@@ -12,6 +12,7 @@ import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../../store/store";
 import { profileSlice } from "../../../slice/profileSlice";
 import { isMobile } from "react-device-detect";
+import { optModalTabFocus } from "../../../library/optModalTabFocus";
 
 interface IProps {
   isFollower: boolean;
@@ -19,6 +20,11 @@ interface IProps {
 export default function FollowModal({ isFollower }: IProps) {
   const dispatch = useDispatch<AppDispatch>();
   const modalRef = useRef<HTMLDivElement>(null);
+  const followListRef = useRef<HTMLUListElement>(null);
+  const closeBtnRef = useRef<HTMLButtonElement>(null);
+  const firstItemLinkRef = useRef<HTMLAnchorElement>(null);
+  const lastItemFollowBtnRef = useRef<HTMLButtonElement>(null);
+
   const closeModal = () => {
     if (modalRef.current) {
       modalRef.current.style.animation = "FollowModalmoveDown 1s";
@@ -30,6 +36,9 @@ export default function FollowModal({ isFollower }: IProps) {
           dispatch(profileSlice.actions.setIsOpenFollowingModal(false));
         }
       }, 700);
+      if (isMobile) {
+        history.back();
+      }
     }
   };
 
@@ -48,15 +57,15 @@ export default function FollowModal({ isFollower }: IProps) {
 
   useEffect(() => {
     if (isMobile) {
-        const handlePopState = () => {
-          closeModal();
-        };
+      const handlePopState = () => {
+        closeModal();
+      };
 
-        window.onpopstate = handlePopState;
+      window.onpopstate = handlePopState;
 
-        return () => {
-          // 컴포넌트가 언마운트될 때 이벤트 핸들러를 삭제
-          window.onpopstate = null;
+      return () => {
+        // 컴포넌트가 언마운트될 때 이벤트 핸들러를 삭제
+        window.onpopstate = null;
       };
     }
   }, []);
@@ -65,24 +74,44 @@ export default function FollowModal({ isFollower }: IProps) {
     <Wrapper>
       <Dim
         onClick={() => {
-          if (isMobile) {
-            // 빈 히스토리를 없애기 위해 뒤로가기
-            history.back();
+          if (modalRef.current) {
+            const animation = window
+              .getComputedStyle(modalRef.current)
+              .getPropertyValue("animation");
+            if (!animation.includes("FollowModalmoveUp")) {
+              return;
+            }
           }
           closeModal();
         }}
       ></Dim>
-      <FollowModalWrapper ref={modalRef}>
+      <FollowModalWrapper
+        ref={modalRef}
+        onKeyDown={(e: React.KeyboardEvent<HTMLDivElement>) => {
+          if (e.keyCode === 27) {
+            closeModal();
+          }
+        }}
+      >
         <ModalTitleBar>
           <ModalTitle>{isFollower ? "팔로워" : "팔로잉"}</ModalTitle>
         </ModalTitleBar>
-        <FollowList isFollower={isFollower} />
+        <FollowList
+          isFollower={isFollower}
+          followListRef={followListRef}
+          closeBtnRef={closeBtnRef}
+          firstItemLinkRef={firstItemLinkRef}
+          lastItemFollowBtnRef={lastItemFollowBtnRef}
+        />
         <CloseBtn
-          onClick={() => {
-            if (isMobile) {
-              history.back();
-            }
-            closeModal();
+          onClick={closeModal}
+          ref={closeBtnRef}
+          onKeyDown={(e: React.KeyboardEvent<HTMLButtonElement>) => {
+            optModalTabFocus(
+              e,
+              lastItemFollowBtnRef.current,
+              firstItemLinkRef.current
+            );
           }}
         />
       </FollowModalWrapper>

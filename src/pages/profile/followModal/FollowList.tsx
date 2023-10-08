@@ -16,8 +16,18 @@ import ScrollLoading from "../../../compoent/commons/loading/ScrollLoading";
 
 interface IProps {
   isFollower: boolean;
+  followListRef: React.RefObject<HTMLUListElement>;
+  closeBtnRef: React.RefObject<HTMLButtonElement>;
+  firstItemLinkRef: React.RefObject<HTMLAnchorElement>;
+  lastItemFollowBtnRef: React.RefObject<HTMLButtonElement>;
 }
-export default function FollowList({ isFollower }: IProps) {
+export default function FollowList({
+  isFollower,
+  followListRef,
+  closeBtnRef,
+  firstItemLinkRef,
+  lastItemFollowBtnRef
+}: IProps) {
   const followListData = useSelector(
     (state: RootState) => state.profile.followListData
   );
@@ -95,6 +105,12 @@ export default function FollowList({ isFollower }: IProps) {
     }
   }, [inview]);
 
+  useEffect(() => {
+    if (followListRef.current) {
+      followListRef.current.focus();
+    }
+  }, [followListRef.current]);
+
   return (
     <>
       {isScrollLoading && followListData.length === 0 ? (
@@ -103,13 +119,18 @@ export default function FollowList({ isFollower }: IProps) {
         <>
           {followListData.length > 0 ? (
             <>
-              <FollowUl>
-                {followListData.map((item) => {
+              <FollowUl ref={followListRef} tabIndex={0}>
+                {followListData.map((item, idx) => {
                   return (
                     <FollowItem
                       key={item.uid}
                       data={item}
+                      idx={idx}
+                      isLastItem={idx === followListData.length - 1}
                       isFollower={isFollower}
+                      closeBtnRef={closeBtnRef}
+                      firstItemLinkRef={firstItemLinkRef}
+                      lastItemFollowBtnRef={lastItemFollowBtnRef}
                     />
                   );
                 })}
