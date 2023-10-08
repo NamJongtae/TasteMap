@@ -15,6 +15,7 @@ import {
 } from "../../../slice/profileSlice";
 import ProfileEditModalUI from "./ProfileEditModal.presenter";
 import { useParams } from "react-router-dom";
+import { isMobile } from 'react-device-detect';
 
 export default function ProfileEditModal() {
   const { uid } = useParams();
@@ -29,6 +30,7 @@ export default function ProfileEditModal() {
   const [introduceValue, setIntroduceValue] = useState(myProfileData.introduce);
   const [previewImg, setPreviewImg] = useState(myProfileData.photoURL);
   const [uploadImg, setUploadImg] = useState<File | string>("");
+  const [isImgLoading, setIsImgLoading] = useState(false);
   const [
     displayNameValue,
     displayNameValid,
@@ -36,6 +38,10 @@ export default function ProfileEditModal() {
     ,
     setDisplayNameValid
   ] = useValidationInput(myProfileData.displayName || "", "displayName", true);
+  const ProfileImgButtonWrapperRef = useRef<HTMLDivElement>(null);
+  const resetBtnRef = useRef<HTMLButtonElement>(null);
+  const editBtnRef = useRef<HTMLButtonElement>(null);
+  const closeBtnRef = useRef<HTMLButtonElement>(null);
 
   /**
    * IntroduceValue 변경
@@ -75,6 +81,9 @@ export default function ProfileEditModal() {
     const file = e.target.files[0];
     const isValid = imgValidation(file);
     if (!isValid) return;
+    if(isMobile) {
+      setIsImgLoading(true);
+    }
     const { compressedFile, compressedPreview } = (await getCompressionImg(
       file,
       "profile"
@@ -84,6 +93,9 @@ export default function ProfileEditModal() {
     };
     setPreviewImg(compressedPreview);
     setUploadImg(compressedFile);
+    if(isMobile) {
+      setIsImgLoading(false);
+    }
   };
 
   /**
@@ -136,6 +148,12 @@ export default function ProfileEditModal() {
     }
   }, []);
 
+  useEffect(() => {
+    if (ProfileImgButtonWrapperRef.current) {
+      ProfileImgButtonWrapperRef.current.focus();
+    }
+  }, []);
+
   return (
     <ProfileEditModalUI
       onClickClose={onCLickClose}
@@ -153,6 +171,11 @@ export default function ProfileEditModal() {
       preventKeydownEnter={preventKeydownEnter}
       textareaRef={textareaRef}
       myProfileData={myProfileData}
+      ProfileImgButtonWrapperRef={ProfileImgButtonWrapperRef}
+      resetBtnRef={resetBtnRef}
+      editBtnRef={editBtnRef}
+      closeBtnRef={closeBtnRef}
+      isImgLoading={isImgLoading}
     />
   );
 }

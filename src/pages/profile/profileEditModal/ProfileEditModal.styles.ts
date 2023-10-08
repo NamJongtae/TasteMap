@@ -114,6 +114,7 @@ export const ProfileImgInput = styled.input``;
 export const ProfileImgButtonWrapper = styled.div`
   position: relative;
   max-width: 130px;
+  min-height: 110px;
   margin: 0 auto;
 `;
 export const ProfileImgButton = styled.button`
