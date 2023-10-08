@@ -8,6 +8,7 @@ import {
   Wrapper
 } from "./home.styles";
 import Header from "../../compoent/commons/layouts/header/Header";
+import TopButton from '../../compoent/commons/topButton/TopButton';
 
 export default function Home() {
   const [postType, setPostType] = useState<"home" | "feed">("home");
@@ -43,6 +44,7 @@ export default function Home() {
         </ButtonWrapper>
         <PostList isProfilePage={false} postType={postType} />
       </Wrapper>
+      <TopButton/>
     </>
   );
 }

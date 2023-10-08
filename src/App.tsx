@@ -11,7 +11,6 @@ import PostUpload from "./pages/postUpload/PostUpload.container";
 import { userSlice } from "./slice/userSlice";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import PostEdit from "./pages/postEdit/PostEdit";
-import TopButton from "./compoent/commons/topButton/TopButton";
 import Profile from "./pages/profile/Profile";
 import MyTasteMap from "./pages/profile/myTasteMap/MyTasteMap.container";
 import NotFound from "./pages/404/NotFound";
@@ -83,7 +82,9 @@ function App() {
         />
         <meta
           property='og:description'
-          content={'맛집을 공유하고 자신의 맛집 지도를 완성시켜가는 SNS 플랫폼\n나만의 맛집 지도를 만들고 공유해 보세요.'}
+          content={
+            "맛집을 공유하고 자신의 맛집 지도를 완성시켜가는 SNS 플랫폼\n나만의 맛집 지도를 만들고 공유해 보세요."
+          }
         />
       </Helmet>
       {webpChecked && (
@@ -102,16 +103,7 @@ function App() {
           />
           <Route
             path='/'
-            element={
-              !userData.uid ? (
-                <Navigate to='/login' />
-              ) : (
-                <>
-                  <Home />
-                  <TopButton />
-                </>
-              )
-            }
+            element={!userData.uid ? <Navigate to='/login' /> : <Home />}
           />
           <Route
             path='/'
