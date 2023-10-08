@@ -79,6 +79,18 @@ export default function DefaultInfo() {
     }
   }, [emailValid, passowrdValid, passwordChkValid, phoneValid]);
 
+  /**
+   * 모바일 화면 100vh 높이 설정시 화면 스크롤 문제 해결
+   */
+  function setScreenSize() {
+    const vh = window.innerHeight * 0.01;
+    document.documentElement.style.setProperty("--vh", `${vh}px`);
+  }
+
+  useEffect(() => {
+    setScreenSize();
+  }, []);
+
   return (
     <DefaultInfoUI
       defaultInfo={defaultInfo}

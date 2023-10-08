@@ -5,7 +5,6 @@ export const SignupForm = styled.form`
   flex-direction: column;
   gap: 20px;
   width: 100%;
-  padding-bottom: 30px;
 `;
 
 export const InputWrapper = styled.div`
@@ -17,7 +16,6 @@ export const InputWrapper = styled.div`
 export const ProfileImgWrapper = styled.div`
   position: relative;
   border-bottom: 2px solid #bdbdbd;
-  margin-bottom: 10px;
 `;
 
 export const ProfileImgLabel = styled.label`
@@ -66,6 +64,7 @@ export const ProfileImg = styled.img`
 export const ProfileImgButtonWrapper = styled.div`
   position: relative;
   max-width: 130px;
+  min-height: 110px;
   margin: 0 auto;
 `;
 
@@ -95,7 +94,7 @@ export const ProfileImgDesc = styled.li`
   line-height: 1.5;
   font-size: 12px;
   word-break: keep-all;
-  @media screen and (max-width:362px){
+  @media screen and (max-width: 362px) {
     font-size: 11px;
   }
 `;

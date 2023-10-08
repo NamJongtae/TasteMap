@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 export const Wrapper = styled.main`
   width: 100%;
-  height: 100vh;
+  height: calc(var(--vh, 1vh) * 100);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -15,17 +15,17 @@ export const FormWrapper = styled.div`
   flex-direction: column;
   align-items: center;
   width: 100%;
-  height: 100vh;
+  height: calc(var(--vh, 1vh) * 100);
   max-width: 450px;
-  padding: 30px 40px;
+  padding: 0px 40px;
   @media screen and (max-width: 431px) {
-    padding: 30px 30px;
+    padding: 0px 30px;
   }
   background-color: #f5f5f5;
 `;
 
 export const Title = styled.h1`
-  margin-top: 30px;
+  margin-top: 20px;
   font-size: 25px;
   margin-bottom: 20px;
   font-weight: 500;
@@ -36,7 +36,7 @@ export const ProgressWrapper = styled.section`
   align-items: center;
   justify-content: center;
   width: 100%;
-  margin-bottom: 80px;
+  margin-bottom: 50px;
 `;
 export const ProgressTitle = styled.h2``;
 

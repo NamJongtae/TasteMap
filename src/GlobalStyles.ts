@@ -10,6 +10,7 @@ const GlobalStyles = createGlobalStyle`
   }
   :root{
     font-family: 'Noto Sans KR', sans-serif;
+    --vh: 100%;
   }
   *{
         box-sizing: border-box;

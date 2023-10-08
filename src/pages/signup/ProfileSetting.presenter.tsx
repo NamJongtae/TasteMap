@@ -16,6 +16,7 @@ import {
 } from "./ProfileSetting.styles";
 import UserInput from "../../compoent/commons/userInput/UserInput";
 import ErrorMsg from "../../compoent/commons/errorMsg/ErrorMsg";
+import ScrollLoading from "../../compoent/commons/loading/ScrollLoading";
 
 interface IProps {
   handleSubmit: (e: React.FormEvent<HTMLFormElement>) => Promise<void>;
@@ -36,6 +37,7 @@ interface IProps {
   setPercentage: React.Dispatch<React.SetStateAction<string>>;
   setNext: React.Dispatch<React.SetStateAction<boolean>>;
   resolveWebp: (img: string, fallbackExt: string) => string;
+  isImgLoading: boolean;
 }
 
 export default function ProfileSettingUI({
@@ -53,7 +55,8 @@ export default function ProfileSettingUI({
   setProfile,
   setPercentage,
   setNext,
-  resolveWebp
+  resolveWebp,
+  isImgLoading
 }: IProps) {
   return (
     <SignupForm onSubmit={handleSubmit}>
@@ -65,37 +68,48 @@ export default function ProfileSettingUI({
           className='a11y-hidden'
           onChange={onChangeImg}
           accept='image/jpg,image/jpeg, image/png, image/bmp, image/tif, image/heic'
+          tabIndex={-1}
         />
         <ProfileImgButtonWrapper>
-          <ProfileImgButton
-            type='button'
-            onClick={() => imgInputRef.current && imgInputRef.current.click()}
-          >
-            <ProfileImg
-              src={previewImg}
-              alt='유저 프로필 이미지'
-              onError={(e: any) =>
-                (e.target.value = resolveWebp(
-                  "/assets/webp/icon-defaultProfile.svg",
-                  "svg"
-                ))
-              }
-            />
-          </ProfileImgButton>
-          <ProfileImgResetBtn type='button' onClick={onClickImgReset}>
-            <span className='a11y-hidden'>초기화</span>
-          </ProfileImgResetBtn>
+          {isImgLoading ? (
+            <ScrollLoading />
+          ) : (
+            <>
+              <ProfileImgResetBtn
+                type='button'
+                onClick={onClickImgReset}
+                aria-label='초기화'
+              />
+              <ProfileImgButton
+                type='button'
+                onClick={() =>
+                  imgInputRef.current && imgInputRef.current.click()
+                }
+              >
+                <ProfileImg
+                  src={previewImg}
+                  alt='유저 프로필 이미지'
+                  onError={(e: any) =>
+                    (e.target.value = resolveWebp(
+                      "/assets/webp/icon-defaultProfile.svg",
+                      "svg"
+                    ))
+                  }
+                />
+              </ProfileImgButton>
+            </>
+          )}
         </ProfileImgButtonWrapper>
 
         <ProfileImgDescList>
           <ProfileImgDesc>
-          ⦁ 이미지를 설정하지 않을 경우 기본 이미지가 적용됩니다.
+            ⦁ 이미지를 설정하지 않을 경우 기본 이미지가 적용됩니다.
           </ProfileImgDesc>
           <ProfileImgDesc>
-          ⦁ 업로드 가능한 최대 이미지 용량은 10MB 입니다.
+            ⦁ 업로드 가능한 최대 이미지 용량은 10MB 입니다.
           </ProfileImgDesc>
           <ProfileImgDesc>
-          ⦁ .jpg, .jpge, .png, .svg 이미지 형식을 지원합니다.
+            ⦁ .jpg, .jpge, .png, .svg 이미지 형식을 지원합니다.
           </ProfileImgDesc>
         </ProfileImgDescList>
       </ProfileImgWrapper>

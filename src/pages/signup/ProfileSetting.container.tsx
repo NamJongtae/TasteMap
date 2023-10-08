@@ -6,7 +6,8 @@ import { getCompressionImg } from "../../library/imageCompression";
 import { useDispatch } from "react-redux";
 import { thunkFetchSignup } from "../../slice/signupSlice";
 import { AppDispatch } from "../../store/store";
-import { imgValidation } from '../../library/imageValidation';
+import { imgValidation } from "../../library/imageValidation";
+import { isMobile } from "react-device-detect";
 interface IProps {
   emailValue: string;
   passwordValue: string;
@@ -36,12 +37,17 @@ export default function ProfileSetting({
   const [displayNameValue, displayNameValid, onChangeDislayName] =
     useValidationInput("", "displayName", true);
   const [introduce, setIntroduce] = useState("");
+  const [isImgLoading, setIsImgLoading] = useState(false);
 
   const onChangeImg = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
     const file = e.target.files[0];
     const isValid = imgValidation(file);
     if (!isValid) return;
+    if (isMobile) {
+      setIsImgLoading(true);
+    }
+
     const { compressedFile, compressedPreview } = (await getCompressionImg(
       file,
       "profile"
@@ -51,6 +57,9 @@ export default function ProfileSetting({
     };
     setPreviewImg(compressedPreview);
     setUploadImg(compressedFile);
+    if (isMobile) {
+      setIsImgLoading(false);
+    }
   };
 
   const onClickImgReset = () => {
@@ -106,6 +115,7 @@ export default function ProfileSetting({
       setPercentage={setPercentage}
       setNext={setNext}
       resolveWebp={resolveWebp}
+      isImgLoading={isImgLoading}
     />
   );
 }
