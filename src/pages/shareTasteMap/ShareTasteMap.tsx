@@ -29,10 +29,13 @@ import {
 } from "./ShareTasteMap.styles";
 import { resolveWebp } from "../../library/webpSupport";
 import { Helmet } from "react-helmet-async";
+import Header from '../../compoent/commons/layouts/header/Header';
 
 export default function ShareTasteMap() {
   const { uid } = useParams();
   const [isLoading, setIsLoading] = useState(false);
+
+  const userData = useSelector((state: RootState)=>state.user.data);
 
   const myProfileData = useSelector(
     (state: RootState) => state.profile.myProfileData
@@ -100,19 +103,20 @@ export default function ShareTasteMap() {
             </InvaildMap>
           ) : (
             <>
+            {userData&&userData.uid&&<Header type='profile'/>}
               <Wrapper>
                 <ContetnTypeBtnWrapper>
                   <MapBtn
                     onClick={onClickMapType}
                     contentType={contentType}
-                    style={{ top: "15px" }}
+                    style={{ top: "0px" }}
                   >
                     지도
                   </MapBtn>
                   <ListBtn
                     onClick={onClickListType}
                     contentType={contentType}
-                    style={{ top: "15px" }}
+                    style={{ top: "0px" }}
                   >
                     목록
                   </ListBtn>
