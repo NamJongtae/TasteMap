@@ -74,7 +74,11 @@ export default function ProfileInfo() {
   };
 
   const onClickTasteMap = () => {
-    navigate(`/profile/tasteMap`);
+    if (!uid || uid === userData.uid) {
+      navigate("/profile/tasteMap");
+    } else {
+      navigate(`/tastemap/share/${uid}`);
+    }
   };
 
   useLayoutEffect(() => {
