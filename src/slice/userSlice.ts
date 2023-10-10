@@ -228,6 +228,7 @@ export const userSlice = createSlice({
     // 로그아웃
     builder.addCase(thunkFetchLogout.fulfilled, (state) => {
       state.data = {};
+      localStorage.removeItem("user");
     });
     builder.addCase(thunkFetchLogout.rejected, (state, action) => {
       if (action.payload) {
