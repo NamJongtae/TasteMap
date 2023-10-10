@@ -86,7 +86,7 @@ export const MapInfoList = styled.ul`
   max-width: 500px;
   margin: 0 auto;
   border: 1px solid #bdbdbd;
-  margin-top: 50px;
+  margin-top: ${(props: {isShareTasteMap: boolean})=>props.isShareTasteMap ? "20px" : "50px"};
   max-height: 500px;
   overflow-y: scroll;
 `;
@@ -206,4 +206,12 @@ export const RemoveBtn = styled.button`
   :hover {
     background-color: ${isMobile ? "" : "coral"};
   }
+`;
+
+export const NoDataWrapper = styled.div`
+  position: relative;
+  height: 165px;
+  max-width: 500px;
+  margin: 50px auto 0 auto;
+  border: 1px solid #bdbdbd;
 `;
