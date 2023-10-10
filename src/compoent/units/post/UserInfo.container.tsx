@@ -202,7 +202,6 @@ export default function UserInfo({
       onClickEditBtn={onClickEditBtn}
       onCliceRemove={onCliceRemove}
       onClickReport={onClickReport}
-      isProfilePage={isProfilePage}
     />
   );
 }

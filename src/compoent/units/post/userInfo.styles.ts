@@ -9,13 +9,6 @@ export const UserInfoWrapper = styled.article`
   align-items: center;
 `;
 
-export const UserProfile = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
-`;
-
 export const UserProfileLink = styled(Link)`
   display: flex;
   justify-content: space-between;

@@ -8,12 +8,11 @@ import {
   UserImg,
   UserInfoWrapper,
   UserProfileLink,
-  UserProfile
 } from "./userInfo.styles";
 import { resolveWebp } from "../../../library/webpSupport";
 import { ICommentData, IPostData, IUserData } from "../../../api/apiType";
 interface IProps {
-  userData: IUserData,
+  userData: IUserData;
   data?: IPostData | ICommentData;
   activeMoreBtn: boolean;
   onClickSelect: (e: React.MouseEvent<HTMLButtonElement>) => void;
@@ -28,7 +27,6 @@ interface IProps {
     e: React.MouseEvent<HTMLButtonElement>,
     postData: IPostData
   ) => void;
-  isProfilePage: boolean;
 }
 export default function UserInfoUI({
   userData,
@@ -40,40 +38,23 @@ export default function UserInfoUI({
   onClickEditBtn,
   onCliceRemove,
   onClickReport,
-  isProfilePage
 }: IProps) {
   return (
     <UserInfoWrapper>
       <h2 className='a11y-hidden'>유저 프로필</h2>
-      {isProfilePage ? (
-        <UserProfile>
-          <UserImg
-            src={data?.photoURL || userData.photoURL}
-            alt='프로필 이미지'
-            onError={(e: React.SyntheticEvent<HTMLImageElement>) =>
-              (e.currentTarget.src = resolveWebp(
-                "/assets/webp/icon-defaultProfile.webp",
-                "svg"
-              ))
-            }
-          />
-          <Username>{data?.displayName || userData.displayName}</Username>
-        </UserProfile>
-      ) : (
-        <UserProfileLink to={`/profile/${data?.uid || userData.uid}`}>
-          <UserImg
-            src={data?.photoURL || userData.photoURL}
-            alt='프로필 이미지'
-            onError={(e: React.SyntheticEvent<HTMLImageElement>) =>
-              (e.currentTarget.src = resolveWebp(
-                "/assets/webp/icon-defaultProfile.webp",
-                "svg"
-              ))
-            }
-          />
-          <Username>{data?.displayName || userData.displayName}</Username>
-        </UserProfileLink>
-      )}
+      <UserProfileLink to={`/profile/${data?.uid || userData.uid}`}>
+        <UserImg
+          src={data?.photoURL || userData.photoURL}
+          alt='프로필 이미지'
+          onError={(e: React.SyntheticEvent<HTMLImageElement>) =>
+            (e.currentTarget.src = resolveWebp(
+              "/assets/webp/icon-defaultProfile.webp",
+              "svg"
+            ))
+          }
+        />
+        <Username>{data?.displayName || userData.displayName}</Username>
+      </UserProfileLink>
 
       {activeMoreBtn && (
         <MoreBtn
