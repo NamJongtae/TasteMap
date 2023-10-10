@@ -15,12 +15,14 @@
 - [⚙ 개발환경](#-개발환경)
   
 - [🔩 벡엔드&API](#-벡엔드--api)
+
+- [⛓ 아키텍처](#-아키텍처) 
+
+- [🚩 User Flow](#-user-flow--이미지를-클릭-해주세요-) 
   
 - [🛠 프로젝트 관리](#-프로젝트-관리)
   
 - [📃 GitHub 컨벤션](#-github-컨벤션)
-
-- [🚩 User Flow](#-user-flow--이미지를-클릭-해주세요-) 
   
 - [👀 구현 기능 미리보기](#-구현-기능-미리보기)
   
@@ -51,12 +53,23 @@
 |프론트엔드|벡엔드|디자인|배포, 관리|
 |---|---|---|---|
 |<img alt="Html" src ="https://img.shields.io/badge/HTML5-E34F26.svg?&style=for-the-badge&logo=HTML5&logoColor=white"/> <img alt="CSS" src ="https://img.shields.io/badge/CSS3-1572B6.svg?&style=for-the-badge&logo=CSS3&logoColor=white"/> <img alt="JavaScript" src ="https://img.shields.io/badge/JavaScript-F7DF1E.svg?&style=for-the-badge&logo=JavaScript&logoColor=black"/> <img alt="TypeScript" src ="https://img.shields.io/badge/TypeScript-3178C6.svg?&style=for-the-badge&logo=TypeScript&logoColor=white"/> <img src="https://img.shields.io/badge/react-61DAFB?style=for-the-badge&logo=react&logoColor=black"> <img src="https://img.shields.io/badge/styled-components-DB7093?style=for-the-badge&logo=styledcomponents&logoColor=pink"> <img src="https://img.shields.io/badge/redux-toolkit-764ABC?style=for-the-badge&logo=redux&logoColor=fff">|<img src ="https://img.shields.io/badge/naverSerachAPI-03C75A.svg?&style=for-the-badge&logo=naver&logoColor=white"/> <img src ="https://img.shields.io/badge/KakamapAPI-FFCD00.svg?&style=for-the-badge&logo=googlemaps&logoColor=black"/> <img src ="https://img.shields.io/badge/firebase-FFCA28.svg?&style=for-the-badge&logo=firebase&logoColor=black"/>|<img src="https://img.shields.io/badge/figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white" width=150>|<img src="https://img.shields.io/badge/netlify-00C7B7?style=for-the-badge&logo=netlify&logoColor=white"> <img src="https://img.shields.io/badge/github-181717?style=for-the-badge&logo=github&logoColor=white">|
+
 <br>
 
 ### 🔩 벡엔드 & API
 - 네이버 검색 API를 통해 맛집 검색 기능을 구현하였습니다.
 - 네이버 검색 API로 얻은 맛집 정보와 좌표를 KakaMapAPI에 전달하여 지도를 그리고, 마커로 해당 맛집을 표시하도록 구현하였습니다.
 - 파이어베이스를 이용하여 db를 구성하고, 로그인, 로그아웃, 게시물, 댓글, 답글, 프로필 등 주요 기능 API를 구현하였습니다.
+
+<br>
+
+### ⛓ 아키텍처
+![architecture](https://github.com/NamJongtae/TasteMap/assets/113427991/ec694903-9a4d-423f-b270-54bd25fc0c33)
+
+<br>
+
+### 🚩 User Flow ( 이미지를 클릭 해주세요. )
+![userFlow](https://github.com/NamJongtae/TasteMap/assets/113427991/cfebd74e-dd6d-45c6-9bee-56e6662d2380)
 
 <br>
 
@@ -69,7 +82,7 @@
 ![issue](https://github.com/NamJongtae/TasteMap/assets/113427991/2064d7af-9224-47a2-ae65-f89854abb9b8)
 
 - <a href="https://github.com/users/NamJongtae/projects/4">GitHub Project</a>
-  - 프로젝트 보드의 이슈 목록을 통해 개발 과정과 진행 상황을 한 눈에 알아 볼 수 있었습니다.
+  - 프로젝트 보드의 이슈 목록을 통해 개발 과정과 진행 상황을 한 눈에 알아 볼 수 있습니다.
   
 ![board](https://github.com/NamJongtae/TasteMap/assets/113427991/506be4b3-71d5-4a14-ab74-17811e071f64)
 
@@ -93,11 +106,6 @@
 `Relese` : 배포 관련 작업인 경우
 
 `Chore` : 그 외 기타 사항이 있을 경우 사용합니다.
-
-<br>
-
-### 🚩 User Flow ( 이미지를 클릭 해주세요. )
-![userFlow](https://github.com/NamJongtae/TasteMap/assets/113427991/cfebd74e-dd6d-45c6-9bee-56e6662d2380)
 
 <br>
 
