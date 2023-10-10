@@ -41,12 +41,16 @@ function App() {
     checkwebp();
   }, []);
 
+  // 페이지 이동 시 스크롤이 최상위로 가도록 설정
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [pathname]);
 
   // 유저 최신 데이터 갱신
   useEffect(() => {
+    // 맛집 지도 공유 페이지에서는 로그인 없이 들어올 수 있기 때문에 userData 저장을 하면 안되기 때문에
+    // pathname에 shaer가 포함되는 경우 return 처리
+    if(pathname.includes("share")) return;
     const auth = getAuth();
     onAuthStateChanged(auth, async (user) => {
       // locatlstroage에 유저 정보 저장
