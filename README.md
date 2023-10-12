@@ -15,14 +15,16 @@
 - [⚙ 개발환경](#-개발환경)
   
 - [🔩 벡엔드&API](#-벡엔드--api)
+
+- [⛓ 아키텍처](#-아키텍처) 
+
+- [🚩 User Flow](#-user-flow--이미지를-클릭-해주세요-) 
   
 - [🛠 프로젝트 관리](#-프로젝트-관리)
   
 - [📃 GitHub 컨벤션](#-github-컨벤션)
   
-- [👀 구현 기능 미리보기](#-구현-기능-미리보기)
-  
-- [🔎 주요 기능 코드 및 설명](#-주요-기능-코드-및-설명)
+- [👀 구현 기능 미리보기](#-구현-기능-미리보기--제목-클릭-시-해당-기능-상세설명으로-이동됩니다-)
   
 <br>
 
@@ -51,12 +53,23 @@
 |프론트엔드|벡엔드|디자인|배포, 관리|
 |---|---|---|---|
 |<img alt="Html" src ="https://img.shields.io/badge/HTML5-E34F26.svg?&style=for-the-badge&logo=HTML5&logoColor=white"/> <img alt="CSS" src ="https://img.shields.io/badge/CSS3-1572B6.svg?&style=for-the-badge&logo=CSS3&logoColor=white"/> <img alt="JavaScript" src ="https://img.shields.io/badge/JavaScript-F7DF1E.svg?&style=for-the-badge&logo=JavaScript&logoColor=black"/> <img alt="TypeScript" src ="https://img.shields.io/badge/TypeScript-3178C6.svg?&style=for-the-badge&logo=TypeScript&logoColor=white"/> <img src="https://img.shields.io/badge/react-61DAFB?style=for-the-badge&logo=react&logoColor=black"> <img src="https://img.shields.io/badge/styled-components-DB7093?style=for-the-badge&logo=styledcomponents&logoColor=pink"> <img src="https://img.shields.io/badge/redux-toolkit-764ABC?style=for-the-badge&logo=redux&logoColor=fff">|<img src ="https://img.shields.io/badge/naverSerachAPI-03C75A.svg?&style=for-the-badge&logo=naver&logoColor=white"/> <img src ="https://img.shields.io/badge/KakamapAPI-FFCD00.svg?&style=for-the-badge&logo=googlemaps&logoColor=black"/> <img src ="https://img.shields.io/badge/firebase-FFCA28.svg?&style=for-the-badge&logo=firebase&logoColor=black"/>|<img src="https://img.shields.io/badge/figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white" width=150>|<img src="https://img.shields.io/badge/netlify-00C7B7?style=for-the-badge&logo=netlify&logoColor=white"> <img src="https://img.shields.io/badge/github-181717?style=for-the-badge&logo=github&logoColor=white">|
+
 <br>
 
 ### 🔩 벡엔드 & API
 - 네이버 검색 API를 통해 맛집 검색 기능을 구현하였습니다.
 - 네이버 검색 API로 얻은 맛집 정보와 좌표를 KakaMapAPI에 전달하여 지도를 그리고, 마커로 해당 맛집을 표시하도록 구현하였습니다.
 - 파이어베이스를 이용하여 db를 구성하고, 로그인, 로그아웃, 게시물, 댓글, 답글, 프로필 등 주요 기능 API를 구현하였습니다.
+
+<br>
+
+### ⛓ 아키텍처
+![architecture](https://github.com/NamJongtae/TasteMap/assets/113427991/4a22d960-d394-4187-a411-3ba63604fea2)
+
+<br>
+
+### 🚩 User Flow ( 이미지를 클릭 해주세요. )
+![userFlow](https://github.com/NamJongtae/TasteMap/assets/113427991/cfebd74e-dd6d-45c6-9bee-56e6662d2380)
 
 <br>
 
@@ -69,7 +82,7 @@
 ![issue](https://github.com/NamJongtae/TasteMap/assets/113427991/2064d7af-9224-47a2-ae65-f89854abb9b8)
 
 - <a href="https://github.com/users/NamJongtae/projects/4">GitHub Project</a>
-  - 프로젝트 보드의 이슈 목록을 통해 개발 과정과 진행 상황을 한 눈에 알아 볼 수 있었습니다.
+  - 프로젝트 보드의 이슈 목록을 통해 개발 과정과 진행 상황을 한 눈에 알아 볼 수 있습니다.
   
 ![board](https://github.com/NamJongtae/TasteMap/assets/113427991/506be4b3-71d5-4a14-ab74-17811e071f64)
 
@@ -96,35 +109,30 @@
 
 <br>
 
-
-### 👀 구현 기능 미리보기
-|로그인|회원가입|아이디/비밀번호 찾기|
+### 👀 구현 기능 미리보기 ( 제목 클릭 시 해당 기능 상세설명으로 이동됩니다. )
+|[🔗 로그인](https://github.com/NamJongtae/TasteMap/wiki/%EA%B8%B0%EB%8A%A5%EB%B3%84-%EC%83%81%EC%84%B8-%EC%84%A4%EB%AA%85#%EB%A1%9C%EA%B7%B8%EC%9D%B8-%ED%8E%98%EC%9D%B4%EC%A7%80)|[🔗 회원가입](https://github.com/NamJongtae/TasteMap/wiki/%EA%B8%B0%EB%8A%A5%EB%B3%84-%EC%83%81%EC%84%B8-%EC%84%A4%EB%AA%85#%ED%9A%8C%EC%9B%90%EA%B0%80%EC%9E%85-%ED%8E%98%EC%9D%B4%EC%A7%80)|[🔗 아이디/비밀번호 찾기](https://github.com/NamJongtae/TasteMap/wiki/%EA%B8%B0%EB%8A%A5%EB%B3%84-%EC%83%81%EC%84%B8-%EC%84%A4%EB%AA%85#%EC%9D%B4%EB%A9%94%EC%9D%BC--%EB%B9%84%EB%B0%80%EB%B2%88%ED%98%B8-%EC%B0%BE%EA%B8%B0-%ED%8E%98%EC%9D%B4%EC%A7%80)|
 |---|---|---|
 |![로그인](https://github.com/NamJongtae/TasteMap/assets/113427991/9345a44f-4220-4c13-81f1-40c1b639d032)|![회원가입](https://github.com/NamJongtae/TasteMap/assets/113427991/e724a7e2-4332-4cb3-9301-2fa4698facfd)|![계정찾기](https://github.com/NamJongtae/TasteMap/assets/113427991/c6ca8fdc-b86d-4421-bac6-302ba839bfca)|
 
-|게시물 조회|게시물 업로드|게시물 수정|
+|[🔗 게시물 조회](https://github.com/NamJongtae/TasteMap/wiki/%EA%B8%B0%EB%8A%A5%EB%B3%84-%EC%83%81%EC%84%B8-%EC%84%A4%EB%AA%85#%EA%B2%8C%EC%8B%9C%EB%AC%BC-%EC%A1%B0%ED%9A%8C)|[🔗 게시물 업로드](https://github.com/NamJongtae/TasteMap/wiki/%EA%B8%B0%EB%8A%A5%EB%B3%84-%EC%83%81%EC%84%B8-%EC%84%A4%EB%AA%85#%EA%B2%8C%EC%8B%9C%EB%AC%BC-%EC%97%85%EB%A1%9C%EB%93%9C)|[🔗 게시물 수정](https://github.com/NamJongtae/TasteMap/wiki/%EA%B8%B0%EB%8A%A5%EB%B3%84-%EC%83%81%EC%84%B8-%EC%84%A4%EB%AA%85#%EA%B2%8C%EC%8B%9C%EB%AC%BC-%EC%88%98%EC%A0%95)|
 |:---:|:---:|:---:|
 |![게시물 조회](https://github.com/NamJongtae/TasteMap/assets/113427991/27a7d40b-7cbe-4295-ba1e-f8c531b635bd)|![게시물 업로드](https://github.com/NamJongtae/TasteMap/assets/113427991/d5e7e011-ceeb-4b9d-a301-8d8fc25762c8)|![게시물 수정](https://github.com/NamJongtae/TasteMap/assets/113427991/8d95c2a6-a143-4714-b951-12a5d81f45be)|
 
-|게시물 삭제|게시물 신고|맛집추가, 좋아요|
+|[🔗 게시물 삭제](https://github.com/NamJongtae/TasteMap/wiki/%EA%B8%B0%EB%8A%A5%EB%B3%84-%EC%83%81%EC%84%B8-%EC%84%A4%EB%AA%85#%EA%B2%8C%EC%8B%9C%EB%AC%BC-%EC%82%AD%EC%A0%9C)|[🔗 게시물 신고](https://github.com/NamJongtae/TasteMap/wiki/%EA%B8%B0%EB%8A%A5%EB%B3%84-%EC%83%81%EC%84%B8-%EC%84%A4%EB%AA%85#%EA%B2%8C%EC%8B%9C%EB%AC%BC-%EC%8B%A0%EA%B3%A0)|[🔗 맛집추가, 좋아요](https://github.com/NamJongtae/TasteMap/wiki/%EA%B8%B0%EB%8A%A5%EB%B3%84-%EC%83%81%EC%84%B8-%EC%84%A4%EB%AA%85#%EB%A7%9B%EC%A7%91-%EC%B6%94%EA%B0%80-%EC%A2%8B%EC%95%84%EC%9A%94)|
 |---|---|---|
 |![게시물 삭제](https://github.com/NamJongtae/TasteMap/assets/113427991/e7d2924f-807c-4615-823d-dca10776bbab)|![게시물 신고](https://github.com/NamJongtae/TasteMap/assets/113427991/2fb0cbd9-6dbc-4e55-b442-dc7bba5501ca)|![맛집추가, 좋아요](https://github.com/NamJongtae/TasteMap/assets/113427991/a402813c-0377-4fc1-a608-84b8280a1a8f)|
 
-|댓글, 답글|프로필 페이지|팔로우, 팔로잉|
+|[🔗 댓글, 답글](https://github.com/NamJongtae/TasteMap/wiki/%EA%B8%B0%EB%8A%A5%EB%B3%84-%EC%83%81%EC%84%B8-%EC%84%A4%EB%AA%85#%EB%8C%93%EA%B8%80-%EB%8B%B5%EA%B8%80)|[🔗 프로필 페이지](https://github.com/NamJongtae/TasteMap/wiki/%EA%B8%B0%EB%8A%A5%EB%B3%84-%EC%83%81%EC%84%B8-%EC%84%A4%EB%AA%85#%ED%94%84%EB%A1%9C%ED%95%84-%ED%8E%98%EC%9D%B4%EC%A7%80)|[🔗 팔로우, 팔로잉](https://github.com/NamJongtae/TasteMap/wiki/%EA%B8%B0%EB%8A%A5%EB%B3%84-%EC%83%81%EC%84%B8-%EC%84%A4%EB%AA%85#%ED%8C%94%EB%A1%9C%EC%9A%B0-%ED%8C%94%EB%A1%9C%EC%9E%89)|
 |---|---|---|
 |![댓글,답글](https://github.com/NamJongtae/TasteMap/assets/113427991/5d2ae00d-4ace-42d8-ae88-2a1a31ae4cd9)|![프로필 페이지](https://github.com/NamJongtae/TasteMap/assets/113427991/a7b3e3aa-8701-49a4-b614-326b58def7d4)|![팔로우, 팔로잉](https://github.com/NamJongtae/TasteMap/assets/113427991/d8139b61-5f2c-4cff-89dc-ee03d8a22a0c)|
 <div align="center">
   
-|프로필 수정|맛집지도|검색|
+|[🔗 프로필 수정](https://github.com/NamJongtae/TasteMap/wiki/%EA%B8%B0%EB%8A%A5%EB%B3%84-%EC%83%81%EC%84%B8-%EC%84%A4%EB%AA%85#%ED%94%84%EB%A1%9C%ED%95%84-%EC%88%98%EC%A0%95)|[🔗 맛집지도](https://github.com/NamJongtae/TasteMap/wiki/%EA%B8%B0%EB%8A%A5%EB%B3%84-%EC%83%81%EC%84%B8-%EC%84%A4%EB%AA%85#%EB%A7%9B%EC%A7%91%EC%A7%80%EB%8F%84)|[🔗 검색](https://github.com/NamJongtae/TasteMap/wiki/%EA%B8%B0%EB%8A%A5%EB%B3%84-%EC%83%81%EC%84%B8-%EC%84%A4%EB%AA%85#%EA%B2%80%EC%83%89)|
 |---|---|---|
 |![프로필 수정](https://github.com/NamJongtae/TasteMap/assets/113427991/1f19f36f-e9c6-4245-9022-dbc085f0a1b8)|![맛집지도](https://github.com/NamJongtae/TasteMap/assets/113427991/eeb5b9ca-b58e-4a7d-8842-6560721d3353)|![검색](https://github.com/NamJongtae/TasteMap/assets/113427991/6df4a19e-21ff-4a27-ab96-5e93910a7d51)|
 
-|로그아웃|404 페이지|
+|[🔗 로그아웃](https://github.com/NamJongtae/TasteMap/wiki/%EA%B8%B0%EB%8A%A5%EB%B3%84-%EC%83%81%EC%84%B8-%EC%84%A4%EB%AA%85#%EB%A1%9C%EA%B7%B8%EC%95%84%EC%9B%83)|[🔗 404 페이지](https://github.com/NamJongtae/TasteMap/wiki/%EA%B8%B0%EB%8A%A5%EB%B3%84-%EC%83%81%EC%84%B8-%EC%84%A4%EB%AA%85#404)|
 |---|---|
 |![로그아웃](https://github.com/NamJongtae/TasteMap/assets/113427991/635b35e4-f1d0-4325-9f69-52fa4c3c02ce)|![404](https://github.com/NamJongtae/TasteMap/assets/113427991/830a1146-2967-4d80-8c4d-d0ed94503851)|
 
 </div>
-<br>
-
-### 🔎 주요 기능 코드 및 설명
-
