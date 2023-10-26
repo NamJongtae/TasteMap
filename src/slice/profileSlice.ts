@@ -358,10 +358,12 @@ export const profileSlice = createSlice({
     });
 
     // 유저 팔로우
+    // 나의 팔로잉 목록에 유저 추가
+    // 유저 팔로우 목록에 나 추가
     builder.addCase(thunkFetchFollow.fulfilled, (state, action) => {
       if (action.payload) {
         const newData = { ...state.myProfileData };
-        newData.followerList?.push(action.payload.userUid);
+        newData.followingList?.push(action.payload.userUid);
         state.myProfileData = newData;
 
         // 팔로우/팔로잉 모달창이 열렸을 경우에는 현재 유저 데이터와 자신의 uid 같을 경우에만 followingList를 변경
@@ -369,14 +371,14 @@ export const profileSlice = createSlice({
         if (state.isOpenFollowerModal || state.isOpenFollowingModal) {
           if (state.userProfileData.uid === action.payload.myUid) {
             const newUserProfile = { ...state.userProfileData };
-            newUserProfile.followingList?.push(action.payload.myUid);
+            newUserProfile.followerList?.push(action.payload.myUid);
             state.userProfileData = newUserProfile;
           }
         } else {
           // 팔로우/팔로잉 모달창이 닫힌 경우
           // followingList 바로 변경
           const newUserProfile = { ...state.userProfileData };
-          newUserProfile.followingList?.push(action.payload.myUid);
+          newUserProfile.followerList?.push(action.payload.myUid);
           state.userProfileData = newUserProfile;
         }
       }
@@ -391,10 +393,12 @@ export const profileSlice = createSlice({
     });
 
     // 유저 언팔로우
+    // 나의 팔로잉 목록에서 제거
+    // 유저 팔로우 목록에서 나 제거
     builder.addCase(thunkFetchUnfollow.fulfilled, (state, action) => {
       if (action.payload) {
         const newData = { ...state.myProfileData };
-        newData.followerList = newData.followerList?.filter(
+        newData.followingList = newData.followingList?.filter(
           (item) => item !== action.payload?.userUid
         );
         state.myProfileData = newData;
@@ -403,7 +407,7 @@ export const profileSlice = createSlice({
         if (state.isOpenFollowerModal || state.isOpenFollowingModal) {
           if (state.userProfileData.uid === action.payload.myUid) {
             const newUserProfile = { ...state.userProfileData };
-            newUserProfile.followingList = newUserProfile.followingList?.filter(
+            newUserProfile.followerList = newUserProfile.followerList?.filter(
               (item) => item !== action.payload?.myUid
             );
             state.userProfileData = newUserProfile;
@@ -412,7 +416,7 @@ export const profileSlice = createSlice({
           // 팔로우/팔로잉 모달창이 닫힌 경우
           // followingList 바로 변경
           const newUserProfile = { ...state.userProfileData };
-          newUserProfile.followingList = newUserProfile.followingList?.filter(
+          newUserProfile.followerList = newUserProfile.followerList?.filter(
             (item) => item !== action.payload?.myUid
           );
           state.userProfileData = newUserProfile;

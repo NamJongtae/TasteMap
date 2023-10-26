@@ -145,24 +145,24 @@ export const fetchProfilePagingData = async (
  * 팔로우
  */
 export const fetchFollow = async (myUid: string, userUid: string) => {
-  // 나의 프로필 Doc에 followList에 해당 유저의 uid 추가
+  // 나의 프로필 Doc에 followingList에 해당 유저의 uid 추가
   const myProfileDoc = doc(db, `user/${myUid}`);
-  const folloerListRef = collection(myProfileDoc, `follower`);
-  const addFollowerListDocPromise = setDoc(doc(folloerListRef, userUid), {
+  const followingListRef = collection(myProfileDoc, `following`);
+  const addFollowingListDocPromise = setDoc(doc(followingListRef, userUid), {
     uid: userUid
   });
   const addFollowerListPromise = updateDoc(myProfileDoc, {
-    followerList: arrayUnion(userUid)
+    followingList: arrayUnion(userUid)
   });
 
-  // 팔로우한 유저 프로필 Doc에 followingList에 나의 uid 추가
+  // 팔로우한 유저 프로필 Doc에 followerList에 나의 uid 추가
   const userProfileDoc = doc(db, `user/${userUid}`);
-  const followingListRef = collection(userProfileDoc, `following`);
-  const addFollowingListDocPromise = setDoc(doc(followingListRef, myUid), {
+  const followerListRef = collection(userProfileDoc, `follower`);
+  const addFollowerListDocPromise = setDoc(doc(followerListRef, myUid), {
     uid: myUid
   });
   const addFollowingListPromise = updateDoc(userProfileDoc, {
-    followingList: arrayUnion(myUid)
+    followerList: arrayUnion(myUid)
   });
 
   await Promise.all([
@@ -177,19 +177,19 @@ export const fetchFollow = async (myUid: string, userUid: string) => {
  * 언팔로우
  */
 export const fetchUnfollow = async (myUid: string, userUid: string) => {
-  // 나의 프로필 Doc에 followList에 해당 유저의 uid 제거
+  // 나의 프로필 Doc에 followingList에 해당 유저의 uid 제거
   const myProfileDoc = doc(db, `user/${myUid}`);
-  const followerDoc = doc(myProfileDoc, `follower/${userUid}`);
-  const removeFollowerDocPromise = deleteDoc(followerDoc);
-  const removeFollowerListPromise = updateDoc(myProfileDoc, {
+  const followingDoc = doc(myProfileDoc, `following/${userUid}`);
+  const removeFollowingDocPromise = deleteDoc(followingDoc);
+  const removeFollowingListPromise = updateDoc(myProfileDoc, {
     followerList: arrayRemove(userUid)
   });
 
-  // 팔로우한 유저 프로필 Doc에 followingList에 나의 uid 제거
+  // 팔로우한 유저 프로필 Doc에 followerList에 나의 uid 제거
   const userProfileDoc = doc(db, `user/${userUid}`);
-  const followingDoc = doc(userProfileDoc, `following/${myUid}`);
-  const removeFollowingDocPromise = deleteDoc(followingDoc);
-  const removeFollowingListPromise = updateDoc(userProfileDoc, {
+  const followerDoc = doc(userProfileDoc, `follower/${myUid}`);
+  const removeFollowerDocPromise = deleteDoc(followerDoc);
+  const removeFollowerListPromise = updateDoc(userProfileDoc, {
     followingList: arrayRemove(myUid)
   });
 
