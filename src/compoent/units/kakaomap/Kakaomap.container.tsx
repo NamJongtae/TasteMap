@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import "./kakaomap.styles.css";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../store/store";
@@ -84,7 +84,7 @@ function Kakaomap({ items, isTasteMapPage }: IProps) {
     this.content = content;
   }
 
-  const onLoadView = (map: any, position: any) => {
+  const onLoadView = useCallback((map: any, position: any) => {
     // loadView가 없을 시 return 타입 가드
     if (!roadview) {
       return;
@@ -262,7 +262,7 @@ function Kakaomap({ items, isTasteMapPage }: IProps) {
         }
       });
     }
-  };
+  },[roadview]);
 
   useEffect(() => {
     // map이 없을 시 리턴 맵 중복 생성 방지

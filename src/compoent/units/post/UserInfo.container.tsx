@@ -50,14 +50,13 @@ export default function UserInfo({
   /**
    * 게시물 수정 페이지 이동
    */
-  const onClickEditBtn = () => {
+  const onClickEditBtn =() => {
     if (data && "id" in data) navigate(`/post/${data?.id}/edit`);
   };
-
   /**
    * 게시물 삭제 함수
    */
-  const onCliceRemove = (
+  const onCliceRemove = useCallback((
     e: React.MouseEvent<HTMLButtonElement>,
     data: IPostData
   ) => {
@@ -76,12 +75,12 @@ export default function UserInfo({
         navigate("/");
       }
     });
-  };
+  },[isProfilePage, postId]);
 
   /**
    * 게시물 신고 함수
    */
-  const onClickReport = (
+  const onClickReport = useCallback((
     e: React.MouseEvent<HTMLButtonElement>,
     postData: IPostData
   ) => {
@@ -137,7 +136,7 @@ export default function UserInfo({
         }
       });
     });
-  };
+  },[userData, isProfilePage]);
 
   /**
    * 더보기 메뉴 활성화/비활성화 함수

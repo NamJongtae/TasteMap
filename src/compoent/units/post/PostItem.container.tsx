@@ -1,4 +1,5 @@
 import React, {
+  useCallback,
   useEffect,
   useLayoutEffect,
   useMemo,
@@ -44,18 +45,19 @@ export default function PostItem({
   const [isShowMoreTextBtn, setIsShowMoreTextBtn] = useState(false);
   const contentTextRef = useRef<HTMLParagraphElement>(null);
   const [kakaomapRef, inview] = useInView();
-  const onClickMoreText = () => {
+
+  const onClickMoreText = useCallback(() => {
     if (contentTextRef.current) {
       contentTextRef.current.style.display = "block";
       setIsShowMoreTextBtn(false);
     }
-  };
+  },[]);
 
-  const openCommentModal = () => {
+  const openCommentModal = useCallback(() => {
     document.body.style.overflow = "hidden";
     dispatch(commentSlice.actions.setIsOpenCommentModal(true));
     dispatch(commentSlice.actions.setPostId(data.id));
-  };
+  },[]);
 
   useLayoutEffect(() => {
     if (contentTextRef.current) {
@@ -79,7 +81,7 @@ export default function PostItem({
     setType("map");
   };
 
-  const onChangeStoredMapList = (map: ISearchMapData) => {
+  const onChangeStoredMapList = useCallback((map: ISearchMapData) => {
     if (myProfileData.storedMapList) {
       if (!isStoredMap) {
         const newProfile = {
@@ -97,12 +99,12 @@ export default function PostItem({
         dispatch(profileSlice.actions.setMyprofile(newProfile));
       }
     }
-  };
+  },[myProfileData, isStoredMap]);
 
   /**
    * 좋아요 추가 함수
    */
-  const onClickLike = async (id: string | undefined) => {
+  const onClickLike = useCallback(async (id: string | undefined) => {
     if (!id) return;
     // 자기 자신의 게시물에 좋아요를 누르면 retun
     if (myProfileData.uid === data.uid) {
@@ -123,9 +125,9 @@ export default function PostItem({
     }
     // 좋아요 유무 변경
     setIsLike(!isLike);
-  };
+  },[myProfileData, isLike]);
 
-  const onClickStoredMap = async (postData: IPostData) => {
+  const onClickStoredMap = useCallback( async (postData: IPostData) => {
     if (!postData || !myProfileData.storedMapList) return;
 
     if (!isStoredMap) {
@@ -149,7 +151,7 @@ export default function PostItem({
     }
     // 지도 추가 유무 변경
     setIsStoredMap(!isStoredMap);
-  };
+  },[myProfileData, isStoredMap]);
 
   // userProfile의 likeList 데이터를 이용하여 게시물의 좋아요 유무를 판별
   useEffect(() => {

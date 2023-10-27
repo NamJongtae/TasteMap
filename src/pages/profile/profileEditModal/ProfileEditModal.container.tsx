@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { getCompressionImg } from "../../../library/imageCompression";
 import { imgValidation } from "../../../library/imageValidation";
 import { useValidationInput } from "../../../hook/useValidationInput";
@@ -65,18 +65,18 @@ export default function ProfileEditModal() {
   /**
    * textarea 자동 줄 바꿈
    */
-  const resizeTextAreaHeight = () => {
+  const resizeTextAreaHeight = useCallback(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
       textareaRef.current.style.height =
         textareaRef.current.scrollHeight - 30 + "px";
     }
-  };
+  },[]);
 
   /**
    * 업로드 프로필 이미지 변경
    */
-  const onChangeImg = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const onChangeImg = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
     const file = e.target.files[0];
     const isValid = imgValidation(file);
@@ -96,7 +96,7 @@ export default function ProfileEditModal() {
     if(isMobile) {
       setIsImgLoading(false);
     }
-  };
+  },[isMobile]);
 
   /**
    * 프로필 수정
@@ -127,7 +127,7 @@ export default function ProfileEditModal() {
   /**
    * 프로필 수정 모달 닫기
    */
-  const onCLickClose = () => {
+  const onCLickClose = useCallback(() => {
     if (modalRef.current) {
       modalRef.current.style.animation = "ProfileEditModalmoveUpmoveDown 1s";
     }
@@ -135,7 +135,7 @@ export default function ProfileEditModal() {
       document.body.style.overflow = "auto";
       dispatch(profileSlice.actions.setIsOpenProfileEditModal(false));
     }, 700);
-  };
+  },[]);
 
   useEffect(() => {
     // 초기 textarea 높이 설정

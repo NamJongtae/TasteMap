@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useCallback, useRef } from "react";
 import { Dim, Wrapper } from "./comment.styles";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../../store/store";
@@ -24,7 +24,7 @@ export default function Comment() {
   /**
    * Dim(모달창 어두운 배경) 클릭 시 모달창 닫기
    */
-  const closeCommentModal = () => {
+  const closeCommentModal = useCallback(() => {
     if (commentModalRef.current) {
       if (commentModalRef.current) {
         const animation = window
@@ -55,7 +55,7 @@ export default function Comment() {
       // 모바일일 시 빈 히스토리를 없애기 위해
       if (isMobile) history.back();
     }
-  };
+  },[isOpenReplyModal, isMobile]);
 
   return (
     <Wrapper

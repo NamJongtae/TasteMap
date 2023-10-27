@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import {
   CloseBtn,
   Dim,
@@ -25,7 +25,7 @@ export default function FollowModal({ isFollower }: IProps) {
   const firstItemLinkRef = useRef<HTMLAnchorElement>(null);
   const lastItemFollowBtnRef = useRef<HTMLButtonElement>(null);
 
-  const closeModal = () => {
+  const closeModal = useCallback(() => {
     if (modalRef.current) {
       modalRef.current.style.animation = "FollowModalmoveDown 1s";
       setTimeout(() => {
@@ -40,7 +40,7 @@ export default function FollowModal({ isFollower }: IProps) {
         history.back();
       }
     }
-  };
+  },[isFollower, isMobile]);
 
   useEffect(() => {
     return () => {

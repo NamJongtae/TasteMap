@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useValidationInput } from "../../hook/useValidationInput";
 import ProfileSettingUI from "./ProfileSetting.presenter";
 import { resolveWebp } from "../../library/webpSupport";
@@ -39,7 +39,7 @@ export default function ProfileSetting({
   const [introduce, setIntroduce] = useState("");
   const [isImgLoading, setIsImgLoading] = useState(false);
 
-  const onChangeImg = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const onChangeImg = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
     const file = e.target.files[0];
     const isValid = imgValidation(file);
@@ -60,7 +60,7 @@ export default function ProfileSetting({
     if (isMobile) {
       setIsImgLoading(false);
     }
-  };
+  },[isMobile]);
 
   const onClickImgReset = () => {
     setPreviewImg(resolveWebp("/assets/webp/icon-defaultProfile.webp", "svg"));

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { v4 as uuid } from "uuid";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store/store";
@@ -59,45 +59,45 @@ export default function PostUpload({ isEdit }: IProps) {
   const [isImgLoading, setIsImgLoading] = useState(false);
   /**
    * 검색 모달창 열기 */
-  const openSearchModal = () => {
+  const openSearchModal = useCallback(() => {
     setIsOpenModal(true);
     document.body.style.overflow = "hidden";
-  };
+  },[]);
 
   /**
    * 검색 모달창 닫기 */
-  const closeSearchModal = () => {
+  const closeSearchModal = useCallback(() => {
     setIsOpenModal(false);
     document.body.style.overflow = "auto";
-  };
+  },[]);
 
   /**
    * 이미지 업로드 input 클릭 */
-  const onClickUploadImg = () => {
+  const onClickUploadImg = useCallback(() => {
     if (hiddenUploadBtnRef.current) {
       hiddenUploadBtnRef.current.click();
     }
-  };
+  },[]);
 
-  const handleResizeHeight = () => {
+  const handleResizeHeight = useCallback(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
       textareaRef.current.style.height =
         textareaRef.current.scrollHeight - 30 + "px";
     }
-  };
+  },[]);
 
   /**
    * 게시물 작성 내용 chage 함수 */
-  const onChangeContentValue = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const onChangeContentValue = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
     handleResizeHeight();
     if (e.target.value.length === 1 && e.target.value === " ") return;
     setContentValue(e.target.value);
-  };
+  },[]);
 
   /**
    * 이미지 chage 함수 */
-  const onChangeImg = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const onChangeImg = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     // 이미지가 존재하지 않을 시 return
     if (!e.target.files || !e.target.files[0]) return;
     // 이미지가 5개를 이상이면 return
@@ -139,12 +139,12 @@ export default function PostUpload({ isEdit }: IProps) {
     setImgFile((prev) => [...prev, compressdImg.compressedFile]);
     // 이미지 업로드 후 업로드한 이미지가 보이도록 스크롤을 맨 아래로 내림
     if (wrapperRef.current) scrollTo({ top: wrapperRef.current.scrollHeight });
-  };
+  },[preview, isMobile]);
 
   /**
    * 이미지 삭제 함수
    * 인자값으로 index를 받아 해당 index에 해당하는 imgFile, preview 제거 */
-  const onClickRemoveImg = (idx: number) => {
+  const onClickRemoveImg = useCallback((idx: number) => {
     if (hiddenUploadBtnRef.current) {
       hiddenUploadBtnRef.current.value = "";
     }
@@ -152,11 +152,11 @@ export default function PostUpload({ isEdit }: IProps) {
     setImgFile((prev) => prev.filter((_, itemIdx) => itemIdx != idx));
     setEditImgURL((prev) => prev.filter((_, itemIdx) => itemIdx != idx));
     setEditImgName((prev) => prev.filter((_, itemIdx) => itemIdx != idx));
-  };
+  },[]);
 
   /**
    * 게시물 업로드 함수 */
-  const onSubmitUpload = async () => {
+  const onSubmitUpload = useCallback(async () => {
     // 내용이 비었거나 맛집을 선택하지 않았을 경우 return
     if (!contentValue || !selectedMapData.length) return;
     if (isEdit) {
@@ -205,7 +205,7 @@ export default function PostUpload({ isEdit }: IProps) {
       }
       navigate("/");
     }
-  };
+  },[postData, contentValue, selectedMapData, isEdit, imgFile, ratingValue]);
 
   useEffect(() => {
     if (imgListRef.current && postData.imgURL !== preview) {

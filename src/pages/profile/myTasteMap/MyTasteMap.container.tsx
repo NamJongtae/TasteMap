@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../store/store";
@@ -50,7 +50,7 @@ export default function MyTasteMap() {
     dispatch(tasteMapSlice.actions.setContentType("list"));
   };
 
-  const onClickShare = async () => {
+  const onClickShare = useCallback(async () => {
     const textarea = document.createElement("textarea");
     document.body.appendChild(textarea);
     const url =
@@ -60,9 +60,9 @@ export default function MyTasteMap() {
     document.execCommand("copy");
     document.body.removeChild(textarea);
     sweetToast("맛집 지도 공유 링크가 복사되었습니다.", "success");
-  };
+  },[]);
 
-  const removeMap = () => {
+  const removeMap = useCallback(() => {
     sweetConfirm("정말 삭제하시겠습니까?", "삭제", "취소", () => {
       dispatch(thunkFetchRemovePostMap(clickMarkerData));
       const newData = {
@@ -77,7 +77,7 @@ export default function MyTasteMap() {
       sweetToast("삭제가 완료되었습니다.", "success");
       dispatch(tasteMapSlice.actions.setClickMarkerData({}));
     });
-  };
+  },[]);
 
   useEffect(() => {
     return () => {

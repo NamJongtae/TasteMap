@@ -50,13 +50,7 @@ export const useValidationInput = (
       });
     }
   }, []);
-
-  const onChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
-    setValue(e.target.value.trim());
-    validation(e.target.value.trim());
-  };
-
-  const validation = (value: string) => {
+  const validation = useCallback((value: string) => {
     if (type === "phone" && value.length < 12) {
       setValid({ errorMsg: typeInfo.errorMsg, valid: false });
       return;
@@ -71,7 +65,14 @@ export const useValidationInput = (
     } else {
       setValid({ errorMsg: typeInfo.errorMsg, valid: false });
     }
-  };
+  },[type, typeInfo, checkDuplication]);
+
+  const onChangeValue = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    setValue(e.target.value.trim());
+    validation(e.target.value.trim());
+  },[value]);
+
+
 
   const duplicationDebounce = useCallback(
     debounce(async (value) => {

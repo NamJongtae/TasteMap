@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../../store/store";
 import { ICommentData, IKnownError, IReplyData } from "../../../../api/apiType";
@@ -53,9 +53,9 @@ export default function CommentItem({
   const dispatch = useDispatch<AppDispatch>();
   const [isEdit, setIsEdit] = useState(false);
 
-  const onClickEdit = () => {
+  const onClickEdit = useCallback(() => {
     setIsEdit(!isEdit);
-  };
+  },[isEdit]);
 
   const onClickReply = () => {
     if (!isOpenReplyModal) {
@@ -67,7 +67,8 @@ export default function CommentItem({
     }
   };
 
-  const commentError = (type: "noPost" | "noComment") => {
+  // 댓글 에러 처리 ( 이미 삭제된 댓글. 이미 삭제된 게시글 )
+  const commentError = useCallback((type: "noPost" | "noComment") => {
     if (type === "noPost") {
       // 댓글 모달창 닫기
       document.body.style.overflow = "auto";
@@ -88,9 +89,9 @@ export default function CommentItem({
       // 답글 모달창 닫기
       dispatch(commentSlice.actions.setIsOpenCommentModal(false));
     }
-  };
+  },[]);
 
-  const replyError = (type: "noReply" | "noPost" | "noComment") => {
+  const replyError = useCallback((type: "noReply" | "noPost" | "noComment") => {
     if (type === "noReply") {
       // 해당 답글 삭제
       const newReplyData = [...replyListData].filter(
@@ -119,9 +120,9 @@ export default function CommentItem({
       );
       dispatch(postSlice.actions.setPostListData(newData));
     }
-  };
+  },[]);
 
-  const onClickRemove = () => {
+  const onClickRemove = useCallback(() => {
     if (data) {
       sweetConfirm("정말 삭제하겠습니까?", "삭제", "취소", () => {
         if (!isReply) {
@@ -177,9 +178,9 @@ export default function CommentItem({
         }
       });
     }
-  };
+  },[data]);
 
-  const onClickReport = () => {
+  const onClickReport = useCallback(() => {
     // 댓글 신고
     if (!isReply && "commentId" in data) {
       // 중복 신고 방지
@@ -298,7 +299,7 @@ export default function CommentItem({
         });
       });
     }
-  };
+  },[isReply]);
 
   // 유저 프로필 클릭 시 프로필 페이지 이동 전 모달 창 닫기
   const onClickProfileLink = () => {

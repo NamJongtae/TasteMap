@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { v4 as uuid } from "uuid";
 
 import { Timestamp } from "firebase/firestore";
@@ -53,13 +53,13 @@ export default function CommentTextArea({
   const dispatch = useDispatch<AppDispatch>();
   const [commentValue, setCommentValue] = useState(initalvalue);
 
-  const handleResizeHeight = () => {
+  const handleResizeHeight = useCallback(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
       textareaRef.current.style.height =
         textareaRef.current.scrollHeight + "px";
     }
-  };
+  },[]);
 
   const onChangeCommentValue = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     handleResizeHeight();
@@ -77,7 +77,7 @@ export default function CommentTextArea({
     }
   };
 
-  const commentError = (type: "noPost" | "noComment") => {
+  const commentError = useCallback((type: "noPost" | "noComment") => {
     if (type === "noPost") {
       // 댓글 모달창 닫기
       document.body.style.overflow = "auto";
@@ -96,9 +96,9 @@ export default function CommentTextArea({
       // 답글 모달창 닫기
       dispatch(commentSlice.actions.setIsOpenCommentModal(false));
     }
-  };
+  },[]);
 
-  const replyError = (type: "noReply" | "noPost" | "noComment") => {
+  const replyError = useCallback((type: "noReply" | "noPost" | "noComment") => {
     if (type === "noReply") {
       // 해당 답글 삭제
       const newReplyData = [...replyListData].filter(
@@ -125,9 +125,9 @@ export default function CommentTextArea({
       const newData = [...postListData].filter((item) => item.id !== postId);
       dispatch(postSlice.actions.setPostListData(newData));
     }
-  };
+  },[]);
 
-  const onSubmitComment = () => {
+  const onSubmitComment = useCallback(() => {
     switch (textAreaType) {
       case "write":
         {
@@ -292,7 +292,7 @@ export default function CommentTextArea({
       default:
         return;
     }
-  };
+  },[textAreaType,isReply, commentId, replyId, commentValue]);
 
   return (
     <CommentTextAreaUI

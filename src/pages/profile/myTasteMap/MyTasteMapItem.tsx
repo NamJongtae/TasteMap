@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { ISearchMapData } from "../../../api/apiType";
 import {
   BtnWrapper,
@@ -30,7 +30,7 @@ export default function MyTasteMapItem({ item, isShareTasteMap }: IProps) {
   const myProfileData = useSelector(
     (state: RootState) => state.profile.myProfileData
   );
-  const removeMap = () => {
+  const removeMap = useCallback(() => {
     sweetConfirm("정말 삭제하시겠습니까?", "삭제", "취소", () => {
       dispatch(thunkFetchRemovePostMap(item));
       const newData = {
@@ -46,7 +46,7 @@ export default function MyTasteMapItem({ item, isShareTasteMap }: IProps) {
         dispatch(tasteMapSlice.actions.setContentType("map"));
       }
     });
-  };
+  },[]);
 
   const onClickFocusMap = () => {
     dispatch(tasteMapSlice.actions.setClickMarkerData(item));

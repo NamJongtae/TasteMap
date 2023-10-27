@@ -100,7 +100,7 @@ export default function ProfileInfo() {
         setIsShowMoreTextBtn(false);
       }
     }
-  }, [userProfileData.introduce, myProfileData.introduce]);
+  }, [userProfileData, myProfileData]);
 
   useEffect(() => {
     dispatch(thunkFetchUserProfile(uid || userData.uid || ""));

@@ -182,7 +182,7 @@ export const fetchUnfollow = async (myUid: string, userUid: string) => {
   const followingDoc = doc(myProfileDoc, `following/${userUid}`);
   const removeFollowingDocPromise = deleteDoc(followingDoc);
   const removeFollowingListPromise = updateDoc(myProfileDoc, {
-    followerList: arrayRemove(userUid)
+    followingList: arrayRemove(userUid)
   });
 
   // 팔로우한 유저 프로필 Doc에 followerList에 나의 uid 제거
@@ -190,7 +190,7 @@ export const fetchUnfollow = async (myUid: string, userUid: string) => {
   const followerDoc = doc(userProfileDoc, `follower/${myUid}`);
   const removeFollowerDocPromise = deleteDoc(followerDoc);
   const removeFollowerListPromise = updateDoc(userProfileDoc, {
-    followingList: arrayRemove(myUid)
+    followerList: arrayRemove(myUid)
   });
 
   await Promise.all([
