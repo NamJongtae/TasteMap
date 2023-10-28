@@ -1,6 +1,10 @@
 import axios from "axios";
 import { ISearchMapData } from "../apiType";
 
+// cors에러 우회를 위한 proxy 사용
+const PROXY = window.location.hostname === 'localhost' ? '' : '/proxy';
+const URL = `${PROXY}/v1/search/local.json`;
+
 /**
  * 네이버 지역 검색 API 사용 함수
  */
@@ -10,7 +14,7 @@ fetchSearchMapData = async (
   keyword: string
 ): Promise<ISearchMapData[]> => {
   try {
-    const res = await axios.get("/v1/search/local.json", {
+    const res = await axios.get(URL, {
       headers: {
         "X-Naver-Client-Id": process.env.REACT_APP_X_Naver_Client_Id,
         "X-Naver-Client-Secret": process.env.REACT_APP_X_Naver_Client_Secret
