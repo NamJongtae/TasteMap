@@ -9,11 +9,8 @@ import {
 } from "./search.styles";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../store/store";
-import {
-  thunkFetchFollow,
-  thunkFetchUnfollow
-} from "../../../slice/profileSlice";
 import { resolveWebp } from "../../../library/webpSupport";
+import { thunkFetchFollow, thunkFetchUnfollow } from '../../../slice/userSlice';
 
 interface IProps {
   item: IProfileData;
@@ -22,25 +19,25 @@ export default function SearchItem({ item }: IProps) {
   const searchKeyword = useSelector(
     (state: RootState) => state.search.searchKeyword
   );
-  const myProfileData = useSelector(
-    (state: RootState) => state.profile.myProfileData
+  const myProfile = useSelector(
+    (state: RootState) => state.user.myProfile
   );
   const dispatch = useDispatch<AppDispatch>();
   const [isFollow, setIsFollow] = useState(false);
 
   const onClickFollow = () => {
-    if (myProfileData.uid && item.uid) {
+    if (myProfile.uid && item.uid) {
       dispatch(
-        thunkFetchFollow({ myUid: myProfileData.uid, userUid: item.uid })
+        thunkFetchFollow({ myUid: myProfile.uid, userUid: item.uid })
       );
       setIsFollow(true);
     }
   };
 
   const onClickUnFollow = () => {
-    if (myProfileData.uid && item.uid) {
+    if (myProfile.uid && item.uid) {
       dispatch(
-        thunkFetchUnfollow({ myUid: myProfileData.uid, userUid: item.uid })
+        thunkFetchUnfollow({ myUid: myProfile.uid, userUid: item.uid })
       );
       setIsFollow(false);
     }
@@ -69,13 +66,13 @@ export default function SearchItem({ item }: IProps) {
   };
 
   useLayoutEffect(() => {
-    if (item.uid && myProfileData.followerList?.includes(item.uid)) {
+    if (item.uid && myProfile.followingList?.includes(item.uid)) {
       setIsFollow(true);
     }
-  }, [myProfileData]);
+  }, [myProfile]);
   return (
     <>
-      {item.uid !== myProfileData.uid && (
+      {item.uid !== myProfile.uid && (
         <SearchLi key={item.uid}>
           <UserProfileLink to={`/profile/${item.uid}`}>
             <UserImg

@@ -1,18 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { FollowUl, InfinityScrollTarget } from "./followModal.styles";
 import FollowItem from "./FollowItem";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../store/store";
-import {
-  thunkFetchFirstPageFollowerData,
-  thunkFetchFirstPageFollowingData,
-  thunkFetchPagingFollowerData,
-  thunkFetchPagingFollowingData
-} from "../../../slice/profileSlice";
 import { useParams } from "react-router-dom";
 import { useInView } from "react-intersection-observer";
 import NoData from "../../../compoent/commons/noData/NoData";
 import ScrollLoading from "../../../compoent/commons/loading/ScrollLoading";
+import { thunkFetchFirstPageFollowerData, thunkFetchFirstPageFollowingData, thunkFetchPagingFollowerData, thunkFetchPagingFollowingData } from '../../../slice/userSlice';
 
 interface IProps {
   isFollower: boolean;
@@ -28,79 +23,61 @@ export default function FollowList({
   firstItemLinkRef,
   lastItemFollowBtnRef
 }: IProps) {
-  const followListData = useSelector(
-    (state: RootState) => state.profile.followListData
-  );
-  const page = useSelector((state: RootState) => state.profile.followPage);
-  const hasMore = useSelector(
-    (state: RootState) => state.profile.followHasMore
-  );
+  const follows = useSelector((state: RootState) => state.user.follows);
+  const page = useSelector((state: RootState) => state.user.followsPage);
+  const hasMore = useSelector((state: RootState) => state.user.followsHasMore);
   const pagePerData = useSelector(
-    (state: RootState) => state.profile.followPagePerData
+    (state: RootState) => state.user.followsPagePerData
   );
   const { uid } = useParams();
-  const userData = useSelector((state: RootState) => state.user.data);
+  const myInfo = useSelector((state: RootState) => state.user.myInfo);
   const dispatch = useDispatch<AppDispatch>();
 
   // 무한 스크롤 follower/following 데이터 추가 시 로딩
-  const [isScrollLoading, setIsScrollLoading] = useState(false);
+  const loadMoreFollowsLoading = useSelector(
+    (state: RootState) => state.user.loadMoreFollowsLoading
+  );
   // react-intersection-observer의 customhook 무한 스크롤을 위해 사용
   const [ref, inview] = useInView();
 
   useEffect(() => {
     if (isFollower) {
-      (async () => {
-        setIsScrollLoading(true);
-        await dispatch(
-          thunkFetchFirstPageFollowerData({
-            uid: uid || userData.uid || "",
-            pagePerData
-          })
-        );
-        setIsScrollLoading(false);
-      })();
+      dispatch(
+        thunkFetchFirstPageFollowerData({
+          uid: uid || myInfo.uid || "",
+          pagePerData
+        })
+      );
     } else {
-      (async () => {
-        setIsScrollLoading(true);
-        await dispatch(
-          thunkFetchFirstPageFollowingData({
-            uid: uid || userData.uid || "",
-            pagePerData
-          })
-        );
-        setIsScrollLoading(false);
-      })();
+      dispatch(
+        thunkFetchFirstPageFollowingData({
+          uid: uid || myInfo.uid || "",
+          pagePerData
+        })
+      );
     }
   }, []);
 
   useEffect(() => {
     if (isFollower) {
-      if (followListData.length > 0 && inview && hasMore) {
-        (async () => {
-          setIsScrollLoading(true);
-          await dispatch(
-            thunkFetchPagingFollowerData({
-              uid: uid || userData.uid || "",
-              page,
-              pagePerData
-            })
-          );
-          setIsScrollLoading(false);
-        })();
+      if (follows.length > 0 && inview && hasMore) {
+        dispatch(
+          thunkFetchPagingFollowerData({
+            uid: uid || myInfo.uid || "",
+            page,
+            pagePerData
+          })
+        );
       }
     } else {
-      if (followListData.length > 0 && inview && hasMore) {
-        (async () => {
-          setIsScrollLoading(true);
-          await dispatch(
-            thunkFetchPagingFollowingData({
-              uid: uid || userData.uid || "",
-              page,
-              pagePerData
-            })
-          );
-          setIsScrollLoading(false);
-        })();
+      if (follows.length > 0 && inview && hasMore) {
+        dispatch(
+          thunkFetchPagingFollowingData({
+            uid: uid || myInfo.uid || "",
+            page,
+            pagePerData
+          })
+        );
       }
     }
   }, [inview]);
@@ -113,20 +90,20 @@ export default function FollowList({
 
   return (
     <>
-      {isScrollLoading && followListData.length === 0 ? (
+      {loadMoreFollowsLoading && follows.length === 0 ? (
         <ScrollLoading />
       ) : (
         <>
-          {followListData.length > 0 ? (
+          {follows.length > 0 ? (
             <>
               <FollowUl ref={followListRef} tabIndex={0}>
-                {followListData.map((item, idx) => {
+                {follows.map((item, idx) => {
                   return (
                     <FollowItem
                       key={item.uid}
                       data={item}
                       idx={idx}
-                      isLastItem={idx === followListData.length - 1}
+                      isLastItem={idx === follows.length - 1}
                       isFollower={isFollower}
                       closeBtnRef={closeBtnRef}
                       firstItemLinkRef={firstItemLinkRef}
@@ -135,7 +112,7 @@ export default function FollowList({
                   );
                 })}
                 <InfinityScrollTarget ref={ref}></InfinityScrollTarget>
-                {isScrollLoading && <ScrollLoading />}
+                {loadMoreFollowsLoading && <ScrollLoading />}
               </FollowUl>
             </>
           ) : (

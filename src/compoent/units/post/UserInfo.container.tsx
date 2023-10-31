@@ -1,11 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import {
-  ICommentData,
-  IKnownError,
-  IPostData,
-  IProfileData
-} from "../../../api/apiType";
+import { ICommentData, IPostData, IProfileData } from "../../../api/apiType";
 
 import {
   postSlice,
@@ -19,7 +14,6 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../store/store";
 import UserInfoUI from "./UserInfo.presenter";
-import { profileSlice } from "../../../slice/profileSlice";
 
 interface IProps {
   userData: IProfileData;
@@ -34,15 +28,11 @@ export default function UserInfo({
   activeMoreBtn,
   isProfilePage
 }: IProps) {
-  const postListData = useSelector(
-    (state: RootState) => state.post.postListData
-  );
-
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const { postId } = useParams();
-  const profilePostListData = useSelector(
-    (state: RootState) => state.profile.profilePostListData
+  const userPosts = useSelector(
+    (state: RootState) => state.post.userPosts
   );
   const [isOpenSelect, setIsOpenSelect] = useState(false);
   // 더보기 메뉴 ref 메뉴창이 닫힐 때 애니메이션 효과를 바꾸기 위해 사용
@@ -50,93 +40,52 @@ export default function UserInfo({
   /**
    * 게시물 수정 페이지 이동
    */
-  const onClickEditBtn =() => {
+  const onClickEditBtn = () => {
     if (data && "id" in data) navigate(`/post/${data?.id}/edit`);
   };
   /**
    * 게시물 삭제 함수
    */
-  const onCliceRemove = useCallback((
-    e: React.MouseEvent<HTMLButtonElement>,
-    data: IPostData
-  ) => {
-    e.stopPropagation();
-    setIsOpenSelect(false);
-    sweetConfirm("정말 삭제 하시겠습니까?", "삭제", "취소", () => {
-      if (isProfilePage) {
-        const newData = [...profilePostListData].filter(
-          (item) => item.id !== data.id
-        );
-        dispatch(profileSlice.actions.setProfilePostListData(newData));
-      }
-      // 게시물 삭제 api 비동기 처리
-      dispatch(thunkFetchRemovePost(data));
-      if (postId) {
-        navigate("/");
-      }
-    });
-  },[isProfilePage, postId]);
+  const onCliceRemove = useCallback(
+    (e: React.MouseEvent<HTMLButtonElement>, data: IPostData) => {
+      e.stopPropagation();
+      setIsOpenSelect(false);
+      sweetConfirm("정말 삭제 하시겠습니까?", "삭제", "취소", () => {
+        if (isProfilePage) {
+          const newData = [...userPosts].filter(
+            (item) => item.id !== data.id
+          );
+          dispatch(postSlice.actions.setUserPosts(newData));
+        }
+        // 게시물 삭제 api 비동기 처리
+        dispatch(thunkFetchRemovePost(data));
+        if (postId) {
+          navigate("/");
+        }
+      });
+    },
+    [isProfilePage, postId]
+  );
 
   /**
    * 게시물 신고 함수
    */
-  const onClickReport = useCallback((
-    e: React.MouseEvent<HTMLButtonElement>,
-    postData: IPostData
-  ) => {
-    e.stopPropagation();
-    setIsOpenSelect(false);
-    // 유저 프로필 데이터의 reportList에서 현재 게시물의 id값이 있으면 이미 신고한 게시물 이므로
-    // 신고를 하지 못하도록 return
-    if (userData.uid && postData.reportUidList?.includes(userData.uid)) {
-      return sweetToast("이미 신고한 게시물입니다.", "warning");
-    }
-    sweetConfirm("정말 신고 하시겠습니까?", "신고", "취소", () => {
-      // 게시물 신고 api 비동기 처리
-      dispatch(thunkFetchReportPost(postData)).then((result) => {
-        // 신고한 게시물이 유효한지 체크
-        if (result.payload) {
-          // 신고한 게시물이 유효하다면 신고 후 postData 수정 로직 수행
-          if ((result.payload as IPostData).id) {
-            if (userData.uid) {
-              let newData = [...postListData];
-              const index = newData.findIndex(
-                (item) => item.id === postData.id
-              );
-              newData[index] = {
-                ...newData[index],
-                reportUidList: [
-                  ...(newData[index].reportUidList || []),
-                  userData.uid
-                ]
-              };
-
-              if (postData && (postData?.reportCount as number) >= 4) {
-                newData = newData.filter((item) => item.id !== postData?.id);
-              }
-              dispatch(postSlice.actions.setPostListData(newData));
-            }
-          } else if (
-            // 신고한 게시물이 유효하지 않다면 모달창을 닫고 첫 페이지 게시물 가져오기
-            (result.payload as IKnownError).message ===
-            "게시물이 존재하지 않습니다."
-          ) {
-            if (!isProfilePage) {
-              const newData = [...postListData].filter(
-                (item) => item.id !== postData.id
-              );
-              dispatch(postSlice.actions.setPostListData(newData));
-            } else {
-              const newData = [...profilePostListData].filter(
-                (item) => item.id !== postData.id
-              );
-              dispatch(profileSlice.actions.setProfilePostListData(newData));
-            }
-          }
-        }
+  const onClickReport = useCallback(
+    (e: React.MouseEvent<HTMLButtonElement>, postData: IPostData) => {
+      e.stopPropagation();
+      setIsOpenSelect(false);
+      // 유저 프로필 데이터의 reportList에서 현재 게시물의 id값이 있으면 이미 신고한 게시물 이므로
+      // 신고를 하지 못하도록 return
+      if (userData.uid && postData.reportUidList?.includes(userData.uid)) {
+        return sweetToast("이미 신고한 게시물입니다.", "warning");
+      }
+      sweetConfirm("정말 신고 하시겠습니까?", "신고", "취소", () => {
+        // 게시물 신고 api 비동기 처리
+        dispatch(thunkFetchReportPost({ ...postData, uid: userData?.uid }));
       });
-    });
-  },[userData, isProfilePage]);
+    },
+    [userData, isProfilePage]
+  );
 
   /**
    * 더보기 메뉴 활성화/비활성화 함수

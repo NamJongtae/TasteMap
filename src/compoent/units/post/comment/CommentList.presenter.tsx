@@ -13,8 +13,8 @@ interface IProps {
   replyLoading: boolean;
   commentLoading: boolean;
   handlerRefresh: () => void;
-  replyListData: IReplyData[];
-  commentDataList: ICommentData[];
+  replies: IReplyData[];
+  comments: ICommentData[];
   infiniteScrollRef: (node?: Element | null | undefined) => void;
   isScrollLoading: boolean;
   closeBtnRef: React.RefObject<HTMLButtonElement>;
@@ -27,8 +27,8 @@ export default function CommentListUI({
   replyLoading,
   commentLoading,
   handlerRefresh,
-  replyListData,
-  commentDataList,
+  replies,
+  comments,
   infiniteScrollRef,
   isScrollLoading,
   closeBtnRef,
@@ -42,9 +42,9 @@ export default function CommentListUI({
         <ScrollLoading />
       ) : (
         <>
-          {(isReply ? replyListData.length > 0 : commentDataList.length > 0) ? (
+          {(isReply ? replies.length > 0 : comments.length > 0) ? (
             <CommentWrpper ref={CommentListRef} tabIndex={-1}>
-              {(isReply ? replyListData : commentDataList).map((item, idx) => {
+              {(isReply ? replies : comments).map((item, idx) => {
                 return (
                   <CommentItem
                     key={
@@ -62,8 +62,8 @@ export default function CommentListUI({
                 );
               })}
               {(!isReply
-                ? commentDataList.length > 0
-                : replyListData.length > 0) && (
+                ? comments.length > 0
+                : replies.length > 0) && (
                 <InfinityScrollTarget
                   ref={infiniteScrollRef}
                 ></InfinityScrollTarget>

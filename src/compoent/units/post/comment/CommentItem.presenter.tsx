@@ -17,7 +17,7 @@ import { optModalTabFocus } from "../../../../library/optModalTabFocus";
 interface IProps {
   data: ICommentData | IReplyData;
   idx: number;
-  userData: IUserData;
+  myInfo: IUserData;
   isEdit: boolean;
   isReply: boolean;
   onClickEdit: () => void;
@@ -34,7 +34,7 @@ interface IProps {
 export default function CommentItemUI({
   data,
   idx,
-  userData,
+  myInfo,
   isEdit,
   isReply,
   onClickEdit,
@@ -63,10 +63,10 @@ export default function CommentItemUI({
             }}
           >
             <UserImg
-              src={data.photoURL || userData.photoURL}
+              src={data.photoURL || myInfo.photoURL}
               alt='유저 프로필 이미지'
             />
-            <UserName>{data.displayName || userData.displayName}</UserName>
+            <UserName>{data.displayName || myInfo.displayName}</UserName>
           </UserLink>
           {isEdit ? (
             <CommentTextArea
@@ -105,7 +105,7 @@ export default function CommentItemUI({
                 {!isReply && (
                   <CommentBtn onClick={onClickReply}>답글</CommentBtn>
                 )}
-                {userData.uid === data.uid ? (
+                {myInfo.uid === data.uid ? (
                   <>
                     <CommentBtn onClick={onClickEdit}>수정</CommentBtn>
                     <CommentBtn onClick={onClickRemove}>삭제</CommentBtn>

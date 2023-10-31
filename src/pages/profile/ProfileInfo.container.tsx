@@ -3,26 +3,27 @@ import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store/store";
+
+import ProfileInfoUI from "./ProfileInfo.presenter";
 import {
-  profileSlice,
   thunkFetchFollow,
   thunkFetchMyProfile,
   thunkFetchUnfollow,
-  thunkFetchUserProfile
-} from "../../slice/profileSlice";
-
-import ProfileInfoUI from "./ProfileInfo.presenter";
+  thunkFetchUserProfile,
+  userSlice
+} from "../../slice/userSlice";
 
 export default function ProfileInfo() {
   const { uid } = useParams();
-  const userData = useSelector((state: RootState) => state.user.data);
-  const isLoading = useSelector((state: RootState) => state.profile.isLoading);
-  const myProfileData = useSelector(
-    (state: RootState) => state.profile.myProfileData
+  const myInfo = useSelector((state: RootState) => state.user.myInfo);
+  const myProfile = useSelector((state: RootState) => state.user.myProfile);
+  const loadMyProfileLoading = useSelector(
+    (state: RootState) => state.user.loadMyProfileLoading
   );
-  const userProfileData = useSelector(
-    (state: RootState) => state.profile.userProfileData
+  const loadUserProfileLoading = useSelector(
+    (state: RootState) => state.user.loadUserProfileLoading
   );
+  const userProfile = useSelector((state: RootState) => state.user.userProfile);
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const introduecRef = useRef<HTMLParagraphElement>(null);
@@ -31,20 +32,20 @@ export default function ProfileInfo() {
   const [isShowMoreTextBtn, setIsShowMoreTextBtn] = useState(false);
 
   const onClickFollow = async () => {
-    if (userData.uid && userProfileData.uid) {
+    if (myInfo.uid && userProfile.uid) {
       dispatch(
-        thunkFetchFollow({ myUid: userData.uid, userUid: userProfileData.uid })
+        thunkFetchFollow({ myUid: myInfo.uid, userUid: userProfile.uid })
       );
       setIsFollow(true);
     }
   };
 
   const onClickUnfollow = async () => {
-    if (userData.uid && userProfileData.uid) {
+    if (myInfo.uid && userProfile.uid) {
       dispatch(
         thunkFetchUnfollow({
-          myUid: userData.uid,
-          userUid: userProfileData.uid
+          myUid: myInfo.uid,
+          userUid: userProfile.uid
         })
       );
       setIsFollow(false);
@@ -53,17 +54,17 @@ export default function ProfileInfo() {
 
   const onClickFollower = () => {
     document.body.style.overflow = "hidden";
-    dispatch(profileSlice.actions.setIsOpenFollowerModal(true));
+    dispatch(userSlice.actions.setIsOpenFollowerModal(true));
   };
 
   const onClickFollowing = () => {
     document.body.style.overflow = "hidden";
-    dispatch(profileSlice.actions.setIsOpenFollowingModal(true));
+    dispatch(userSlice.actions.setIsOpenFollowingModal(true));
   };
 
   const onClickProfileEdit = () => {
     document.body.style.overflow = "hidden";
-    dispatch(profileSlice.actions.setIsOpenProfileEditModal(true));
+    dispatch(userSlice.actions.setIsOpenProfileEditModal(true));
   };
 
   const onClickMoreText = () => {
@@ -74,23 +75,26 @@ export default function ProfileInfo() {
   };
 
   const onClickTasteMap = () => {
-    if (!uid || uid === userData.uid) {
+    if (!uid || uid === myInfo.uid) {
       navigate("/profile/tasteMap");
     } else {
       navigate(`/tastemap/share/${uid}`);
     }
   };
 
+  useEffect(() => {
+    if (uid === myInfo.uid) {
+      navigate("/profile", { replace: true });
+    }
+  }, [uid]);
+
   useLayoutEffect(() => {
-    if (
-      userProfileData.uid &&
-      myProfileData.followingList?.includes(userProfileData.uid)
-    ) {
+    if (userProfile.uid && myProfile.followingList?.includes(userProfile.uid)) {
       setIsFollow(true);
     } else {
       setIsFollow(false);
     }
-  }, [userProfileData, myProfileData]);
+  }, [userProfile, myProfile]);
 
   useLayoutEffect(() => {
     if (introduecRef.current) {
@@ -100,19 +104,22 @@ export default function ProfileInfo() {
         setIsShowMoreTextBtn(false);
       }
     }
-  }, [userProfileData, myProfileData]);
+  }, [userProfile, myProfile]);
 
   useEffect(() => {
-    dispatch(thunkFetchUserProfile(uid || userData.uid || ""));
-    dispatch(thunkFetchMyProfile(userData.uid || ""));
+    if (uid) {
+      dispatch(thunkFetchUserProfile(uid || ""));
+    }
+    dispatch(thunkFetchMyProfile(myInfo.uid || ""));
   }, [uid]);
 
   return (
     <ProfileInfoUI
-      isLoading={isLoading}
-      userData={userData}
-      userProfileData={userProfileData}
-      myProfileData={myProfileData}
+      loadMyProfileLoading={loadMyProfileLoading}
+      loadUserProfileLoading={loadUserProfileLoading}
+      myInfo={myInfo}
+      userProfile={userProfile}
+      myProfile={myProfile}
       onClickFollower={onClickFollower}
       onClickFollowing={onClickFollowing}
       uid={uid}

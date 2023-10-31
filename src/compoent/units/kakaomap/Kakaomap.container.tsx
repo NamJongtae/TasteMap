@@ -5,9 +5,9 @@ import { AppDispatch, RootState } from "../../../store/store";
 import { postSlice, thunkFetchAddPostMap } from "../../../slice/postSlice";
 import KakaomapUI from "./Kakaomap.presenter";
 import { ISearchMapData } from "../../../api/apiType";
-import { profileSlice } from "../../../slice/profileSlice";
 import { sweetToast } from "../../../library/sweetAlert/sweetAlert";
 import { tasteMapSlice } from "../../../slice/tasteMapSlice";
+import { userSlice } from '../../../slice/userSlice';
 declare global {
   interface Window {
     kakao: any;
@@ -24,8 +24,8 @@ function Kakaomap({ items, isTasteMapPage }: IProps) {
   const seletedMapData = useSelector(
     (state: RootState) => state.post.seletedMapData
   );
-  const myProfileData = useSelector(
-    (state: RootState) => state.profile.myProfileData
+  const myProfile = useSelector(
+    (state: RootState) => state.user.myProfile
   );
   const clickMarkerData = useSelector(
     (state: RootState) => state.tasteMap.clickMarkerData
@@ -435,8 +435,8 @@ function Kakaomap({ items, isTasteMapPage }: IProps) {
       if (seletedMapData.length > 0) {
         // 저장된 맛집 데이터가 20개 이상일 경우 맛집 저장 제한
         if (
-          myProfileData.storedMapList &&
-          myProfileData.storedMapList.length > 20
+          myProfile.storedMapList &&
+          myProfile.storedMapList.length > 20
         ) {
           sweetToast(
             "저장 가능한 맛집 수를 초과하였습니다.\n(최대 20개)",
@@ -447,7 +447,7 @@ function Kakaomap({ items, isTasteMapPage }: IProps) {
         }
         // 저장된 맛집 데이터에 추가할 맛집 데이터가 있다면 저장 제한
         if (
-          myProfileData.storedMapList?.find(
+          myProfile.storedMapList?.find(
             (item) => item.address === seletedMapData[0].address
           )
         ) {
@@ -465,13 +465,13 @@ function Kakaomap({ items, isTasteMapPage }: IProps) {
         if (myMap) myMap.setCenter(position);
         // 추가한 맛집 데이터를 기존 myProfile 데이터에 업데이트
         const newData = {
-          ...myProfileData,
+          ...myProfile,
           storedMapList: [
-            ...(myProfileData.storedMapList || []),
+            ...(myProfile.storedMapList || []),
             ...seletedMapData
           ]
         };
-        dispatch(profileSlice.actions.setMyprofile(newData));
+        dispatch(userSlice.actions.setMyprofile(newData));
         sweetToast("맛집이 추가 되었습니다.", "success");
       }
     }
@@ -485,16 +485,16 @@ function Kakaomap({ items, isTasteMapPage }: IProps) {
 
   useEffect(() => {
     if (isTasteMapPage) {
-      if (myProfileData.storedMapList) {
-        setData(myProfileData.storedMapList);
+      if (myProfile.storedMapList) {
+        setData(myProfile.storedMapList);
         if (myMap) myMap.setLevel(14);
       }
       // 저장된 맛집 지도 데이터가 없는 경우 맵 초기화
-      if (myProfileData.storedMapList?.length === 0) {
+      if (myProfile.storedMapList?.length === 0) {
         setMyMap(null);
       }
     }
-  }, [myProfileData]);
+  }, [myProfile]);
 
   useEffect(() => {
     if (!isTasteMapPage) {

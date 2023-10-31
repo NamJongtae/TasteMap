@@ -23,7 +23,7 @@ import SearchModal from "../../postUpload/SearchModal.container";
 import Loading from "../../../compoent/commons/loading/Loading";
 import { IProfileData, ISearchMapData } from "../../../api/apiType";
 interface IProps {
-  myProfileData: IProfileData;
+  myProfile: IProfileData;
   onClickMapType: () => void;
   contentType: "map" | "list";
   onClickListType: () => void;
@@ -36,7 +36,7 @@ interface IProps {
 }
 
 export default function MyTasteMapUI({
-  myProfileData,
+  myProfile,
   onClickMapType,
   contentType,
   onClickListType,
@@ -49,7 +49,7 @@ export default function MyTasteMapUI({
 }: IProps) {
   return (
     <>
-      {!myProfileData.storedMapList ? (
+      {!myProfile.storedMapList ? (
         <Loading />
       ) : (
         <>
@@ -74,9 +74,9 @@ export default function MyTasteMapUI({
             </ContetnTypeBtnWrapper>
             <KakaomapWrapper contentType={contentType}>
               <Desc>마커 클릭 시 맛집 정보가 지도 아래 표시 됩니다.</Desc>
-              {myProfileData.storedMapList && (
+              {myProfile.storedMapList && (
                 <Kakaomap
-                  items={myProfileData.storedMapList}
+                  items={myProfile.storedMapList}
                   isTasteMapPage={true}
                 />
               )}
@@ -116,7 +116,7 @@ export default function MyTasteMapUI({
             )}
             {contentType === "list" && (
               <MyTasteMapList
-                items={myProfileData.storedMapList}
+                items={myProfile.storedMapList}
                 isShareTasteMap={false}
               />
             )}

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import {
   ContetnTypeBtnWrapper,
   Desc,
@@ -19,7 +19,6 @@ import MyTasteMapList from "../profile/myTasteMap/MyTasteMapList";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store/store";
 import { tasteMapSlice } from "../../slice/tasteMapSlice";
-import { thunkFetchMyProfile } from "../../slice/profileSlice";
 import {
   InvaildMap,
   InvaildMapImg,
@@ -29,17 +28,14 @@ import {
 } from "./ShareTasteMap.styles";
 import { resolveWebp } from "../../library/webpSupport";
 import { Helmet } from "react-helmet-async";
-import Header from '../../compoent/commons/layouts/header/Header';
+import Header from "../../compoent/commons/layouts/header/Header";
+import { thunkFetchMyProfile } from "../../slice/userSlice";
 
 export default function ShareTasteMap() {
   const { uid } = useParams();
-  const [isLoading, setIsLoading] = useState(false);
-
-  const userData = useSelector((state: RootState)=>state.user.data);
-
-  const myProfileData = useSelector(
-    (state: RootState) => state.profile.myProfileData
-  );
+  const myInfo = useSelector((state: RootState) => state.user.myInfo);
+  const myProfile = useSelector((state: RootState) => state.user.myProfile);
+  const loadMyProfileLoading = useSelector((state: RootState) => state.user.loadMyProfileLoading);
   const clickMarkerData = useSelector(
     (state: RootState) => state.tasteMap.clickMarkerData
   );
@@ -58,11 +54,7 @@ export default function ShareTasteMap() {
 
   useEffect(() => {
     if (uid) {
-      (async () => {
-        setIsLoading(true);
-        await dispatch(thunkFetchMyProfile(uid));
-        setIsLoading(false);
-      })();
+      dispatch(thunkFetchMyProfile(uid));
     }
   }, []);
 
@@ -71,12 +63,12 @@ export default function ShareTasteMap() {
       <Helmet>
         <meta
           property='og:title'
-          content={(myProfileData.displayName || "") + "님의 TasteMap"}
+          content={(myProfile.displayName || "") + "님의 TasteMap"}
         />
         <meta property='og:type' content='webpsite' />
         <meta
           property='og:url'
-          content={"https://tasteMap.site/tasteMap/share" + myProfileData.uid}
+          content={"https://tasteMap.site/tasteMap/share" + myProfile.uid}
         />
         <meta
           property='og:image'
@@ -85,16 +77,16 @@ export default function ShareTasteMap() {
         <meta
           property='og:description'
           content={
-            (myProfileData.displayName || "") + "님이 공유하는 나만의 맛집 지도"
+            (myProfile.displayName || "") + "님이 공유하는 나만의 맛집 지도"
           }
           data-react-helmet='true'
         />
       </Helmet>
-      {isLoading ? (
+      {loadMyProfileLoading ? (
         <Loading />
       ) : (
         <>
-          {!myProfileData.storedMapList ? (
+          {!myProfile.storedMapList ? (
             <InvaildMap>
               <InvaildMapImg
                 src={resolveWebp("/assets/webp/icon-cloche.webp", "svg")}
@@ -103,7 +95,7 @@ export default function ShareTasteMap() {
             </InvaildMap>
           ) : (
             <>
-            {userData&&userData.uid&&<Header type='profile'/>}
+              {myInfo && myInfo.uid && <Header type='profile' />}
               <Wrapper>
                 <ContetnTypeBtnWrapper>
                   <MapBtn
@@ -123,13 +115,13 @@ export default function ShareTasteMap() {
                 </ContetnTypeBtnWrapper>
                 <Title>
                   <TitleImg src={"/assets/icon-searchMap.svg"} alt='맛집지도' />
-                  {myProfileData.displayName}님의 맛집 지도
+                  {myProfile.displayName}님의 맛집 지도
                 </Title>
                 <KakaomapWrapper contentType={contentType}>
                   <Desc>마커 클릭 시 맛집 정보가 지도 아래 표시 됩니다.</Desc>
-                  {myProfileData.storedMapList && (
+                  {myProfile.storedMapList && (
                     <Kakaomap
-                      items={myProfileData.storedMapList}
+                      items={myProfile.storedMapList}
                       isTasteMapPage={true}
                     />
                   )}
@@ -166,7 +158,7 @@ export default function ShareTasteMap() {
                 )}
                 {contentType === "list" && (
                   <MyTasteMapList
-                    items={myProfileData.storedMapList}
+                    items={myProfile.storedMapList}
                     isShareTasteMap={true}
                   />
                 )}

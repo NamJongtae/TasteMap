@@ -10,13 +10,12 @@ import { IFollowData } from "../../../api/apiType";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../store/store";
 import {
-  profileSlice,
+  userSlice,
   thunkFetchFollow,
   thunkFetchUnfollow
-} from "../../../slice/profileSlice";
+} from "../../../slice/userSlice";
 import { isMobile } from "react-device-detect";
 import { optModalTabFocus } from "../../../library/optModalTabFocus";
-
 interface IProps {
   data: IFollowData;
   idx: number;
@@ -35,25 +34,25 @@ export default function FollowItem({
   firstItemLinkRef,
   lastItemFollowBtnRef
 }: IProps) {
-  const myProfileData = useSelector(
-    (state: RootState) => state.profile.myProfileData
+  const myProfile = useSelector(
+    (state: RootState) => state.user.myProfile
   );
   const dispatch = useDispatch<AppDispatch>();
   const [isFollow, setIsFollow] = useState(false);
 
   const onClickUnFollow = () => {
-    if (myProfileData.uid && data.uid) {
+    if (myProfile.uid && data.uid) {
       dispatch(
-        thunkFetchUnfollow({ myUid: myProfileData.uid, userUid: data.uid })
+        thunkFetchUnfollow({ myUid: myProfile.uid, userUid: data.uid })
       );
       setIsFollow(false);
     }
   };
 
   const onClickFollow = () => {
-    if (myProfileData.uid && data.uid) {
+    if (myProfile.uid && data.uid) {
       dispatch(
-        thunkFetchFollow({ myUid: myProfileData.uid, userUid: data.uid })
+        thunkFetchFollow({ myUid: myProfile.uid, userUid: data.uid })
       );
       setIsFollow(true);
     }
@@ -62,14 +61,14 @@ export default function FollowItem({
   const onClickProfileLink = () => {
     document.body.style.overflow = "auto";
     if (isFollower) {
-      dispatch(profileSlice.actions.setIsOpenFollowerModal(false));
+      dispatch(userSlice.actions.setIsOpenFollowerModal(false));
     } else {
-      dispatch(profileSlice.actions.setIsOpenFollowingModal(false));
+      dispatch(userSlice.actions.setIsOpenFollowingModal(false));
     }
   };
 
   useLayoutEffect(() => {
-    if (data.uid && myProfileData.followingList?.includes(data.uid)) {
+    if (data.uid && myProfile.followingList?.includes(data.uid)) {
       setIsFollow(true);
     } else {
       setIsFollow(false);
@@ -92,7 +91,7 @@ export default function FollowItem({
         <UserImg src={data.photoURL} alt='유저 프로필 이미지' />
         <UserName>{data.displayName}</UserName>
       </UserLink>
-      {myProfileData.uid !== data.uid && (
+      {myProfile.uid !== data.uid && (
         <FollowBtn
           isFollow={isFollow}
           onClick={isFollow ? onClickUnFollow : onClickFollow}

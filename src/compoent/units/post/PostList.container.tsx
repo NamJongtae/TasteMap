@@ -1,76 +1,76 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../store/store";
 import {
   thunkFetchFirstPageFeedData,
   thunkFetchFirstPagePostData,
   thunkFetchPagingFeedData,
-  thunkFetchPagingPostData
+  thunkFetchPagingPostData,
+  thunkFetchProfileFirstPageData,
+  thunkFetchProfilePagingData
 } from "../../../slice/postSlice";
 
 import { useInView } from "react-intersection-observer";
-import {
-  profileSlice,
-  thunkFetchMyProfile,
-  thunkFetchProfileFirstPageData,
-  thunkFetchProfilePagingData
-} from "../../../slice/profileSlice";
-
 import { useParams } from "react-router-dom";
 import PostListUI from "./PostList.presenter";
+import { thunkFetchMyProfile } from '../../../slice/userSlice';
 interface Iprops {
   isProfilePage: boolean;
   postType?: "home" | "feed";
 }
 export default function PostList({ isProfilePage, postType }: Iprops) {
   const { uid } = useParams();
-  const userData = useSelector((state: RootState) => state.user.data);
+  const myInfo = useSelector((state: RootState) => state.user.myInfo);
   const isOpenCommentModal = useSelector(
     (state: RootState) => state.comment.isOpenCommentModal
   );
-  const myProfileData = useSelector(
-    (state: RootState) => state.profile.myProfileData
+  const myProfile = useSelector(
+    (state: RootState) => state.user.myProfile
   );
   // 게시물 데이터 목록을 가져옴
-  const postListData = useSelector(
-    (state: RootState) => state.post.postListData
+  const posts = useSelector(
+    (state: RootState) => state.post.posts
   );
   // 현재 페이지를 가져옴
-  const page = useSelector((state: RootState) => state.post.page);
+  const page = useSelector((state: RootState) => state.post.postsPage);
   // 다음 게시물 여부가 있는지를 판별하는 hasMore를 가져옴
-  const hasMore = useSelector((state: RootState) => state.post.hasMore);
+  const hasMore = useSelector((state: RootState) => state.post.postsHasMore);
   // 페이징 최대 게시물 수
-  const pagePerData = useSelector((state: RootState) => state.post.pagePerData);
+  const pagePerData = useSelector((state: RootState) => state.post.postsPagePerData);
   // 게시물 데이터가 있는지 확인
-  const isNoPostData = useSelector((state: RootState) => state.post.isNoPostData);
+  const isNoPostData = useSelector(
+    (state: RootState) => state.post.isNoPostData
+  );
 
   // 유저 프로필 게시물 목록
-  const profilePostListData = useSelector(
-    (state: RootState) => state.profile.profilePostListData
+  const userPosts = useSelector(
+    (state: RootState) => state.post.userPosts
   );
   // 유저 프로필 게시물 목록 페이지당 최대 게시물 수
-  const profilePagePerData = useSelector(
-    (state: RootState) => state.profile.pagePerData
+  const userPostsPagePerData = useSelector(
+    (state: RootState) => state.post.userPostsPagePerData
   );
   // 유저 프로필 게시물 현재 페이지
-  const profilePostPage = useSelector((state: RootState) => state.profile.page);
+  const userPostsPage = useSelector((state: RootState) => state.post.userPostsPage);
   // 유저 프로필 게시물 다음 게시물 존재 여부
-  const profilePostHasMore = useSelector(
-    (state: RootState) => state.profile.hasMore
+  const userPostsHasMore = useSelector(
+    (state: RootState) => state.post.userPostsHasMore
   );
   // 유저 프로필 게시물 데이터가 있는지 확인
-  const isNoProfilePostData = useSelector((state: RootState) => state.profile.isNoProfilePostData);
-  const userProfileData = useSelector(
-    (state: RootState) => state.profile.userProfileData
+  const isNoUserPostData = useSelector(
+    (state: RootState) => state.post.isNoUserPostData
   );
   // react-intersection-observer의 customhook 무한 스크롤을 위해 사용
   const [ref, inview] = useInView();
-  // 무한 스크롤시 게시물 추가 로딩
-  const [isScrollLoading, setIsScrollLoading] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
-  const isLoading = useSelector((state: RootState) => state.post.isLoading);
-  const profilePostIsLoading = useSelector(
-    (state: RootState) => state.profile.profilePostIsLoading
+  const loadMorePostsLoading = useSelector(
+    (state: RootState) => state.post.loadMorePostsLoading
+  );
+  const loadPostsLoading = useSelector(
+    (state: RootState) => state.post.loadPostsLoading
+  );
+  const loadUserPostsLoading = useSelector(
+    (state: RootState) => state.post.loadUserPostsLoading
   );
   // 무한스크롤 처리 inview의 상태가 변경될 때 마다 게시물 목록을 추가로 받아옴
   useEffect(() => {
@@ -82,7 +82,7 @@ export default function PostList({ isProfilePage, postType }: Iprops) {
         dispatch(
           thunkFetchFirstPageFeedData({
             pagePerData,
-            followerList: myProfileData.followerList || []
+            followerList: myProfile.followerList || []
           })
         );
       }
@@ -93,92 +93,65 @@ export default function PostList({ isProfilePage, postType }: Iprops) {
   useEffect(() => {
     // 프로필 게시물 일때
     if (isProfilePage) {
-      if (userProfileData?.uid !== profilePostListData[0]?.uid) {
         dispatch(
           thunkFetchProfileFirstPageData({
-            uid: uid ? uid : userData.uid || "",
-            pagePerData: profilePagePerData
+            uid: uid ? uid : myInfo.uid || "",
+            pagePerData: userPostsPagePerData
           })
         );
-      }
     }
-  }, [userProfileData, uid]);
+  }, [uid]);
 
   useEffect(() => {
     // 홈 페이지 게시물
     if (!isProfilePage) {
-      // postListData가 존재, 페이지에 따라 게시물 목록 추가로 가져오기
-      if (postListData.length > 0 && hasMore && inview) {
+      // posts가 존재, 페이지에 따라 게시물 목록 추가로 가져오기
+      if (posts.length > 0 && hasMore && inview) {
         if (postType === "home") {
-          (async () => {
-            setIsScrollLoading(true);
-            await dispatch(thunkFetchPagingPostData({ page, pagePerData }));
-            setIsScrollLoading(false);
-          })();
+          dispatch(thunkFetchPagingPostData({ page, pagePerData }));
         } else {
-          (async () => {
-            setIsScrollLoading(true);
-            await dispatch(
-              thunkFetchPagingFeedData({
-                page,
-                pagePerData,
-                followerList: myProfileData.followerList || []
-              })
-            );
-            setIsScrollLoading(false);
-          })();
+          dispatch(
+            thunkFetchPagingFeedData({
+              page,
+              pagePerData,
+              followerList: myProfile.followerList || []
+            })
+          );
         }
       }
     } else {
       // 프로필 페이지 게시물
-      // profilePostListData 데이터가 존재, 페이지에 따라 게시물 목록 추가로 가져오기
-      if (profilePostListData.length > 0 && profilePostHasMore && inview) {
-        (async () => {
-          setIsScrollLoading(true);
-          await dispatch(
-            thunkFetchProfilePagingData({
-              uid: uid ? uid : userData.uid || "",
-              pagePerData,
-              page: profilePostPage
-            })
-          );
-          setIsScrollLoading(false);
-        })();
+      // profileposts 데이터가 존재, 페이지에 따라 게시물 목록 추가로 가져오기
+      if (userPosts.length > 0 && userPostsHasMore && inview) {
+        dispatch(
+          thunkFetchProfilePagingData({
+            uid: uid ? uid : myInfo.uid || "",
+            pagePerData,
+            page: userPostsPage
+          })
+        );
       }
     }
   }, [inview]);
 
   useEffect(() => {
-    if (userData.uid && !isProfilePage)
-      dispatch(thunkFetchMyProfile(userData.uid));
-  }, []);
-
-  // 언마운트시 게시물 데이터 초기화
-  useEffect(() => {
-    if (isProfilePage) {
-      return () => {
-        dispatch(profileSlice.actions.setProfilePostListData([]));
-      };
-    } else {
-      return () => {
-        dispatch(thunkFetchFirstPagePostData(pagePerData));
-      };
-    }
+    if (myInfo.uid && !isProfilePage)
+      dispatch(thunkFetchMyProfile(myInfo.uid));
   }, []);
 
   return (
     <PostListUI
       isProfilePage={isProfilePage}
-      profilePostListData={profilePostListData}
-      postListData={postListData}
-      myProfileData={myProfileData}
-      isScrollLoading={isScrollLoading}
-      isLoading={isLoading}
-      profilePostIsLoading={profilePostIsLoading}
+      userPosts={userPosts}
+      posts={posts}
+      myProfile={myProfile}
+      loadMorePostsLoading={loadMorePostsLoading}
+      loadPostsLoading={loadPostsLoading}
+      loadUserPostsLoading={loadUserPostsLoading}
       isOpenCommentModal={isOpenCommentModal}
       intinityScrollRef={ref}
       isNoPostData={isNoPostData}
-      isNoProfilePostData={isNoProfilePostData}
+      isNoUserPostData={isNoUserPostData}
     />
   );
 }

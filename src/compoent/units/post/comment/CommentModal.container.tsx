@@ -8,10 +8,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../../store/store";
 import { replySlice } from "../../../../slice/replySlice";
 import { isMobile } from "react-device-detect";
-import { thunkUpdatePostCommentCount } from "../../../../slice/postSlice";
+import { thunkUpdatePostCommentCount, thunkUpdateProfilePostCommentCount } from "../../../../slice/postSlice";
 import CommentModalUI from "./CommentModal.presenter";
 import { useLocation } from "react-router-dom";
-import { thunkUpdateProfilePostCommentCount } from "../../../../slice/profileSlice";
 
 interface IProps {
   commentModalRef: React.RefObject<HTMLDivElement>;
@@ -34,7 +33,7 @@ export default function CommentModal({
   const parentCommentId = useSelector(
     (state: RootState) => state.reply.parentCommentId
   );
-  const userData = useSelector((state: RootState) => state.user.data);
+  const myInfo = useSelector((state: RootState) => state.user.myInfo);
   const dispatch = useDispatch<AppDispatch>();
   const postId = useSelector((state: RootState) => state.comment.postId);
   const commentId = useSelector(
@@ -70,7 +69,7 @@ export default function CommentModal({
         dispatch(replySlice.actions.setIsOpenReplyModal(false));
       }, 700);
     }
-  },[isOpenReplyModal, isMobile]);
+  },[isOpenReplyModal, isMobile, pathname]);
 
   /**
    * 모바일 뒤로가기 시 모달창 닫기
@@ -124,7 +123,7 @@ export default function CommentModal({
     <CommentModalUI
       isReply={isReply}
       modalRef={isReply ? replyModalRef : commentModalRef}
-      userData={userData}
+      myInfo={myInfo}
       parentCommentId={parentCommentId}
       closeCommentModal={closeCommentModal}
       closeBtnRef={closeBtnRef}

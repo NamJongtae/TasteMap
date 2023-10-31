@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import {
   commentSlice,
   thunkFetchFirstPageCommentData,
@@ -6,15 +6,12 @@ import {
 } from "../../../../slice/commentSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../../store/store";
-import { IKnownError } from "../../../../api/apiType";
 import { useInView } from "react-intersection-observer";
 import {
   replySlice,
   thunkFetchFirstPageReplyData,
   thunkFetchPagingReplyData
 } from "../../../../slice/replySlice";
-
-import { postSlice } from "../../../../slice/postSlice";
 import CommentListUI from "./CommentList.presenter";
 
 interface IProps {
@@ -30,16 +27,13 @@ export default function CommentList({
   firstItemLinkRef
 }: IProps) {
   const dispatch = useDispatch<AppDispatch>();
-  const postListData = useSelector(
-    (state: RootState) => state.post.postListData
-  );
   // 댓글 데이터 목록
-  const commentDataList = useSelector(
-    (state: RootState) => state.comment.commentListData
+  const comments = useSelector(
+    (state: RootState) => state.comment.comments
   );
   // 댓글 모달창 로딩 여부
   const commentLoading = useSelector(
-    (state: RootState) => state.comment.isLoading
+    (state: RootState) => state.comment.loadCommentsLoading
   );
   // 현재 댓글들의 게시물 아이디
   const postId = useSelector((state: RootState) => state.comment.postId);
@@ -55,25 +49,27 @@ export default function CommentList({
   );
 
   // 답글 모달창 로딩 여부
-  const replyLoading = useSelector((state: RootState) => state.reply.isLoading);
+  const replyLoading = useSelector(
+    (state: RootState) => state.reply.loadReplyLoading
+  );
   // 답글의 부모 댓글 아이디
   const parentCommentId = useSelector(
     (state: RootState) => state.reply.parentCommentId
   );
   // 답글 데이터 목록
-  const replyListData = useSelector(
-    (state: RootState) => state.reply.replyListData
-  );
+  const replies = useSelector((state: RootState) => state.reply.replies);
   // 답글 현재 페이지
-  const replyPage = useSelector((state: RootState) => state.reply.page);
+  const repliesPage = useSelector((state: RootState) => state.reply.page);
   // 다음 답글 존재 여부
-  const replyHasMore = useSelector((state: RootState) => state.reply.hasMore);
+  const repliesHasMore = useSelector((state: RootState) => state.reply.hasMore);
   // 페이지 당 최대 답글 수
-  const replyPagePerData = useSelector(
+  const repliesPagePerData = useSelector(
     (state: RootState) => state.reply.pagePerData
   );
   // 무한 스크롤 댓글/답글 추가 시 로딩
-  const [isScrollLoading, setIsScrollLoading] = useState(false);
+  const loadMoreCommentsLoading = useSelector(
+    (state: RootState) => state.comment.loadMoreCommentsLoading
+  );
   // react-intersection-observer 라이브러리
   const [ref, inview] = useInView();
   const CommentListRef = useRef<HTMLUListElement>(null);
@@ -84,7 +80,7 @@ export default function CommentList({
       if (!isReply) {
         dispatch(commentSlice.actions.setCommentListData([]));
       } else {
-        dispatch(replySlice.actions.setReplyListData([]));
+        dispatch(replySlice.actions.setReplies([]));
       }
     };
   }, []);
@@ -95,72 +91,46 @@ export default function CommentList({
     // 댓글 모달인 경우
     if (!isReply) {
       // 첫 페이지 댓글 목록 가져오기
-      if (commentDataList.length === 0) {
+      if (comments.length === 0) {
         dispatch(
           thunkFetchFirstPageCommentData({
             postId,
             pagePerData: commentPagePerData
           })
-        ).then((result) => {
-          if (
-            (result.payload as IKnownError).message ===
-            "게시물이 존재하지 않습니다."
-          ) {
-            dispatch(commentSlice.actions.setIsOpenCommentModal(false));
-            const newData = [...postListData].filter(
-              (item) => item.id !== postId
-            );
-            dispatch(postSlice.actions.setPostListData(newData));
-          }
-        });
+        );
       }
       // 이후 페이지에 따라 댓글 목록 추가로 가져오기
       if (
-        commentDataList.length > 0 &&
+        comments.length > 0 &&
         commentHasMore &&
         inview &&
         commentPage
       ) {
-        setIsScrollLoading(true);
-        (async () => {
-          await dispatch(
-            thunkFetchPagingCommentData({
-              page: commentPage,
-              postId,
-              pagePerData: commentPagePerData
-            })
-          );
-          setIsScrollLoading(false);
-        })();
+        dispatch(
+          thunkFetchPagingCommentData({
+            page: commentPage,
+            postId,
+            pagePerData: commentPagePerData
+          })
+        );
       }
     } else {
       // 답글 모달인 경우
       // 첫 페이지 답글 목록 가져오기
-      if (replyListData.length === 0) {
+      if (replies.length === 0) {
         dispatch(
           thunkFetchFirstPageReplyData({
             parentCommentId,
-            pagePerData: replyPagePerData
+            pagePerData: repliesPagePerData
           })
-        ).then((result) => {
-          if (
-            (result.payload as IKnownError).message ===
-            "댓글이 존재하지 않습니다."
-          ) {
-            dispatch(replySlice.actions.setIsOpenReplyModal(false));
-            const newData = [...commentDataList].filter(
-              (item) => item.commentId !== parentCommentId
-            );
-            dispatch(commentSlice.actions.setCommentListData(newData));
-          }
-        });
+        );
       } // 이후 페이지에 따라 답글 목록 추가로 가져오기
-      if (replyListData.length > 0 && replyHasMore && inview && replyPage) {
+      if (replies.length > 0 && repliesHasMore && inview && repliesPage) {
         dispatch(
           thunkFetchPagingReplyData({
-            page: replyPage,
+            page: repliesPage,
             parentCommentId,
-            pagePerData: replyPagePerData
+            pagePerData: repliesPagePerData
           })
         );
       }
@@ -179,7 +149,7 @@ export default function CommentList({
       dispatch(
         thunkFetchFirstPageReplyData({
           parentCommentId,
-          pagePerData: replyPagePerData
+          pagePerData: repliesPagePerData
         })
       );
     }
@@ -197,10 +167,10 @@ export default function CommentList({
       replyLoading={replyLoading}
       commentLoading={commentLoading}
       handlerRefresh={handlerRefresh}
-      replyListData={replyListData}
-      commentDataList={commentDataList}
+      replies={replies}
+      comments={comments}
       infiniteScrollRef={ref}
-      isScrollLoading={isScrollLoading}
+      isScrollLoading={loadMoreCommentsLoading}
       closeBtnRef={closeBtnRef}
       textareaRef={textareaRef}
       CommentListRef={CommentListRef}

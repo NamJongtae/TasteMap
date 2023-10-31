@@ -25,14 +25,14 @@ import InvalidPage from "../../compoent/commons/invalidPage/InvalidPage";
 import ScrollLoading from '../../compoent/commons/loading/ScrollLoading';
 
 interface IProps {
-  postData: IPostData;
+  post: IPostData;
   contentValue: string;
   selectedMapData: ISearchMapData[];
   ratingValue: number;
   onSubmitUpload: () => Promise<void>;
   wrapperRef: React.RefObject<HTMLDivElement>;
   imgListRef: React.RefObject<HTMLUListElement>;
-  userData: IUserData;
+  myInfo: IUserData;
   openSearchModal: () => void;
   setRatingValue: React.Dispatch<React.SetStateAction<number>>;
   textareaRef: React.RefObject<HTMLTextAreaElement>;
@@ -52,14 +52,14 @@ interface IProps {
 }
 
 export default function PostUploadUI({
-  postData,
+  post,
   contentValue,
   selectedMapData,
   ratingValue,
   onSubmitUpload,
   wrapperRef,
   imgListRef,
-  userData,
+  myInfo,
   openSearchModal,
   setRatingValue,
   textareaRef,
@@ -83,7 +83,7 @@ export default function PostUploadUI({
     </>
   ) : (
     <>
-      {(isEdit && postData.id) || !isEdit ? (
+      {(isEdit && post.id) || !isEdit ? (
         <>
           <Header
             type='upload'
@@ -91,10 +91,10 @@ export default function PostUploadUI({
             disabled={
               isEdit
                 ? contentValue === "" ||
-                  (postData.content === contentValue &&
-                    postData.imgURL === preview &&
-                    postData.rating === ratingValue &&
-                    postData.mapData?.address === selectedMapData[0].address)
+                  (post.content === contentValue &&
+                    post.imgURL === preview &&
+                    post.rating === ratingValue &&
+                    post.mapData?.address === selectedMapData[0].address)
                 : !contentValue || !selectedMapData.length || !ratingValue
             }
             onSubmit={onSubmitUpload}
@@ -106,8 +106,8 @@ export default function PostUploadUI({
             <Section>
               <SectionTitle className='a11y-hidden'>유저 프로필</SectionTitle>
               <UserInfo
-                userData={{ ...userData }}
-                data={{ ...postData }}
+                userData={{ ...myInfo }}
+                data={{ ...post }}
                 activeMoreBtn={false}
                 isProfilePage={false}
               />

@@ -8,8 +8,7 @@ import { detectWebpSupport } from "./library/webpSupport";
 import FindAccount from "./pages/findAccount/FindAccount.container";
 import Home from "./pages/home/Home";
 import PostUpload from "./pages/postUpload/PostUpload.container";
-import { userSlice } from "./slice/userSlice";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { thunkFetchLoadMyInfo } from "./slice/userSlice";
 import PostEdit from "./pages/postEdit/PostEdit";
 import Profile from "./pages/profile/Profile";
 import MyTasteMap from "./pages/profile/myTasteMap/MyTasteMap.container";
@@ -17,11 +16,13 @@ import NotFound from "./pages/404/NotFound";
 import Search from "./compoent/units/search/Search";
 import ShareTasteMap from "./pages/shareTasteMap/ShareTasteMap";
 import { Helmet } from "react-helmet-async";
+import Loading from './compoent/commons/loading/Loading';
 
 function App() {
   const { pathname } = useLocation();
-  const userData = useSelector((state: RootState) => state.user.data);
+  const myInfo = useSelector((state: RootState) => state.user.myInfo);
   const dispatch = useDispatch<AppDispatch>();
+  const loadMyInfoLoading = useSelector((state: RootState) => state.user.loadMyInfoLoading);
   // webp 지원유무가 확인 되었을때 컴포넌트를 렌더링 시키위해 사용
   const [webpChecked, setWebpChecked] = useState(false);
 
@@ -48,30 +49,10 @@ function App() {
 
   // 유저 최신 데이터 갱신
   useEffect(() => {
-    // 맛집 지도 공유 페이지에서는 로그인 없이 들어올 수 있기 때문에 userData 저장을 하면 안되기 때문에
+    // 맛집 지도 공유 페이지에서는 로그인 없이 들어올 수 있기 때문에 myInfo 저장을 하면 안되기 때문에
     // pathname에 shaer가 포함되는 경우 return 처리
     if(pathname.includes("share")) return;
-    const auth = getAuth();
-    onAuthStateChanged(auth, async (user) => {
-      // locatlstroage에 유저 정보 저장
-      localStorage.setItem(
-        "user",
-        JSON.stringify({
-          uid: user?.uid,
-          displayName: user?.displayName,
-          email: user?.email,
-          photoURL: user?.photoURL || process.env.REACT_APP_DEFAULT_PROFILE_IMG
-        })
-      );
-      dispatch(
-        userSlice.actions.setUser({
-          uid: user?.uid,
-          displayName: user?.displayName,
-          email: user?.email,
-          photoURL: user?.photoURL || process.env.REACT_APP_DEFAULT_PROFILE_IMG
-        })
-      );
-    });
+    dispatch(thunkFetchLoadMyInfo());
   }, []);
 
   return (
@@ -91,45 +72,46 @@ function App() {
           }
         />
       </Helmet>
-      {webpChecked && (
+      {loadMyInfoLoading && <Loading />}
+      {webpChecked && !loadMyInfoLoading &&(
         <Routes>
           <Route
             path='/login'
-            element={userData.uid ? <Navigate to='/' /> : <Login />}
+            element={myInfo.uid ? <Navigate to='/' /> : <Login />}
           />
           <Route
             path='/signup'
-            element={userData.uid ? <Navigate to='/' /> : <DefaultInfo />}
+            element={myInfo.uid ? <Navigate to='/' /> : <DefaultInfo />}
           />
           <Route
             path='/findAccount'
-            element={userData.uid ? <Navigate to='/' /> : <FindAccount />}
+            element={myInfo.uid ? <Navigate to='/' /> : <FindAccount />}
           />
           <Route
             path='/'
-            element={!userData.uid ? <Navigate to='/login' /> : <Home />}
+            element={!myInfo.uid ? <Navigate to='/login' /> : <Home />}
           />
           <Route
             path='/'
-            element={!userData.uid ? <Navigate to='/login' /> : <Home />}
+            element={!myInfo.uid ? <Navigate to='/login' /> : <Home />}
           />
           <Route
             path='/post/'
-            element={!userData.uid ? <Navigate to='/login' /> : <Outlet />}
+            element={!myInfo.uid ? <Navigate to='/login' /> : <Outlet />}
           >
             <Route path='upload' element={<PostUpload isEdit={false} />} />
             <Route path=':postId/edit' element={<PostEdit />} />
           </Route>
           <Route
             path='/profile'
-            element={!userData.uid ? <Navigate to='/login' /> : <Outlet />}
+            element={!myInfo.uid ? <Navigate to='/login' /> : <Outlet />}
           >
             <Route index element={<Profile />} />
             <Route path=':uid/' element={<Profile />} />
             <Route
               path='tasteMap'
               element={
-                !userData.uid ? <Navigate to='/login' /> : <MyTasteMap />
+                !myInfo.uid ? <Navigate to='/login' /> : <MyTasteMap />
               }
             />
           </Route>

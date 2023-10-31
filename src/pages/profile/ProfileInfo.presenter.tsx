@@ -17,13 +17,15 @@ import {
   UserWrapper
 } from "./profileInfo.styles";
 import { resolveWebp } from "../../library/webpSupport";
-import Loading from "../../compoent/commons/loading/Loading";
 import { IProfileData, IUserData } from "../../api/apiType";
+import Loading from "../../compoent/commons/loading/Loading";
+
 interface IProps {
-  isLoading: boolean;
-  userData: IUserData;
-  userProfileData: IProfileData;
-  myProfileData: IProfileData;
+  loadUserProfileLoading: boolean;
+  loadMyProfileLoading: boolean;
+  myInfo: IUserData;
+  userProfile: IProfileData;
+  myProfile: IProfileData;
   onClickFollower: () => void;
   onClickFollowing: () => void;
   uid: string | undefined;
@@ -37,10 +39,11 @@ interface IProps {
   onClickTasteMap: () => void;
 }
 export default function ProfileInfoUI({
-  isLoading,
-  userData,
-  userProfileData,
-  myProfileData,
+  loadUserProfileLoading,
+  loadMyProfileLoading,
+  myInfo,
+  userProfile,
+  myProfile,
   onClickFollower,
   onClickFollowing,
   uid,
@@ -55,24 +58,23 @@ export default function ProfileInfoUI({
 }: IProps) {
   return (
     <>
-      {isLoading ? (
+      {loadUserProfileLoading || loadMyProfileLoading ? (
         <Loading />
       ) : (
-        userProfileData.displayName && (
+        (userProfile.displayName || myProfile.displayName) && (
           <ProfileInfoWrapper>
             <h2 className='a11y-hidden'>유저 프로필</h2>
             <UserWrapper>
               <FollowerBtn onClick={onClickFollower}>
                 <FollowerCount>
-                  {userProfileData.uid === userData.uid
-                    ? myProfileData.followerList?.length
-                    : userProfileData.followerList &&
-                      userProfileData.followerList.length}
+                  {uid
+                    ? userProfile.followerList?.length
+                    : myProfile.followerList && myProfile.followerList.length}
                 </FollowerCount>
                 <FollowerTag>Followers</FollowerTag>
               </FollowerBtn>
               <UserProfileImg
-                src={uid ? userProfileData.photoURL : myProfileData.photoURL}
+                src={uid ? userProfile.photoURL : myProfile.photoURL}
                 alt='프로필 이미지'
                 onError={(e: React.SyntheticEvent<HTMLImageElement>) =>
                   (e.currentTarget.src = resolveWebp(
@@ -83,19 +85,18 @@ export default function ProfileInfoUI({
               />
               <FollowingBtn onClick={onClickFollowing}>
                 <FollowingCount>
-                  {userProfileData.uid === userData.uid
-                    ? myProfileData.followingList?.length
-                    : userProfileData.followingList &&
-                      userProfileData.followingList.length}
+                  {uid
+                    ? userProfile.followingList?.length
+                    : myProfile.followingList && myProfile.followingList.length}
                 </FollowingCount>
                 <FollowerTag>Following</FollowerTag>
               </FollowingBtn>
             </UserWrapper>
             <UserName>
-              {uid ? userProfileData.displayName : myProfileData.displayName}
+              {uid ? userProfile.displayName : myProfile.displayName}
             </UserName>
             <Introduce ref={introduecRef} isShowMoreTextBtn={isShowMoreTextBtn}>
-              {uid ? userProfileData.introduce : myProfileData.introduce}
+              {uid ? userProfile.introduce : myProfile.introduce}
             </Introduce>
 
             {isShowMoreTextBtn && (
@@ -105,7 +106,7 @@ export default function ProfileInfoUI({
               </>
             )}
             <ButtonWrapper>
-              {userProfileData.uid === userData.uid ? (
+              {!uid || userProfile.uid === myInfo.uid ? (
                 <ProfileBtn onClick={onClickProfileEdit}>
                   프로필 수정
                 </ProfileBtn>

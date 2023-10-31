@@ -11,16 +11,16 @@ import { AppDispatch, RootState } from "../../../store/store";
 import SearchItem from "./SearchItem";
 import { useInView } from "react-intersection-observer";
 import { thunkFetchSearchPagingData } from "../../../slice/searchSlice";
-import { thunkFetchMyProfile } from "../../../slice/profileSlice";
 import ScrollLoading from "../../commons/loading/ScrollLoading";
+import { thunkFetchMyProfile } from '../../../slice/userSlice';
 
 export default function SearchList() {
-  const userData = useSelector((state: RootState) => state.user.data);
+  const myInfo = useSelector((state: RootState) => state.user.myInfo);
   const searchKeyword = useSelector(
     (state: RootState) => state.search.searchKeyword
   );
-  const searchListData = useSelector(
-    (state: RootState) => state.search.searchListData
+  const searchResult = useSelector(
+    (state: RootState) => state.search.searchResult
   );
 
   const page = useSelector((state: RootState) => state.search.page);
@@ -28,12 +28,13 @@ export default function SearchList() {
     (state: RootState) => state.search.pagePerData
   );
   const hasMore = useSelector((state: RootState) => state.search.hasMore);
-  const isLoading = useSelector((state: RootState) => state.search.isLoading);
+  const loadSerachLoading = useSelector((state: RootState) => state.search.loadSerachLoading);
+  const loadMoreSerachLoading = useSelector((state: RootState) => state.search.loadMoreSearchLoading);
   const dispatch = useDispatch<AppDispatch>();
   const [ref, inview] = useInView();
 
   useEffect(() => {
-    if (searchListData.length > 0 && inview && hasMore) {
+    if (searchResult.length > 0 && inview && hasMore) {
       dispatch(
         thunkFetchSearchPagingData({
           keyword: searchKeyword,
@@ -45,21 +46,21 @@ export default function SearchList() {
   }, [inview, hasMore]);
 
   useEffect(() => {
-    if (userData.uid) {
-      dispatch(thunkFetchMyProfile(userData.uid));
+    if (myInfo.uid) {
+      dispatch(thunkFetchMyProfile(myInfo.uid));
     }
   }, []);
 
   return (
     <>
       <SearchUl>
-        {searchListData.length === 0 && isLoading ? (
+        {searchResult.length === 0 && loadSerachLoading ? (
           <ScrollLoading />
         ) : (
           <>
-            {searchListData.length > 0 ? (
+            {searchResult.length > 0 ? (
               <>
-                {searchListData.map((item) => {
+                {searchResult.map((item) => {
                   return <SearchItem key={item.uid} item={item} />;
                 })}
                 <InfinityScrollTarget ref={ref}></InfinityScrollTarget>
@@ -79,7 +80,7 @@ export default function SearchList() {
             )}
           </>
         )}
-        {searchListData.length > 0 && isLoading && <ScrollLoading />}
+        {searchResult.length > 0 && loadMoreSerachLoading && <ScrollLoading />}
       </SearchUl>
     </>
   );

@@ -58,17 +58,19 @@ export const thunkFetchSearchPagingData = createAsyncThunk<
 export const searchSlice = createSlice({
   name: "searchSlice",
   initialState: {
-    searchListData: [] as IProfileData[],
+    searchResult: [] as IProfileData[],
     searchKeyword: "",
     page: {} as QueryDocumentSnapshot<DocumentData, DocumentData>,
     hasMore: false,
     pagePerData: 20,
-    isLoading: false,
-    error: ""
+    loadSerachLoading: false,
+    loadSearchDone: false,
+    loadSearchError: "",
+    loadMoreSearchLoading: false,
   },
   reducers: {
-    setSearchListData: (state, action) => {
-      state.searchListData = action.payload;
+    setSearchResult: (state, action) => {
+      state.searchResult = action.payload;
     },
     setSearchKeyword: (state, action) => {
       state.searchKeyword = action.payload;
@@ -76,14 +78,17 @@ export const searchSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(thunkFetchSearchFirstPageData.pending, (state) => {
-      state.isLoading = true;
+      state.loadSerachLoading = true;
+      state.loadSearchDone = false;
+      state.loadSearchError = "";
     });
     builder.addCase(
       thunkFetchSearchFirstPageData.fulfilled,
       (state, action) => {
-        state.isLoading = false;
+        state.loadSerachLoading = false;
+        state.loadSearchDone = true;
         if (action.payload) {
-          state.searchListData = action.payload.data;
+          state.searchResult = action.payload.data;
           state.hasMore = action.payload.data.length % state.pagePerData === 0;
           state.page =
             action.payload.userDocs.docs[
@@ -93,10 +98,10 @@ export const searchSlice = createSlice({
       }
     );
     builder.addCase(thunkFetchSearchFirstPageData.rejected, (state, action) => {
-      state.isLoading = false;
+      state.loadSerachLoading = false;
       if (action.payload) {
-        state.error = action.payload.message;
-        console.error(state.error);
+        state.loadSearchError = action.payload.message;
+        console.error(state.loadSearchError);
         sweetToast(
           "알 수 없는 에러가 발생하였습니다.\n잠시 후 다시 시도해 주세요.",
           "warning"
@@ -105,24 +110,24 @@ export const searchSlice = createSlice({
     });
 
     builder.addCase(thunkFetchSearchPagingData.pending, (state) => {
-      state.isLoading = true;
+      state.loadMoreSearchLoading = true;
+      state.loadSearchDone = false;
+      state.loadSearchError = "";
     });
     builder.addCase(thunkFetchSearchPagingData.fulfilled, (state, action) => {
-      state.isLoading = false;
+      state.loadMoreSearchLoading = false;
+      state.loadSearchDone = true;
       if (action.payload) {
-        state.searchListData = [
-          ...state.searchListData,
-          ...action.payload.data
-        ];
+        state.searchResult.push(...action.payload.data);
         state.hasMore = action.payload.data.length % state.pagePerData === 0;
         state.page =
           action.payload.userDocs.docs[action.payload.userDocs.docs.length - 1];
       }
     });
     builder.addCase(thunkFetchSearchPagingData.rejected, (state, action) => {
-      state.isLoading = false;
+      state.loadMoreSearchLoading = false;
       if (action.payload) {
-        state.error = action.payload.message;
+        state.loadSearchError = action.payload.message;
         sweetToast(
           "알 수 없는 에러가 발생하였습니다.\n잠시 후 다시 시도해 주세요.",
           "warning"

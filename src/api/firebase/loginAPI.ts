@@ -6,7 +6,7 @@ import {
   signInWithPopup,
   GoogleAuthProvider,
   GithubAuthProvider,
-  signOut
+  signOut,
 } from "firebase/auth";
 import { db } from "./setting";
 import { sweetToast } from "../../library/sweetAlert/sweetAlert";
@@ -93,3 +93,4 @@ export const fetchLogout = async () => {
     throw error;
   }
 };
+

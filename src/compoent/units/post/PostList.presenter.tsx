@@ -8,49 +8,49 @@ import { IPostData, IProfileData } from "../../../api/apiType";
 import NoData from "../../commons/noData/NoData";
 interface IProps {
   isProfilePage: boolean;
-  profilePostListData: IPostData[];
-  postListData: IPostData[];
-  myProfileData: IProfileData;
-  isScrollLoading: boolean;
-  isLoading: boolean;
-  profilePostIsLoading: boolean;
+  userPosts: IPostData[];
+  posts: IPostData[];
+  myProfile: IProfileData;
+  loadMorePostsLoading: boolean;
+  loadPostsLoading: boolean;
+  loadUserPostsLoading: boolean;
   isOpenCommentModal: boolean;
   intinityScrollRef: (node?: Element | null | undefined) => void;
   isNoPostData: boolean;
-  isNoProfilePostData: boolean;
+  isNoUserPostData: boolean;
 }
 export default function PostListUI({
   isProfilePage,
-  profilePostListData,
-  postListData,
-  myProfileData,
-  isScrollLoading,
-  isLoading,
-  profilePostIsLoading,
+  userPosts,
+  posts,
+  myProfile,
+  loadMorePostsLoading,
+  loadPostsLoading,
+  loadUserPostsLoading,
   isOpenCommentModal,
   intinityScrollRef,
   isNoPostData,
-  isNoProfilePostData
+  isNoUserPostData
 }: IProps) {
   return (
     <>
       {
         <>
           <Wrapper>
-            {(!isProfilePage ? isLoading : profilePostIsLoading) ? (
+            {(!isProfilePage ? loadPostsLoading : loadUserPostsLoading) ? (
               <ScrollLoading />
-            ) : (isProfilePage ? isNoProfilePostData : isNoPostData) ? (
+            ) : (isProfilePage ? isNoUserPostData : isNoPostData) ? (
               <NoData />
             ) : (
               <PostWrapper>
-                {(isProfilePage ? profilePostListData : postListData).map(
+                {(isProfilePage ? userPosts : posts).map(
                   (item) => {
                     return (
                       !item.isBlock && (
                         <PostItem
                           key={item.id}
                           data={item}
-                          myProfileData={myProfileData}
+                          myProfile={myProfile}
                           isProfilePage={isProfilePage}
                         />
                       )
@@ -60,7 +60,7 @@ export default function PostListUI({
                 <InfinityScrollTarget
                   ref={intinityScrollRef}
                 ></InfinityScrollTarget>
-                {isScrollLoading && (
+                {loadMorePostsLoading && (
                   <li>
                     <ScrollLoading />
                   </li>

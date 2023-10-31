@@ -52,7 +52,7 @@ interface IProps {
   setProfile: React.Dispatch<React.SetStateAction<boolean>>;
   setPercentage: React.Dispatch<React.SetStateAction<string>>;
   setNext: React.Dispatch<React.SetStateAction<boolean>>;
-  isLoading: boolean;
+  signupLoading: boolean;
   onClickCancel: () => void;
 }
 
@@ -77,7 +77,7 @@ export default function DefaultInfoUI({
   setProfile,
   setPercentage,
   setNext,
-  isLoading,
+  signupLoading,
   onClickCancel
 }: IProps) {
   return (
@@ -180,7 +180,7 @@ export default function DefaultInfoUI({
           />
         )}
       </FormWrapper>
-      {isLoading && <Loading />}
+      {signupLoading && <Loading />}
     </Wrapper>
   );
 }

@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 
 export default function DefaultInfo() {
   const navigate = useNavigate();
-  const isLoading = useSelector((state: RootState) => state.signup.isLoading);
+  const signupLoading = useSelector((state: RootState) => state.user.signupLoading);
   const [defaultInfo, setDefaultInfo] = useState(false);
   const [profile, setProfile] = useState(false);
   const [percentage, setPercentage] = useState("0%");
@@ -113,7 +113,7 @@ export default function DefaultInfo() {
       setProfile={setProfile}
       setPercentage={setPercentage}
       setNext={setNext}
-      isLoading={isLoading}
+      signupLoading={signupLoading}
       onClickCancel={onClickCancel}
     />
   );

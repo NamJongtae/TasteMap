@@ -3,8 +3,6 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../store/store";
 
-import { profileSlice, thunkFetchMyProfile } from "../../../slice/profileSlice";
-
 import { thunkFetchRemovePostMap } from "../../../slice/postSlice";
 import {
   sweetConfirm,
@@ -12,11 +10,12 @@ import {
 } from "../../../library/sweetAlert/sweetAlert";
 import { tasteMapSlice } from "../../../slice/tasteMapSlice";
 import MyTasteMapUI from "./MyTasteMap.presenter";
+import { thunkFetchMyProfile, userSlice } from '../../../slice/userSlice';
 
 export default function MyTasteMap() {
-  const userData = useSelector((state: RootState) => state.user.data);
-  const myProfileData = useSelector(
-    (state: RootState) => state.profile.myProfileData
+  const myInfo = useSelector((state: RootState) => state.user.myInfo);
+  const myProfile = useSelector(
+    (state: RootState) => state.user.myProfile
   );
   const contentType = useSelector(
     (state: RootState) => state.tasteMap.contentType
@@ -28,8 +27,8 @@ export default function MyTasteMap() {
     (state: RootState) => state.tasteMap.clickMarkerData
   );
   useEffect(() => {
-    if (userData.uid) {
-      dispatch(thunkFetchMyProfile(userData.uid));
+    if (myInfo.uid) {
+      dispatch(thunkFetchMyProfile(myInfo.uid));
       // 초기 clickMarkerData 섷정 저장된 값중 제일 첫번째 요소로 지정
     }
   }, []);
@@ -54,7 +53,7 @@ export default function MyTasteMap() {
     const textarea = document.createElement("textarea");
     document.body.appendChild(textarea);
     const url =
-      window.document.location.host + `/tasteMap/share/${myProfileData.uid}`;
+      window.document.location.host + `/tasteMap/share/${myProfile.uid}`;
     textarea.value = url;
     textarea.select();
     document.execCommand("copy");
@@ -66,14 +65,14 @@ export default function MyTasteMap() {
     sweetConfirm("정말 삭제하시겠습니까?", "삭제", "취소", () => {
       dispatch(thunkFetchRemovePostMap(clickMarkerData));
       const newData = {
-        ...myProfileData,
-        storedMapList: myProfileData.storedMapList?.filter(
+        ...myProfile,
+        storedMapList: myProfile.storedMapList?.filter(
           (item) =>
             item.mapx !== clickMarkerData.mapx &&
             item.mapy !== clickMarkerData.mapy
         )
       };
-      dispatch(profileSlice.actions.setMyprofile(newData));
+      dispatch(userSlice.actions.setMyprofile(newData));
       sweetToast("삭제가 완료되었습니다.", "success");
       dispatch(tasteMapSlice.actions.setClickMarkerData({}));
     });
@@ -87,7 +86,7 @@ export default function MyTasteMap() {
 
   return (
     <MyTasteMapUI
-      myProfileData={myProfileData}
+      myProfile={myProfile}
       onClickMapType={onClickMapType}
       contentType={contentType}
       onClickListType={onClickListType}

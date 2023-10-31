@@ -24,7 +24,7 @@ import { resolveWebp } from "../../library/webpSupport";
 
 export default function Login() {
   const dispatch = useDispatch<AppDispatch>();
-  const isLoading = useSelector((state: RootState) => state.user.isLoading);
+  const logInLoading = useSelector((state: RootState) => state.user.logInLoading);
   const [disabled, setDisabled] = useState(true);
   const emailRef = useRef<HTMLInputElement>(null);
   const [emailValue, emailValid, onChangeEmail, setEmailValue] =
@@ -123,7 +123,7 @@ export default function Login() {
           </SocialLoginWrapper>
         </LoginForm>
       </Wrapper>
-      {isLoading && <Loading />}
+      {logInLoading && <Loading />}
     </>
   );
 }

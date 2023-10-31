@@ -16,10 +16,10 @@ import {
   sweetConfirm,
   sweetToast
 } from "../../../library/sweetAlert/sweetAlert";
-import { profileSlice } from "../../../slice/profileSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../store/store";
 import { tasteMapSlice } from "../../../slice/tasteMapSlice";
+import { userSlice } from '../../../slice/userSlice';
 
 interface IProps {
   item: ISearchMapData;
@@ -27,19 +27,19 @@ interface IProps {
 }
 export default function MyTasteMapItem({ item, isShareTasteMap }: IProps) {
   const dispatch = useDispatch<AppDispatch>();
-  const myProfileData = useSelector(
-    (state: RootState) => state.profile.myProfileData
+  const myProfile = useSelector(
+    (state: RootState) => state.user.myProfile
   );
   const removeMap = useCallback(() => {
     sweetConfirm("정말 삭제하시겠습니까?", "삭제", "취소", () => {
       dispatch(thunkFetchRemovePostMap(item));
       const newData = {
-        ...myProfileData,
-        storedMapList: myProfileData.storedMapList?.filter(
+        ...myProfile,
+        storedMapList: myProfile.storedMapList?.filter(
           (data) => data.mapx !== item.mapx && data.mapy !== item.mapy
         )
       };
-      dispatch(profileSlice.actions.setMyprofile(newData));
+      dispatch(userSlice.actions.setMyprofile(newData));
       sweetToast("삭제가 완료되었습니다.", "success");
       dispatch(tasteMapSlice.actions.setClickMarkerData({}));
       if (newData.storedMapList && newData.storedMapList.length === 0) {

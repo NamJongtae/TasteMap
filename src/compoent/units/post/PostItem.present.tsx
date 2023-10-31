@@ -27,7 +27,7 @@ import Kakaomap from "../kakaomap/Kakaomap.container";
 import UserInfo from "./UserInfo.container";
 interface IProps {
   data: IPostData;
-  myProfileData: IProfileData;
+  myProfile: IProfileData;
   isLike: boolean;
   likeCount: number | undefined;
   onClickLike: (id: string | undefined) => Promise<void>;
@@ -54,7 +54,7 @@ export default function PostItemUI({
   onClickStoredMap,
   onClickLike,
   formattedDate,
-  myProfileData,
+  myProfile,
   changePostMapType,
   changePostImgType,
   postType,
@@ -74,7 +74,7 @@ export default function PostItemUI({
           <h3 className='a11y-hidden'>유저 프로필</h3>
           <UserInfo
             userData={{
-              ...myProfileData
+              ...myProfile
             }}
             data={{ ...data }}
             activeMoreBtn={true}

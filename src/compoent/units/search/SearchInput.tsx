@@ -34,8 +34,9 @@ export default function SearchInput() {
   const searchDebounce = useCallback(
     debounce(async (keyword) => {
       dispatch(searchSlice.actions.setSearchKeyword(keyword));
+      // 검색어가 없는 경우에는 검색 결과 초기화
       if (!keyword) {
-        return dispatch(searchSlice.actions.setSearchListData([]));
+        return dispatch(searchSlice.actions.setSearchResult([]));
       }
       dispatch(
         thunkFetchSearchFirstPageData({ keyword, limitPage: pagePerData })

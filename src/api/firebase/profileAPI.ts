@@ -412,6 +412,12 @@ export const fetchEditProfile = async (editProfileData: IEditProfileData) => {
     }
     promise.push(updateDoc(userDoc, updateFields));
     await Promise.all(promise);
+    return {
+      uid: auth.currentUser.uid,
+      displayName: updateFields.displayName || user?.displayName,
+      introduce: updateFields.introduce|| user?.introduce,
+      photoURL: updateFields.photoURL|| user?.photoURL,
+    }
   } catch (error) {
     console.error(error);
     throw error;

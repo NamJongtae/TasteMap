@@ -45,7 +45,7 @@ interface IProps {
   onChangeIntroduce: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
   preventKeydownEnter: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
   textareaRef: React.RefObject<HTMLTextAreaElement>;
-  myProfileData: IProfileData;
+  myProfile: IProfileData;
   ProfileImgButtonWrapperRef: React.RefObject<HTMLDivElement>;
   resetBtnRef: React.RefObject<HTMLButtonElement>;
   editBtnRef: React.RefObject<HTMLButtonElement>;
@@ -67,7 +67,7 @@ export default function ProfileEditModalUI({
   onChangeIntroduce,
   preventKeydownEnter,
   textareaRef,
-  myProfileData,
+  myProfile,
   ProfileImgButtonWrapperRef,
   resetBtnRef,
   editBtnRef,
@@ -181,10 +181,10 @@ export default function ProfileEditModalUI({
             type='submit'
             disabled={
               !displayNameValid.valid ||
-              (myProfileData.displayName?.toLowerCase() ===
+              (myProfile.displayName?.toLowerCase() ===
                 displayNameValue.toLowerCase() &&
-                myProfileData.photoURL === previewImg &&
-                myProfileData.introduce === introduceValue)
+                myProfile.photoURL === previewImg &&
+                myProfile.introduce === introduceValue)
             }
             ref={editBtnRef}
           >

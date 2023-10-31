@@ -15,7 +15,7 @@ import { optModalTabFocus } from "../../../../library/optModalTabFocus";
 interface IPros {
   isReply: boolean;
   modalRef: React.RefObject<HTMLDivElement>;
-  userData: IUserData;
+  myInfo: IUserData;
   parentCommentId: string;
   closeCommentModal: () => void;
   closeBtnRef: React.RefObject<HTMLButtonElement>;
@@ -25,7 +25,7 @@ interface IPros {
 export default function CommentModalUI({
   isReply,
   modalRef,
-  userData,
+  myInfo,
   parentCommentId,
   closeCommentModal,
   closeBtnRef,
@@ -46,7 +46,7 @@ export default function CommentModalUI({
       />
       <CommentTextAreaWrapper>
         <UserImg
-          src={userData.photoURL}
+          src={myInfo.photoURL}
           alt='프로필 이미지'
           onError={(e: SyntheticEvent<HTMLImageElement, Event>) => {
             e.currentTarget.src = resolveWebp(

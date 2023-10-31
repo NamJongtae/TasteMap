@@ -3,32 +3,26 @@ import { getCompressionImg } from "../../../library/imageCompression";
 import { imgValidation } from "../../../library/imageValidation";
 import { useValidationInput } from "../../../hook/useValidationInput";
 
-import { userSlice } from "../../../slice/userSlice";
+import { thunkFetchEditProfile, thunkFetchMyProfile, thunkFetchUserProfile, userSlice } from "../../../slice/userSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../store/store";
-import {
-  profileSlice,
-  thunkFetchEditProfile,
-  thunkFetchMyProfile,
-  thunkFetchProfileFirstPageData,
-  thunkFetchUserProfile
-} from "../../../slice/profileSlice";
 import ProfileEditModalUI from "./ProfileEditModal.presenter";
 import { useParams } from "react-router-dom";
 import { isMobile } from 'react-device-detect';
+import { thunkFetchProfileFirstPageData } from '../../../slice/postSlice';
 
 export default function ProfileEditModal() {
   const { uid } = useParams();
-  const myProfileData = useSelector(
-    (state: RootState) => state.profile.myProfileData
+  const myProfile = useSelector(
+    (state: RootState) => state.user.myProfile
   );
-  const userData = useSelector((state: RootState) => state.user.data);
+  const myInfo = useSelector((state: RootState) => state.user.myInfo);
   const dispatch = useDispatch<AppDispatch>();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
   const imgInputRef = useRef<HTMLInputElement>(null);
-  const [introduceValue, setIntroduceValue] = useState(myProfileData.introduce);
-  const [previewImg, setPreviewImg] = useState(myProfileData.photoURL);
+  const [introduceValue, setIntroduceValue] = useState(myProfile.introduce);
+  const [previewImg, setPreviewImg] = useState(myProfile.photoURL);
   const [uploadImg, setUploadImg] = useState<File | string>("");
   const [isImgLoading, setIsImgLoading] = useState(false);
   const [
@@ -37,7 +31,7 @@ export default function ProfileEditModal() {
     onChangeDislayName,
     ,
     setDisplayNameValid
-  ] = useValidationInput(myProfileData.displayName || "", "displayName", true);
+  ] = useValidationInput(myProfile.displayName || "", "displayName", true);
   const ProfileImgButtonWrapperRef = useRef<HTMLDivElement>(null);
   const resetBtnRef = useRef<HTMLButtonElement>(null);
   const editBtnRef = useRef<HTMLButtonElement>(null);
@@ -109,14 +103,13 @@ export default function ProfileEditModal() {
       introduce: introduceValue
     };
     await dispatch(thunkFetchEditProfile(IEditProfileData));
-    if (userData.uid) {
-      dispatch(thunkFetchMyProfile(userData.uid));
-      if (userData.uid === uid) dispatch(thunkFetchUserProfile(userData.uid));
+    if (myInfo.uid) {
+      dispatch(thunkFetchMyProfile(myInfo.uid));
+      if (myInfo.uid === uid) dispatch(thunkFetchUserProfile(myInfo.uid));
       dispatch(
-        thunkFetchProfileFirstPageData({ uid: userData.uid, pagePerData: 10 })
+        thunkFetchProfileFirstPageData({ uid: myInfo.uid, pagePerData: 10 })
       );
     }
-    dispatch(userSlice.actions.refreshUser());
   };
 
   const onClickImgReset = () => {
@@ -133,7 +126,7 @@ export default function ProfileEditModal() {
     }
     setTimeout(() => {
       document.body.style.overflow = "auto";
-      dispatch(profileSlice.actions.setIsOpenProfileEditModal(false));
+      dispatch(userSlice.actions.setIsOpenProfileEditModal(false));
     }, 700);
   },[]);
 
@@ -142,9 +135,9 @@ export default function ProfileEditModal() {
     resizeTextAreaHeight();
     // displayName 초기 valid true 설정
     setDisplayNameValid({ errorMsg: "", valid: true });
-    if (userData.uid) {
-      // myProfileData 가져오기
-      dispatch(thunkFetchMyProfile(userData.uid));
+    if (myInfo.uid) {
+      // myProfile 가져오기
+      dispatch(thunkFetchMyProfile(myInfo.uid));
     }
   }, []);
 
@@ -170,7 +163,7 @@ export default function ProfileEditModal() {
       onChangeIntroduce={onChangeIntroduce}
       preventKeydownEnter={preventKeydownEnter}
       textareaRef={textareaRef}
-      myProfileData={myProfileData}
+      myProfile={myProfile}
       ProfileImgButtonWrapperRef={ProfileImgButtonWrapperRef}
       resetBtnRef={resetBtnRef}
       editBtnRef={editBtnRef}

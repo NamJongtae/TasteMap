@@ -10,7 +10,7 @@ import {
 import FollowList from "./FollowList";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../../store/store";
-import { profileSlice } from "../../../slice/profileSlice";
+import { userSlice } from "../../../slice/userSlice";
 import { isMobile } from "react-device-detect";
 import { optModalTabFocus } from "../../../library/optModalTabFocus";
 
@@ -31,9 +31,9 @@ export default function FollowModal({ isFollower }: IProps) {
       setTimeout(() => {
         document.body.style.overflow = "auto";
         if (isFollower) {
-          dispatch(profileSlice.actions.setIsOpenFollowerModal(false));
+          dispatch(userSlice.actions.setIsOpenFollowerModal(false));
         } else {
-          dispatch(profileSlice.actions.setIsOpenFollowingModal(false));
+          dispatch(userSlice.actions.setIsOpenFollowingModal(false));
         }
       }, 700);
       if (isMobile) {
@@ -41,12 +41,6 @@ export default function FollowModal({ isFollower }: IProps) {
       }
     }
   },[isFollower, isMobile]);
-
-  useEffect(() => {
-    return () => {
-      dispatch(profileSlice.actions.setFollowListData([]));
-    };
-  }, []);
 
   // 뒤로가기 버튼을 눌러도 현재 페이지가 유지됨
   useEffect(() => {

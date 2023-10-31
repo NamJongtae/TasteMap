@@ -4,10 +4,10 @@ import ProfileSettingUI from "./ProfileSetting.presenter";
 import { resolveWebp } from "../../library/webpSupport";
 import { getCompressionImg } from "../../library/imageCompression";
 import { useDispatch } from "react-redux";
-import { thunkFetchSignup } from "../../slice/signupSlice";
 import { AppDispatch } from "../../store/store";
 import { imgValidation } from "../../library/imageValidation";
 import { isMobile } from "react-device-detect";
+import { thunkFetchSignup } from '../../slice/userSlice';
 interface IProps {
   emailValue: string;
   passwordValue: string;

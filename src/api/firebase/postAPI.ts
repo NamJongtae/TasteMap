@@ -397,6 +397,10 @@ export const fetchRemovePost = async (postData: IPostData) => {
 export const fetchAddPostLike = async (id: string) => {
   try {
     const postRef = doc(db, `post/${id}`);
+    const postDocSnapshot = await getDoc(postRef);
+    if (!postDocSnapshot.exists()) {
+      throw new Error("게시물이 존재하지 않습니다.");
+    }
     const addLikeCountPromise = updateDoc(postRef, {
       likeCount: increment(1)
     });
@@ -418,8 +422,12 @@ export const fetchAddPostLike = async (id: string) => {
  */
 export const fetchRemovePostLike = async (id: string) => {
   try {
-    const postRef = doc(db, `post/${id}`);
-    const removeLikeCountPromise = updateDoc(postRef, {
+    const postDoc = doc(db, `post/${id}`);
+    const postDocSnapshot = await getDoc(postDoc);
+    if (!postDocSnapshot.exists()) {
+      throw new Error("게시물이 존재하지 않습니다.");
+    }
+    const removeLikeCountPromise = updateDoc(postDoc, {
       likeCount: increment(-1)
     });
 

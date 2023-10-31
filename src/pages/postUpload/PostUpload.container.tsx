@@ -25,17 +25,17 @@ interface IProps {
 export default function PostUpload({ isEdit }: IProps) {
   const { postId } = useParams();
   const navigate = useNavigate();
-  const postData = useSelector((state: RootState) => state.post.postData);
-  const postListData = useSelector(
-    (state: RootState) => state.post.postListData
+  const post = useSelector((state: RootState) => state.post.post);
+  const posts = useSelector(
+    (state: RootState) => state.post.posts
   );
-  // 작성자의 프로필을 넣기위해 userData를 가져옴
-  const userData = useSelector((state: RootState) => state.user.data);
+  // 작성자의 프로필을 넣기위해 myInfo를 가져옴
+  const myInfo = useSelector((state: RootState) => state.user.myInfo);
   // 맛집 검색으로 선택된 맛집 데이터를 가져옴
   const selectedMapData = useSelector(
     (state: RootState) => state.post.seletedMapData
   );
-  const isLoading = useSelector((state: RootState) => state.post.isLoading);
+  const isLoading = useSelector((state: RootState) => state.post.uploadPostLoading);
   const invalidPage = useSelector((state: RootState) => state.post.invalidPage);
   const dispatch = useDispatch<AppDispatch>();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -164,7 +164,7 @@ export default function PostUpload({ isEdit }: IProps) {
         IPostUploadData,
         "id" | "content" | "rating" | "mapData" | "imgURL" | "imgName" | "img"
       > = {
-        id: postData.id || "",
+        id: post.id || "",
         content: contentValue,
         rating: ratingValue,
         mapData: selectedMapData[0],
@@ -174,7 +174,7 @@ export default function PostUpload({ isEdit }: IProps) {
       };
       await dispatch(
         thunkFecthEditPost({
-          prevPostData: postData,
+          prevPostData: post,
           editPostData: editPostData
         })
       );
@@ -186,7 +186,7 @@ export default function PostUpload({ isEdit }: IProps) {
         id,
         content: contentValue,
         img: imgFile,
-        uid: userData.uid || "",
+        uid: myInfo.uid || "",
         createdAt: Timestamp.fromDate(new Date()),
         likeCount: 0,
         commentCount: 0,
@@ -200,15 +200,15 @@ export default function PostUpload({ isEdit }: IProps) {
       };
       // redux thunk를 이용하여 비동기 처리 서버로 데이터 전송
       await dispatch(thunkFetchUploadPost(uploadData));
-      if (postListData.length === 0) {
+      if (posts.length === 0) {
         await dispatch(thunkFetchFirstPagePostData(10));
       }
       navigate("/");
     }
-  },[postData, contentValue, selectedMapData, isEdit, imgFile, ratingValue]);
+  },[post, contentValue, selectedMapData, isEdit, imgFile, ratingValue]);
 
   useEffect(() => {
-    if (imgListRef.current && postData.imgURL !== preview) {
+    if (imgListRef.current && post.imgURL !== preview) {
       imgListRef.current.scrollLeft =
         imgListRef.current.clientWidth * preview.length;
     }
@@ -216,39 +216,39 @@ export default function PostUpload({ isEdit }: IProps) {
 
   useEffect(() => {
     if (isEdit) {
-      if (postData.uid && postData.uid !== userData.uid) {
+      if (post.uid && post.uid !== myInfo.uid) {
         sweetToast("다른 사용자의 게시물은 수정할 수 없습니다!", "warning");
         navigate("/");
       }
     }
-  }, [postData]);
+  }, [post]);
 
   useEffect(() => {
     if (isEdit && postId) {
       dispatch(thunkFetchPostData(postId));
     }
     return () => {
-      dispatch(postSlice.actions.setPostData([]));
+      dispatch(postSlice.actions.setPost([]));
     };
   }, []);
 
   useEffect(() => {
     if (
       isEdit &&
-      postData.imgURL &&
-      postData.content &&
-      postData.rating &&
-      postData.imgName
+      post.imgURL &&
+      post.content &&
+      post.rating &&
+      post.imgName
     ) {
-      setPreview(postData.imgURL);
-      setContentValue(postData.content);
-      setRatingValue(postData.rating);
-      setImgFile(postData.imgURL.map(() => ({}) as File));
-      setEditImgName(postData.imgName);
-      setEditImgURL(postData.imgURL);
-      dispatch(postSlice.actions.setSelectedMapData(postData.mapData));
+      setPreview(post.imgURL);
+      setContentValue(post.content);
+      setRatingValue(post.rating);
+      setImgFile(post.imgURL.map(() => ({}) as File));
+      setEditImgName(post.imgName);
+      setEditImgURL(post.imgURL);
+      dispatch(postSlice.actions.setSelectedMapData(post.mapData));
     }
-  }, [postData]);
+  }, [post]);
 
   useEffect(() => {
     handleResizeHeight();
@@ -256,14 +256,14 @@ export default function PostUpload({ isEdit }: IProps) {
 
   return (
     <PostUploadUI
-      postData={postData}
+      post={post}
       contentValue={contentValue}
       selectedMapData={selectedMapData}
       ratingValue={ratingValue}
       onSubmitUpload={onSubmitUpload}
       wrapperRef={wrapperRef}
       imgListRef={imgListRef}
-      userData={userData}
+      myInfo={myInfo}
       openSearchModal={openSearchModal}
       setRatingValue={setRatingValue}
       textareaRef={textareaRef}
