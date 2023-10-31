@@ -14,6 +14,7 @@ export const store = configureStore({
     tasteMap: tasteMapSlice.reducer,
     search: searchSlice.reducer,
   },
+  devTools: process.env.NODE_ENV !== 'production',
   middleware: getDefaultMiddleware({
     serializableCheck: false
   })
