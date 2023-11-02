@@ -329,6 +329,10 @@ export const fetchEditPost = async (
 ) => {
   try {
     const postDoc = doc(db, `post/${editPostData.id}`);
+    const postDocSnapshot = await getDoc(postDoc);
+    if (!postDocSnapshot.exists()) {
+      throw new Error("게시물이 존재하지 않습니다.");
+    }
     const updatePostPromise = updateDoc(postDoc, { ...editPostData });
     // 게시물 수정 시 기존 이미지가 삭제된다면 해당 이미지 파일을 저장소에서 삭제처리
     const removeImgPromise = [];
@@ -356,6 +360,11 @@ export const fetchEditPost = async (
 export const fetchRemovePost = async (postData: IPostData) => {
   try {
     if (!postData.imgName) return;
+    const postDoc = doc(db, `post/${postData.id}`);
+    const postDocSnapshot = await getDoc(postDoc);
+    if (!postDocSnapshot.exists()) {
+      throw new Error("게시물이 존재하지 않습니다.");
+    }
     const removeImgPromise = postData.imgName?.map((name) => {
       return deleteObject(storageRef(storage, `images/post/${name}`));
     });
@@ -366,7 +375,6 @@ export const fetchRemovePost = async (postData: IPostData) => {
       postList: arrayRemove(postData.id)
     });
 
-    const postDoc = doc(db, `post/${postData.id}`);
     const removePost = deleteDoc(postDoc);
 
     // comments collection에서 postId와 일치하는 문서 삭제

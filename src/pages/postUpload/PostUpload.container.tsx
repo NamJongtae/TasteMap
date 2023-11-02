@@ -26,16 +26,16 @@ export default function PostUpload({ isEdit }: IProps) {
   const { postId } = useParams();
   const navigate = useNavigate();
   const post = useSelector((state: RootState) => state.post.post);
-  const posts = useSelector(
-    (state: RootState) => state.post.posts
-  );
+  const posts = useSelector((state: RootState) => state.post.posts);
   // 작성자의 프로필을 넣기위해 myInfo를 가져옴
   const myInfo = useSelector((state: RootState) => state.user.myInfo);
   // 맛집 검색으로 선택된 맛집 데이터를 가져옴
   const selectedMapData = useSelector(
     (state: RootState) => state.post.seletedMapData
   );
-  const isLoading = useSelector((state: RootState) => state.post.uploadPostLoading);
+  const isLoading = useSelector(
+    (state: RootState) => state.post.uploadPostLoading
+  );
   const invalidPage = useSelector((state: RootState) => state.post.invalidPage);
   const dispatch = useDispatch<AppDispatch>();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -62,14 +62,14 @@ export default function PostUpload({ isEdit }: IProps) {
   const openSearchModal = useCallback(() => {
     setIsOpenModal(true);
     document.body.style.overflow = "hidden";
-  },[]);
+  }, []);
 
   /**
    * 검색 모달창 닫기 */
   const closeSearchModal = useCallback(() => {
     setIsOpenModal(false);
     document.body.style.overflow = "auto";
-  },[]);
+  }, []);
 
   /**
    * 이미지 업로드 input 클릭 */
@@ -77,7 +77,7 @@ export default function PostUpload({ isEdit }: IProps) {
     if (hiddenUploadBtnRef.current) {
       hiddenUploadBtnRef.current.click();
     }
-  },[]);
+  }, []);
 
   const handleResizeHeight = useCallback(() => {
     if (textareaRef.current) {
@@ -85,61 +85,68 @@ export default function PostUpload({ isEdit }: IProps) {
       textareaRef.current.style.height =
         textareaRef.current.scrollHeight - 30 + "px";
     }
-  },[]);
+  }, []);
 
   /**
    * 게시물 작성 내용 chage 함수 */
-  const onChangeContentValue = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    handleResizeHeight();
-    if (e.target.value.length === 1 && e.target.value === " ") return;
-    setContentValue(e.target.value);
-  },[]);
+  const onChangeContentValue = useCallback(
+    (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+      handleResizeHeight();
+      if (e.target.value.length === 1 && e.target.value === " ") return;
+      setContentValue(e.target.value);
+    },
+    []
+  );
 
   /**
    * 이미지 chage 함수 */
-  const onChangeImg = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
-    // 이미지가 존재하지 않을 시 return
-    if (!e.target.files || !e.target.files[0]) return;
-    // 이미지가 5개를 이상이면 return
-    if (preview.length >= 5) {
-      sweetToast("최대 5개의 이미지까지 업로드 가능합니다.", "warning");
-      return;
-    }
-    const file = e.target.files[0];
-    // 이미지 형식 유효성 검사
-    const isValidImg = imgValidation(file);
-    // 유요하지 않은 이미지 형식이라면 return
-    if (!isValidImg) {
-      e.target.value = "";
-      return;
-    }
-    // 모바일의 경우 이미지 미리보기 업로드 속도가 느려 로딩창 활성화
-    if (isMobile) {
-      setIsImgLoading(true);
-    }
-    // 이미지 압축
-    const compressdImg = (await getCompressionImg(file, "post")) as {
-      compressedFile: File;
-      compressedPreview: string;
-    };
-    // 로딩창 비활성화
-    if (isMobile) {
-      setIsImgLoading(false);
-    }
-    // 이미지 타입이 undefined일 때 예외처리
-    if (!compressdImg?.compressedFile || !compressdImg?.compressedPreview)
-      return;
-    // 이미 업로드한 파일이라면 경고창 출력 후 return
-    if (preview.includes(compressdImg.compressedPreview)) {
-      sweetToast("이미 업로드한 이미지 입니다.", "warning");
-      return;
-    }
-    // imgFile, preview 배열에 업로드한 이미지 추가
-    setPreview((prev) => [...prev, compressdImg.compressedPreview]);
-    setImgFile((prev) => [...prev, compressdImg.compressedFile]);
-    // 이미지 업로드 후 업로드한 이미지가 보이도록 스크롤을 맨 아래로 내림
-    if (wrapperRef.current) scrollTo({ top: wrapperRef.current.scrollHeight });
-  },[preview, isMobile]);
+  const onChangeImg = useCallback(
+    async (e: React.ChangeEvent<HTMLInputElement>) => {
+      // 이미지가 존재하지 않을 시 return
+      if (!e.target.files || !e.target.files[0]) return;
+      // 이미지가 5개를 이상이면 return
+      if (preview.length >= 5) {
+        sweetToast("최대 5개의 이미지까지 업로드 가능합니다.", "warning");
+        return;
+      }
+      const file = e.target.files[0];
+      // 이미지 형식 유효성 검사
+      const isValidImg = imgValidation(file);
+      // 유요하지 않은 이미지 형식이라면 return
+      if (!isValidImg) {
+        e.target.value = "";
+        return;
+      }
+      // 모바일의 경우 이미지 미리보기 업로드 속도가 느려 로딩창 활성화
+      if (isMobile) {
+        setIsImgLoading(true);
+      }
+      // 이미지 압축
+      const compressdImg = (await getCompressionImg(file, "post")) as {
+        compressedFile: File;
+        compressedPreview: string;
+      };
+      // 로딩창 비활성화
+      if (isMobile) {
+        setIsImgLoading(false);
+      }
+      // 이미지 타입이 undefined일 때 예외처리
+      if (!compressdImg?.compressedFile || !compressdImg?.compressedPreview)
+        return;
+      // 이미 업로드한 파일이라면 경고창 출력 후 return
+      if (preview.includes(compressdImg.compressedPreview)) {
+        sweetToast("이미 업로드한 이미지 입니다.", "warning");
+        return;
+      }
+      // imgFile, preview 배열에 업로드한 이미지 추가
+      setPreview((prev) => [...prev, compressdImg.compressedPreview]);
+      setImgFile((prev) => [...prev, compressdImg.compressedFile]);
+      // 이미지 업로드 후 업로드한 이미지가 보이도록 스크롤을 맨 아래로 내림
+      if (wrapperRef.current)
+        scrollTo({ top: wrapperRef.current.scrollHeight });
+    },
+    [preview, isMobile]
+  );
 
   /**
    * 이미지 삭제 함수
@@ -152,7 +159,7 @@ export default function PostUpload({ isEdit }: IProps) {
     setImgFile((prev) => prev.filter((_, itemIdx) => itemIdx != idx));
     setEditImgURL((prev) => prev.filter((_, itemIdx) => itemIdx != idx));
     setEditImgName((prev) => prev.filter((_, itemIdx) => itemIdx != idx));
-  },[]);
+  }, []);
 
   /**
    * 게시물 업로드 함수 */
@@ -202,7 +209,7 @@ export default function PostUpload({ isEdit }: IProps) {
       }
       navigate("/");
     }
-  },[post, contentValue, selectedMapData, isEdit, imgFile, ratingValue]);
+  }, [post, contentValue, selectedMapData, isEdit, imgFile, ratingValue]);
 
   useEffect(() => {
     if (imgListRef.current && post.imgURL !== preview) {
@@ -213,9 +220,9 @@ export default function PostUpload({ isEdit }: IProps) {
 
   useEffect(() => {
     if (isEdit) {
-      if (post.uid !== myInfo.uid) {
+      if (post.uid && post.uid !== myInfo.uid) {
         sweetToast("다른 사용자의 게시물은 수정할 수 없습니다!", "warning");
-        navigate("/");
+        navigate("/", { replace: true });
       }
     }
   }, [post]);
@@ -230,13 +237,7 @@ export default function PostUpload({ isEdit }: IProps) {
   }, []);
 
   useEffect(() => {
-    if (
-      isEdit &&
-      post.imgURL &&
-      post.content &&
-      post.rating &&
-      post.imgName
-    ) {
+    if (isEdit && post.imgURL && post.content && post.rating && post.imgName) {
       setPreview(post.imgURL);
       setContentValue(post.content);
       setRatingValue(post.rating);
