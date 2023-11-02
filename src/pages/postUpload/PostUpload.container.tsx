@@ -33,9 +33,10 @@ export default function PostUpload({ isEdit }: IProps) {
   const selectedMapData = useSelector(
     (state: RootState) => state.post.seletedMapData
   );
-  const isLoading = useSelector(
+  const uploadPostLoading = useSelector(
     (state: RootState) => state.post.uploadPostLoading
   );
+  const loadPostLoading = useSelector((state: RootState) => state.post.loadPostLoading);
   const invalidPage = useSelector((state: RootState) => state.post.invalidPage);
   const dispatch = useDispatch<AppDispatch>();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -274,7 +275,8 @@ export default function PostUpload({ isEdit }: IProps) {
       onClickUploadImg={onClickUploadImg}
       closeSearchModal={closeSearchModal}
       isOpenModal={isOpenModal}
-      isLoading={isLoading}
+      uploadPostLoading={uploadPostLoading}
+      loadPostLoading={loadPostLoading}
       isImgLoading={isImgLoading}
       isEdit={isEdit}
       invalidPage={invalidPage}

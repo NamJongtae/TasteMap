@@ -495,6 +495,9 @@ export const postSlice = createSlice({
     seletedMapData: [] as ISearchMapData[], // 선택한 검색 데이터,
     invalidPage: false,
     isNoPostData: false,
+    loadPostLoading: false,
+    loadPostDone: false,
+    loadPostError: "",
     loadPostsLoading: false,
     loadPostsDone: false,
     loadPostsError: "",
@@ -575,25 +578,25 @@ export const postSlice = createSlice({
     // 게시물 데이터 조회
     builder.addCase(thunkFetchPostData.pending, (state) => {
       document.body.style.overflow = "hidden";
-      state.loadPostsLoading = true;
-      state.loadPostsDone = false;
-      state.loadPostsError = "";
+      state.loadPostLoading = true;
+      state.loadPostDone = false;
+      state.loadPostError = "";
     });
     builder.addCase(thunkFetchPostData.fulfilled, (state, action) => {
       if (action.payload) state.post = action.payload;
       document.body.style.overflow = "auto";
-      state.loadPostsLoading = false;
-      state.loadPostsDone = true;
+      state.loadPostLoading = false;
+      state.loadPostDone = true;
     });
     builder.addCase(thunkFetchPostData.rejected, (state, action) => {
-      if (action.payload) state.loadPostsError = action.payload.message;
+      if (action.payload) state.loadPostError = action.payload.message;
       document.body.style.overflow = "auto";
-      state.loadPostsLoading = false;
+      state.loadPostLoading = false;
       sweetToast(
         "알 수 없는 에러가 발생하였습니다.\n잠시 후 다시 시도해 주세요.",
         "warning"
       );
-      console.error(state.loadPostsError);
+      console.error(state.loadPostError);
     });
 
     builder.addCase(thunkUpdatePostCommentCount.pending, (state) => {

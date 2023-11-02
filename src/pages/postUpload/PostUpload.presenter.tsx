@@ -22,7 +22,7 @@ import Loading from "../../component/commons/loading/Loading";
 import { IPostData, ISearchMapData, IUserData } from "../../api/apiType";
 import UserInfo from "../../component/units/post/UserInfo.container";
 import InvalidPage from "../../component/commons/invalidPage/InvalidPage";
-import ScrollLoading from '../../component/commons/loading/ScrollLoading';
+import ScrollLoading from "../../component/commons/loading/ScrollLoading";
 
 interface IProps {
   post: IPostData;
@@ -45,7 +45,8 @@ interface IProps {
   onClickUploadImg: () => void;
   closeSearchModal: () => void;
   isOpenModal: boolean;
-  isLoading: boolean;
+  uploadPostLoading: boolean;
+  loadPostLoading: boolean;
   isImgLoading: boolean;
   isEdit: boolean;
   invalidPage: boolean;
@@ -71,7 +72,8 @@ export default function PostUploadUI({
   onClickUploadImg,
   closeSearchModal,
   isOpenModal,
-  isLoading,
+  uploadPostLoading,
+  loadPostLoading,
   isImgLoading,
   isEdit,
   invalidPage
@@ -83,7 +85,9 @@ export default function PostUploadUI({
     </>
   ) : (
     <>
-      {(isEdit && post.id) || !isEdit ? (
+      {loadPostLoading ? (
+        <Loading />
+      ) : (
         <>
           <Header
             type='upload'
@@ -185,10 +189,8 @@ export default function PostUploadUI({
           />
           {isOpenModal && <SearchModal closeSearchModal={closeSearchModal} />}
         </>
-      ) : (
-        isLoading && <Loading />
       )}
-      {isLoading && <Loading />}
+      {uploadPostLoading && <Loading />}
     </>
   );
 }
