@@ -13,8 +13,8 @@ import {
   Title,
   Wrapper
 } from "./findAccount.style";
-import UserInput from "../../compoent/commons/userInput/UserInput";
-import ErrorMsg from "../../compoent/commons/errorMsg/ErrorMsg";
+import UserInput from "../../component/commons/userInput/UserInput";
+import ErrorMsg from "../../component/commons/errorMsg/ErrorMsg";
 
 interface IProps {
   findPasswordMenu: boolean;

@@ -18,7 +18,7 @@ import {
 } from "./profileInfo.styles";
 import { resolveWebp } from "../../library/webpSupport";
 import { IProfileData, IUserData } from "../../api/apiType";
-import Loading from "../../compoent/commons/loading/Loading";
+import Loading from "../../component/commons/loading/Loading";
 
 interface IProps {
   loadUserProfileLoading: boolean;
@@ -68,8 +68,8 @@ export default function ProfileInfoUI({
               <FollowerBtn onClick={onClickFollower}>
                 <FollowerCount>
                   {uid
-                    ? userProfile.followerList?.length
-                    : myProfile.followerList && myProfile.followerList.length}
+                    ? userProfile.followerList.length
+                    : myProfile.followerList.length}
                 </FollowerCount>
                 <FollowerTag>Followers</FollowerTag>
               </FollowerBtn>
@@ -86,8 +86,8 @@ export default function ProfileInfoUI({
               <FollowingBtn onClick={onClickFollowing}>
                 <FollowingCount>
                   {uid
-                    ? userProfile.followingList?.length
-                    : myProfile.followingList && myProfile.followingList.length}
+                    ? userProfile.followingList.length
+                    : myProfile.followingList.length}
                 </FollowingCount>
                 <FollowerTag>Following</FollowerTag>
               </FollowingBtn>

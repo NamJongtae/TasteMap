@@ -1,5 +1,5 @@
 import React, { useLayoutEffect, useState } from "react";
-import { IProfileData } from "../../../api/apiType";
+import { IProfileData } from "../../api/apiType";
 import {
   FollowBtn,
   SearchLi,
@@ -8,9 +8,9 @@ import {
   Username
 } from "./search.styles";
 import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../../../store/store";
-import { resolveWebp } from "../../../library/webpSupport";
-import { thunkFetchFollow, thunkFetchUnfollow } from '../../../slice/userSlice';
+import { AppDispatch, RootState } from "../../store/store";
+import { resolveWebp } from "../../library/webpSupport";
+import { thunkFetchFollow, thunkFetchUnfollow } from "../../slice/userSlice";
 
 interface IProps {
   item: IProfileData;
@@ -19,26 +19,20 @@ export default function SearchItem({ item }: IProps) {
   const searchKeyword = useSelector(
     (state: RootState) => state.search.searchKeyword
   );
-  const myProfile = useSelector(
-    (state: RootState) => state.user.myProfile
-  );
+  const myProfile = useSelector((state: RootState) => state.user.myProfile);
   const dispatch = useDispatch<AppDispatch>();
   const [isFollow, setIsFollow] = useState(false);
 
   const onClickFollow = () => {
     if (myProfile.uid && item.uid) {
-      dispatch(
-        thunkFetchFollow({ myUid: myProfile.uid, userUid: item.uid })
-      );
+      dispatch(thunkFetchFollow({ myUid: myProfile.uid, userUid: item.uid }));
       setIsFollow(true);
     }
   };
 
   const onClickUnFollow = () => {
     if (myProfile.uid && item.uid) {
-      dispatch(
-        thunkFetchUnfollow({ myUid: myProfile.uid, userUid: item.uid })
-      );
+      dispatch(thunkFetchUnfollow({ myUid: myProfile.uid, userUid: item.uid }));
       setIsFollow(false);
     }
   };
@@ -47,7 +41,7 @@ export default function SearchItem({ item }: IProps) {
   const textHighLight = (text: string) => {
     // 검색 키워드를 기준으로 문자열이 나눔
     const parts = text.split(new RegExp(`(${searchKeyword})`, "gi"));
-    
+
     return (
       <>
         {parts.map((part, index) => (
@@ -66,7 +60,7 @@ export default function SearchItem({ item }: IProps) {
   };
 
   useLayoutEffect(() => {
-    if (item.uid && myProfile.followingList?.includes(item.uid)) {
+    if (item.uid && myProfile.followingList.includes(item.uid)) {
       setIsFollow(true);
     }
   }, [myProfile]);

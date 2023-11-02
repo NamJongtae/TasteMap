@@ -113,7 +113,7 @@ export default function ProfileEditModal() {
   };
 
   const onClickImgReset = () => {
-    setPreviewImg(process.env.REACT_APP_DEFAULT_PROFILE_IMG);
+    setPreviewImg(process.env.REACT_APP_DEFAULT_PROFILE_IMG||"");
     setUploadImg("defaultImg");
   };
 

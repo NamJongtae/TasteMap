@@ -25,6 +25,7 @@ import ImgSlider from "../imgSlider/ImgSlider";
 import { IPostData, IProfileData } from "../../../api/apiType";
 import Kakaomap from "../kakaomap/Kakaomap.container";
 import UserInfo from "./UserInfo.container";
+import { EContentType } from './PostItem.container';
 interface IProps {
   data: IPostData;
   myProfile: IProfileData;
@@ -36,7 +37,7 @@ interface IProps {
   formattedDate: string | undefined;
   changePostMapType: () => void;
   changePostImgType: () => void;
-  postType: "map" | "image";
+  contentType: EContentType;
   onClickMoreText: () => void;
   contentTextRef: React.RefObject<HTMLParagraphElement>;
   isShowMoreTextBtn: boolean;
@@ -57,7 +58,7 @@ export default function PostItemUI({
   myProfile,
   changePostMapType,
   changePostImgType,
-  postType,
+  contentType,
   onClickMoreText,
   contentTextRef,
   isShowMoreTextBtn,
@@ -98,8 +99,8 @@ export default function PostItemUI({
             </>
           )}
           
-            <KakaoMapWrapper postType={postType} ref={kakaomapRef}>
-              {postType === "map" && (
+            <KakaoMapWrapper contentType={contentType} ref={kakaomapRef}>
+              {contentType === EContentType.MAP && (
                 <StoredMapBtn
                   type='button'
                   aria-label={isStoredMap ? "맛집 삭제" : "맛집 추가"}
@@ -109,9 +110,9 @@ export default function PostItemUI({
                 />
               )}
               <h3 className='a11y-hidden'>
-                {postType === "map" ? "지도" : "이미지"}
+                {contentType === EContentType.MAP ? "지도" : "이미지"}
               </h3>
-              {postType === "map"
+              {contentType === EContentType.MAP
                 ? data.mapData?.mapx && (
                     inview? <Kakaomap
                       items={[{ ...data.mapData }]}
@@ -131,13 +132,13 @@ export default function PostItemUI({
         </ContentWrapper>
         <ActiveMapBtn
           type='button'
-          postType={postType}
+          contentType={contentType}
           onClick={changePostImgType}
           aria-label='지도'
         />
         <ActiveImageBtn
           type='button'
-          postType={postType}
+          contentType={contentType}
           onClick={changePostMapType}
           aria-label='이미지'
         />

@@ -1,9 +1,9 @@
 import React from "react";
 import { Wrapper } from "./search.styles";
-import Header from "../../commons/layouts/header/Header";
+import Header from "../../component/commons/layouts/header/Header";
 import SearchInput from "./SearchInput";
-import SearchList from './SearchList';
-import TopButton from '../../commons/topButton/TopButton';
+import SearchList from "./SearchList";
+import TopButton from "../../component/commons/topButton/TopButton";
 
 export default function Search() {
   return (
@@ -14,7 +14,7 @@ export default function Search() {
         <SearchInput />
         <SearchList />
       </Wrapper>
-      <TopButton/>
+      <TopButton />
     </>
   );
 }

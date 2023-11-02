@@ -80,7 +80,7 @@ export default function UserInfoUI({
                 <OptionBtn
                   className='opctionBtn'
                   type='button'
-                  onClick={(e) => onCliceRemove(e, data)}
+                  onClick={(e) => onCliceRemove(e, data as IPostData)}
                 >
                   삭제
                 </OptionBtn>
@@ -92,7 +92,7 @@ export default function UserInfoUI({
                 <OptionBtn
                   className='opctionBtn'
                   type='button'
-                  onClick={(e) => onClickReport(e, data)}
+                  onClick={(e) => onClickReport(e, data as IPostData)}
                 >
                   신고
                 </OptionBtn>

@@ -7,12 +7,12 @@ import {
   SearchUl
 } from "./search.styles";
 import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../../../store/store";
+import { AppDispatch, RootState } from "../../store/store";
 import SearchItem from "./SearchItem";
 import { useInView } from "react-intersection-observer";
-import { thunkFetchSearchPagingData } from "../../../slice/searchSlice";
-import ScrollLoading from "../../commons/loading/ScrollLoading";
-import { thunkFetchMyProfile } from '../../../slice/userSlice';
+import { thunkFetchSearchPagingData } from "../../slice/searchSlice";
+import ScrollLoading from "../../component/commons/loading/ScrollLoading";
+import { thunkFetchMyProfile } from "../../slice/userSlice";
 
 export default function SearchList() {
   const myInfo = useSelector((state: RootState) => state.user.myInfo);
@@ -28,8 +28,12 @@ export default function SearchList() {
     (state: RootState) => state.search.pagePerData
   );
   const hasMore = useSelector((state: RootState) => state.search.hasMore);
-  const loadSerachLoading = useSelector((state: RootState) => state.search.loadSerachLoading);
-  const loadMoreSerachLoading = useSelector((state: RootState) => state.search.loadMoreSearchLoading);
+  const loadSerachLoading = useSelector(
+    (state: RootState) => state.search.loadSerachLoading
+  );
+  const loadMoreSerachLoading = useSelector(
+    (state: RootState) => state.search.loadMoreSearchLoading
+  );
   const dispatch = useDispatch<AppDispatch>();
   const [ref, inview] = useInView();
 

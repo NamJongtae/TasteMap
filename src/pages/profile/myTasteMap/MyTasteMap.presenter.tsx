@@ -16,16 +16,17 @@ import {
   Wrapper
 } from "./myTasteMap.styles";
 import { SearchModalBtn } from "../../postUpload/postUpload.styles";
-import Header from "../../../compoent/commons/layouts/header/Header";
-import Kakaomap from "../../../compoent/units/kakaomap/Kakaomap.container";
+import Header from "../../../component/commons/layouts/header/Header";
+import Kakaomap from "../../../component/units/kakaomap/Kakaomap.container";
 import MyTasteMapList from "./MyTasteMapList";
 import SearchModal from "../../postUpload/SearchModal.container";
-import Loading from "../../../compoent/commons/loading/Loading";
+import Loading from "../../../component/commons/loading/Loading";
 import { IProfileData, ISearchMapData } from "../../../api/apiType";
+import { EContentType } from '../../../slice/tasteMapSlice';
 interface IProps {
   myProfile: IProfileData;
   onClickMapType: () => void;
-  contentType: "map" | "list";
+  contentType: EContentType
   onClickListType: () => void;
   openSearchModal: () => void;
   clickMarkerData: ISearchMapData;
@@ -63,12 +64,12 @@ export default function MyTasteMapUI({
               <ListBtn onClick={onClickListType} contentType={contentType}>
                 목록
               </ListBtn>
-              {contentType === "map" && (
+              {contentType === EContentType.MAP && (
                 <SearchModalBtn onClick={openSearchModal}>
                   맛집 추가
                 </SearchModalBtn>
               )}
-              {contentType === "map" && (
+              {contentType === EContentType.MAP && (
                 <ShareBtn onClick={onClickShare} aria-label='공유' />
               )}
             </ContetnTypeBtnWrapper>
@@ -114,7 +115,7 @@ export default function MyTasteMapUI({
                 </BtnWrapper>
               </ItemSingleList>
             )}
-            {contentType === "list" && (
+            {contentType === EContentType.LIST && (
               <MyTasteMapList
                 items={myProfile.storedMapList}
                 isShareTasteMap={false}

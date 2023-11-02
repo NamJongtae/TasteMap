@@ -79,7 +79,7 @@ export default function CommentItem({
     // 댓글 신고
     if (!isReply && "commentId" in data) {
       // 중복 신고 방지
-      if (myInfo.uid && data.reportUidList.includes(myInfo.uid)) {
+      if (data.reportUidList.includes(myInfo.uid)) {
         sweetToast("이미 신고한 댓글 입니다.", "warning");
         return;
       }
@@ -88,7 +88,7 @@ export default function CommentItem({
           thunkFetchReportComment({
             commentId: data.commentId,
             reportCount: data.reportCount,
-            uid: myInfo?.uid,
+            uid: myInfo.uid,
             postId
           })
         );
@@ -96,7 +96,7 @@ export default function CommentItem({
     } else if (isReply && "replyId" in data) {
       // 답글 신고
       // 중복 신고 방지
-      if (myInfo.uid && data.reportUidList.includes(myInfo.uid)) {
+      if (data.reportUidList.includes(myInfo.uid)) {
         sweetToast("이미 신고한 답글 입니다.", "warning");
         return;
       }
@@ -107,7 +107,7 @@ export default function CommentItem({
             replyId: data.replyId,
             reportCount: data.reportCount,
             postId: data.postId,
-            uid: myInfo?.uid
+            uid: myInfo.uid
           })
         );
       });

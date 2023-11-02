@@ -90,8 +90,15 @@ export const IntroduceTextLine = styled.div`
 `;
 export const MoreTextBtn = styled.button`
   display: block;
-  background: url("/assets/icon-moreTextBtn.svg") no-repeat right 2px top 7px /
-    9px;
+  body.webp & {
+    background: url("/assets/webp/icon-moreTextBtn.webp") no-repeat right 2px top 7px /
+      9px;
+  }
+  body.no-Webp & {
+    background: url("/assets/icon-moreTextBtn.svg") no-repeat right 2px top 7px /
+      9px;
+  }
+
   padding-right: 16px;
   margin-bottom: 10px;
   font-weight: 500;

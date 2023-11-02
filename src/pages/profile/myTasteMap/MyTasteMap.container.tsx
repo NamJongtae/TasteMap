@@ -42,11 +42,11 @@ export default function MyTasteMap() {
   };
 
   const onClickMapType = () => {
-    dispatch(tasteMapSlice.actions.setContentType("map"));
+    dispatch(tasteMapSlice.actions.setContentType("MAP"));
   };
 
   const onClickListType = () => {
-    dispatch(tasteMapSlice.actions.setContentType("list"));
+    dispatch(tasteMapSlice.actions.setContentType("LIST"));
   };
 
   const onClickShare = useCallback(async () => {
@@ -66,7 +66,7 @@ export default function MyTasteMap() {
       dispatch(thunkFetchRemovePostMap(clickMarkerData));
       const newData = {
         ...myProfile,
-        storedMapList: myProfile.storedMapList?.filter(
+        storedMapList: myProfile.storedMapList.filter(
           (item) =>
             item.mapx !== clickMarkerData.mapx &&
             item.mapy !== clickMarkerData.mapy

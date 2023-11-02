@@ -1,14 +1,14 @@
 import { Wrapper } from "./profile.styles";
 import ProfileInfo from "./ProfileInfo.container";
 import ProfilePost from "./ProfilePost";
-import Header from "../../compoent/commons/layouts/header/Header";
+import Header from "../../component/commons/layouts/header/Header";
 import FollowModal from "./followModal/FollowModal";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/store";
 import ProfileEditModal from "./profileEditModal/ProfileEditModal.container";
-import InvalidPage from "../../compoent/commons/invalidPage/InvalidPage";
-import TopButton from "../../compoent/commons/topButton/TopButton";
-import Loading from "../../compoent/commons/loading/Loading";
+import InvalidPage from "../../component/commons/invalidPage/InvalidPage";
+import TopButton from "../../component/commons/topButton/TopButton";
+import Loading from "../../component/commons/loading/Loading";
 
 export default function Profile() {
   const isOpenFollowModal = useSelector(

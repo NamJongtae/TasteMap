@@ -2,7 +2,7 @@ import React from "react";
 import { MapInfoList, NoDataWrapper } from "./myTasteMap.styles";
 import { ISearchMapData } from "../../../api/apiType";
 import MyTasteMapItem from "./MyTasteMapItem";
-import NoData from "../../../compoent/commons/noData/NoData";
+import NoData from "../../../component/commons/noData/NoData";
 
 interface IProps {
   items: ISearchMapData[];

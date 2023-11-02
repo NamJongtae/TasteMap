@@ -15,14 +15,14 @@ import {
   TextArea,
   Wrapper
 } from "./postUpload.styles";
-import Header from "../../compoent/commons/layouts/header/Header";
-import Kakaomap from "../../compoent/units/kakaomap/Kakaomap.container";
+import Header from "../../component/commons/layouts/header/Header";
+import Kakaomap from "../../component/units/kakaomap/Kakaomap.container";
 import SearchModal from "./SearchModal.container";
-import Loading from "../../compoent/commons/loading/Loading";
+import Loading from "../../component/commons/loading/Loading";
 import { IPostData, ISearchMapData, IUserData } from "../../api/apiType";
-import UserInfo from "../../compoent/units/post/UserInfo.container";
-import InvalidPage from "../../compoent/commons/invalidPage/InvalidPage";
-import ScrollLoading from '../../compoent/commons/loading/ScrollLoading';
+import UserInfo from "../../component/units/post/UserInfo.container";
+import InvalidPage from "../../component/commons/invalidPage/InvalidPage";
+import ScrollLoading from '../../component/commons/loading/ScrollLoading';
 
 interface IProps {
   post: IPostData;
@@ -94,7 +94,7 @@ export default function PostUploadUI({
                   (post.content === contentValue &&
                     post.imgURL === preview &&
                     post.rating === ratingValue &&
-                    post.mapData?.address === selectedMapData[0].address)
+                    post.mapData.address === selectedMapData[0].address)
                 : !contentValue || !selectedMapData.length || !ratingValue
             }
             onSubmit={onSubmitUpload}

@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ICommentData, IPostData, IProfileData } from "../../../api/apiType";
+import { ICommentData, IPostData, IUserData } from "../../../api/apiType";
 
 import {
   postSlice,
@@ -16,7 +16,7 @@ import { AppDispatch, RootState } from "../../../store/store";
 import UserInfoUI from "./UserInfo.presenter";
 
 interface IProps {
-  userData: IProfileData;
+  userData:IUserData;
   data?: IPostData | ICommentData;
   activeMoreBtn: boolean;
   isProfilePage: boolean;
@@ -41,7 +41,7 @@ export default function UserInfo({
    * 게시물 수정 페이지 이동
    */
   const onClickEditBtn = () => {
-    if (data && "id" in data) navigate(`/post/${data?.id}/edit`);
+    if (data && "id" in data) navigate(`/post/${data.id}/edit`);
   };
   /**
    * 게시물 삭제 함수
@@ -81,7 +81,7 @@ export default function UserInfo({
       }
       sweetConfirm("정말 신고 하시겠습니까?", "신고", "취소", () => {
         // 게시물 신고 api 비동기 처리
-        dispatch(thunkFetchReportPost({ ...postData, uid: userData?.uid }));
+        dispatch(thunkFetchReportPost({ ...postData, uid: userData.uid }));
       });
     },
     [userData, isProfilePage]

@@ -369,7 +369,7 @@ export const thunkFetchEditProfile = createAsyncThunk<
   async (editProfileData: IEditProfileData, thunkAPI) => {
     try {
       const res = await fetchEditProfile(editProfileData);
-      return res;
+      return res as IUserData;
     } catch (error: any) {
       thunkAPI.rejectWithValue(error);
     }
@@ -574,7 +574,7 @@ export const userSlice = createSlice({
     builder.addCase(thunkFetchLogout.fulfilled, (state) => {
       state.logOutLoading = false;
       state.logOutDone = true;
-      state.myInfo = {};
+      state.myInfo = {} as IUserData;
       localStorage.removeItem("user");
     });
     builder.addCase(thunkFetchLogout.rejected, (state, action) => {

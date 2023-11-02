@@ -1,11 +1,15 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { ISearchMapData } from '../api/apiType';
 
+export const enum EContentType {
+  MAP="MAP",
+  LIST="LIST"
+}
 export const tasteMapSlice = createSlice({
   name: "tasteMapSlice",
   initialState:{
     clickMarkerData: {} as ISearchMapData,
-    contentType: "map" as "map"|"list",
+    contentType: EContentType.MAP as EContentType,
   },
   reducers:{
     setClickMarkerData: (state, action) => {

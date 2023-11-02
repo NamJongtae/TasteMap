@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import {
   IKnownError,
   IPostData,
+  IEditPostUploadData,
   IPostUploadData,
   ISearchMapData
 } from "../api/apiType";
@@ -83,7 +84,7 @@ export const thunkFetchSearchMap = createAsyncThunk(
 
 // 게시물 업로드
 export const thunkFetchUploadPost = createAsyncThunk<
-  IPostUploadData,
+  IPostData,
   IPostUploadData,
   { rejectValue: IKnownError }
 >("postSlice/thunkFetchUploadPost", async (postData, thunkAPI) => {
@@ -100,7 +101,7 @@ export const thunkFetchUploadPost = createAsyncThunk<
     // 데이터 업로드시 파일 프로퍼티는 업로드할 필요가 없음
     delete postData.img;
     await fetchUploadPost(postData);
-    return postData;
+    return postData as IPostData;
   } catch (error: any) {
     return thunkAPI.rejectWithValue(error);
   }
@@ -207,16 +208,10 @@ export const thunkFetchPagingFeedData = createAsyncThunk<
  * 게시물 수정
  */
 export const thunkFecthEditPost = createAsyncThunk<
-  Pick<
-    IPostUploadData,
-    "id" | "content" | "rating" | "mapData" | "imgURL" | "imgName" | "img"
-  >,
+  IPostData,
   {
     prevPostData: IPostData;
-    editPostData: Pick<
-      IPostUploadData,
-      "id" | "content" | "rating" | "mapData" | "imgURL" | "imgName" | "img"
-    >;
+    editPostData: IEditPostUploadData;
   },
   { rejectValue: IKnownError }
 >(
@@ -235,7 +230,7 @@ export const thunkFecthEditPost = createAsyncThunk<
       // 데이터 업로드시 파일 프로퍼티는 업로드할 필요가 없음
       delete editPostData.img;
       await fetchEditPost(prevPostData, editPostData);
-      return editPostData;
+      return editPostData as IPostData;
     } catch (error: any) {
       if (error.message === "게시물이 존재하지 않습니다.") {
         const state = thunkAPI.getState() as RootState;
@@ -819,10 +814,8 @@ export const postSlice = createSlice({
       document.body.style.overflow = "auto";
       state.uploadPostLoading = false;
       state.uploadPostDone = true;
-      let postListData = state.posts.find(
-        (item) => item.id === action.payload.id
-      );
-      if (postListData) postListData = action.payload;
+      let posts = state.posts.find((item) => item.id === action.payload.id);
+      if (posts) posts = action.payload;
     });
     builder.addCase(thunkFecthEditPost.rejected, (state, action) => {
       if (!action.payload) return;

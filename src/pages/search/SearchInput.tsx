@@ -2,11 +2,11 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { SearchInputWrapper, SearchLabel, Input } from "./search.styles";
 import { debounce } from "lodash";
 import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../../../store/store";
+import { AppDispatch, RootState } from "../../store/store";
 import {
   searchSlice,
   thunkFetchSearchFirstPageData
-} from "../../../slice/searchSlice";
+} from "../../slice/searchSlice";
 
 export default function SearchInput() {
   const dispatch = useDispatch<AppDispatch>();

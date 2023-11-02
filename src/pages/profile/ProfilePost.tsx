@@ -1,6 +1,6 @@
 import React from "react";
 import { ProfilePostSection } from "./profilePost.styles";
-import PostList from "../../compoent/units/post/PostList.container";
+import PostList from "../../component/units/post/PostList.container";
 
 export default function ProfilePost() {
   return (

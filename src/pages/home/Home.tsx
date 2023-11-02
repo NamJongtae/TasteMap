@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import PostList from "../../compoent/units/post/PostList.container";
+import PostList from "../../component/units/post/PostList.container";
 import {
   ButtonWrapper,
   FeedBtn,
@@ -7,18 +7,23 @@ import {
   PostTypeTitle,
   Wrapper
 } from "./home.styles";
-import Header from "../../compoent/commons/layouts/header/Header";
-import TopButton from '../../compoent/commons/topButton/TopButton';
+import Header from "../../component/commons/layouts/header/Header";
+import TopButton from '../../component/commons/topButton/TopButton';
+
+export const enum EPostType {
+  HOME= 'HOME',
+  FEED= 'FEED'
+}
 
 export default function Home() {
-  const [postType, setPostType] = useState<"home" | "feed">("home");
+  const [postType, setPostType] = useState<EPostType>(EPostType.HOME);
 
   const onClickHomeBtn = () => {
-    setPostType("home");
+    setPostType(EPostType.HOME);
   };
 
   const onClickFeedBtn = () => {
-    setPostType("feed");
+    setPostType(EPostType.FEED);
   };
 
   return (
@@ -39,7 +44,7 @@ export default function Home() {
             title='Feed'
           />
           <PostTypeTitle>
-            {postType === "home" ? "전체 게시물" : "피드 게시물"}
+            {postType === EPostType.HOME ? "전체 게시물" : "피드 게시물"}
           </PostTypeTitle>
         </ButtonWrapper>
         <PostList isProfilePage={false} postType={postType} />

@@ -16,9 +16,9 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store/store";
 import { useValidationInput } from "../../hook/useValidationInput";
-import Loading from "../../compoent/commons/loading/Loading";
-import ErrorMsg from "../../compoent/commons/errorMsg/ErrorMsg";
-import UserInput from "../../compoent/commons/userInput/UserInput";
+import Loading from "../../component/commons/loading/Loading";
+import ErrorMsg from "../../component/commons/errorMsg/ErrorMsg";
+import UserInput from "../../component/commons/userInput/UserInput";
 import { thunkFetchLogin, thunkFetchSocialLogin } from "../../slice/userSlice";
 import { resolveWebp } from "../../library/webpSupport";
 

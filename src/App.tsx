@@ -13,16 +13,18 @@ import PostEdit from "./pages/postEdit/PostEdit";
 import Profile from "./pages/profile/Profile";
 import MyTasteMap from "./pages/profile/myTasteMap/MyTasteMap.container";
 import NotFound from "./pages/404/NotFound";
-import Search from "./compoent/units/search/Search";
+import Search from "./pages/search/Search";
 import ShareTasteMap from "./pages/shareTasteMap/ShareTasteMap";
 import { Helmet } from "react-helmet-async";
-import Loading from './compoent/commons/loading/Loading';
+import Loading from "./component/commons/loading/Loading";
 
 function App() {
   const { pathname } = useLocation();
   const myInfo = useSelector((state: RootState) => state.user.myInfo);
   const dispatch = useDispatch<AppDispatch>();
-  const loadMyInfoLoading = useSelector((state: RootState) => state.user.loadMyInfoLoading);
+  const loadMyInfoLoading = useSelector(
+    (state: RootState) => state.user.loadMyInfoLoading
+  );
   // webp 지원유무가 확인 되었을때 컴포넌트를 렌더링 시키위해 사용
   const [webpChecked, setWebpChecked] = useState(false);
 
@@ -51,7 +53,7 @@ function App() {
   useEffect(() => {
     // 맛집 지도 공유 페이지에서는 로그인 없이 들어올 수 있기 때문에 myInfo 저장을 하면 안되기 때문에
     // pathname에 shaer가 포함되는 경우 return 처리
-    if(pathname.includes("share")) return;
+    if (pathname.includes("share")) return;
     dispatch(thunkFetchLoadMyInfo());
   }, []);
 
@@ -73,7 +75,7 @@ function App() {
         />
       </Helmet>
       {loadMyInfoLoading && <Loading />}
-      {webpChecked && !loadMyInfoLoading &&(
+      {webpChecked && !loadMyInfoLoading && (
         <Routes>
           <Route
             path='/login'
@@ -110,9 +112,7 @@ function App() {
             <Route path=':uid/' element={<Profile />} />
             <Route
               path='tasteMap'
-              element={
-                !myInfo.uid ? <Navigate to='/login' /> : <MyTasteMap />
-              }
+              element={!myInfo.uid ? <Navigate to='/login' /> : <MyTasteMap />}
             />
           </Route>
           <Route path='/tasteMap/share/:uid' element={<ShareTasteMap />} />

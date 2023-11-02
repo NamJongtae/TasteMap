@@ -45,7 +45,7 @@ export const fetchProfile = async (
     const userRef = doc(db, `user/${uid}`);
     const userDoc = await getDoc(userRef);
     const data = userDoc.data();
-    return data;
+    return data as IProfileData;
   } catch (error) {
     console.error(error);
     throw error;
@@ -76,7 +76,7 @@ export const fetchProfileFirstPageData = async (
       const userQuery = query(userRef, where("uid", "in", userUid));
       const res = await getDocs(userQuery);
       const uidData: IUserData[] = res.docs.map((el) => {
-        return { uid: el.id, ...el.data() };
+        return { uid: el.id, ...(el.data() as Omit<IUserData, "uid">) };
       });
 
       for (let i = 0; i < data.length; i++) {
@@ -121,7 +121,7 @@ export const fetchProfilePagingData = async (
       const userQuery = query(userRef, where("uid", "in", userUid));
       const res = await getDocs(userQuery);
       const uidData: IUserData[] = res.docs.map((el) => {
-        return { uid: el.id, ...el.data() };
+        return { uid: el.id, ...(el.data() as Omit<IUserData, "uid">) };
       });
 
       for (let i = 0; i < data.length; i++) {
@@ -220,7 +220,7 @@ export const fetchFirstpageFollowerData = async (
     const userQuery = query(userRef, where("uid", "in", userUid));
     const res = await getDocs(userQuery);
     const uidData: IUserData[] = res.docs.map((el) => {
-      return { uid: el.id, ...el.data() };
+      return { uid: el.id, ...(el.data() as Omit<IUserData, "uid">) };
     });
 
     for (let i = 0; i < data.length; i++) {
@@ -255,7 +255,7 @@ export const fetchPagingFollowerData = async (
     const userQuery = query(userRef, where("uid", "in", userUid));
     const res = await getDocs(userQuery);
     const uidData: IUserData[] = res.docs.map((el) => {
-      return { uid: el.id, ...el.data() };
+      return { uid: el.id, ...(el.data() as Omit<IUserData, "uid">) };
     });
 
     for (let i = 0; i < data.length; i++) {
@@ -289,7 +289,7 @@ export const fetchFirstpageFollowingData = async (
     const userQuery = query(userRef, where("uid", "in", userUid));
     const res = await getDocs(userQuery);
     const uidData: IUserData[] = res.docs.map((el) => {
-      return { uid: el.id, ...el.data() };
+      return { uid: el.id, ...(el.data() as Omit<IUserData, "uid">) };
     });
 
     for (let i = 0; i < data.length; i++) {
@@ -324,7 +324,7 @@ export const fetchPagingFollowingData = async (
     const userQuery = query(userRef, where("uid", "in", userUid));
     const res = await getDocs(userQuery);
     const uidData: IUserData[] = res.docs.map((el) => {
-      return { uid: el.id, ...el.data() };
+      return { uid: el.id, ...(el.data() as Omit<IUserData, "uid">) };
     });
 
     for (let i = 0; i < data.length; i++) {
@@ -344,17 +344,19 @@ export const fetchPagingFollowingData = async (
  */
 const auth = getAuth();
 export const fetchEditProfile = async (editProfileData: IEditProfileData) => {
-  try{
+  try {
     // 이미지 파일 존재시 이미지 파일을 업로드
-      const fileName =
-      typeof editProfileData.file !== "string"&&editProfileData.file && `${uuid()}_${editProfileData.file.name}`;
-      const ImgRes =
-      typeof editProfileData.file !== "string"&& editProfileData.file &&
-        (await uploadBytes(
-          storageRef(storage, `images/profile/${fileName}`),
-          editProfileData.file
-        ));
-    
+    const fileName =
+      typeof editProfileData.file !== "string" &&
+      editProfileData.file &&
+      `${uuid()}_${editProfileData.file.name}`;
+    const ImgRes =
+      typeof editProfileData.file !== "string" &&
+      editProfileData.file &&
+      (await uploadBytes(
+        storageRef(storage, `images/profile/${fileName}`),
+        editProfileData.file
+      ));
 
     const promise = [];
     const uploadfileUrl =
@@ -369,7 +371,8 @@ export const fetchEditProfile = async (editProfileData: IEditProfileData) => {
 
     // 이미지 파일 존재 시 기존 프로필 이미지 삭제
     if (
-      (typeof editProfileData.file !== "string"|| editProfileData.file === "defaultImg") &&
+      (typeof editProfileData.file !== "string" ||
+        editProfileData.file === "defaultImg") &&
       user &&
       user.photoFileName
     ) {
@@ -395,14 +398,14 @@ export const fetchEditProfile = async (editProfileData: IEditProfileData) => {
     // photoURL 속성이 uploadfileUrl에 존재하면 업데이트 객체에 추가합니다.
     if (uploadfileUrl) {
       updateFields.photoURL = uploadfileUrl;
-    } else if(editProfileData.file==="defaultImg") {
-      updateFields.photoURL =process.env.REACT_APP_DEFAULT_PROFILE_IMG;
+    } else if (editProfileData.file === "defaultImg") {
+      updateFields.photoURL = process.env.REACT_APP_DEFAULT_PROFILE_IMG;
     }
     promise.push(updateProfile(auth.currentUser, updateFields));
     // photoFileName 속성이 fileName에 존재하면 업데이트 객체에 추가합니다.
     if (fileName) {
       updateFields.photoFileName = fileName;
-    } else if(editProfileData.file==="defaultImg") {
+    } else if (editProfileData.file === "defaultImg") {
       updateFields.photoFileName = "icon-defaultProfileImg.png";
     }
 
@@ -414,12 +417,13 @@ export const fetchEditProfile = async (editProfileData: IEditProfileData) => {
     await Promise.all(promise);
     return {
       uid: auth.currentUser.uid,
+      email: auth.currentUser.email,
       displayName: updateFields.displayName || user?.displayName,
-      introduce: updateFields.introduce|| user?.introduce,
-      photoURL: updateFields.photoURL|| user?.photoURL,
-    }
+      introduce: updateFields.introduce || user?.introduce,
+      photoURL: updateFields.photoURL || user?.photoURL
+    };
   } catch (error) {
     console.error(error);
     throw error;
   }
-}
+};

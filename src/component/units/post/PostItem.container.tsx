@@ -26,18 +26,23 @@ interface IProps {
   isProfilePage: boolean;
 }
 
+export const enum EContentType {
+  MAP = "MAP",
+  IMAGE = "IMAGE"
+}
+
 export default function PostItem({ data, myProfile, isProfilePage }: IProps) {
   const dispatch = useDispatch<AppDispatch>();
   // 좋아요 유무
-  const isLike = !!myProfile.likeList?.find((v)=>v===data.id);
+  const isLike = !!myProfile.likeList.find((v) => v === data.id);
   // 좋아요 수
   const likeCount = data.likeCount;
   // 맛집 지도 추가 유무
-  const isStoredMap = !!myProfile.storedMapList?.find(
+  const isStoredMap = !!myProfile.storedMapList.find(
     (v) => v.mapx === data.mapData?.mapx && v.mapy === data.mapData?.mapy
   );
   // 게시물 썸네일 스타일 타입
-  const [postType, setType] = useState<"map" | "image">("map");
+  const [contentType, setContentType] = useState<EContentType>(EContentType.MAP);
   const [isShowMoreTextBtn, setIsShowMoreTextBtn] = useState(false);
   const contentTextRef = useRef<HTMLParagraphElement>(null);
   const [kakaomapRef, inview] = useInView();
@@ -70,11 +75,11 @@ export default function PostItem({ data, myProfile, isProfilePage }: IProps) {
       sweetToast("이미지가 존재하지 않습니다.", "warning");
       return;
     }
-    setType("image");
+    setContentType(EContentType.IMAGE);
   };
 
   const changePostImgType = () => {
-    setType("map");
+    setContentType(EContentType.MAP);
   };
 
   /**
@@ -142,7 +147,7 @@ export default function PostItem({ data, myProfile, isProfilePage }: IProps) {
       formattedDate={formattedDate}
       changePostMapType={changePostMapType}
       changePostImgType={changePostImgType}
-      postType={postType}
+      contentType={contentType}
       onClickMoreText={onClickMoreText}
       contentTextRef={contentTextRef}
       isShowMoreTextBtn={isShowMoreTextBtn}

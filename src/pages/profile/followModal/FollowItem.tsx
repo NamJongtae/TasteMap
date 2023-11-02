@@ -68,7 +68,7 @@ export default function FollowItem({
   };
 
   useLayoutEffect(() => {
-    if (data.uid && myProfile.followingList?.includes(data.uid)) {
+    if (myProfile.followingList.includes(data.uid)) {
       setIsFollow(true);
     } else {
       setIsFollow(false);

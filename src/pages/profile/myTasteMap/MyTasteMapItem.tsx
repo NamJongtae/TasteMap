@@ -35,7 +35,7 @@ export default function MyTasteMapItem({ item, isShareTasteMap }: IProps) {
       dispatch(thunkFetchRemovePostMap(item));
       const newData = {
         ...myProfile,
-        storedMapList: myProfile.storedMapList?.filter(
+        storedMapList: myProfile.storedMapList.filter(
           (data) => data.mapx !== item.mapx && data.mapy !== item.mapy
         )
       };

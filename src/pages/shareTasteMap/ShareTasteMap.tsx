@@ -12,13 +12,13 @@ import {
   MapBtn,
   Wrapper
 } from "../profile/myTasteMap/myTasteMap.styles";
-import Loading from "../../compoent/commons/loading/Loading";
+import Loading from "../../component/commons/loading/Loading";
 import { useParams } from "react-router-dom";
-import Kakaomap from "../../compoent/units/kakaomap/Kakaomap.container";
+import Kakaomap from "../../component/units/kakaomap/Kakaomap.container";
 import MyTasteMapList from "../profile/myTasteMap/MyTasteMapList";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store/store";
-import { tasteMapSlice } from "../../slice/tasteMapSlice";
+import { EContentType, tasteMapSlice } from "../../slice/tasteMapSlice";
 import {
   InvaildMap,
   InvaildMapImg,
@@ -28,7 +28,7 @@ import {
 } from "./ShareTasteMap.styles";
 import { resolveWebp } from "../../library/webpSupport";
 import { Helmet } from "react-helmet-async";
-import Header from "../../compoent/commons/layouts/header/Header";
+import Header from "../../component/commons/layouts/header/Header";
 import { thunkFetchMyProfile } from "../../slice/userSlice";
 
 export default function ShareTasteMap() {
@@ -63,7 +63,7 @@ export default function ShareTasteMap() {
       <Helmet>
         <meta
           property='og:title'
-          content={(myProfile.displayName || "") + "님의 TasteMap"}
+          content={(myProfile.displayName) + "님의 TasteMap"}
         />
         <meta property='og:type' content='webpsite' />
         <meta
@@ -156,7 +156,7 @@ export default function ShareTasteMap() {
                     </Item>
                   </ItemSingleList>
                 )}
-                {contentType === "list" && (
+                {contentType === EContentType.MAP && (
                   <MyTasteMapList
                     items={myProfile.storedMapList}
                     isShareTasteMap={true}

@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store/store";
 import { getCompressionImg } from "../../library/imageCompression";
 import { sweetToast } from "../../library/sweetAlert/sweetAlert";
-import { IPostUploadData } from "../../api/apiType";
+import { IEditPostUploadData, IPostUploadData } from "../../api/apiType";
 import { Timestamp } from "firebase/firestore";
 import {
   postSlice,
@@ -160,11 +160,8 @@ export default function PostUpload({ isEdit }: IProps) {
     // 내용이 비었거나 맛집을 선택하지 않았을 경우 return
     if (!contentValue || !selectedMapData.length) return;
     if (isEdit) {
-      const editPostData: Pick<
-        IPostUploadData,
-        "id" | "content" | "rating" | "mapData" | "imgURL" | "imgName" | "img"
-      > = {
-        id: post.id || "",
+      const editPostData: IEditPostUploadData = {
+        id: post.id,
         content: contentValue,
         rating: ratingValue,
         mapData: selectedMapData[0],
@@ -186,7 +183,7 @@ export default function PostUpload({ isEdit }: IProps) {
         id,
         content: contentValue,
         img: imgFile,
-        uid: myInfo.uid || "",
+        uid: myInfo.uid,
         createdAt: Timestamp.fromDate(new Date()),
         likeCount: 0,
         commentCount: 0,
@@ -216,7 +213,7 @@ export default function PostUpload({ isEdit }: IProps) {
 
   useEffect(() => {
     if (isEdit) {
-      if (post.uid && post.uid !== myInfo.uid) {
+      if (post.uid !== myInfo.uid) {
         sweetToast("다른 사용자의 게시물은 수정할 수 없습니다!", "warning");
         navigate("/");
       }

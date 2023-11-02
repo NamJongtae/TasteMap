@@ -5,8 +5,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../store/store";
 import { useParams } from "react-router-dom";
 import { useInView } from "react-intersection-observer";
-import NoData from "../../../compoent/commons/noData/NoData";
-import ScrollLoading from "../../../compoent/commons/loading/ScrollLoading";
+import NoData from "../../../component/commons/noData/NoData";
+import ScrollLoading from "../../../component/commons/loading/ScrollLoading";
 import { thunkFetchFirstPageFollowerData, thunkFetchFirstPageFollowingData, thunkFetchPagingFollowerData, thunkFetchPagingFollowingData } from '../../../slice/userSlice';
 
 interface IProps {
@@ -44,14 +44,14 @@ export default function FollowList({
     if (isFollower) {
       dispatch(
         thunkFetchFirstPageFollowerData({
-          uid: uid || myInfo.uid || "",
+          uid: uid || myInfo.uid,
           pagePerData
         })
       );
     } else {
       dispatch(
         thunkFetchFirstPageFollowingData({
-          uid: uid || myInfo.uid || "",
+          uid: uid || myInfo.uid,
           pagePerData
         })
       );
@@ -63,7 +63,7 @@ export default function FollowList({
       if (follows.length > 0 && inview && hasMore) {
         dispatch(
           thunkFetchPagingFollowerData({
-            uid: uid || myInfo.uid || "",
+            uid: uid || myInfo.uid,
             page,
             pagePerData
           })
@@ -73,7 +73,7 @@ export default function FollowList({
       if (follows.length > 0 && inview && hasMore) {
         dispatch(
           thunkFetchPagingFollowingData({
-            uid: uid || myInfo.uid || "",
+            uid: uid || myInfo.uid,
             page,
             pagePerData
           })

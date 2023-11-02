@@ -14,9 +14,9 @@ import {
   SignupBtn,
   SignupForm
 } from "./ProfileSetting.styles";
-import UserInput from "../../compoent/commons/userInput/UserInput";
-import ErrorMsg from "../../compoent/commons/errorMsg/ErrorMsg";
-import ScrollLoading from "../../compoent/commons/loading/ScrollLoading";
+import UserInput from "../../component/commons/userInput/UserInput";
+import ErrorMsg from "../../component/commons/errorMsg/ErrorMsg";
+import ScrollLoading from "../../component/commons/loading/ScrollLoading";
 
 interface IProps {
   handleSubmit: (e: React.FormEvent<HTMLFormElement>) => Promise<void>;

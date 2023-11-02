@@ -1,6 +1,7 @@
 import { isMobile } from "react-device-detect";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
+import { EContentType } from '../../../slice/tasteMapSlice';
 
 export const Wrapper = styled.main`
   width: 100%;
@@ -19,8 +20,8 @@ export const KakaomapWrapper = styled.div`
   width: 100%;
   max-width: 500px;
   margin: 0 auto;
-  display: ${(props: { contentType: "map" | "list" }) =>
-    props.contentType === "map" ? "block" : "none"};
+  display: ${(props: { contentType: EContentType }) =>
+    props.contentType === EContentType.MAP ? "block" : "none"};
 `;
 
 export const ContetnTypeBtnWrapper = styled.div`
@@ -57,10 +58,10 @@ export const MapBtn = styled.button`
   font-size: 12px;
   font-weight: 500;
   transition: all 0.3s;
-  color: ${(props: { contentType: "map" | "list" }) =>
-    props.contentType === "map" ? "#fff" : "none"};
-  background-color: ${(props: { contentType: "map" | "list" }) =>
-    props.contentType === "map" ? "#208AFA" : "none"};
+  color: ${(props: { contentType: EContentType }) =>
+    props.contentType === EContentType.MAP ? "#fff" : "none"};
+  background-color: ${(props: { contentType: EContentType }) =>
+    props.contentType === EContentType.MAP ? "#208AFA" : "none"};
 `;
 
 export const ListBtn = styled.button`
@@ -74,10 +75,10 @@ export const ListBtn = styled.button`
   font-size: 12px;
   font-weight: 500;
   transition: all 0.3s;
-  color: ${(props: { contentType: "map" | "list" }) =>
-    props.contentType === "list" ? "#fff" : "none"};
-  background-color: ${(props: { contentType: "map" | "list" }) =>
-    props.contentType === "list" ? "#208AFA" : "none"};
+  color: ${(props: { contentType: EContentType }) =>
+    props.contentType === EContentType.LIST ? "#fff" : "none"};
+  background-color: ${(props: { contentType: EContentType }) =>
+    props.contentType === EContentType.LIST ? "#208AFA" : "none"};
 `;
 
 export const MapInfoList = styled.ul`
@@ -114,8 +115,8 @@ export const ItemSingleList = styled(ItemList)`
   border: 1px solid #bdbdbd;
   padding: 10px 50px 10px 20px;
   margin: 20px auto 0 auto;
-  display: ${(props: { contentType: "map" | "list" }) =>
-    props.contentType === "map" ? "flex" : "none"};
+  display: ${(props: { contentType: EContentType }) =>
+    props.contentType === EContentType.MAP ? "flex" : "none"};
 `;
 
 export const Item = styled.li`

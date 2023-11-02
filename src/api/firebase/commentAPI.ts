@@ -68,7 +68,7 @@ export const fetchFirstPageCommentData = async (
       const userQuery = query(userRef, where("uid", "in", userUid));
       const res = await getDocs(userQuery);
       const uidData: IUserData[] = res.docs.map((el) => {
-        return { uid: el.id, ...el.data() };
+        return { uid: el.id, ...el.data() as Omit<IUserData, "uid"> };
       });
 
       for (let i = 0; i < data.length; i++) {
@@ -115,7 +115,7 @@ export const fetchPagingCommentData = async (
       const userQuery = query(userRef, where("uid", "in", userUid));
       const res = await getDocs(userQuery);
       const uidData: IUserData[] = res.docs.map((el) => {
-        return { uid: el.id, ...el.data() };
+        return { uid: el.id, ...el.data() as Omit<IUserData, "uid"> };
       });
 
       for (let i = 0; i < data.length; i++) {

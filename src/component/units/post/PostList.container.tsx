@@ -14,9 +14,10 @@ import { useInView } from "react-intersection-observer";
 import { useParams } from "react-router-dom";
 import PostListUI from "./PostList.presenter";
 import { thunkFetchMyProfile } from '../../../slice/userSlice';
+import { EPostType } from '../../../pages/home/Home';
 interface Iprops {
   isProfilePage: boolean;
-  postType?: "home" | "feed";
+  postType?: EPostType;
 }
 export default function PostList({ isProfilePage, postType }: Iprops) {
   const { uid } = useParams();
@@ -75,14 +76,14 @@ export default function PostList({ isProfilePage, postType }: Iprops) {
   // 무한스크롤 처리 inview의 상태가 변경될 때 마다 게시물 목록을 추가로 받아옴
   useEffect(() => {
     if (!isProfilePage) {
-      if (postType === "home") {
+      if (postType === EPostType.HOME) {
         // 첫 페이지 게시물 가져오기
         dispatch(thunkFetchFirstPagePostData(pagePerData));
       } else {
         dispatch(
           thunkFetchFirstPageFeedData({
             pagePerData,
-            followerList: myProfile.followerList || []
+            followerList: myProfile.followerList
           })
         );
       }
@@ -95,7 +96,7 @@ export default function PostList({ isProfilePage, postType }: Iprops) {
     if (isProfilePage) {
         dispatch(
           thunkFetchProfileFirstPageData({
-            uid: uid ? uid : myInfo.uid || "",
+            uid: uid ? uid : myInfo.uid,
             pagePerData: userPostsPagePerData
           })
         );
@@ -107,14 +108,14 @@ export default function PostList({ isProfilePage, postType }: Iprops) {
     if (!isProfilePage) {
       // posts가 존재, 페이지에 따라 게시물 목록 추가로 가져오기
       if (posts.length > 0 && hasMore && inview) {
-        if (postType === "home") {
+        if (postType === EPostType.FEED) {
           dispatch(thunkFetchPagingPostData({ page, pagePerData }));
         } else {
           dispatch(
             thunkFetchPagingFeedData({
               page,
               pagePerData,
-              followerList: myProfile.followerList || []
+              followerList: myProfile.followerList
             })
           );
         }
@@ -125,7 +126,7 @@ export default function PostList({ isProfilePage, postType }: Iprops) {
       if (userPosts.length > 0 && userPostsHasMore && inview) {
         dispatch(
           thunkFetchProfilePagingData({
-            uid: uid ? uid : myInfo.uid || "",
+            uid: uid ? uid : myInfo.uid,
             pagePerData,
             page: userPostsPage
           })

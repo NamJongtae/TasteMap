@@ -1,6 +1,7 @@
 import { Rate } from "antd";
 import { isMobile } from "react-device-detect";
 import styled from "styled-components";
+import { EContentType } from "./PostItem.container";
 
 export const Wrapper = styled.li`
   width: 100%;
@@ -116,8 +117,15 @@ export const ContentTextLine = styled.div`
 export const MoreContentBtn = styled.button`
   display: block;
   margin: 0 auto 16px auto;
-  background: url("/assets/icon-moreTextBtn.svg") no-repeat right 2px top 7px /
-    9px;
+  body.webp & {
+    background: url("/assets/webp/icon-moreTextBtn.webp") no-repeat right 2px
+      top 7px / 9px;
+  }
+  body.no-webp & {
+    background: url("/assets/icon-moreTextBtn.svg") no-repeat right 2px top 7px /
+      9px;
+  }
+
   padding-right: 16px;
   font-weight: 500;
 `;
@@ -151,8 +159,8 @@ export const ActiveMapBtn = styled.button`
   width: 30px;
   height: 30px;
   border-radius: 5px;
-  background: ${(props: { postType: string }) =>
-    props.postType === "map"
+  background: ${(props: { contentType: EContentType }) =>
+    props.contentType === EContentType.MAP
       ? document.body.classList.contains("webp")
         ? 'url("/assets/webp/icon-thumbnailMapBtnActive.webp") no-repeat center / 30px'
         : 'url("/assets/icon-thumbnailMapBtnActive.svg") no-repeat center / 30px'
@@ -168,8 +176,8 @@ export const ActiveImageBtn = styled.button`
   width: 30px;
   height: 30px;
   border-radius: 5px;
-  background: ${(props: { postType: string }) =>
-    props.postType === "image"
+  background: ${(props: { contentType: EContentType }) =>
+    props.contentType === EContentType.IMAGE
       ? document.body.classList.contains("webp")
         ? 'url("/assets/webp/icon-thumbnailImgBtnActive.webp") no-repeat center / 30px'
         : 'url("/assets/icon-thumbnailImgBtnActive.svg") no-repeat center / 30px'
@@ -181,8 +189,8 @@ export const ActiveImageBtn = styled.button`
 export const KakaoMapWrapper = styled.section`
   position: relative;
   width: 100%;
-  height: ${(props: { postType: "map" | "image" }) =>
-    props.postType === "image" && "300px"};
+  height: ${(props: { contentType: EContentType }) =>
+    props.contentType === EContentType.MAP && "300px"};
 `;
 
 export const PostItemButtom = styled.div`

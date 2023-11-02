@@ -1,8 +1,8 @@
 import React from "react";
 import { resolveWebp } from "../../../library/webpSupport";
-import UserInput from "../../../compoent/commons/userInput/UserInput";
-import { Label } from "../../../compoent/commons/userInput/userInput.styles";
-import ErrorMsg from "../../../compoent/commons/errorMsg/ErrorMsg";
+import UserInput from "../../../component/commons/userInput/UserInput";
+import { Label } from "../../../component/commons/userInput/userInput.styles";
+import ErrorMsg from "../../../component/commons/errorMsg/ErrorMsg";
 import {
   CloseBtn,
   Dim,
@@ -26,7 +26,7 @@ import {
 } from "./ProfileEditModal.styles";
 import { IProfileData } from "../../../api/apiType";
 import { optModalTabFocus } from "../../../library/optModalTabFocus";
-import ScrollLoading from "../../../compoent/commons/loading/ScrollLoading";
+import ScrollLoading from "../../../component/commons/loading/ScrollLoading";
 interface IProps {
   onClickClose: () => void;
   modalRef: React.RefObject<HTMLDivElement>;

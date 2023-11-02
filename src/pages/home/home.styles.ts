@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { EPostType } from "./Home";
 
 export const Wrapper = styled.main`
   width: 100%;
@@ -24,17 +25,17 @@ export const PostTypeTitle = styled.h2`
   text-align: center;
   font-weight: 500;
   color: #555;
-`
+`;
 
 export const HomeBtn = styled.button`
   width: 30px;
   height: 30px;
   border-radius: 5px;
-  background: ${(props: { postType: "home" | "feed" }) =>
-    props.postType === "home"
+  background: ${(props: { postType: EPostType }) =>
+    props.postType === EPostType.HOME
       ? document.body.classList.contains("webp")
         ? "url(/assets/webp/icon-homeBtnActive.webp) no-repeat center / 30px"
-        : "url(/assets/icon-homeActiveBtn.svg) no-repeat center / 30px"
+        : "url(/assets/icon-homeBtnActive.svg) no-repeat center / 30px"
       : document.body.classList.contains("webp")
       ? "url(/assets/webp/icon-homeBtn.webp) no-repeat center / 30px"
       : "url(/assets/icon-homeBtn.svg) no-repeat center / 30px"};
@@ -44,11 +45,11 @@ export const FeedBtn = styled.button`
   width: 30px;
   height: 30px;
   border-radius: 5px;
-  background: ${(props: { postType: "home" | "feed" }) =>
-    props.postType === "feed"
+  background: ${(props: { postType: EPostType }) =>
+    props.postType === EPostType.FEED
       ? document.body.classList.contains("webp")
         ? "url(/assets/webp/icon-feedBtnActive.webp) no-repeat center / 30px"
-        : "url(/assets/icon-feedActiveBtn.svg) no-repeat center / 30px"
+        : "url(/assets/icon-feedBtnActive.svg) no-repeat center / 30px"
       : document.body.classList.contains("webp")
       ? "url(/assets/webp/icon-feedBtn.webp) no-repeat center / 30px"
       : "url(/assets/icon-feedBtn.svg) no-repeat center / 30px"};

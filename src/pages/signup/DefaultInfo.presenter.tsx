@@ -14,10 +14,10 @@ import {
   Title,
   Wrapper
 } from "./DefaultInfo.styles";
-import UserInput from "../../compoent/commons/userInput/UserInput";
-import ErrorMsg from "../../compoent/commons/errorMsg/ErrorMsg";
+import UserInput from "../../component/commons/userInput/UserInput";
+import ErrorMsg from "../../component/commons/errorMsg/ErrorMsg";
 import ProfileSetting from "./ProfileSetting.container";
-import Loading from "../../compoent/commons/loading/Loading";
+import Loading from "../../component/commons/loading/Loading";
 
 interface IProps {
   defaultInfo: boolean;

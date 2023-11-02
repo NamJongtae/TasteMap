@@ -52,13 +52,13 @@ export const fetchPostData = async (
       const userQuery = query(userRef, where("uid", "==", data.uid));
       const res = await getDocs(userQuery);
       const uidData: IUserData[] = res.docs.map((el) => {
-        return { uid: el.id, ...el.data() };
+        return { uid: el.id, ...(el.data() as Omit<IUserData, "uid">) };
       });
       const userInfo = uidData.find((userData) => userData.uid === data.uid);
       data.displayName = userInfo?.displayName;
       data.photoURL = userInfo?.photoURL;
     }
-    return data;
+    return data as IPostData;
   } catch (error) {
     console.error(error);
     throw error;
@@ -81,7 +81,7 @@ export const fetchFirstPagePostData = async (pagePerDate: number) => {
       const userQuery = query(userRef, where("uid", "in", userUid));
       const res = await getDocs(userQuery);
       const uidData: IUserData[] = res.docs.map((el) => {
-        return { uid: el.id, ...el.data() };
+        return { uid: el.id, ...(el.data() as Omit<IUserData, "uid">) };
       });
 
       for (let i = 0; i < data.length; i++) {
@@ -125,7 +125,7 @@ export const fetchPagingPostData = async (
       const userQuery = query(userRef, where("uid", "in", userUid));
       const res = await getDocs(userQuery);
       const uidData: IUserData[] = res.docs.map((el) => {
-        return { uid: el.id, ...el.data() };
+        return { uid: el.id, ...(el.data() as Omit<IUserData, "uid">) };
       });
 
       for (let i = 0; i < data.length; i++) {
@@ -175,7 +175,7 @@ export const fetchFirstPageFeedData = async (
       const userQuery = query(userRef, where("uid", "in", userUid));
       const res = await getDocs(userQuery);
       const uidData: IUserData[] = res.docs.map((el) => {
-        return { uid: el.id, ...el.data() };
+        return { uid: el.id, ...(el.data() as Omit<IUserData, "uid">) };
       });
 
       for (let i = 0; i < data.length; i++) {
@@ -221,7 +221,7 @@ export const fetchPagingFeedData = async (
       const userQuery = query(userRef, where("uid", "in", userUid));
       const res = await getDocs(userQuery);
       const uidData: IUserData[] = res.docs.map((el) => {
-        return { uid: el.id, ...el.data() };
+        return { uid: el.id, ...(el.data() as Omit<IUserData, "uid">) };
       });
 
       for (let i = 0; i < data.length; i++) {

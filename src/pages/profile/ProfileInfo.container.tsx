@@ -89,7 +89,7 @@ export default function ProfileInfo() {
   }, [uid]);
 
   useLayoutEffect(() => {
-    if (userProfile.uid && myProfile.followingList?.includes(userProfile.uid)) {
+    if (userProfile.uid && myProfile.followingList.includes(userProfile.uid)) {
       setIsFollow(true);
     } else {
       setIsFollow(false);
@@ -110,7 +110,7 @@ export default function ProfileInfo() {
     if (uid) {
       dispatch(thunkFetchUserProfile(uid || ""));
     }
-    dispatch(thunkFetchMyProfile(myInfo.uid || ""));
+    dispatch(thunkFetchMyProfile(myInfo.uid));
   }, [uid]);
 
   return (

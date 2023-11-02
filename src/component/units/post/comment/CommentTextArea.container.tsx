@@ -72,7 +72,7 @@ export default function CommentTextArea({
           const commnetData = {
             commentId,
             postId,
-            uid: myInfo.uid || "",
+            uid: myInfo.uid,
             content: commentValue,
             createdAt: Timestamp.fromDate(new Date()),
             isBlock: false,
@@ -124,7 +124,7 @@ export default function CommentTextArea({
             postId,
             replyId,
             parentCommentId: commentId,
-            uid: myInfo.uid || "",
+            uid: myInfo.uid,
             content: commentValue,
             createdAt: Timestamp.fromDate(new Date()),
             isBlock: false,

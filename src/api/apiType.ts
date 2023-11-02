@@ -1,30 +1,25 @@
 import { Timestamp } from "firebase/firestore";
 
 export interface IUserData {
-  uid?: string;
-  displayName?: string;
-  email?: string;
-  photoURL?: string;
+  uid: string;
+  displayName: string;
+  email: string;
+  photoURL: string;
 }
 
 export interface IProfileData {
-  uid?: string;
-  displayName?: string;
-  email?: string;
-  photoURL?: string;
-  phone?: string;
-  introduce?: string;
-  createdAt?: Timestamp;
-  likeList?: string[];
-  postList?: string[];
-  storedMapList?: ISearchMapData[];
-  followerList?: string[];
-  followingList?: string[];
-}
-
-export interface IStoredImgData {
-  url?: string[];
-  filename?: string[];
+  uid: string;
+  displayName: string;
+  email: string;
+  photoURL: string;
+  phone: string;
+  introduce: string;
+  createdAt: Timestamp;
+  likeList: string[];
+  postList: string[];
+  storedMapList: ISearchMapData[];
+  followerList: string[];
+  followingList: string[];
 }
 
 export interface IPostUploadData {
@@ -44,32 +39,42 @@ export interface IPostUploadData {
   rating: number;
 }
 
+export interface IEditPostUploadData {
+  id: string;
+  content: string;
+  rating: number;
+  mapData: ISearchMapData;
+  img?: File[];
+  imgName: string[];
+  imgURL: string[];
+}
+
 export interface IPostData {
-  uid?: string;
-  displayName?: string;
-  photoURL?: string;
-  id?: string;
-  content?: string;
-  imgURL?: string[];
-  imgName?: string[];
-  createdAt?: Timestamp;
-  likeCount?: number;
-  commentCount?: number;
-  reportCount?: number;
-  reportUidList?: string[];
-  mapData?: ISearchMapData;
-  isBlock?: boolean;
-  rating?: number;
+  uid: string;
+  displayName: string;
+  photoURL: string;
+  id: string;
+  content: string;
+  imgURL: string[];
+  imgName: string[];
+  createdAt: Timestamp;
+  likeCount: number;
+  commentCount: number;
+  reportCount: number;
+  reportUidList: string[];
+  mapData: ISearchMapData;
+  isBlock: boolean;
+  rating: number;
 }
 
 export interface ISearchMapData {
-  address?: string;
-  category?: string;
-  link?: string;
-  mapx?: string;
-  mapy?: string;
-  roadAddress?: string;
-  title?: string;
+  address: string;
+  category: string;
+  link: string;
+  mapx: string;
+  mapy: string;
+  roadAddress: string;
+  title: string;
 }
 
 export interface ICommentData {
@@ -102,15 +107,15 @@ export interface IReplyData {
 }
 
 export interface IFollowData {
-  uid?:string;
-  displayName?: string;
-  photoURL?: string;
+  uid: string;
+  displayName: string;
+  photoURL: string;
 }
 
 export interface IEditProfileData {
-  displayName?: string;
-  file?: File | string;
-  introduce?: string;
+  displayName: string;
+  file: File | string;
+  introduce: string;
 }
 
 export interface IKnownError {
