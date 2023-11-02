@@ -745,15 +745,8 @@ export const userSlice = createSlice({
       state.followDone = true;
       if (action.payload) {
         state.myProfile.followingList?.push(action.payload.userUid);
-        // 팔로우/팔로잉 모달창이 열렸을 경우에는 현재 유저 데이터와 자신의 uid 같을 경우에만 followingList를 변경
-        // 현재 페이지의 유저의 팔로잉 리스트가 모달창에서 팔로우 버튼을 누르면 계속 늘어나는 문제해결을 위해 사용
-        if (state.isOpenFollowerModal || state.isOpenFollowingModal) {
-          if (state.userProfile.uid === action.payload.myUid) {
-            state.userProfile.followerList?.push(action.payload.myUid);
-          }
-        } else {
-          // 팔로우/팔로잉 모달창이 닫힌 경우
-          // followingList 바로 변경
+        // 팔로우/팔로잉 모달창이 닫힌 경우에는 현재 유저 프로필의 팔로워리스트 수정 (유저 프로필상에서 언팔로우/팔로우)
+        if (!state.isOpenFollowerModal && !state.isOpenFollowingModal) {
           state.userProfile.followerList?.push(action.payload.myUid);
         }
       }
@@ -774,7 +767,7 @@ export const userSlice = createSlice({
       state.unfollowDone = false;
       state.unfollowError = "";
     });
-    // 나의 팔로잉 목록에서 제거
+    // 나의 팔로잉 목록에서 유저 제거
     // 유저 팔로우 목록에서 나 제거
     builder.addCase(thunkFetchUnfollow.fulfilled, (state, action) => {
       state.unfollowLoading = false;
@@ -784,20 +777,12 @@ export const userSlice = createSlice({
           (item) => item !== action.payload?.userUid
         );
 
-        // 팔로우/팔로잉 모달창이 열렸을 경우에는 현재 유저 데이터와 자신의 uid 같을 경우에만 followingList를 변경
-        // 현재 페이지의 유저의 팔로잉 리스트가 모달창에서 팔로우 버튼을 누르면 계속 줄어드는 문제해결을 위해 사용
-        if (state.isOpenFollowerModal || state.isOpenFollowingModal) {
-          if (state.userProfile.uid === action.payload.myUid) {
+        // 팔로우/팔로잉 모달창이 닫힌 경우에는 현재 유저 프로필의 팔로워리스트 수정 (유저 프로필상에서 언팔로우/팔로우)
+        if (!state.isOpenFollowerModal && !state.isOpenFollowingModal) {
+          state.userProfile.followerList =
             state.userProfile.followerList?.filter(
               (item) => item !== action.payload?.myUid
             );
-          }
-        } else {
-          // 팔로우/팔로잉 모달창이 닫힌 경우
-          // followingList 바로 변경
-          state.userProfile.followerList?.filter(
-            (item) => item !== action.payload?.myUid
-          );
         }
       }
     });
