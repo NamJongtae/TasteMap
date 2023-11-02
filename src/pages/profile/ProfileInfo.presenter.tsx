@@ -68,8 +68,8 @@ export default function ProfileInfoUI({
               <FollowerBtn onClick={onClickFollower}>
                 <FollowerCount>
                   {uid
-                    ? userProfile.followerList.length
-                    : myProfile.followerList.length}
+                    ? userProfile.followerList?.length
+                    : myProfile.followerList?.length}
                 </FollowerCount>
                 <FollowerTag>Followers</FollowerTag>
               </FollowerBtn>
@@ -86,8 +86,8 @@ export default function ProfileInfoUI({
               <FollowingBtn onClick={onClickFollowing}>
                 <FollowingCount>
                   {uid
-                    ? userProfile.followingList.length
-                    : myProfile.followingList.length}
+                    ? userProfile.followingList?.length
+                    : myProfile.followingList?.length}
                 </FollowingCount>
                 <FollowerTag>Following</FollowerTag>
               </FollowingBtn>
