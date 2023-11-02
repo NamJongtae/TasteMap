@@ -27,8 +27,7 @@ export default function ProfileInfo() {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const introduecRef = useRef<HTMLParagraphElement>(null);
-
-  const [isFollow, setIsFollow] = useState(false);
+  const isFollow = myProfile.followingList?.includes(userProfile.uid)
   const [isShowMoreTextBtn, setIsShowMoreTextBtn] = useState(false);
 
   const onClickFollow = async () => {
@@ -36,7 +35,6 @@ export default function ProfileInfo() {
       dispatch(
         thunkFetchFollow({ myUid: myInfo.uid, userUid: userProfile.uid })
       );
-      setIsFollow(true);
     }
   };
 
@@ -48,7 +46,6 @@ export default function ProfileInfo() {
           userUid: userProfile.uid
         })
       );
-      setIsFollow(false);
     }
   };
 
@@ -87,14 +84,6 @@ export default function ProfileInfo() {
       navigate("/profile", { replace: true });
     }
   }, [uid]);
-
-  useLayoutEffect(() => {
-    if (userProfile.uid && myProfile.followingList.includes(userProfile.uid)) {
-      setIsFollow(true);
-    } else {
-      setIsFollow(false);
-    }
-  }, [userProfile, myProfile]);
 
   useLayoutEffect(() => {
     if (introduecRef.current) {
