@@ -135,10 +135,6 @@ export default function ProfileEditModal() {
     resizeTextAreaHeight();
     // displayName 초기 valid true 설정
     setDisplayNameValid({ errorMsg: "", valid: true });
-    if (myInfo.uid) {
-      // myProfile 가져오기
-      dispatch(thunkFetchMyProfile(myInfo.uid));
-    }
   }, []);
 
   useEffect(() => {
