@@ -108,7 +108,7 @@ export default function PostList({ isProfilePage, postType }: Iprops) {
     if (!isProfilePage) {
       // posts가 존재, 페이지에 따라 게시물 목록 추가로 가져오기
       if (posts.length > 0 && hasMore && inview) {
-        if (postType === EPostType.FEED) {
+        if (postType === EPostType.HOME) {
           dispatch(thunkFetchPagingPostData({ page, pagePerData }));
         } else {
           dispatch(
