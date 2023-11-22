@@ -190,7 +190,7 @@ export const KakaoMapWrapper = styled.section`
   position: relative;
   width: 100%;
   height: ${(props: { contentType: EContentType }) =>
-    props.contentType === EContentType.MAP && "300px"};
+    props.contentType === EContentType.IMAGE && "300px"};
 `;
 
 export const PostItemButtom = styled.div`
