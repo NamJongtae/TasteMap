@@ -1,67 +1,65 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 import { useNavigate, useParams } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../../store/store";
+import { useSelector } from "react-redux";
+import { RootState } from "../../store/store";
 
 import ProfileInfoUI from "./ProfileInfo.presenter";
-import {
-  thunkFetchFollow,
-  thunkFetchMyProfile,
-  thunkFetchUnfollow,
-  thunkFetchUserProfile,
-  userSlice
-} from "../../slice/userSlice";
+import { useFollowMutation } from "../../hook/query/profile/useFollowMutation";
+import { useUnfollowMutation } from "../../hook/query/profile/useUnfollowMutation";
+import { IMyProfileData, IUserProfileData } from "../../api/apiType";
 
-export default function ProfileInfo() {
+interface IProps {
+  openFollowersModalHandler: () => void;
+  openFollowingModalHanlder: () => void;
+  openProfileUpdateModalHandler: () => void;
+  myProfile: IMyProfileData;
+  userProfile: IUserProfileData;
+}
+export default function ProfileInfo({
+  openFollowersModalHandler,
+  openFollowingModalHanlder,
+  openProfileUpdateModalHandler,
+  myProfile,
+  userProfile
+}: IProps) {
   const { uid } = useParams();
   const myInfo = useSelector((state: RootState) => state.user.myInfo);
-  const myProfile = useSelector((state: RootState) => state.user.myProfile);
-  const loadMyProfileLoading = useSelector(
-    (state: RootState) => state.user.loadMyProfileLoading
-  );
-  const loadUserProfileLoading = useSelector(
-    (state: RootState) => state.user.loadUserProfileLoading
-  );
-  const userProfile = useSelector((state: RootState) => state.user.userProfile);
   const navigate = useNavigate();
-  const dispatch = useDispatch<AppDispatch>();
   const introduecRef = useRef<HTMLParagraphElement>(null);
-  const isFollow = myProfile.followingList?.includes(userProfile.uid)
+
   const [isShowMoreTextBtn, setIsShowMoreTextBtn] = useState(false);
+
+  const { mutate: followMutate } = useFollowMutation();
+  const { mutate: unfollowMutate } = useUnfollowMutation();
+
+  const isFollow = myProfile.followingList?.includes(userProfile.uid);
 
   const onClickFollow = async () => {
     if (myInfo.uid && userProfile.uid) {
-      dispatch(
-        thunkFetchFollow({ myUid: myInfo.uid, userUid: userProfile.uid })
-      );
+      followMutate({ myUid: myInfo.uid, userUid: userProfile.uid });
     }
   };
 
   const onClickUnfollow = async () => {
     if (myInfo.uid && userProfile.uid) {
-      dispatch(
-        thunkFetchUnfollow({
-          myUid: myInfo.uid,
-          userUid: userProfile.uid
-        })
-      );
+      unfollowMutate({
+        myUid: myInfo.uid,
+        userUid: userProfile.uid
+      });
     }
   };
 
   const onClickFollower = () => {
-    document.body.style.overflow = "hidden";
-    dispatch(userSlice.actions.setIsOpenFollowerModal(true));
+    openFollowersModalHandler();
   };
 
   const onClickFollowing = () => {
-    document.body.style.overflow = "hidden";
-    dispatch(userSlice.actions.setIsOpenFollowingModal(true));
+    openFollowingModalHanlder();
   };
 
   const onClickProfileEdit = () => {
-    document.body.style.overflow = "hidden";
-    dispatch(userSlice.actions.setIsOpenProfileEditModal(true));
+    openProfileUpdateModalHandler();
   };
 
   const onClickMoreText = () => {
@@ -86,26 +84,17 @@ export default function ProfileInfo() {
   }, [uid]);
 
   useLayoutEffect(() => {
-    if (introduecRef.current) {
+    if (introduecRef.current && myProfile.uid) {
       if (introduecRef.current?.clientHeight >= 63) {
         setIsShowMoreTextBtn(true);
       } else {
         setIsShowMoreTextBtn(false);
       }
     }
-  }, [userProfile, myProfile]);
-
-  useEffect(() => {
-    if (uid) {
-      dispatch(thunkFetchUserProfile(uid || ""));
-    }
-    dispatch(thunkFetchMyProfile(myInfo.uid));
-  }, [uid]);
+  }, [userProfile, myProfile.uid]);
 
   return (
     <ProfileInfoUI
-      loadMyProfileLoading={loadMyProfileLoading}
-      loadUserProfileLoading={loadUserProfileLoading}
       myInfo={myInfo}
       userProfile={userProfile}
       myProfile={myProfile}

@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useRef } from "react";
+import ReactDOM from "react-dom";
 import {
   CloseBtn,
   Dim,
@@ -8,62 +9,38 @@ import {
   Wrapper
 } from "./followModal.styles";
 import FollowList from "./FollowList";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../../store/store";
-import { userSlice } from "../../../slice/userSlice";
 import { isMobile } from "react-device-detect";
 import { optModalTabFocus } from "../../../library/optModalTabFocus";
 
 interface IProps {
   isFollower: boolean;
+  closeFollowersModalHandler: () => void;
+  closeFollowingModalHandler: () => void;
 }
-export default function FollowModal({ isFollower }: IProps) {
-  const dispatch = useDispatch<AppDispatch>();
-  const modalRef = useRef<HTMLDivElement>(null);
-  const followListRef = useRef<HTMLUListElement>(null);
-  const closeBtnRef = useRef<HTMLButtonElement>(null);
-  const firstItemLinkRef = useRef<HTMLAnchorElement>(null);
-  const lastItemFollowBtnRef = useRef<HTMLButtonElement>(null);
 
-  const closeModal = useCallback(() => {
-    if (modalRef.current) {
-      modalRef.current.style.animation = "FollowModalmoveDown 1s";
-      setTimeout(() => {
-        document.body.style.overflow = "auto";
-        if (isFollower) {
-          dispatch(userSlice.actions.setIsOpenFollowerModal(false));
-        } else {
-          dispatch(userSlice.actions.setIsOpenFollowingModal(false));
-        }
-      }, 700);
-      if (isMobile) {
-        history.back();
-      }
-    }
-  },[isFollower, isMobile]);
+interface IModalProps {
+  modalRef: React.RefObject<HTMLDivElement>;
+  followListRef: React.RefObject<HTMLUListElement>;
+  closeBtnRef: React.RefObject<HTMLButtonElement>;
+  firstItemLinkRef: React.RefObject<HTMLAnchorElement>;
+  lastItemFollowBtnRef: React.RefObject<HTMLButtonElement>;
+  closeModal: () => void;
+  isFollower: boolean;
+  closeFollowersModalHandler: () => void;
+  closeFollowingModalHandler: () => void;
+}
 
-  // 뒤로가기 버튼을 눌러도 현재 페이지가 유지됨
-  useEffect(() => {
-    if (isMobile) {
-      window.history.pushState(null, "", window.location.href);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (isMobile) {
-      const handlePopState = () => {
-        closeModal();
-      };
-
-      window.onpopstate = handlePopState;
-
-      return () => {
-        // 컴포넌트가 언마운트될 때 이벤트 핸들러를 삭제
-        window.onpopstate = null;
-      };
-    }
-  }, []);
-
+const Modal = ({
+  modalRef,
+  followListRef,
+  closeBtnRef,
+  firstItemLinkRef,
+  lastItemFollowBtnRef,
+  closeModal,
+  isFollower,
+  closeFollowersModalHandler,
+  closeFollowingModalHandler
+}: IModalProps) => {
   return (
     <Wrapper>
       <Dim
@@ -96,6 +73,8 @@ export default function FollowModal({ isFollower }: IProps) {
           closeBtnRef={closeBtnRef}
           firstItemLinkRef={firstItemLinkRef}
           lastItemFollowBtnRef={lastItemFollowBtnRef}
+          closeFollowersModalHandler={closeFollowersModalHandler}
+          closeFollowingModalHandler={closeFollowingModalHandler}
         />
         <CloseBtn
           onClick={closeModal}
@@ -110,5 +89,82 @@ export default function FollowModal({ isFollower }: IProps) {
         />
       </FollowModalWrapper>
     </Wrapper>
+  );
+};
+export default function FollowModal({
+  isFollower,
+  closeFollowersModalHandler,
+  closeFollowingModalHandler
+}: IProps) {
+  const modalRef = useRef<HTMLDivElement>(null);
+  const followListRef = useRef<HTMLUListElement>(null);
+  const closeBtnRef = useRef<HTMLButtonElement>(null);
+  const firstItemLinkRef = useRef<HTMLAnchorElement>(null);
+  const lastItemFollowBtnRef = useRef<HTMLButtonElement>(null);
+
+  const closeModal = useCallback(() => {
+    if (modalRef.current) {
+      modalRef.current.style.animation = "FollowModalmoveDown 1s";
+      setTimeout(() => {
+        if (isMobile) {
+          history.back();
+        }
+        if (isFollower) {
+          closeFollowersModalHandler();
+        } else {
+          closeFollowingModalHandler();
+        }
+      }, 700);
+    }
+  }, [isFollower, isMobile]);
+
+  // 뒤로가기 버튼을 눌러도 현재 페이지가 유지됨
+  useEffect(() => {
+    if (isMobile) {
+      window.history.pushState(null, "", window.location.href);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isMobile) {
+      const handlePopState = () => {
+        if (modalRef.current) {
+          modalRef.current.style.animation = "FollowModalmoveDown 1s";
+          setTimeout(() => {
+            if (isFollower) {
+              closeFollowersModalHandler();
+            } else {
+              closeFollowingModalHandler();
+            }
+          }, 700);
+        }
+      };
+
+      window.onpopstate = handlePopState;
+
+      return () => {
+        // 컴포넌트가 언마운트될 때 이벤트 핸들러를 삭제
+        window.onpopstate = null;
+      };
+    }
+  }, []);
+
+  return (
+    <>
+      {ReactDOM.createPortal(
+        <Modal
+          modalRef={modalRef}
+          followListRef={followListRef}
+          closeBtnRef={closeBtnRef}
+          firstItemLinkRef={firstItemLinkRef}
+          lastItemFollowBtnRef={lastItemFollowBtnRef}
+          closeModal={closeModal}
+          isFollower={isFollower}
+          closeFollowersModalHandler={closeFollowersModalHandler}
+          closeFollowingModalHandler={closeFollowingModalHandler}
+        />,
+        document.getElementById("modal-root") as HTMLDivElement
+      )}
+    </>
   );
 }

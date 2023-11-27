@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { useValidationInput } from "../../hook/useValidationInput";
 import DefaultInfoUI from "./DefaultInfo.presenter";
-import { useSelector } from "react-redux";
-import { RootState } from "../../store/store";
 import { useNavigate } from "react-router-dom";
+import { useSignupMutation } from "../../hook/query/auth/useSignupMutation";
 
 export default function DefaultInfo() {
   const navigate = useNavigate();
-  const signupLoading = useSelector((state: RootState) => state.user.signupLoading);
   const [defaultInfo, setDefaultInfo] = useState(false);
   const [profile, setProfile] = useState(false);
   const [percentage, setPercentage] = useState("0%");
   const [next, setNext] = useState(false);
+
+  const { mutate, isPending } = useSignupMutation();
 
   // 이메일 유효성 input
   const [emailValue, emailValid, onChangeEmail] = useValidationInput(
@@ -19,15 +19,12 @@ export default function DefaultInfo() {
     "email",
     true
   );
-  const [passwordValue, passowrdValid, onChangePassowrd] = useValidationInput(
-    "",
-    "password",
-    true
-  );
-
+  const [passwordValue, passowrdValid, , setPasswordValue, setPasswordVaild] =
+    useValidationInput("", "password", true);
+  const passwordReg = /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,16}$/;
   // 비밀번호 유효성 input
   const [
-    passowrdChkValue,
+    passwordChkValue,
     passwordChkValid,
     ,
     setPasswordChkValue,
@@ -54,6 +51,21 @@ export default function DefaultInfo() {
       });
     } else {
       setPasswordChkValid({ errorMsg: "", valid: true });
+    }
+  };
+
+  const onChangePassword = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPasswordValue(e.target.value.trim());
+    if (passwordChkValue && passwordChkValue !== e.target.value.trim()) {
+      return setPasswordVaild({
+        errorMsg: "비밀번호가 일치하지 않습니다.",
+        valid: false
+      });
+    }
+    if (passwordReg.test(e.target.value.trim())) {
+      return setPasswordVaild({ errorMsg: "", valid: true });
+    } else {
+      setPasswordVaild({ errorMsg: "8-16자 특수문자, 숫자, 영문을 포함해야합니다.", valid: false });
     }
   };
 
@@ -101,9 +113,9 @@ export default function DefaultInfo() {
       onChangeEmail={onChangeEmail}
       emailValid={emailValid}
       passwordValue={passwordValue}
-      onChangePassowrd={onChangePassowrd}
+      onChangePassword={onChangePassword}
       passowrdValid={passowrdValid}
-      passowrdChkValue={passowrdChkValue}
+      passwordChkValue={passwordChkValue}
       onChangePasswordChk={onChangePasswordChk}
       passwordChkValid={passwordChkValid}
       phoneValue={phoneValue}
@@ -113,8 +125,9 @@ export default function DefaultInfo() {
       setProfile={setProfile}
       setPercentage={setPercentage}
       setNext={setNext}
-      signupLoading={signupLoading}
+      signupLoading={isPending}
       onClickCancel={onClickCancel}
+      mutate={mutate}
     />
   );
 }

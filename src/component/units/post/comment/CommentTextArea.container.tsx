@@ -2,17 +2,13 @@ import React, { useCallback, useState } from "react";
 import { v4 as uuid } from "uuid";
 
 import { Timestamp } from "firebase/firestore";
-import {
-  thunkFetchAddComment,
-  thunkFetchEditComment
-} from "../../../../slice/commentSlice";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../../../../store/store";
-import {
-  thunkFetchAddReply,
-  thunkFetchEditReply
-} from "../../../../slice/replySlice";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../../store/store";;
 import CommentTextAreaUI from "./CommentTextArea.presenter";
+import { useCommentLeaveMutation } from "../../../../hook/query/post/comment/useCommentLeaveMutation";
+import { useCommentUpdateMutation } from "../../../../hook/query/post/comment/useCommentUpdateMutation";
+import { useReplyLeaveMutation } from "../../../../hook/query/post/reply/useReplyLeaveMutation.";
+import { useReplyUpdateMutation } from "../../../../hook/query/post/reply/useReplyUpdateMutation";
 
 interface IProps {
   textAreaType: "write" | "edit" | "reply";
@@ -23,6 +19,7 @@ interface IProps {
   closeTextArea?: () => void;
   closeBtnRef: React.RefObject<HTMLButtonElement>;
   textareaRef: React.RefObject<HTMLTextAreaElement>;
+  postType: "HOME" | "FEED" | "PROFILE";
 }
 
 export default function CommentTextArea({
@@ -33,13 +30,17 @@ export default function CommentTextArea({
   replyId,
   closeTextArea,
   closeBtnRef,
-  textareaRef
+  textareaRef,
+  postType
 }: IProps) {
   const postId = useSelector((state: RootState) => state.comment.postId);
   const myInfo = useSelector((state: RootState) => state.user.myInfo);
-  const dispatch = useDispatch<AppDispatch>();
   const [commentValue, setCommentValue] = useState(initalvalue);
 
+  const { mutate: commentLeaveMutate } = useCommentLeaveMutation(postType);
+  const { mutate: commentUpdateMutate } = useCommentUpdateMutation(postType);
+  const { mutate: replyLeaveMutate } = useReplyLeaveMutation(postType);
+  const { mutate: replyUpdateMutate } = useReplyUpdateMutation(postType);
   const handleResizeHeight = useCallback(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
@@ -80,9 +81,8 @@ export default function CommentTextArea({
             replyCount: 0,
             reportUidList: []
           };
-          dispatch(thunkFetchAddComment(commnetData)).then(() => {
-            setCommentValue("");
-          });
+          commentLeaveMutate(commnetData);
+          setCommentValue("");
         }
         break;
 
@@ -96,9 +96,8 @@ export default function CommentTextArea({
               content: commentValue,
               postId
             };
-            dispatch(thunkFetchEditComment(commentEditData)).then(() => {
-              if (closeTextArea) closeTextArea();
-            });
+            commentUpdateMutate(commentEditData);
+            if (closeTextArea) closeTextArea();
           } else {
             // 타입 가드
             if (!replyId || !commentId) return;
@@ -108,9 +107,8 @@ export default function CommentTextArea({
               content: commentValue,
               postId: postId
             };
-            dispatch(thunkFetchEditReply(replyEditData)).then(() => {
-              if (closeTextArea) closeTextArea();
-            });
+            replyUpdateMutate(replyEditData);
+            if (closeTextArea) closeTextArea();
           }
         }
         break;
@@ -131,7 +129,7 @@ export default function CommentTextArea({
             reportCount: 0,
             reportUidList: []
           };
-          dispatch(thunkFetchAddReply(replyData));
+          replyLeaveMutate(replyData);
           setCommentValue("");
         }
         break;

@@ -19,7 +19,7 @@ import Header from "../../component/commons/layouts/header/Header";
 import Kakaomap from "../../component/units/kakaomap/Kakaomap.container";
 import SearchModal from "./SearchModal.container";
 import Loading from "../../component/commons/loading/Loading";
-import { IPostData, ISearchMapData, IUserData } from "../../api/apiType";
+import { IPostData, IMapData, IUserData } from "../../api/apiType";
 import UserInfo from "../../component/units/post/UserInfo.container";
 import InvalidPage from "../../component/commons/invalidPage/InvalidPage";
 import ScrollLoading from "../../component/commons/loading/ScrollLoading";
@@ -27,7 +27,7 @@ import ScrollLoading from "../../component/commons/loading/ScrollLoading";
 interface IProps {
   post: IPostData;
   contentValue: string;
-  selectedMapData: ISearchMapData[];
+  selectedMapData: IMapData[];
   ratingValue: number;
   onSubmitUpload: () => Promise<void>;
   wrapperRef: React.RefObject<HTMLDivElement>;
@@ -113,7 +113,7 @@ export default function PostUploadUI({
                 userData={{ ...myInfo }}
                 data={{ ...post }}
                 activeMoreBtn={false}
-                isProfilePage={false}
+                postType={"HOME"}
               />
             </Section>
 
@@ -122,7 +122,7 @@ export default function PostUploadUI({
               <SearchModalBtn onClick={openSearchModal}>
                 맛집 검색
               </SearchModalBtn>
-              <Kakaomap items={[...selectedMapData]} isTasteMapPage={false} />
+              <Kakaomap items={selectedMapData} isTasteMapPage={false} />
             </Section>
 
             <Section>

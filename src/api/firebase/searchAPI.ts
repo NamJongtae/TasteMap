@@ -1,7 +1,6 @@
 import {
   DocumentData,
   QueryDocumentSnapshot,
-  QuerySnapshot,
   collection,
   getDocs,
   limit,
@@ -11,58 +10,40 @@ import {
   where
 } from "firebase/firestore";
 import { db } from "./setting";
-import { IProfileData } from "../apiType";
+import { IUserProfileData } from "../apiType";
 
-export const fetchSearchFirstPageData = async (
+export const fetchUserSearch = async (
   keyword: string,
-  limitPage: number
-): Promise<
-  | {
-      userDocs: QuerySnapshot<DocumentData, DocumentData>;
-      data: IProfileData[];
-    }
-  | undefined
-> => {
+  page: QueryDocumentSnapshot<DocumentData, DocumentData> | null,
+  pagePerData: number
+) => {
   const userRef = collection(db, "user");
-
-  const q = query(
-    userRef,
-    where("displayName", ">=", keyword.toLowerCase()),
-    where("displayName", "<=", keyword.toLowerCase() + "\uf8ff"),
-    orderBy("displayName", "asc"),
-    limit(limitPage)
-  );
-  try {
-    const res = await getDocs(q);
-    const data = res.docs.map((el) => el.data() as IProfileData);
-    return { userDocs: res, data};
-  } catch (error: any) {
-    console.error(error);
-    throw error;
-  }
-};
-
-export const fetchSearchPagingData = async (
-  keyword: string,
-  page: QueryDocumentSnapshot<DocumentData, DocumentData>,
-  limitPage: number
-): Promise<
-  | {
-      userDocs: QuerySnapshot<DocumentData, DocumentData>;
-      data: IProfileData[];
-    }
-  | undefined
-> => {
-  const userRef = collection(db, "user");
-  const q = query(
-    userRef,
-    where("displayName", ">=", keyword.toLowerCase()),
-    where("displayName", "<=", keyword.toLowerCase() + "\uf8ff"),
-    orderBy("displayName", "asc"),
-    startAfter(page),
-    limit(limitPage)
-  );
+  const q = page
+    ? query(
+        userRef,
+        where("displayName", ">=", keyword.toLowerCase()),
+        where("displayName", "<=", keyword.toLowerCase() + "\uf8ff"),
+        orderBy("displayName", "asc"),
+        startAfter(page),
+        limit(pagePerData)
+      )
+    : query(
+        userRef,
+        where("displayName", ">=", keyword.toLowerCase()),
+        where("displayName", "<=", keyword.toLowerCase() + "\uf8ff"),
+        orderBy("displayName", "asc"),
+        limit(pagePerData)
+      );
   const res = await getDocs(q);
-  const data = res.docs.map((el) => el.data());
-  return { userDocs: res, data: data as IProfileData[] };
+  const data = res.docs.map((el) => el.data() as IUserProfileData);
+  const userProfiles = data.map((profile: IUserProfileData) => ({
+    uid: profile.uid,
+    displayName: profile.displayName,
+    photoURL: profile.photoURL,
+    introduce: profile.introduce,
+    storedMapList: profile.storedMapList,
+    followerList: profile.followerList,
+    followingList: profile.followingList
+  }));
+  return { userDocs: res, data: userProfiles as IUserProfileData[]};
 };

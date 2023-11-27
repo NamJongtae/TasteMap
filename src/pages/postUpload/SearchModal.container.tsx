@@ -1,11 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
 
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../../store/store";
-import { postSlice, thunkFetchSearchMap } from "../../slice/postSlice";
-import { ISearchMapData } from "../../api/apiType";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../store/store";
+import { postSlice } from "../../slice/postSlice";
+import { IMapData } from "../../api/apiType";
 import { sweetToast } from "../../library/sweetAlert/sweetAlert";
 import SearchModalUI from "./SearchModal.presenter";
+import { useMapSearchMutation } from "../../hook/query/post/useMapSearchMutation";
+import { isMobile } from "react-device-detect";
 
 interface IProps {
   closeSearchModal: () => void;
@@ -13,9 +15,6 @@ interface IProps {
 
 export default function SearchModal({ closeSearchModal }: IProps) {
   // 맛집 검색 데이터 가져오기
-  const searchMapData = useSelector(
-    (state: RootState) => state.post.searchMapData
-  );
   const dispatch = useDispatch<AppDispatch>();
   const inputRef = useRef<HTMLInputElement>(null);
   const closeBtnRef = useRef<HTMLButtonElement>(null);
@@ -26,6 +25,8 @@ export default function SearchModal({ closeSearchModal }: IProps) {
   const [isSarch, setIsSearch] = useState(false);
   // 검색어를 저장 검색결과가 없을 시 해당 검색어를 표시하기 위해
   const [searchKeyword, setSearchKeyword] = useState("");
+
+  const { mutate: mapSearchMutate, data, isPending } = useMapSearchMutation();
   /**
    * 검색어 change 함수 */
   const onChangeValue = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -40,14 +41,14 @@ export default function SearchModal({ closeSearchModal }: IProps) {
     // 검색어가 없는 경우 return 처리
     if (!inputValue) return sweetToast("검색어를 입력해주세요.", "warning");
     // redux thunk를 이용해 비동기 처리 서버로 부터 검색한 내용을 받아옴
-    await dispatch(thunkFetchSearchMap(inputValue));
+    mapSearchMutate(inputValue);
     setSearchKeyword(inputValue);
     setIsSearch(true);
   };
 
   /**
    * 맛집 검색 데이터 선택 함수 */
-  const onClickSelected = (item: ISearchMapData) => {
+  const onClickSelected = (item: IMapData) => {
     // selectedMapData 상태 업데이트
     dispatch(postSlice.actions.setSelectedMapData(item));
 
@@ -58,6 +59,29 @@ export default function SearchModal({ closeSearchModal }: IProps) {
     // 모달 창 닫기
     closeSearchModal();
   };
+
+  // 모바일 뒤로가기 구현을 위해 빈 히스토리 생성
+  // 뒤로가기 버튼을 눌러도 현재 페이지가 유지됨
+  useEffect(() => {
+    if (isMobile) {
+      window.history.pushState(null, "", window.location.href);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isMobile) {
+      const handlePopState = () => {
+        closeSearchModal();
+      };
+
+      window.onpopstate = handlePopState;
+
+      return () => {
+        // 컴포넌트가 언마운트될 때 이벤트 핸들러를 삭제
+        window.onpopstate = null;
+      };
+    }
+  }, []);
 
   useEffect(() => {
     if (inputRef.current) {
@@ -75,9 +99,10 @@ export default function SearchModal({ closeSearchModal }: IProps) {
       closeBtnRef={closeBtnRef}
       lastItemSelectBtn={lastItemSelectBtn}
       isSarch={isSarch}
-      searchMapData={searchMapData}
+      searchMapData={data || []}
       onClickSelected={onClickSelected}
       searchKeyword={searchKeyword}
+      isPending={isPending}
     />
   );
 }

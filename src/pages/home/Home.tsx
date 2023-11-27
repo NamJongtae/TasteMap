@@ -8,22 +8,19 @@ import {
   Wrapper
 } from "./home.styles";
 import Header from "../../component/commons/layouts/header/Header";
-import TopButton from '../../component/commons/topButton/TopButton';
+import TopButton from "../../component/commons/topButton/TopButton";
 
-export const enum EPostType {
-  HOME= 'HOME',
-  FEED= 'FEED'
-}
+export type TPostType = "HOME" | "FEED";
 
 export default function Home() {
-  const [postType, setPostType] = useState<EPostType>(EPostType.HOME);
+  const [postType, setPostType] = useState<TPostType>("HOME");
 
   const onClickHomeBtn = () => {
-    setPostType(EPostType.HOME);
+    setPostType("HOME");
   };
 
   const onClickFeedBtn = () => {
-    setPostType(EPostType.FEED);
+    setPostType("FEED");
   };
 
   return (
@@ -44,12 +41,12 @@ export default function Home() {
             title='Feed'
           />
           <PostTypeTitle>
-            {postType === EPostType.HOME ? "전체 게시물" : "피드 게시물"}
+            {postType === "HOME" ? "전체 게시물" : "피드 게시물"}
           </PostTypeTitle>
         </ButtonWrapper>
-        <PostList isProfilePage={false} postType={postType} />
+        <PostList postType={postType}/>
       </Wrapper>
-      <TopButton/>
+      <TopButton />
     </>
   );
 }

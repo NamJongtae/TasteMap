@@ -13,32 +13,39 @@ import {
   InputWrapper,
   SocialLoginItem
 } from "./login.styels";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../../store/store";
+
 import { useValidationInput } from "../../hook/useValidationInput";
 import Loading from "../../component/commons/loading/Loading";
 import ErrorMsg from "../../component/commons/errorMsg/ErrorMsg";
 import UserInput from "../../component/commons/userInput/UserInput";
-import { thunkFetchLogin, thunkFetchSocialLogin } from "../../slice/userSlice";
 import { resolveWebp } from "../../library/webpSupport";
+import { useLoginMutation } from "../../hook/query/auth/useLoginMutation";
+import { useSocialLoginMutation } from "../../hook/query/auth/useSocialLoginMutation";
 
 export default function Login() {
-  const dispatch = useDispatch<AppDispatch>();
-  const logInLoading = useSelector((state: RootState) => state.user.logInLoading);
   const [disabled, setDisabled] = useState(true);
   const emailRef = useRef<HTMLInputElement>(null);
   const [emailValue, emailValid, onChangeEmail, setEmailValue] =
     useValidationInput("", "email", false);
   const [passwordValue, passwordValid, onChangePassword, setPasswordValue] =
     useValidationInput("", "password", false);
+
+  const { mutate: loginMutate, isPending: loginIsPending } = useLoginMutation();
+  const { mutate: socialLoginMutate, isPending: socialLoginIsPending } =
+    useSocialLoginMutation();
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (emailValid.valid && passwordValid.valid) {
-      dispatch(thunkFetchLogin({ emailValue, passwordValue }));
+      loginMutate({ email: emailValue, password: passwordValue });
       setEmailValue("");
       setPasswordValue("");
       setDisabled(true);
     }
+  };
+
+  const socialLoginHandler = (type: "google" | "github") => {
+    socialLoginMutate(type);
   };
 
   useEffect(() => {
@@ -52,6 +59,7 @@ export default function Login() {
       setDisabled(true);
     }
   }, [emailValid, passwordValid]);
+
   return (
     <>
       <Title className='a11y-hidden'>로그인 페이지</Title>
@@ -106,7 +114,7 @@ export default function Login() {
               <SocialLoginBtn
                 className='google'
                 type='button'
-                onClick={() => dispatch(thunkFetchSocialLogin("google"))}
+                onClick={() => socialLoginHandler("google")}
               >
                 구글 계정으로 로그인
               </SocialLoginBtn>
@@ -115,7 +123,7 @@ export default function Login() {
               <SocialLoginBtn
                 className='github'
                 type='button'
-                onClick={() => dispatch(thunkFetchSocialLogin("github"))}
+                onClick={() => socialLoginHandler("github")}
               >
                 깃 허브 계정으로 로그인
               </SocialLoginBtn>
@@ -123,7 +131,7 @@ export default function Login() {
           </SocialLoginWrapper>
         </LoginForm>
       </Wrapper>
-      {logInLoading && <Loading />}
+      {(loginIsPending || socialLoginIsPending) && <Loading />}
     </>
   );
 }

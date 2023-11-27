@@ -7,17 +7,24 @@ export interface IUserData {
   photoURL: string;
 }
 
-export interface IProfileData {
+export interface IMyProfileData {
   uid: string;
   displayName: string;
-  email: string;
   photoURL: string;
-  phone: string;
   introduce: string;
-  createdAt: Timestamp;
+  createdAt: string;
   likeList: string[];
-  postList: string[];
-  storedMapList: ISearchMapData[];
+  storedMapList: IMapData[];
+  followerList: string[];
+  followingList: string[];
+}
+
+export interface IUserProfileData {
+  uid: string;
+  displayName: string;
+  photoURL: string;
+  introduce: string;
+  storedMapList: IMapData[];
   followerList: string[];
   followingList: string[];
 }
@@ -32,18 +39,18 @@ export interface IPostUploadData {
   commentCount: number;
   reportCount: number;
   reportUidList: string[];
-  mapData: ISearchMapData;
+  mapData: IMapData;
   isBlock: boolean;
   imgName: string[];
   imgURL: string[];
   rating: number;
 }
 
-export interface IEditPostUploadData {
+export interface IPostUpdateData {
   id: string;
   content: string;
   rating: number;
-  mapData: ISearchMapData;
+  mapData: IMapData;
   img?: File[];
   imgName: string[];
   imgURL: string[];
@@ -62,12 +69,12 @@ export interface IPostData {
   commentCount: number;
   reportCount: number;
   reportUidList: string[];
-  mapData: ISearchMapData;
+  mapData: IMapData;
   isBlock: boolean;
   rating: number;
 }
 
-export interface ISearchMapData {
+export interface IMapData {
   address: string;
   category: string;
   link: string;
@@ -112,12 +119,8 @@ export interface IFollowData {
   photoURL: string;
 }
 
-export interface IEditProfileData {
+export interface IProfileUpdateData {
   displayName: string;
   file: File | string;
   introduce: string;
-}
-
-export interface IKnownError {
-  message: string;
 }

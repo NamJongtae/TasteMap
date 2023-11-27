@@ -12,7 +12,7 @@ import {
 import { resolveWebp } from "../../../library/webpSupport";
 import { ICommentData, IPostData, IUserData } from "../../../api/apiType";
 interface IProps {
-  userData: IUserData;
+  userData: Omit<IUserData, "email">;
   data?: IPostData | ICommentData;
   activeMoreBtn: boolean;
   onClickSelect: (e: React.MouseEvent<HTMLButtonElement>) => void;

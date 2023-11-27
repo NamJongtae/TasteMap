@@ -2,28 +2,28 @@ import React, { useCallback, useEffect, useRef } from "react";
 
 import {
   commentSlice,
-  thunkUpdateReplyCount
 } from "../../../../slice/commentSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../../store/store";
 import { replySlice } from "../../../../slice/replySlice";
 import { isMobile } from "react-device-detect";
-import { thunkUpdatePostCommentCount, thunkUpdateProfilePostCommentCount } from "../../../../slice/postSlice";
 import CommentModalUI from "./CommentModal.presenter";
-import { useLocation } from "react-router-dom";
+import { useFetchCommentCountMutation } from "../../../../hook/query/post/useFetchCommentCountMutation";
 
 interface IProps {
   commentModalRef: React.RefObject<HTMLDivElement>;
   replyModalRef: React.RefObject<HTMLDivElement>;
   isReply: boolean;
+  postType: "HOME" | "FEED" | "PROFILE";
 }
 
 export default function CommentModal({
   commentModalRef,
   replyModalRef,
-  isReply
+  isReply,
+  postType
 }: IProps) {
-  const { pathname } = useLocation();
+
   const isOpenCommnetModal = useSelector(
     (state: RootState) => state.comment.isOpenCommentModal
   );
@@ -36,9 +36,6 @@ export default function CommentModal({
   const myInfo = useSelector((state: RootState) => state.user.myInfo);
   const dispatch = useDispatch<AppDispatch>();
   const postId = useSelector((state: RootState) => state.comment.postId);
-  const commentId = useSelector(
-    (state: RootState) => state.reply.parentCommentId
-  );
   const closeBtnRef = useRef<HTMLButtonElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const firstItemLinkRef = useRef<HTMLAnchorElement>(null);
@@ -47,15 +44,9 @@ export default function CommentModal({
    */
   const closeCommentModal = useCallback(() => {
     if (commentModalRef.current && !isOpenReplyModal) {
-      if (pathname === "/") {
-        dispatch(thunkUpdatePostCommentCount(postId));
-      } else {
-        dispatch(thunkUpdateProfilePostCommentCount(postId));
-      }
 
       commentModalRef.current.style.animation = "moveDown 1s";
       setTimeout(() => {
-        document.body.style.overflow = "auto";
         dispatch(commentSlice.actions.setIsOpenCommentModal(false));
         // 빈 히스토리를 없애기 위해 뒤로가기
         if (isMobile) {
@@ -63,13 +54,12 @@ export default function CommentModal({
         }
       }, 800);
     } else if (replyModalRef.current) {
-      dispatch(thunkUpdateReplyCount(commentId));
       replyModalRef.current.style.animation = "replyInActive 1s";
       setTimeout(() => {
         dispatch(replySlice.actions.setIsOpenReplyModal(false));
       }, 700);
     }
-  },[isOpenReplyModal, isMobile, pathname]);
+  }, [isOpenReplyModal, isMobile]);
 
   /**
    * 모바일 뒤로가기 시 모달창 닫기
@@ -77,10 +67,8 @@ export default function CommentModal({
   const closeModalMobile = useCallback(() => {
     if (commentModalRef.current) {
       if (!isOpenReplyModal) {
-        dispatch(thunkUpdatePostCommentCount(postId));
         commentModalRef.current.style.animation = "moveDown 1s";
         setTimeout(() => {
-          document.body.style.overflow = "auto";
           dispatch(commentSlice.actions.setIsOpenCommentModal(false));
         }, 800);
       } else {
@@ -89,13 +77,12 @@ export default function CommentModal({
           replyModalRef.current.style.animation = "moveDown 1s";
         }
         setTimeout(() => {
-          document.body.style.overflow = "auto";
           dispatch(commentSlice.actions.setIsOpenCommentModal(false));
           dispatch(replySlice.actions.setIsOpenReplyModal(false));
         }, 800);
       }
     }
-  },[isOpenReplyModal]);
+  }, [isOpenReplyModal]);
   // 모바일 뒤로가기 구현을 위해 빈 히스토리 생성
   // 뒤로가기 버튼을 눌러도 현재 페이지가 유지됨
   useEffect(() => {
@@ -119,6 +106,14 @@ export default function CommentModal({
     }
   }, []);
 
+  const { mutate } = useFetchCommentCountMutation(postType);
+
+  useEffect(() => {
+    return () => {
+      mutate(postId);
+    };
+  }, []);
+
   return (
     <CommentModalUI
       isReply={isReply}
@@ -129,6 +124,7 @@ export default function CommentModal({
       closeBtnRef={closeBtnRef}
       textareaRef={textareaRef}
       firstItemLinkRef={firstItemLinkRef}
+      postType={postType}
     />
   );
 }

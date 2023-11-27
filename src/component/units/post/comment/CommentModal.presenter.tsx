@@ -21,6 +21,7 @@ interface IPros {
   closeBtnRef: React.RefObject<HTMLButtonElement>;
   textareaRef: React.RefObject<HTMLTextAreaElement>;
   firstItemLinkRef: React.RefObject<HTMLAnchorElement>;
+  postType: "HOME" | "FEED" | "PROFILE"
 }
 export default function CommentModalUI({
   isReply,
@@ -30,7 +31,8 @@ export default function CommentModalUI({
   closeCommentModal,
   closeBtnRef,
   textareaRef,
-  firstItemLinkRef
+  firstItemLinkRef,
+  postType
 }: IPros) {
   return (
     <CommentModalWrapper ref={modalRef} isReply={isReply}>
@@ -43,6 +45,7 @@ export default function CommentModalUI({
         closeBtnRef={closeBtnRef}
         textareaRef={textareaRef}
         firstItemLinkRef={firstItemLinkRef}
+        postType={postType}
       />
       <CommentTextAreaWrapper>
         <UserImg
@@ -62,6 +65,7 @@ export default function CommentModalUI({
           commentId={parentCommentId}
           textareaRef={textareaRef}
           closeBtnRef={closeBtnRef}
+          postType={postType}
         />
       </CommentTextAreaWrapper>
       <CloseBtn

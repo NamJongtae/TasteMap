@@ -11,11 +11,10 @@ import {
   ref as storageRef
 } from "firebase/storage";
 import { v4 as uuidv4 } from "uuid";
-import { sweetToast } from "../../library/sweetAlert/sweetAlert";
 
 const auth = getAuth();
 // 회원가입 API
-export const fetchSignup = async (
+export const signup = async (
   displayName: string,
   file: File | "",
   email: string,
@@ -25,13 +24,6 @@ export const fetchSignup = async (
 ) => {
   try {
     const res = await createUserWithEmailAndPassword(auth, email, password);
-    if (auth.currentUser) {
-      sweetToast(
-        `${displayName}님 환영합니다.`,
-        "success",
-        1500
-      );
-    }
     const fileName = file && `${uuidv4()}_${file.name}`;
     const uploadImgURLRes =
       file &&
@@ -57,7 +49,6 @@ export const fetchSignup = async (
       displayName: res.user.displayName,
       photoURL: res.user.photoURL || process.env.REACT_APP_DEFAULT_PROFILE_IMG,
       phone,
-      postList: [],
       likeList: [],
       storedMapList: [],
       followerList: [],

@@ -1,42 +1,31 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { ICommentData, IPostData, IUserData } from "../../../api/apiType";
-
-import {
-  postSlice,
-  thunkFetchRemovePost,
-  thunkFetchReportPost
-} from "../../../slice/postSlice";
 import {
   sweetConfirm,
   sweetToast
 } from "../../../library/sweetAlert/sweetAlert";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../../../store/store";
 import UserInfoUI from "./UserInfo.presenter";
+import { usePostDeleteMutation } from "../../../hook/query/post/usePostDeleteMutation";
+import { usePostReportMutation } from "../../../hook/query/post/usePostReportMutation";
 
 interface IProps {
-  userData:IUserData;
+  userData: Omit<IUserData, "email">;
   data?: IPostData | ICommentData;
   activeMoreBtn: boolean;
-  isProfilePage: boolean;
+  postType: "HOME"|"FEED"|"PROFILE";
 }
 
-export default function UserInfo({
-  userData,
-  data,
-  activeMoreBtn,
-  isProfilePage
-}: IProps) {
-  const dispatch = useDispatch<AppDispatch>();
+export default function UserInfo({ userData, data, activeMoreBtn, postType }: IProps) {
   const navigate = useNavigate();
-  const { postId } = useParams();
-  const userPosts = useSelector(
-    (state: RootState) => state.post.userPosts
-  );
   const [isOpenSelect, setIsOpenSelect] = useState(false);
   // 더보기 메뉴 ref 메뉴창이 닫힐 때 애니메이션 효과를 바꾸기 위해 사용
   const opectionListRef = useRef<HTMLUListElement>(null);
+
+  const { mutate } = usePostDeleteMutation(postType);
+
+  const { mutate: postReportMutate } = usePostReportMutation(postType);
+
   /**
    * 게시물 수정 페이지 이동
    */
@@ -51,20 +40,10 @@ export default function UserInfo({
       e.stopPropagation();
       setIsOpenSelect(false);
       sweetConfirm("정말 삭제 하시겠습니까?", "삭제", "취소", () => {
-        if (isProfilePage) {
-          const newData = [...userPosts].filter(
-            (item) => item.id !== data.id
-          );
-          dispatch(postSlice.actions.setUserPosts(newData));
-        }
-        // 게시물 삭제 api 비동기 처리
-        dispatch(thunkFetchRemovePost(data));
-        if (postId) {
-          navigate("/");
-        }
+        mutate({ id: data.id, imgName: data.imgName });
       });
     },
-    [isProfilePage, postId]
+    [postType]
   );
 
   /**
@@ -80,11 +59,13 @@ export default function UserInfo({
         return sweetToast("이미 신고한 게시물입니다.", "warning");
       }
       sweetConfirm("정말 신고 하시겠습니까?", "신고", "취소", () => {
-        // 게시물 신고 api 비동기 처리
-        dispatch(thunkFetchReportPost({ ...postData, uid: userData.uid }));
+        postReportMutate({
+          id: postData.id,
+          reportCount: postData.reportCount
+        });
       });
     },
-    [userData, isProfilePage]
+    [userData, postType]
   );
 
   /**

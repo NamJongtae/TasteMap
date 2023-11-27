@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useState } from "react";
+import React from "react";
 import {
   FollowBtn,
   FollowLi,
@@ -7,15 +7,13 @@ import {
   UserName
 } from "./followModal.styles";
 import { IFollowData } from "../../../api/apiType";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../../../store/store";
-import {
-  userSlice,
-  thunkFetchFollow,
-  thunkFetchUnfollow
-} from "../../../slice/userSlice";
 import { isMobile } from "react-device-detect";
 import { optModalTabFocus } from "../../../library/optModalTabFocus";
+import { useFollowMutation } from "../../../hook/query/profile/useFollowMutation";
+import { useUnfollowMutation } from "../../../hook/query/profile/useUnfollowMutation";
+import { useMyProfileQuery } from "../../../hook/query/profile/useMyProfileQuery";
+import { RootState } from "../../../store/store";
+import { useSelector } from "react-redux";
 interface IProps {
   data: IFollowData;
   idx: number;
@@ -24,7 +22,10 @@ interface IProps {
   closeBtnRef: React.RefObject<HTMLButtonElement>;
   firstItemLinkRef: React.RefObject<HTMLAnchorElement>;
   lastItemFollowBtnRef: React.RefObject<HTMLButtonElement>;
+  closeFollowersModalHandler: () => void;
+  closeFollowingModalHandler: () => void;
 }
+
 export default function FollowItem({
   data,
   idx,
@@ -32,48 +33,37 @@ export default function FollowItem({
   isFollower,
   closeBtnRef,
   firstItemLinkRef,
-  lastItemFollowBtnRef
+  lastItemFollowBtnRef,
+  closeFollowersModalHandler,
+  closeFollowingModalHandler
 }: IProps) {
-  const myProfile = useSelector(
-    (state: RootState) => state.user.myProfile
-  );
-  const dispatch = useDispatch<AppDispatch>();
-  const [isFollow, setIsFollow] = useState(false);
+  const { mutate: followMutate } = useFollowMutation();
+  const { mutate: unfollowMutate } = useUnfollowMutation();
+  const myInfo = useSelector((state: RootState) => state.user.myInfo);
+
+  const { data: myProfile } = useMyProfileQuery(myInfo.uid);
+
+  const isFollow = myProfile?.followingList.includes(data.uid) || false;
 
   const onClickUnFollow = () => {
-    if (myProfile.uid && data.uid) {
-      dispatch(
-        thunkFetchUnfollow({ myUid: myProfile.uid, userUid: data.uid })
-      );
-      setIsFollow(false);
+    if (myProfile?.uid && data.uid) {
+      unfollowMutate({ myUid: myProfile.uid, userUid: data.uid });
     }
   };
 
   const onClickFollow = () => {
-    if (myProfile.uid && data.uid) {
-      dispatch(
-        thunkFetchFollow({ myUid: myProfile.uid, userUid: data.uid })
-      );
-      setIsFollow(true);
+    if (myProfile?.uid && data.uid) {
+      followMutate({ myUid: myProfile.uid, userUid: data.uid });
     }
   };
 
   const onClickProfileLink = () => {
-    document.body.style.overflow = "auto";
     if (isFollower) {
-      dispatch(userSlice.actions.setIsOpenFollowerModal(false));
+      closeFollowersModalHandler();
     } else {
-      dispatch(userSlice.actions.setIsOpenFollowingModal(false));
+      closeFollowingModalHandler();
     }
   };
-
-  useLayoutEffect(() => {
-    if (myProfile.followingList.includes(data.uid)) {
-      setIsFollow(true);
-    } else {
-      setIsFollow(false);
-    }
-  }, []);
 
   return (
     <FollowLi>
@@ -91,7 +81,7 @@ export default function FollowItem({
         <UserImg src={data.photoURL} alt='유저 프로필 이미지' />
         <UserName>{data.displayName}</UserName>
       </UserLink>
-      {myProfile.uid !== data.uid && (
+      {myProfile?.uid !== data.uid && (
         <FollowBtn
           isFollow={isFollow}
           onClick={isFollow ? onClickUnFollow : onClickFollow}

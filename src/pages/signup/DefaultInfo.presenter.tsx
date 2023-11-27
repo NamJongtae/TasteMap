@@ -18,6 +18,7 @@ import UserInput from "../../component/commons/userInput/UserInput";
 import ErrorMsg from "../../component/commons/errorMsg/ErrorMsg";
 import ProfileSetting from "./ProfileSetting.container";
 import Loading from "../../component/commons/loading/Loading";
+import { UseMutateFunction } from '@tanstack/react-query';
 
 interface IProps {
   defaultInfo: boolean;
@@ -31,12 +32,12 @@ interface IProps {
     valid: boolean;
   };
   passwordValue: string;
-  onChangePassowrd: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onChangePassword: (e: React.ChangeEvent<HTMLInputElement>) => void;
   passowrdValid: {
     errorMsg: string;
     valid: boolean;
   };
-  passowrdChkValue: string;
+  passwordChkValue: string;
   onChangePasswordChk: (e: React.ChangeEvent<HTMLInputElement>) => void;
   passwordChkValid: {
     errorMsg: string;
@@ -54,6 +55,24 @@ interface IProps {
   setNext: React.Dispatch<React.SetStateAction<boolean>>;
   signupLoading: boolean;
   onClickCancel: () => void;
+  mutate: UseMutateFunction<
+    {
+      uid: string;
+      email: string | null;
+      displayName: string | null;
+      photoURL: string | undefined;
+    },
+    Error,
+    {
+      displayName: string;
+      file: "" | File;
+      email: string;
+      password: string;
+      phone: string;
+      introduce: string;
+    },
+    unknown
+  >;
 }
 
 export default function DefaultInfoUI({
@@ -65,9 +84,9 @@ export default function DefaultInfoUI({
   onChangeEmail,
   emailValid,
   passwordValue,
-  onChangePassowrd,
+  onChangePassword,
   passowrdValid,
-  passowrdChkValue,
+  passwordChkValue,
   onChangePasswordChk,
   passwordChkValid,
   phoneValue,
@@ -78,7 +97,8 @@ export default function DefaultInfoUI({
   setPercentage,
   setNext,
   signupLoading,
-  onClickCancel
+  onClickCancel,
+  mutate
 }: IProps) {
   return (
     <Wrapper>
@@ -121,7 +141,7 @@ export default function DefaultInfoUI({
                 id={"input-password"}
                 placeholder={"8-16자 특수문자, 숫자, 영문 포함"}
                 value={passwordValue}
-                onChange={onChangePassowrd}
+                onChange={onChangePassword}
                 minLength={8}
                 maxLength={16}
               />
@@ -135,7 +155,7 @@ export default function DefaultInfoUI({
                 label={"비밀번호 확인 (필수)"}
                 id={"input-passwordChk"}
                 placeholder={"비밀번호 확인을 입력해주세요."}
-                value={passowrdChkValue}
+                value={passwordChkValue}
                 onChange={onChangePasswordChk}
                 minLength={8}
                 maxLength={16}
@@ -167,7 +187,9 @@ export default function DefaultInfoUI({
             >
               다음
             </SignupBtn>
-            <CancelBtn type='button' onClick={onClickCancel}>취소</CancelBtn>
+            <CancelBtn type='button' onClick={onClickCancel}>
+              취소
+            </CancelBtn>
           </SignupForm>
         ) : (
           <ProfileSetting
@@ -177,6 +199,7 @@ export default function DefaultInfoUI({
             phoneValue={phoneValue}
             setPercentage={setPercentage}
             setNext={setNext}
+            mutate={mutate}
           />
         )}
       </FormWrapper>

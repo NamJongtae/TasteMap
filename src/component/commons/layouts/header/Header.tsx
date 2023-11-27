@@ -16,10 +16,8 @@ import {
 } from "./header.styles";
 import { resolveWebp } from "../../../../library/webpSupport";
 import { useNavigate, useParams } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../../../store/store";
-import { thunkFetchLogout } from "../../../../slice/userSlice";
 import { sweetConfirm } from "../../../../library/sweetAlert/sweetAlert";
+import { useLogoutMutation } from '../../../../hook/query/auth/useLogoutMutation';
 
 interface IParms {
   type: string;
@@ -30,10 +28,11 @@ interface IParms {
 export default function Header({ type, onSubmit, btnText, disabled }: IParms) {
   const navigate = useNavigate();
   const { uid } = useParams();
-  const dispatch = useDispatch<AppDispatch>();
+  const { mutate } = useLogoutMutation();
+
   const onClickLogout = () => {
     sweetConfirm("정말 로그아웃 하시겠습니까?", "확인", "취소", () => {
-      dispatch(thunkFetchLogout());
+      mutate();
     });
   };
   const setHeader = () => {

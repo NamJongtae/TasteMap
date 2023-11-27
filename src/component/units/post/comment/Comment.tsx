@@ -1,15 +1,64 @@
 import React, { useCallback, useRef } from "react";
+import ReactDOM from "react-dom";
 import { Dim, Wrapper } from "./comment.styles";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../../store/store";
-
 import { commentSlice } from "../../../../slice/commentSlice";
 import CommentModal from "./CommentModal.container";
 import { replySlice } from "../../../../slice/replySlice";
-import { thunkUpdatePostCommentCount } from "../../../../slice/postSlice";
 import { isMobile } from "react-device-detect";
 
-export default function Comment() {
+interface IProps {
+  postType: "HOME" | "FEED" | "PROFILE";
+}
+
+interface IModalProps {
+  closeCommentModal: () => void;
+  isOpenCommentModal: boolean;
+  isOpenReplyModal: boolean;
+  commentModalRef: React.RefObject<HTMLDivElement>;
+  replyModalRef: React.RefObject<HTMLDivElement>;
+  postType: "HOME" | "FEED" | "PROFILE";
+}
+
+const Modal = ({
+  closeCommentModal,
+  isOpenCommentModal,
+  isOpenReplyModal,
+  commentModalRef,
+  replyModalRef,
+  postType
+}: IModalProps) => {
+  return (
+    <Wrapper
+      onKeyDown={(e: React.KeyboardEvent<HTMLDivElement>) => {
+        if (e.keyCode === 27) {
+          closeCommentModal();
+        }
+      }}
+    >
+      <Dim onClick={closeCommentModal}></Dim>
+      {isOpenCommentModal && (
+        <CommentModal
+          commentModalRef={commentModalRef}
+          replyModalRef={replyModalRef}
+          isReply={false}
+          postType={postType}
+        />
+      )}
+      {isOpenReplyModal && (
+        <CommentModal
+          commentModalRef={commentModalRef}
+          replyModalRef={replyModalRef}
+          isReply={true}
+          postType={postType}
+        />
+      )}
+    </Wrapper>
+  );
+};
+
+export default function Comment({ postType }: IProps) {
   const isOpenCommentModal = useSelector(
     (state: RootState) => state.comment.isOpenCommentModal
   );
@@ -17,7 +66,6 @@ export default function Comment() {
     (state: RootState) => state.reply.isOpenReplyModal
   );
   const dispatch = useDispatch<AppDispatch>();
-  const postId = useSelector((state: RootState) => state.comment.postId);
   const commentModalRef = useRef<HTMLDivElement>(null);
   const replyModalRef = useRef<HTMLDivElement>(null);
 
@@ -35,10 +83,8 @@ export default function Comment() {
         }
       }
       if (!isOpenReplyModal) {
-        dispatch(thunkUpdatePostCommentCount(postId));
         commentModalRef.current.style.animation = "moveDown 1s";
         setTimeout(() => {
-          document.body.style.overflow = "auto";
           dispatch(commentSlice.actions.setIsOpenCommentModal(false));
         }, 800);
       } else {
@@ -47,7 +93,6 @@ export default function Comment() {
           replyModalRef.current.style.animation = "moveDown 1s";
         }
         setTimeout(() => {
-          document.body.style.overflow = "auto";
           dispatch(commentSlice.actions.setIsOpenCommentModal(false));
           dispatch(replySlice.actions.setIsOpenReplyModal(false));
         }, 800);
@@ -55,31 +100,21 @@ export default function Comment() {
       // 모바일일 시 빈 히스토리를 없애기 위해
       if (isMobile) history.back();
     }
-  },[isOpenReplyModal, isMobile]);
+  }, [isOpenReplyModal, isMobile]);
 
   return (
-    <Wrapper
-      onKeyDown={(e: React.KeyboardEvent<HTMLDivElement>) => {
-        if (e.keyCode === 27) {
-          closeCommentModal();
-        }
-      }}
-    >
-      <Dim onClick={closeCommentModal}></Dim>
-      {isOpenCommentModal && (
-        <CommentModal
+    <>
+      {ReactDOM.createPortal(
+        <Modal
+          closeCommentModal={closeCommentModal}
+          isOpenCommentModal={isOpenCommentModal}
+          isOpenReplyModal={isOpenReplyModal}
           commentModalRef={commentModalRef}
           replyModalRef={replyModalRef}
-          isReply={false}
-        />
+          postType={postType}
+        />,
+        document.getElementById("modal-root") as HTMLDivElement
       )}
-      {isOpenReplyModal && (
-        <CommentModal
-          commentModalRef={commentModalRef}
-          replyModalRef={replyModalRef}
-          isReply={true}
-        />
-      )}
-    </Wrapper>
+    </>
   );
 }

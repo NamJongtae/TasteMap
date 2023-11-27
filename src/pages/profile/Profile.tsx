@@ -9,44 +9,123 @@ import ProfileEditModal from "./profileEditModal/ProfileEditModal.container";
 import InvalidPage from "../../component/commons/invalidPage/InvalidPage";
 import TopButton from "../../component/commons/topButton/TopButton";
 import Loading from "../../component/commons/loading/Loading";
+import { useUpdateProfileMutation } from "../../hook/query/profile/useUpdateProfileMutation";
+import { useCallback, useEffect, useState } from "react";
+import { useUserProfileQuery } from "../../hook/query/profile/useUserProfileQuery";
+import { useParams } from "react-router-dom";
+import { IMyProfileData, IUserProfileData } from "../../api/apiType";
+import { useMyProfileQuery } from "../../hook/query/profile/useMyProfileQuery";
 
 export default function Profile() {
-  const isOpenFollowModal = useSelector(
-    (state: RootState) => state.user.isOpenFollowerModal
+  const [isOpenProfileUpdateModal, setIsOpenProfileUpdateModal] =
+    useState(false);
+  const [isOpenFollowersModal, setIsOpenFollowersModal] = useState(false);
+  const [isOpenFollowingModal, setIsOpenFollowingModal] = useState(false);
+
+  const openProfileUpdateModalHandler = useCallback(() => {
+    document.body.style.overflow = "hidden";
+    setIsOpenProfileUpdateModal(true);
+  }, []);
+
+  const closeProfileEditModalHandler = useCallback(() => {
+    document.body.style.overflow = "auto";
+    setIsOpenProfileUpdateModal(false);
+  }, []);
+
+  const openFollowersModalHandler = () => {
+    document.body.style.overflow = "hidden";
+    setIsOpenFollowersModal(true);
+  };
+
+  const openFollowingModalHanlder = () => {
+    document.body.style.overflow = "hidden";
+    setIsOpenFollowingModal(true);
+  };
+
+  const closeFollowersModalHandler = () => {
+    document.body.style.overflow = "auto";
+    setIsOpenFollowersModal(false);
+  };
+
+  const closeFollowingModalHandler = () => {
+    document.body.style.overflow = "auto";
+    setIsOpenFollowingModal(false);
+  };
+
+  const { uid } = useParams();
+
+  const myInfo = useSelector((state: RootState) => state.user.myInfo);
+
+  const { mutate: updateProfileMutate, isPending: updateProfileLoading } =
+    useUpdateProfileMutation(() => {
+      setIsOpenProfileUpdateModal(false);
+    });
+
+  const { data: myProfile, isPending: myProfileLoading } = useMyProfileQuery(
+    myInfo.uid
   );
-  const isOpenFollowingModal = useSelector(
-    (state: RootState) => state.user.isOpenFollowingModal
-  );
-  const invaildUserProfile = useSelector(
-    (state: RootState) => state.user.invaildUserProfile
-  );
-  const isOpenProfileEditModal = useSelector(
-    (state: RootState) => state.user.isOpenProfileEditModal
-  );
-  const updateProfileLoading = useSelector(
-    (state: RootState) => state.user.updateProfileLoading
-  );
+
+  const {
+    data: userProfile,
+    refetch: userProfileRefetch,
+    isFetching: userProfileLoading
+  } = useUserProfileQuery(uid || myInfo.uid);
+
+  // uid(params)가 바뀔 때 마다 refetch를 통해 해당 유저 정보 가져오기
+  useEffect(() => {
+    if (userProfile) {
+      userProfileRefetch();
+    }
+  }, [uid]);
+
+  const loadProfileLoading = uid ? userProfileLoading : myProfileLoading;
 
   return (
     <>
-      {invaildUserProfile ? (
+      {(uid ? !userProfile?.uid : !myProfile || ({} as IMyProfileData).uid) &&
+      !userProfileLoading &&
+      !myProfileLoading ? (
         <>
           <Header type='profile' />
           <InvalidPage text='유효하지 않은 계정입니다.' />
         </>
-      ) : updateProfileLoading ? (
+      ) : updateProfileLoading || loadProfileLoading ? (
         <Loading />
       ) : (
         <>
           <Wrapper>
             <Header type='profile' />
-            <ProfileInfo />
+            <ProfileInfo
+              myProfile={myProfile || ({} as IMyProfileData)}
+              userProfile={userProfile || ({} as IUserProfileData)}
+              openFollowersModalHandler={openFollowersModalHandler}
+              openFollowingModalHanlder={openFollowingModalHanlder}
+              openProfileUpdateModalHandler={openProfileUpdateModalHandler}
+            />
             <ProfilePost />
             <TopButton />
           </Wrapper>
-          {isOpenFollowModal && <FollowModal isFollower={true} />}
-          {isOpenFollowingModal && <FollowModal isFollower={false} />}
-          {isOpenProfileEditModal && <ProfileEditModal />}
+          {isOpenFollowersModal && (
+            <FollowModal
+              isFollower={true}
+              closeFollowersModalHandler={closeFollowersModalHandler}
+              closeFollowingModalHandler={closeFollowingModalHandler}
+            />
+          )}
+          {isOpenFollowingModal && (
+            <FollowModal
+              isFollower={false}
+              closeFollowersModalHandler={closeFollowersModalHandler}
+              closeFollowingModalHandler={closeFollowingModalHandler}
+            />
+          )}
+          {isOpenProfileUpdateModal && (
+            <ProfileEditModal
+              updateProfileMutate={updateProfileMutate}
+              closeProfileEditModalHandler={closeProfileEditModalHandler}
+              myProfile={myProfile || ({} as IMyProfileData)}
+            />
+          )}
         </>
       )}
     </>

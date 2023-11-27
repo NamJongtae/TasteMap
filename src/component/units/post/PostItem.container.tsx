@@ -7,23 +7,21 @@ import React, {
 } from "react";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../../store/store";
-import {
-  thunkFetchAddPostLike,
-  thunkFetchAddPostMap,
-  thunkFetchRemovePostLike,
-  thunkFetchRemovePostMap
-} from "../../../slice/postSlice";
 import { sweetToast } from "../../../library/sweetAlert/sweetAlert";
-import { IPostData, IProfileData } from "../../../api/apiType";
+import { IPostData, IMyProfileData } from "../../../api/apiType";
 import PostItemUI from "./PostItem.present";
 import { setDateFormat } from "../../../library/setDateFormat";
 import { commentSlice } from "../../../slice/commentSlice";
 import { useInView } from "react-intersection-observer";
+import { useAddTasteMapMutation } from "../../../hook/query/profile/useAddTasteMapMutation";
+import { useRemoveTasteMapMutation } from "../../../hook/query/profile/useRemoveTasteMapMutation";
+import { useAddLikeMutation } from "../../../hook/query/profile/useAddLikeMutation";
+import { useRemoveLikeMutation } from "../../../hook/query/profile/useRemoveLikeMutation";
 
 interface IProps {
   data: IPostData;
-  myProfile: IProfileData;
-  isProfilePage: boolean;
+  myProfile: IMyProfileData;
+  postType: "HOME" | "FEED" | "PROFILE";
 }
 
 export const enum EContentType {
@@ -31,21 +29,30 @@ export const enum EContentType {
   IMAGE = "IMAGE"
 }
 
-export default function PostItem({ data, myProfile, isProfilePage }: IProps) {
+export default function PostItem({ data, myProfile, postType }: IProps) {
   const dispatch = useDispatch<AppDispatch>();
   // 좋아요 유무
-  const isLike = !!myProfile.likeList.find((v) => v === data.id);
+  const isLike = myProfile.likeList.includes(data.id);
   // 좋아요 수
   const likeCount = data.likeCount;
   // 맛집 지도 추가 유무
   const isStoredMap = !!myProfile.storedMapList.find(
     (v) => v.mapx === data.mapData?.mapx && v.mapy === data.mapData?.mapy
   );
+
   // 게시물 썸네일 스타일 타입
-  const [contentType, setContentType] = useState<EContentType>(EContentType.MAP);
+  const [contentType, setContentType] = useState<EContentType>(
+    EContentType.MAP
+  );
   const [isShowMoreTextBtn, setIsShowMoreTextBtn] = useState(false);
   const contentTextRef = useRef<HTMLParagraphElement>(null);
   const [kakaomapRef, inview] = useInView();
+
+  const { mutate: addTasteMapMutate } = useAddTasteMapMutation();
+  const { mutate: removeTasteMapMutate } = useRemoveTasteMapMutation();
+
+  const { mutate: addLikeMutate } = useAddLikeMutation(postType);
+  const { mutate: removeLikeMutate } = useRemoveLikeMutation(postType);
 
   const onClickMoreText = useCallback(() => {
     if (contentTextRef.current) {
@@ -55,7 +62,6 @@ export default function PostItem({ data, myProfile, isProfilePage }: IProps) {
   }, []);
 
   const openCommentModal = useCallback(() => {
-    document.body.style.overflow = "hidden";
     dispatch(commentSlice.actions.setIsOpenCommentModal(true));
     dispatch(commentSlice.actions.setPostId(data.id));
   }, []);
@@ -95,14 +101,12 @@ export default function PostItem({ data, myProfile, isProfilePage }: IProps) {
       }
 
       if (!isLike) {
-        // 좋아요 추가 api 비동기 처리
-        dispatch(thunkFetchAddPostLike(id));
+        addLikeMutate(id);
       } else {
-        // 좋아요 제거 api 비동기 처리
-        dispatch(thunkFetchRemovePostLike(id));
+        removeLikeMutate(id);
       }
     },
-    [myProfile, isLike]
+    [myProfile]
   );
 
   const onClickStoredMap = useCallback(
@@ -115,13 +119,13 @@ export default function PostItem({ data, myProfile, isProfilePage }: IProps) {
           if (myProfile.storedMapList.length > 20) {
             sweetToast("저장 가능한 맛집 수를 초과하였습니다\n(최대 20개)");
           }
-          dispatch(thunkFetchAddPostMap(postData.mapData));
+          addTasteMapMutate(postData.mapData);
           sweetToast("나의 맛집 지도에 맛집이 추가 되었습니다", "success");
         }
       } else {
         // 지도 제거 api 비동기 처리
         if (postData.mapData) {
-          dispatch(thunkFetchRemovePostMap(postData.mapData));
+          removeTasteMapMutate(postData.mapData);
           sweetToast("나의 맛집 지도에 맛집이 삭제 되었습니다", "success");
         }
       }
@@ -152,9 +156,9 @@ export default function PostItem({ data, myProfile, isProfilePage }: IProps) {
       contentTextRef={contentTextRef}
       isShowMoreTextBtn={isShowMoreTextBtn}
       openCommentModal={openCommentModal}
-      isProfilePage={isProfilePage}
       kakaomapRef={kakaomapRef}
       inview={inview}
+      postType={postType}
     />
   );
 }

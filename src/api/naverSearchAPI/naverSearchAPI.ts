@@ -1,5 +1,5 @@
 import axios from "axios";
-import { ISearchMapData } from "../apiType";
+import { IMapData } from "../apiType";
 
 // cors에러 우회를 위한 proxy 사용
 const PROXY = window.location.hostname === 'localhost' ? '' : '/proxy';
@@ -10,9 +10,9 @@ const URL = `${PROXY}/v1/search/local.json`;
  */
 export const 
 
-fetchSearchMapData = async (
+fetchMap = async (
   keyword: string
-): Promise<ISearchMapData[]> => {
+): Promise<IMapData[]> => {
   try {
     const res = await axios.get(URL, {
       headers: {
@@ -26,7 +26,7 @@ fetchSearchMapData = async (
       }
     });
     // 검색된 제목의 html 태그와 엔티티 코드를 제거
-    const filterTitleRes = res.data.items.map((item: ISearchMapData) => {
+    const filterTitleRes = res.data.items.map((item: IMapData) => {
       return {
         ...item,
         title:

@@ -1,5 +1,5 @@
-import React, { useLayoutEffect, useState } from "react";
-import { IProfileData } from "../../api/apiType";
+import React from "react";
+import { IMyProfileData, IUserProfileData } from "../../api/apiType";
 import {
   FollowBtn,
   SearchLi,
@@ -7,34 +7,32 @@ import {
   UserProfileLink,
   Username
 } from "./search.styles";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../../store/store";
+import { useSelector } from "react-redux";
+import { RootState } from "../../store/store";
 import { resolveWebp } from "../../library/webpSupport";
-import { thunkFetchFollow, thunkFetchUnfollow } from "../../slice/userSlice";
+import { useFollowMutation } from "../../hook/query/profile/useFollowMutation";
+import { useUnfollowMutation } from "../../hook/query/profile/useUnfollowMutation";
 
 interface IProps {
-  item: IProfileData;
+  item: IUserProfileData;
+  myProfile: IMyProfileData | undefined;
 }
-export default function SearchItem({ item }: IProps) {
+export default function SearchItem({ item, myProfile }: IProps) {
   const searchKeyword = useSelector(
     (state: RootState) => state.search.searchKeyword
   );
-  const myProfile = useSelector((state: RootState) => state.user.myProfile);
-  const dispatch = useDispatch<AppDispatch>();
-  const [isFollow, setIsFollow] = useState(false);
+
+  const { mutate: followMuate } = useFollowMutation();
+  const { mutate: unfollowMuate } = useUnfollowMutation();
+
+  const isFollow = myProfile!.followingList.includes(item.uid);
 
   const onClickFollow = () => {
-    if (myProfile.uid && item.uid) {
-      dispatch(thunkFetchFollow({ myUid: myProfile.uid, userUid: item.uid }));
-      setIsFollow(true);
-    }
+      followMuate({ myUid: myProfile!.uid, userUid: item.uid });
   };
 
   const onClickUnFollow = () => {
-    if (myProfile.uid && item.uid) {
-      dispatch(thunkFetchUnfollow({ myUid: myProfile.uid, userUid: item.uid }));
-      setIsFollow(false);
-    }
+      unfollowMuate({ myUid: myProfile!.uid, userUid: item.uid });
   };
 
   // 검색 텍스트 하이라이트 효과
@@ -59,14 +57,9 @@ export default function SearchItem({ item }: IProps) {
     );
   };
 
-  useLayoutEffect(() => {
-    if (item.uid && myProfile.followingList.includes(item.uid)) {
-      setIsFollow(true);
-    }
-  }, [myProfile]);
   return (
     <>
-      {item.uid !== myProfile.uid && (
+      {item.uid !== myProfile?.uid && (
         <SearchLi key={item.uid}>
           <UserProfileLink to={`/profile/${item.uid}`}>
             <UserImg

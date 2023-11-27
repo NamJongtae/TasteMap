@@ -27,8 +27,7 @@ export const fetchFindEmail = async (displayName: string, phone: string) => {
         createdAt: changeFormateDate(datas[0].createdAt.toDate())
       };
     else {
-      sweetToast("일치하는 정보가 없습니다!", "warning");
-      return {};
+      throw new Error("일치하는 정보가 없습니다!")
     }
   } catch (error) {
     console.error(error);

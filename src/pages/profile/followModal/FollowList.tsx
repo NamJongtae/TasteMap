@@ -1,13 +1,15 @@
 import React, { useEffect } from "react";
 import { FollowUl, InfinityScrollTarget } from "./followModal.styles";
 import FollowItem from "./FollowItem";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../../../store/store";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../store/store";
 import { useParams } from "react-router-dom";
 import { useInView } from "react-intersection-observer";
 import NoData from "../../../component/commons/noData/NoData";
 import ScrollLoading from "../../../component/commons/loading/ScrollLoading";
-import { thunkFetchFirstPageFollowerData, thunkFetchFirstPageFollowingData, thunkFetchPagingFollowerData, thunkFetchPagingFollowingData } from '../../../slice/userSlice';
+import { useFollowingInfiniteQuery } from "../../../hook/query/profile/useFollowingInfiniteQuery";
+import { useFollowersInfiniteQuery } from "../../../hook/query/profile/useFollowersInfiniteQuery";
+import { sweetToast } from "../../../library/sweetAlert/sweetAlert";
 
 interface IProps {
   isFollower: boolean;
@@ -15,72 +17,66 @@ interface IProps {
   closeBtnRef: React.RefObject<HTMLButtonElement>;
   firstItemLinkRef: React.RefObject<HTMLAnchorElement>;
   lastItemFollowBtnRef: React.RefObject<HTMLButtonElement>;
+  closeFollowersModalHandler: () => void;
+  closeFollowingModalHandler: () => void;
 }
 export default function FollowList({
   isFollower,
   followListRef,
   closeBtnRef,
   firstItemLinkRef,
-  lastItemFollowBtnRef
+  lastItemFollowBtnRef,
+  closeFollowersModalHandler,
+  closeFollowingModalHandler
 }: IProps) {
-  const follows = useSelector((state: RootState) => state.user.follows);
-  const page = useSelector((state: RootState) => state.user.followsPage);
-  const hasMore = useSelector((state: RootState) => state.user.followsHasMore);
   const pagePerData = useSelector(
     (state: RootState) => state.user.followsPagePerData
   );
   const { uid } = useParams();
   const myInfo = useSelector((state: RootState) => state.user.myInfo);
-  const dispatch = useDispatch<AppDispatch>();
-
-  // 무한 스크롤 follower/following 데이터 추가 시 로딩
-  const loadMoreFollowsLoading = useSelector(
-    (state: RootState) => state.user.loadMoreFollowsLoading
-  );
-  // react-intersection-observer의 customhook 무한 스크롤을 위해 사용
   const [ref, inview] = useInView();
 
-  useEffect(() => {
-    if (isFollower) {
-      dispatch(
-        thunkFetchFirstPageFollowerData({
-          uid: uid || myInfo.uid,
-          pagePerData
-        })
-      );
-    } else {
-      dispatch(
-        thunkFetchFirstPageFollowingData({
-          uid: uid || myInfo.uid,
-          pagePerData
-        })
-      );
-    }
-  }, []);
+  const {
+    data: followers,
+    hasNextPage: followersHasNextPage,
+    fetchNextPage: followersFetchNextPage,
+    isFetching: followersIsFetching,
+    isFetchingNextPage: followersIsFetchingNextPage,
+    isError: followersIsError,
+    error: followersError
+  } = useFollowersInfiniteQuery(uid || myInfo.uid, pagePerData, isFollower);
+
+  const {
+    data: following,
+    hasNextPage: followingHasNextPage,
+    fetchNextPage: followingFetchNextPage,
+    isFetching: followingIsFetching,
+    isFetchingNextPage: followingIsFetchingNextPage,
+    isError: followingIsError,
+    error: followingError
+  } = useFollowingInfiniteQuery(uid || myInfo.uid, pagePerData, isFollower);
 
   useEffect(() => {
     if (isFollower) {
-      if (follows.length > 0 && inview && hasMore) {
-        dispatch(
-          thunkFetchPagingFollowerData({
-            uid: uid || myInfo.uid,
-            page,
-            pagePerData
-          })
-        );
+      if (inview && followersHasNextPage) {
+        followersFetchNextPage();
       }
     } else {
-      if (follows.length > 0 && inview && hasMore) {
-        dispatch(
-          thunkFetchPagingFollowingData({
-            uid: uid || myInfo.uid,
-            page,
-            pagePerData
-          })
-        );
+      if (inview && followingHasNextPage) {
+        followingFetchNextPage();
       }
     }
-  }, [inview]);
+  }, [isFollower, inview, followersHasNextPage]);
+
+  useEffect(() => {
+    if (followersError || followingError) {
+      sweetToast(
+        "알 수 없는 에러가 발생하였습니다.\n잠시 후 다시 시도해 주세요.",
+        "warning"
+      );
+      console.error(followersError || followingError);
+    }
+  }, [followersIsError, followingIsError]);
 
   useEffect(() => {
     if (followListRef.current) {
@@ -88,35 +84,63 @@ export default function FollowList({
     }
   }, [followListRef.current]);
 
+  const loadDataLoading = isFollower
+    ? !followersIsFetchingNextPage && followersIsFetching
+    : !followingIsFetchingNextPage && followingIsFetching;
+  const loadMoreDataLoading = isFollower
+    ? followersIsFetchingNextPage
+    : followingIsFetchingNextPage;
+
+  const isError = isFollower ? followersIsError : followingIsError;
+
+  const isNoData = isError || !followers || !following
+
   return (
     <>
-      {loadMoreFollowsLoading && follows.length === 0 ? (
-        <ScrollLoading />
+      {isNoData ? (
+        <NoData />
       ) : (
         <>
-          {follows.length > 0 ? (
-            <>
-              <FollowUl ref={followListRef} tabIndex={0}>
-                {follows.map((item, idx) => {
-                  return (
-                    <FollowItem
-                      key={item.uid}
-                      data={item}
-                      idx={idx}
-                      isLastItem={idx === follows.length - 1}
-                      isFollower={isFollower}
-                      closeBtnRef={closeBtnRef}
-                      firstItemLinkRef={firstItemLinkRef}
-                      lastItemFollowBtnRef={lastItemFollowBtnRef}
-                    />
-                  );
-                })}
-                <InfinityScrollTarget ref={ref}></InfinityScrollTarget>
-                {loadMoreFollowsLoading && <ScrollLoading />}
-              </FollowUl>
-            </>
+          {loadDataLoading ? (
+            <ScrollLoading />
           ) : (
-            <NoData />
+            <>
+              {(isFollower ? followers.length > 0 : following.length > 0) ? (
+                <>
+                  <FollowUl ref={followListRef} tabIndex={0}>
+                    {(isFollower ? followers : following).map((item, idx) => {
+                      return (
+                        <FollowItem
+                          key={item.uid}
+                          data={item}
+                          idx={idx}
+                          isLastItem={
+                            idx ===
+                            (isFollower
+                              ? followers.length - 1
+                              : following.length - 1)
+                          }
+                          isFollower={isFollower}
+                          closeBtnRef={closeBtnRef}
+                          firstItemLinkRef={firstItemLinkRef}
+                          lastItemFollowBtnRef={lastItemFollowBtnRef}
+                          closeFollowersModalHandler={
+                            closeFollowersModalHandler
+                          }
+                          closeFollowingModalHandler={
+                            closeFollowingModalHandler
+                          }
+                        />
+                      );
+                    })}
+                    <InfinityScrollTarget ref={ref}></InfinityScrollTarget>
+                    {loadMoreDataLoading && <ScrollLoading />}
+                  </FollowUl>
+                </>
+              ) : (
+                <NoData />
+              )}
+            </>
           )}
         </>
       )}

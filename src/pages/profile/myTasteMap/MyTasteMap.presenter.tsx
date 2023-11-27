@@ -21,19 +21,20 @@ import Kakaomap from "../../../component/units/kakaomap/Kakaomap.container";
 import MyTasteMapList from "./MyTasteMapList";
 import SearchModal from "../../postUpload/SearchModal.container";
 import Loading from "../../../component/commons/loading/Loading";
-import { IProfileData, ISearchMapData } from "../../../api/apiType";
-import { EContentType } from '../../../slice/tasteMapSlice';
+import { IMyProfileData, IMapData } from "../../../api/apiType";
+import { EMapContentType } from "../../../slice/tasteMapSlice";
 interface IProps {
-  myProfile: IProfileData;
+  myProfile: IMyProfileData;
   onClickMapType: () => void;
-  contentType: EContentType
+  contentType: EMapContentType;
   onClickListType: () => void;
   openSearchModal: () => void;
-  clickMarkerData: ISearchMapData;
+  clickMarkerData: IMapData;
   isOpenModal: boolean;
   closeSearchModal: () => void;
   removeMap: () => void;
   onClickShare: () => Promise<void>;
+  myProfileIsPending: boolean;
 }
 
 export default function MyTasteMapUI({
@@ -46,11 +47,12 @@ export default function MyTasteMapUI({
   isOpenModal,
   closeSearchModal,
   removeMap,
-  onClickShare
+  onClickShare,
+  myProfileIsPending
 }: IProps) {
   return (
     <>
-      {!myProfile.storedMapList ? (
+      {myProfileIsPending ? (
         <Loading />
       ) : (
         <>
@@ -64,12 +66,12 @@ export default function MyTasteMapUI({
               <ListBtn onClick={onClickListType} contentType={contentType}>
                 목록
               </ListBtn>
-              {contentType === EContentType.MAP && (
+              {contentType === EMapContentType.MAP && (
                 <SearchModalBtn onClick={openSearchModal}>
                   맛집 추가
                 </SearchModalBtn>
               )}
-              {contentType === EContentType.MAP && (
+              {contentType === EMapContentType.MAP && (
                 <ShareBtn onClick={onClickShare} aria-label='공유' />
               )}
             </ContetnTypeBtnWrapper>
@@ -115,8 +117,9 @@ export default function MyTasteMapUI({
                 </BtnWrapper>
               </ItemSingleList>
             )}
-            {contentType === EContentType.LIST && (
+            {contentType === EMapContentType.LIST && (
               <MyTasteMapList
+                profile={myProfile}
                 items={myProfile.storedMapList}
                 isShareTasteMap={false}
               />

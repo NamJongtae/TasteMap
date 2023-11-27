@@ -12,10 +12,10 @@ import {
   ZoomInBtn,
   ZoomOutBtn,
 } from "./kakaomap.styles";
-import { ISearchMapData } from "../../../api/apiType";
+import { IMapData } from "../../../api/apiType";
 
 interface IProps {
-  data: ISearchMapData[];
+  data: IMapData[];
   mapRef: React.RefObject<HTMLDivElement>;
   roadview: boolean;
   setRoadview: React.Dispatch<React.SetStateAction<boolean>>;

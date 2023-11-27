@@ -30,6 +30,7 @@ interface IProps {
   closeBtnRef: React.RefObject<HTMLButtonElement>;
   textareaRef: React.RefObject<HTMLTextAreaElement>;
   firstItemLinkRef: React.RefObject<HTMLAnchorElement>;
+  postType: "HOME" | "FEED" | "PROFILE";
 }
 export default function CommentItemUI({
   data,
@@ -45,7 +46,8 @@ export default function CommentItemUI({
   onClickProfileLink,
   closeBtnRef,
   textareaRef,
-  firstItemLinkRef
+  firstItemLinkRef,
+  postType
 }: IProps) {
   return (
     <>
@@ -82,6 +84,7 @@ export default function CommentItemUI({
               closeTextArea={onClickEdit}
               closeBtnRef={closeBtnRef}
               textareaRef={textareaRef}
+              postType={postType}
             />
           ) : (
             <CommentText>{data.content}</CommentText>

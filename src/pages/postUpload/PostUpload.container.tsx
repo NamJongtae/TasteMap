@@ -4,19 +4,21 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store/store";
 import { getCompressionImg } from "../../library/imageCompression";
 import { sweetToast } from "../../library/sweetAlert/sweetAlert";
-import { IEditPostUploadData, IPostUploadData } from "../../api/apiType";
-import { Timestamp } from "firebase/firestore";
 import {
-  postSlice,
-  thunkFecthEditPost,
-  thunkFetchPostData,
-  thunkFetchFirstPagePostData,
-  thunkFetchUploadPost
-} from "../../slice/postSlice";
+  IPostUpdateData,
+  IPostData,
+  IPostUploadData
+} from "../../api/apiType";
+import { Timestamp } from "firebase/firestore";
+import { postSlice } from "../../slice/postSlice";
 import { imgValidation } from "../../library/imageValidation";
 import { isMobile } from "react-device-detect";
 import PostUploadUI from "./PostUpload.presenter";
 import { useNavigate, useParams } from "react-router-dom";
+import { usePostUploadMutation } from "../../hook/query/post/usePostUploadMutation";
+import { usePostUpdateMutation } from "../../hook/query/post/usePostUpdateMutation";
+import { useLoadPostQuery } from "../../hook/query/post/useLoadPostQuery";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface IProps {
   isEdit: boolean;
@@ -25,19 +27,12 @@ interface IProps {
 export default function PostUpload({ isEdit }: IProps) {
   const { postId } = useParams();
   const navigate = useNavigate();
-  const post = useSelector((state: RootState) => state.post.post);
-  const posts = useSelector((state: RootState) => state.post.posts);
   // 작성자의 프로필을 넣기위해 myInfo를 가져옴
   const myInfo = useSelector((state: RootState) => state.user.myInfo);
   // 맛집 검색으로 선택된 맛집 데이터를 가져옴
   const selectedMapData = useSelector(
     (state: RootState) => state.post.seletedMapData
   );
-  const uploadPostLoading = useSelector(
-    (state: RootState) => state.post.uploadPostLoading
-  );
-  const loadPostLoading = useSelector((state: RootState) => state.post.loadPostLoading);
-  const invalidPage = useSelector((state: RootState) => state.post.invalidPage);
   const dispatch = useDispatch<AppDispatch>();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [editImgName, setEditImgName] = useState<string[]>([]);
@@ -58,6 +53,37 @@ export default function PostUpload({ isEdit }: IProps) {
   // 별점
   const [ratingValue, setRatingValue] = useState(0);
   const [isImgLoading, setIsImgLoading] = useState(false);
+
+  const { mutate, isPending } = usePostUploadMutation();
+
+  const { mutate: updatePostMutate, isPending: updatePostIsPending } =
+    usePostUpdateMutation();
+
+  let post = {} as IPostData;
+  let postIsPending = false;
+  let postIsFetching = false;
+  const queryClient = useQueryClient();
+
+  if (isEdit && postId) {
+    const { data, isPending, isFetching, isError, error } =
+      useLoadPostQuery(postId);
+    post = data || ({} as IPostData);
+    postIsPending = isPending;
+    postIsFetching = isFetching;
+    if (isError) {
+      if (error?.message !== "존재하지 않는 게시물입니다.") {
+        sweetToast(
+          "알 수 없는 에러가 발생하였습니다.\n잠시 후 다시 시도해 주세요.",
+          "warning"
+        );
+        console.error(error);
+        navigate("/");
+      }
+    }
+
+    queryClient.removeQueries({ queryKey: ["post"] });
+  }
+
   /**
    * 검색 모달창 열기 */
   const openSearchModal = useCallback(() => {
@@ -68,6 +94,7 @@ export default function PostUpload({ isEdit }: IProps) {
   /**
    * 검색 모달창 닫기 */
   const closeSearchModal = useCallback(() => {
+    // 빈 히스토리를 없애기 위해 뒤로가기
     setIsOpenModal(false);
     document.body.style.overflow = "auto";
   }, []);
@@ -168,7 +195,7 @@ export default function PostUpload({ isEdit }: IProps) {
     // 내용이 비었거나 맛집을 선택하지 않았을 경우 return
     if (!contentValue || !selectedMapData.length) return;
     if (isEdit) {
-      const editPostData: IEditPostUploadData = {
+      const editPostData: IPostUpdateData = {
         id: post.id,
         content: contentValue,
         rating: ratingValue,
@@ -177,13 +204,10 @@ export default function PostUpload({ isEdit }: IProps) {
         imgName: editImgName || [],
         img: imgFile
       };
-      await dispatch(
-        thunkFecthEditPost({
-          prevPostData: post,
-          editPostData: editPostData
-        })
-      );
-      navigate("/");
+      updatePostMutate({
+        prevPostDataImgName: post,
+        newPost: editPostData
+      });
     } else {
       const id = uuid();
       // 서버로 보낼 postData 정의
@@ -203,12 +227,8 @@ export default function PostUpload({ isEdit }: IProps) {
         imgURL: [],
         rating: ratingValue
       };
-      // redux thunk를 이용하여 비동기 처리 서버로 데이터 전송
-      await dispatch(thunkFetchUploadPost(uploadData));
-      if (posts.length === 0) {
-        await dispatch(thunkFetchFirstPagePostData(10));
-      }
-      navigate("/");
+
+      mutate(uploadData);
     }
   }, [post, contentValue, selectedMapData, isEdit, imgFile, ratingValue]);
 
@@ -229,9 +249,6 @@ export default function PostUpload({ isEdit }: IProps) {
   }, [post]);
 
   useEffect(() => {
-    if (isEdit && postId) {
-      dispatch(thunkFetchPostData(postId));
-    }
     return () => {
       dispatch(postSlice.actions.setPost([]));
     };
@@ -252,6 +269,12 @@ export default function PostUpload({ isEdit }: IProps) {
   useEffect(() => {
     handleResizeHeight();
   }, [contentValue]);
+
+  useEffect(() => {
+    return () => {
+      dispatch(postSlice.actions.resetSelectedMapData());
+    };
+  }, []);
 
   return (
     <PostUploadUI
@@ -275,11 +298,11 @@ export default function PostUpload({ isEdit }: IProps) {
       onClickUploadImg={onClickUploadImg}
       closeSearchModal={closeSearchModal}
       isOpenModal={isOpenModal}
-      uploadPostLoading={uploadPostLoading}
-      loadPostLoading={loadPostLoading}
+      uploadPostLoading={isPending || updatePostIsPending}
+      loadPostLoading={postIsPending || postIsFetching}
       isImgLoading={isImgLoading}
       isEdit={isEdit}
-      invalidPage={invalidPage}
+      invalidPage={!post.id && !postIsPending}
     />
   );
 }

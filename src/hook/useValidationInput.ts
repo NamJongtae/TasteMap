@@ -1,7 +1,8 @@
 import { debounce } from "lodash";
 import { ChangeEvent, useCallback, useEffect, useState } from "react";
 import { fetchDuplication } from "../api/firebase/validationAPI";
-import { IUserData } from "../api/apiType";
+import { useSelector } from 'react-redux';
+import { RootState } from '../store/store';
 
 export const useValidationInput = (
   initialValue: string,
@@ -50,29 +51,8 @@ export const useValidationInput = (
       });
     }
   }, []);
-  const validation = useCallback((value: string) => {
-    if (type === "phone" && value.length < 12) {
-      setValid({ errorMsg: typeInfo.errorMsg, valid: false });
-      return;
-    }
-    if (typeInfo.reg.test(value)) {
-      if (checkDuplication) {
-        setValid({ errorMsg: "", valid: false });
-        duplicationDebounce(value);
-      } else {
-        setValid({ errorMsg: "", valid: true });
-      }
-    } else {
-      setValid({ errorMsg: typeInfo.errorMsg, valid: false });
-    }
-  },[type, typeInfo, checkDuplication]);
 
-  const onChangeValue = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    setValue(e.target.value.trim());
-    validation(e.target.value.trim());
-  },[value]);
-
-
+  const myInfo = useSelector((state: RootState) => state.user.myInfo);
 
   const duplicationDebounce = useCallback(
     debounce(async (value) => {
@@ -81,9 +61,7 @@ export const useValidationInput = (
         type
       );
       // 프로필 변경시 기존 자신의 닉네임은 중복검사 제외 하기 위해 사용
-      const storedUser = localStorage.getItem("user");
-      const user: IUserData = storedUser ? JSON.parse(storedUser) : "";
-      if (isDulplcation && user?.displayName !== value.toLowerCase()) {
+      if (isDulplcation && myInfo.displayName !== value.toLowerCase()) {
         setValid({
           errorMsg: typeInfo.duplicationMsg,
           valid: false
@@ -93,6 +71,34 @@ export const useValidationInput = (
       }
     }, 200),
     [typeInfo]
+  );
+
+  const validation = useCallback(
+    (value: string) => {
+      if (type === "phone" && value.length < 12) {
+        setValid({ errorMsg: typeInfo.errorMsg, valid: false });
+        return;
+      }
+      if (typeInfo.reg.test(value)) {
+        if (checkDuplication) {
+          setValid({ errorMsg: "", valid: false });
+          duplicationDebounce(value);
+        } else {
+          setValid({ errorMsg: "", valid: true });
+        }
+      } else {
+        setValid({ errorMsg: typeInfo.errorMsg, valid: false });
+      }
+    },
+    [type, typeInfo, checkDuplication]
+  );
+
+  const onChangeValue = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      setValue(e.target.value.trim());
+      validation(e.target.value.trim());
+    },
+    [validation]
   );
 
   return [value, valid, onChangeValue, setValue, setValid] as const;

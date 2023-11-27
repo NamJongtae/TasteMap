@@ -4,63 +4,54 @@ import PostItem from "./PostItem.container";
 import Comment from "./comment/Comment";
 import ScrollLoading from "../../commons/loading/ScrollLoading";
 import { InfinityScrollTarget, PostWrapper, Wrapper } from "./postList.styles";
-import { IPostData, IProfileData } from "../../../api/apiType";
+import { IPostData, IMyProfileData } from "../../../api/apiType";
 import NoData from "../../commons/noData/NoData";
+
 interface IProps {
-  isProfilePage: boolean;
-  userPosts: IPostData[];
   posts: IPostData[];
-  myProfile: IProfileData;
+  myProfile: IMyProfileData;
   loadMorePostsLoading: boolean;
   loadPostsLoading: boolean;
-  loadUserPostsLoading: boolean;
   isOpenCommentModal: boolean;
   intinityScrollRef: (node?: Element | null | undefined) => void;
   isNoPostData: boolean;
-  isNoUserPostData: boolean;
+  postType: "HOME" | "FEED" | "PROFILE";
 }
 export default function PostListUI({
-  isProfilePage,
-  userPosts,
   posts,
   myProfile,
   loadMorePostsLoading,
   loadPostsLoading,
-  loadUserPostsLoading,
   isOpenCommentModal,
   intinityScrollRef,
   isNoPostData,
-  isNoUserPostData
+  postType
 }: IProps) {
   return (
     <>
       {
         <>
           <Wrapper>
-            {(!isProfilePage ? loadPostsLoading : loadUserPostsLoading) ? (
+            {loadPostsLoading ? (
               <ScrollLoading />
-            ) : (isProfilePage ? isNoUserPostData : isNoPostData) ? (
+            ) : isNoPostData ? (
               <NoData />
             ) : (
               <PostWrapper>
-                {(isProfilePage ? userPosts : posts).map(
-                  (item) => {
-                    return (
-                      !item.isBlock && (
-                        <PostItem
-                          key={item.id}
-                          data={item}
-                          myProfile={myProfile}
-                          isProfilePage={isProfilePage}
-                        />
-                      )
-                    );
-                  }
-                )}
+                {posts.map((item) => {
+                  return (
+                      <PostItem
+                        key={item.id}
+                        data={item}
+                        myProfile={myProfile}
+                        postType={postType}
+                      />
+                  );
+                })}
                 <InfinityScrollTarget
                   ref={intinityScrollRef}
                 ></InfinityScrollTarget>
-                {loadMorePostsLoading && (
+                {loadMorePostsLoading && !loadPostsLoading && (
                   <li>
                     <ScrollLoading />
                   </li>
@@ -68,7 +59,7 @@ export default function PostListUI({
               </PostWrapper>
             )}
           </Wrapper>
-          {isOpenCommentModal && <Comment />}
+          {isOpenCommentModal && <Comment postType={postType} />}
         </>
       }
     </>

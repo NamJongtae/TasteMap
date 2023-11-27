@@ -3,16 +3,10 @@ import { SearchInputWrapper, SearchLabel, Input } from "./search.styles";
 import { debounce } from "lodash";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store/store";
-import {
-  searchSlice,
-  thunkFetchSearchFirstPageData
-} from "../../slice/searchSlice";
+import { searchSlice } from "../../slice/searchSlice";
 
 export default function SearchInput() {
   const dispatch = useDispatch<AppDispatch>();
-  const pagePerData = useSelector(
-    (state: RootState) => state.search.pagePerData
-  );
   const searchKeyword = useSelector(
     (state: RootState) => state.search.searchKeyword
   );
@@ -34,13 +28,6 @@ export default function SearchInput() {
   const searchDebounce = useCallback(
     debounce(async (keyword) => {
       dispatch(searchSlice.actions.setSearchKeyword(keyword));
-      // 검색어가 없는 경우에는 검색 결과 초기화
-      if (!keyword) {
-        return dispatch(searchSlice.actions.setSearchResult([]));
-      }
-      dispatch(
-        thunkFetchSearchFirstPageData({ keyword, limitPage: pagePerData })
-      );
     }, 500),
     []
   );

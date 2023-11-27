@@ -25,7 +25,7 @@ const auth = getAuth();
 /**
  * 댓글 데이터 조회
  */
-export const fetchCommentData = async (
+export const fetchComment = async (
   commentId: string
 ): Promise<ICommentData | undefined> => {
   try {
@@ -38,76 +38,35 @@ export const fetchCommentData = async (
     throw error;
   }
 };
-/**
- * 댓글 첫 페이지 조회
- */
-export const fetchFirstPageCommentData = async (
-  postId: string,
-  pagePerData: number
-) => {
-  try {
-    // 게시물 확인 및 예외처리
-    const postDoc = doc(db, `post/${postId}`);
-    const postDocSnapshot = await getDoc(postDoc);
-    if(!postDocSnapshot.exists()){
-      throw new Error("게시물이 존재하지 않습니다.");
-    }
-
-    const commentsRef = collection(db, "comments");
-    const q = query(
-      commentsRef,
-      orderBy("createdAt", "desc"),
-      where("postId", "==", postId),
-      limit(pagePerData)
-    );
-    const commentDoc = await getDocs(q);
-    const data = commentDoc.docs.map((el) => el.data());
-    if (data.length > 0) {
-      const userRef = collection(db, "user");
-      const userUid: string[] = [...data].map((item) => item.uid);
-      const userQuery = query(userRef, where("uid", "in", userUid));
-      const res = await getDocs(userQuery);
-      const uidData: IUserData[] = res.docs.map((el) => {
-        return { uid: el.id, ...el.data() as Omit<IUserData, "uid"> };
-      });
-
-      for (let i = 0; i < data.length; i++) {
-        const userData = uidData.find(
-          (userData) => userData.uid === data[i].uid
-        );
-        if (userData) {
-          data[i].displayName = userData.displayName;
-          data[i].photoURL = userData.photoURL;
-        }
-      }
-    }
-
-    return { commentDoc, data: data as ICommentData[] };
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
-};
 
 /**
  * 댓글 페이징
  */
-export const fetchPagingCommentData = async (
-  page: QueryDocumentSnapshot<DocumentData, DocumentData>,
+export const fetchComments = async (
+  page: QueryDocumentSnapshot<DocumentData, DocumentData> | null,
   postId: string,
   pagePerData: number
 ) => {
   try {
     const commentsRef = collection(db, "comments");
-    const q = query(
-      commentsRef,
-      orderBy("createdAt", "desc"),
-      where("postId", "==", postId),
-      startAfter(page),
-      limit(pagePerData)
-    );
-    const commentDoc = await getDocs(q);
-    const data = commentDoc.docs.map((el) => el.data());
+    const q = page
+      ? query(
+          commentsRef,
+          orderBy("createdAt", "desc"),
+          where("postId", "==", postId),
+          where("isBlock", "==", false),
+          startAfter(page),
+          limit(pagePerData)
+        )
+      : query(
+          commentsRef,
+          orderBy("createdAt", "desc"),
+          where("postId", "==", postId),
+          where("isBlock", "==", false),
+          limit(pagePerData)
+        );
+    const commentDocs = await getDocs(q);
+    const data = commentDocs.docs.map((el) => el.data());
 
     if (data.length > 0) {
       const userRef = collection(db, "user");
@@ -115,7 +74,7 @@ export const fetchPagingCommentData = async (
       const userQuery = query(userRef, where("uid", "in", userUid));
       const res = await getDocs(userQuery);
       const uidData: IUserData[] = res.docs.map((el) => {
-        return { uid: el.id, ...el.data() as Omit<IUserData, "uid"> };
+        return { uid: el.id, ...(el.data() as Omit<IUserData, "uid">) };
       });
 
       for (let i = 0; i < data.length; i++) {
@@ -129,7 +88,7 @@ export const fetchPagingCommentData = async (
       }
     }
 
-    return { commentDoc, data: data as ICommentData[] };
+    return { commentDocs, data: data as ICommentData[] };
   } catch (error) {
     console.error(error);
     throw error;
@@ -139,7 +98,7 @@ export const fetchPagingCommentData = async (
 /**
  * 댓글 추가
  */
-export const fetchAddComment = async (commentData: ICommentData) => {
+export const leaveComment = async (commentData: ICommentData) => {
   try {
     // 게시물 확인 작업 추가
     const postDoc = doc(db, `post/${commentData.postId}`);
@@ -152,7 +111,7 @@ export const fetchAddComment = async (commentData: ICommentData) => {
 
     // comment colledcion에 댓글 doc 추가
     const commentsRef = collection(db, "comments");
-    const addCommentPromise = setDoc(
+    const leaveCommentPromise = setDoc(
       doc(commentsRef, commentData.commentId),
       commentData
     );
@@ -162,7 +121,9 @@ export const fetchAddComment = async (commentData: ICommentData) => {
       commentCount: increment(1)
     });
 
-    await Promise.all([addCommentPromise, addCommentCountPromise]);
+    await Promise.all([leaveCommentPromise, addCommentCountPromise]);
+
+    return commentData.postId;
   } catch (error) {
     console.error(error);
     throw error;
@@ -172,7 +133,7 @@ export const fetchAddComment = async (commentData: ICommentData) => {
 /**
  * 댓글 수정
  */
-export const fetchEditComment = async (
+export const updateComment = async (
   commentEditData: Pick<ICommentData, "commentId" | "content" | "postId">
 ) => {
   try {
@@ -209,8 +170,8 @@ export const fetchEditComment = async (
 /**
  * 댓글 삭제
  */
-export const fetchRemoveComment = async (
-  commentData: ICommentData
+export const removeComment = async (
+  commentData: Pick<ICommentData, "postId" | "commentId">
 ): Promise<void> => {
   try {
     // 병렬 처리할 비동기 작업 배열 생성
@@ -254,10 +215,8 @@ export const fetchRemoveComment = async (
 /**
  * 댓글 신고
  */
-export const fetchReportComment = async (
-  reportCommentData: Pick<ICommentData, "commentId" | "reportCount"> & {
-    postId: string;
-  }
+export const reportComment = async (
+  reportCommentData: Pick<ICommentData, "postId" | "commentId" | "reportCount">
 ) => {
   try {
     if (!auth.currentUser) return;
@@ -302,6 +261,7 @@ export const fetchReportComment = async (
     }
 
     await Promise.all([addReportCountPromise, decreaseCommentCountPromise]);
+    return reportCommentData;
   } catch (error) {
     console.error(error);
     throw error;

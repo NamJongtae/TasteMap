@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { ISearchMapData } from "../../../api/apiType";
+import { IMapData, IMyProfileData, IUserProfileData } from "../../../api/apiType";
 import {
   BtnWrapper,
   FocusMapBtn,
@@ -11,46 +11,42 @@ import {
   MapInfoItem,
   RemoveBtn
 } from "./myTasteMap.styles";
-import { thunkFetchRemovePostMap } from "../../../slice/postSlice";
 import {
   sweetConfirm,
   sweetToast
 } from "../../../library/sweetAlert/sweetAlert";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../../../store/store";
-import { tasteMapSlice } from "../../../slice/tasteMapSlice";
-import { userSlice } from '../../../slice/userSlice';
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../../store/store";
+import { EMapContentType, tasteMapSlice } from "../../../slice/tasteMapSlice";
+import { useRemoveTasteMapMutation } from "../../../hook/query/profile/useRemoveTasteMapMutation";
 
 interface IProps {
-  item: ISearchMapData;
+  item: IMapData;
   isShareTasteMap: boolean;
+  profile: IMyProfileData | IUserProfileData;
 }
-export default function MyTasteMapItem({ item, isShareTasteMap }: IProps) {
+export default function MyTasteMapItem({
+  item,
+  isShareTasteMap,
+  profile
+}: IProps) {
   const dispatch = useDispatch<AppDispatch>();
-  const myProfile = useSelector(
-    (state: RootState) => state.user.myProfile
-  );
+
+  const { mutate: removeTasteMapMutate } = useRemoveTasteMapMutation();
   const removeMap = useCallback(() => {
     sweetConfirm("정말 삭제하시겠습니까?", "삭제", "취소", () => {
-      dispatch(thunkFetchRemovePostMap(item));
-      const newData = {
-        ...myProfile,
-        storedMapList: myProfile.storedMapList.filter(
-          (data) => data.mapx !== item.mapx && data.mapy !== item.mapy
-        )
-      };
-      dispatch(userSlice.actions.setMyprofile(newData));
+      removeTasteMapMutate(item);
       sweetToast("삭제가 완료되었습니다.", "success");
       dispatch(tasteMapSlice.actions.setClickMarkerData({}));
-      if (newData.storedMapList && newData.storedMapList.length === 0) {
-        dispatch(tasteMapSlice.actions.setContentType("map"));
+      if (profile.storedMapList.length === 1) {
+        dispatch(tasteMapSlice.actions.setContentType(EMapContentType.MAP));
       }
     });
-  },[]);
+  }, [profile.storedMapList]);
 
   const onClickFocusMap = () => {
     dispatch(tasteMapSlice.actions.setClickMarkerData(item));
-    dispatch(tasteMapSlice.actions.setContentType("map"));
+    dispatch(tasteMapSlice.actions.setContentType(EMapContentType.MAP));
   };
   return (
     <MapInfoItem>
@@ -79,7 +75,7 @@ export default function MyTasteMapItem({ item, isShareTasteMap }: IProps) {
         </Item>
         <BtnWrapper>
           <FocusMapBtn onClick={onClickFocusMap} title={"지도로 보기"} />
-          {!isShareTasteMap&&<RemoveBtn onClick={removeMap} title={"삭제"} />}
+          {!isShareTasteMap && <RemoveBtn onClick={removeMap} title={"삭제"} />}
         </BtnWrapper>
       </ItemList>
     </MapInfoItem>

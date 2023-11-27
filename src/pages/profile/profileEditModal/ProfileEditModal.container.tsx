@@ -2,25 +2,44 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { getCompressionImg } from "../../../library/imageCompression";
 import { imgValidation } from "../../../library/imageValidation";
 import { useValidationInput } from "../../../hook/useValidationInput";
-
-import { thunkFetchEditProfile, thunkFetchMyProfile, thunkFetchUserProfile, userSlice } from "../../../slice/userSlice";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../../../store/store";
 import ProfileEditModalUI from "./ProfileEditModal.presenter";
-import { useParams } from "react-router-dom";
-import { isMobile } from 'react-device-detect';
-import { thunkFetchProfileFirstPageData } from '../../../slice/postSlice';
+import { isMobile } from "react-device-detect";
+import { UseMutateFunction } from "@tanstack/react-query";
+import { IMyProfileData, IProfileUpdateData } from "../../../api/apiType";
 
-export default function ProfileEditModal() {
-  const { uid } = useParams();
-  const myProfile = useSelector(
-    (state: RootState) => state.user.myProfile
-  );
-  const myInfo = useSelector((state: RootState) => state.user.myInfo);
-  const dispatch = useDispatch<AppDispatch>();
+interface IProps {
+  updateProfileMutate: UseMutateFunction<
+    | {
+        uid: string;
+        email: string | null;
+        displayName: any;
+        introduce: any;
+        photoURL: any;
+      }
+    | undefined,
+    Error,
+    IProfileUpdateData,
+    unknown
+  >;
+  closeProfileEditModalHandler: () => void;
+  myProfile: IMyProfileData;
+}
+
+
+
+export default function ProfileEditModal({
+  updateProfileMutate,
+  closeProfileEditModalHandler,
+  myProfile
+}: IProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
   const imgInputRef = useRef<HTMLInputElement>(null);
+  const ProfileImgButtonWrapperRef = useRef<HTMLDivElement>(null);
+  const resetBtnRef = useRef<HTMLButtonElement>(null);
+  const editBtnRef = useRef<HTMLButtonElement>(null);
+  const closeBtnRef = useRef<HTMLButtonElement>(null);
+
   const [introduceValue, setIntroduceValue] = useState(myProfile.introduce);
   const [previewImg, setPreviewImg] = useState(myProfile.photoURL);
   const [uploadImg, setUploadImg] = useState<File | string>("");
@@ -32,10 +51,6 @@ export default function ProfileEditModal() {
     ,
     setDisplayNameValid
   ] = useValidationInput(myProfile.displayName || "", "displayName", true);
-  const ProfileImgButtonWrapperRef = useRef<HTMLDivElement>(null);
-  const resetBtnRef = useRef<HTMLButtonElement>(null);
-  const editBtnRef = useRef<HTMLButtonElement>(null);
-  const closeBtnRef = useRef<HTMLButtonElement>(null);
 
   /**
    * IntroduceValue 변경
@@ -65,70 +80,68 @@ export default function ProfileEditModal() {
       textareaRef.current.style.height =
         textareaRef.current.scrollHeight - 30 + "px";
     }
-  },[]);
+  }, []);
 
   /**
    * 업로드 프로필 이미지 변경
    */
-  const onChangeImg = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files) return;
-    const file = e.target.files[0];
-    const isValid = imgValidation(file);
-    if (!isValid) return;
-    if(isMobile) {
-      setIsImgLoading(true);
-    }
-    const { compressedFile, compressedPreview } = (await getCompressionImg(
-      file,
-      "profile"
-    )) as {
-      compressedFile: File;
-      compressedPreview: string;
-    };
-    setPreviewImg(compressedPreview);
-    setUploadImg(compressedFile);
-    if(isMobile) {
-      setIsImgLoading(false);
-    }
-  },[isMobile]);
+  const onChangeImg = useCallback(
+    async (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (!e.target.files) return;
+      const file = e.target.files[0];
+      const isValid = imgValidation(file);
+      if (!isValid) return;
+      if (isMobile) {
+        setIsImgLoading(true);
+      }
+      const { compressedFile, compressedPreview } = (await getCompressionImg(
+        file,
+        "profile"
+      )) as {
+        compressedFile: File;
+        compressedPreview: string;
+      };
+      setPreviewImg(compressedPreview);
+      setUploadImg(compressedFile);
+      if (isMobile) {
+        setIsImgLoading(false);
+      }
+    },
+    [isMobile]
+  );
 
   /**
    * 프로필 수정
    */
   const onClickSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const IEditProfileData = {
+    const IProfileUpdateData = {
       displayName: displayNameValue.toLowerCase(),
       file: uploadImg,
       introduce: introduceValue
     };
-    await dispatch(thunkFetchEditProfile(IEditProfileData));
-    if (myInfo.uid) {
-      dispatch(thunkFetchMyProfile(myInfo.uid));
-      if (myInfo.uid === uid) dispatch(thunkFetchUserProfile(myInfo.uid));
-      dispatch(
-        thunkFetchProfileFirstPageData({ uid: myInfo.uid, pagePerData: 10 })
-      );
-    }
+    updateProfileMutate(IProfileUpdateData);
   };
 
   const onClickImgReset = () => {
-    setPreviewImg(process.env.REACT_APP_DEFAULT_PROFILE_IMG||"");
+    setPreviewImg(process.env.REACT_APP_DEFAULT_PROFILE_IMG || "");
     setUploadImg("defaultImg");
   };
 
   /**
    * 프로필 수정 모달 닫기
    */
-  const onCLickClose = useCallback(() => {
+  const onClickClose = useCallback(() => {
     if (modalRef.current) {
       modalRef.current.style.animation = "ProfileEditModalmoveUpmoveDown 1s";
     }
     setTimeout(() => {
-      document.body.style.overflow = "auto";
-      dispatch(userSlice.actions.setIsOpenProfileEditModal(false));
+      if (isMobile) {
+        history.back();
+      }
+      closeProfileEditModalHandler();
     }, 700);
-  },[]);
+  }, []);
 
   useEffect(() => {
     // 초기 textarea 높이 설정
@@ -143,9 +156,37 @@ export default function ProfileEditModal() {
     }
   }, []);
 
+  // 뒤로가기 버튼을 눌러도 현재 페이지가 유지됨
+  useEffect(() => {
+    if (isMobile) {
+      window.history.pushState(null, "", window.location.href);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isMobile) {
+      const handlePopState = () => {
+        if (modalRef.current) {
+          modalRef.current.style.animation =
+            "ProfileEditModalmoveUpmoveDown 1s";
+        }
+        setTimeout(() => {
+          closeProfileEditModalHandler();
+        }, 700);
+      };
+
+      window.onpopstate = handlePopState;
+
+      return () => {
+        // 컴포넌트가 언마운트될 때 이벤트 핸들러를 삭제
+        window.onpopstate = null;
+      };
+    }
+  }, []);
+
   return (
     <ProfileEditModalUI
-      onClickClose={onCLickClose}
+      onClickClose={onClickClose}
       modalRef={modalRef}
       onClickSubmit={onClickSubmit}
       imgInputRef={imgInputRef}

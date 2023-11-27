@@ -1,22 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useValidationInput } from "../../hook/useValidationInput";
 import FindAccountUI from "./FindAccount.presenter";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  thunkFetchChangePassowrd,
-  thunkFetchFindEmail,
-  userSlice
-} from "../../slice/userSlice";
-import { AppDispatch, RootState } from "../../store/store";
+import { useFindAccountMutation } from "../../hook/query/auth/useFindEmailMutation";
+import { useFindPasswordMuataion } from "../../hook/query/auth/useFindPasswordMutation";
 
 export default function FindAccount() {
-  const dispatch = useDispatch<AppDispatch>();
-  const findEmailValue = useSelector(
-    (state: RootState) => state.user.findEmailValue
-  );
-  const findPasswordValue = useSelector(
-    (state: RootState) => state.user.findPasswordValue
-  );
   const [
     displayNameValue,
     displayNameValid,
@@ -34,6 +22,20 @@ export default function FindAccount() {
   const [disabled, setDisabled] = useState(false);
   const [findPasswordMenu, setFindPasswordMenu] = useState(false);
 
+  const {
+    mutate: findEmailMuate,
+    isPending: findEmailIsPending,
+    data: findEmailValue,
+    reset: findEmailReset
+  } = useFindAccountMutation();
+
+  const {
+    mutate: findPasswordMuate,
+    isPending: findPasswordIsPending,
+    data: isFindPassword,
+    reset: findPasswordReset
+  } = useFindPasswordMuataion();
+
   const resetValue = () => {
     setEmailValue("");
     setEmailValid({ errorMsg: "", valid: false });
@@ -46,39 +48,34 @@ export default function FindAccount() {
   const onClickFindEmailMenu = () => {
     setFindPasswordMenu(false);
     setDisabled(false);
-    dispatch(userSlice.actions.resetFindAccountValue());
+    isFindPassword && findPasswordReset();
     resetValue();
   };
 
   const onClickFindPwMenu = () => {
     setFindPasswordMenu(true);
     setDisabled(false);
-    dispatch(userSlice.actions.resetFindAccountValue());
+    findEmailValue && findEmailReset();
     resetValue();
   };
 
   const onClickFindEmail = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    await dispatch(
-      thunkFetchFindEmail({
-        displayNameValue,
-        phoneValue: phoneValue.replace(/-/g, "")
-      })
-    );
-    if (!findEmailValue.email) resetValue();
+    findEmailMuate({
+      displayName: displayNameValue,
+      phone: phoneValue.replace(/-/g, "")
+    });
+    if (!findEmailValue) resetValue();
   };
 
   const onClickFindPassword = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    await dispatch(
-      thunkFetchChangePassowrd({
-        emailValue,
-        phoneValue: phoneValue.replace(/-/g, "")
-      })
-    );
-    if (!findPasswordValue) resetValue();
+    findPasswordMuate({
+      email: emailValue,
+      phone: phoneValue.replace(/-/g, "")
+    });
+    if (!isFindPassword) resetValue();
   };
-
 
   // 전체 input이 유효하다면 버튼 활성화
   useEffect(() => {
@@ -97,10 +94,6 @@ export default function FindAccount() {
     }
   }, [displayNameValid, emailValid, phoneValid]);
 
-  useEffect(() => {
-    dispatch(userSlice.actions.resetFindAccountValue());
-  }, []);
-
   return (
     <FindAccountUI
       findPasswordMenu={findPasswordMenu}
@@ -118,8 +111,9 @@ export default function FindAccount() {
       phoneValue={phoneValue}
       onChangePhone={onChangePhone}
       phoneValid={phoneValid}
-      findPasswordValue={findPasswordValue}
+      findPasswordValue={isFindPassword}
       disabled={disabled}
+      isLoading={findEmailIsPending || findPasswordIsPending}
     />
   );
 }

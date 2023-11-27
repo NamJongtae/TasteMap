@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { EPostType } from "./Home";
+import { TPostType } from './Home';
 
 export const Wrapper = styled.main`
   width: 100%;
@@ -31,8 +31,8 @@ export const HomeBtn = styled.button`
   width: 30px;
   height: 30px;
   border-radius: 5px;
-  background: ${(props: { postType: EPostType }) =>
-    props.postType === EPostType.HOME
+  background: ${(props: { postType: TPostType }) =>
+    props.postType === "HOME"
       ? document.body.classList.contains("webp")
         ? "url(/assets/webp/icon-homeBtnActive.webp) no-repeat center / 30px"
         : "url(/assets/icon-homeBtnActive.svg) no-repeat center / 30px"
@@ -45,8 +45,8 @@ export const FeedBtn = styled.button`
   width: 30px;
   height: 30px;
   border-radius: 5px;
-  background: ${(props: { postType: EPostType }) =>
-    props.postType === EPostType.FEED
+  background: ${(props: { postType: TPostType }) =>
+    props.postType === "FEED"
       ? document.body.classList.contains("webp")
         ? "url(/assets/webp/icon-feedBtnActive.webp) no-repeat center / 30px"
         : "url(/assets/icon-feedBtnActive.svg) no-repeat center / 30px"

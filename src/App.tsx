@@ -1,14 +1,11 @@
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React, { useEffect } from "react";
 import { Navigate, Outlet, Route, Routes, useLocation } from "react-router-dom";
-import { AppDispatch, RootState } from "./store/store";
 import Login from "./pages/login/Login";
 import DefaultInfo from "./pages/signup/DefaultInfo.container";
 import { detectWebpSupport } from "./library/webpSupport";
 import FindAccount from "./pages/findAccount/FindAccount.container";
 import Home from "./pages/home/Home";
 import PostUpload from "./pages/postUpload/PostUpload.container";
-import { thunkFetchLoadMyInfo } from "./slice/userSlice";
 import PostEdit from "./pages/postEdit/PostEdit";
 import Profile from "./pages/profile/Profile";
 import MyTasteMap from "./pages/profile/myTasteMap/MyTasteMap.container";
@@ -16,17 +13,15 @@ import NotFound from "./pages/404/NotFound";
 import Search from "./pages/search/Search";
 import ShareTasteMap from "./pages/shareTasteMap/ShareTasteMap";
 import { Helmet } from "react-helmet-async";
+import { useAuthQuery } from "./hook/query/auth/useAuthQuery";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "./store/store";
+import { userSlice } from "./slice/userSlice";
 import Loading from "./component/commons/loading/Loading";
 
 function App() {
-  const { pathname } = useLocation();
-  const myInfo = useSelector((state: RootState) => state.user.myInfo);
   const dispatch = useDispatch<AppDispatch>();
-  const loadMyInfoLoading = useSelector(
-    (state: RootState) => state.user.loadMyInfoLoading
-  );
-  // webp 지원유무가 확인 되었을때 컴포넌트를 렌더링 시키위해 사용
-  const [webpChecked, setWebpChecked] = useState(false);
+  const { pathname } = useLocation();
 
   const checkwebp = async () => {
     const webpSupport = await detectWebpSupport();
@@ -35,8 +30,6 @@ function App() {
     } else {
       document.body.classList.add("no-webp");
     }
-    // webp 지원 유무가 확인되었다면 true로 설정
-    setWebpChecked(true);
   };
 
   // webp 지원 유무 확인
@@ -49,13 +42,32 @@ function App() {
     window.scrollTo(0, 0);
   }, [pathname]);
 
+  const isCheckedWebpSupport =
+    document.body.classList.contains("webp") ||
+    document.body.classList.contains("no-webp");
+
+  // 저장된 유저 정보 사용
+  let myInfo = useSelector((state: RootState) => state.user.myInfo);
+
   // 유저 최신 데이터 갱신
+  const { data, isPending, isError, isSuccess } = useAuthQuery();
+  if (data && data.uid) {
+    myInfo = data;
+  }
   useEffect(() => {
-    // 맛집 지도 공유 페이지에서는 로그인 없이 들어올 수 있기 때문에 myInfo 저장을 하면 안되기 때문에
-    // pathname에 shaer가 포함되는 경우 return 처리
-    if (pathname.includes("share")) return;
-    dispatch(thunkFetchLoadMyInfo());
-  }, []);
+    if (isSuccess && data && data.uid) {
+      localStorage.setItem("user", JSON.stringify(data));
+      dispatch(userSlice.actions.setMyInfo(data));
+    }
+  }, [isSuccess, data]);
+
+  if (isError) {
+    return (
+      <p style={{ textAlign: "center" }}>
+        계정을 불러올 수 없습니다. 재로그인 하시거나, 잠시 후 다시 시도해주세요.
+      </p>
+    );
+  }
 
   return (
     <>
@@ -74,8 +86,9 @@ function App() {
           }
         />
       </Helmet>
-      {loadMyInfoLoading && <Loading />}
-      {webpChecked && !loadMyInfoLoading && (
+      {/* 로그인 페이지에서만 유저 인증 로딩을 보여줌 */}
+      {isPending && pathname === "/login" && <Loading />}
+      {isCheckedWebpSupport && (
         <Routes>
           <Route
             path='/login'
@@ -88,10 +101,6 @@ function App() {
           <Route
             path='/findAccount'
             element={myInfo.uid ? <Navigate to='/' /> : <FindAccount />}
-          />
-          <Route
-            path='/'
-            element={!myInfo.uid ? <Navigate to='/login' /> : <Home />}
           />
           <Route
             path='/'

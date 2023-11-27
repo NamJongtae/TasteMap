@@ -1,7 +1,6 @@
 import {
   DocumentData,
   QueryDocumentSnapshot,
-  QuerySnapshot,
   arrayRemove,
   arrayUnion,
   collection,
@@ -21,12 +20,7 @@ import {
 import { v4 as uuid } from "uuid";
 import { db, storage } from "./setting";
 import { getAuth } from "firebase/auth";
-import {
-  IPostData,
-  IPostUploadData,
-  ISearchMapData,
-  IUserData
-} from "../apiType";
+import { IPostData, IPostUploadData, IMapData, IUserData } from "../apiType";
 import {
   deleteObject,
   getDownloadURL,
@@ -39,13 +33,17 @@ const auth = getAuth();
 /**
  * 게시물 데이터 조회
  */
-export const fetchPostData = async (
+export const fetchPost = async (
   postId: string
 ): Promise<IPostData | undefined> => {
   try {
     const postDoc = doc(db, `post/${postId}`);
     const res = await getDoc(postDoc);
     const data = res.data();
+
+    if (!res.exists()) {
+      throw new Error("존재하지 않는 게시물입니다.");
+    }
 
     if (data) {
       const userRef = collection(db, "user");
@@ -66,15 +64,24 @@ export const fetchPostData = async (
 };
 
 /**
- * 게시물 첫 페이지
+ * 게시물 데이터 페이징
  */
-export const fetchFirstPagePostData = async (pagePerDate: number) => {
+export const fetchPosts = async (
+  page: QueryDocumentSnapshot<DocumentData, DocumentData> | null,
+  pagePerData: number
+) => {
   try {
     const postRef = collection(db, "post");
-    const q = query(postRef, orderBy("createdAt", "desc"), limit(pagePerDate));
+    const q = page
+      ? query(
+          postRef,
+          orderBy("createdAt", "desc"),
+          startAfter(page),
+          limit(pagePerData)
+        )
+      : query(postRef, orderBy("createdAt", "desc"), limit(pagePerData));
     const postDocs = await getDocs(q);
     const data = postDocs.docs.map((el) => el.data());
-
     if (data.length > 0) {
       const userRef = collection(db, "user");
       const userUid: string[] = [...data].map((item) => item.uid);
@@ -95,7 +102,7 @@ export const fetchFirstPagePostData = async (pagePerDate: number) => {
       }
     }
 
-    return { postDocs, data };
+    return { postDocs, data: data as IPostData[] };
   } catch (error) {
     console.error(error);
     throw error;
@@ -103,20 +110,29 @@ export const fetchFirstPagePostData = async (pagePerDate: number) => {
 };
 
 /**
- * 게시물 페이징 데이터
+ * 피드 게시물 페이징
  */
-export const fetchPagingPostData = async (
-  page: QueryDocumentSnapshot<DocumentData, DocumentData>,
-  pagePerDate: number
+export const fetchFeedPosts = async (
+  page: QueryDocumentSnapshot<DocumentData, DocumentData> | null,
+  pagePerData: number,
+  followingList: string[]
 ) => {
   try {
     const postRef = collection(db, "post");
-    const q = query(
-      postRef,
-      orderBy("createdAt", "desc"),
-      startAfter(page),
-      limit(pagePerDate)
-    );
+    const q = page
+      ? query(
+          postRef,
+          orderBy("createdAt", "desc"),
+          where("uid", "in", followingList),
+          startAfter(page),
+          limit(pagePerData)
+        )
+      : query(
+          postRef,
+          orderBy("createdAt", "desc"),
+          where("uid", "in", followingList),
+          limit(pagePerData)
+        );
     const postDocs = await getDocs(q);
     const data = postDocs.docs.map((el) => el.data());
     if (data.length > 0) {
@@ -138,103 +154,7 @@ export const fetchPagingPostData = async (
         }
       }
     }
-    return { postDocs, data };
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
-};
-
-/**
- * 게시물 피드 첫 페이지
- */
-export const fetchFirstPageFeedData = async (
-  pagePerDate: number,
-  followerList: string[]
-) => {
-  try {
-    if (followerList.length === 0) {
-      return {
-        postDocs: {} as QuerySnapshot<DocumentData, DocumentData>,
-        data: [] as DocumentData[]
-      };
-    }
-    const postRef = collection(db, "post");
-    const q = query(
-      postRef,
-      orderBy("createdAt", "desc"),
-      where("uid", "in", followerList),
-      limit(pagePerDate)
-    );
-    const postDocs = await getDocs(q);
-    const data = postDocs.docs.map((el) => el.data());
-
-    if (data.length > 0) {
-      const userRef = collection(db, "user");
-      const userUid: string[] = [...data].map((item) => item.uid);
-      const userQuery = query(userRef, where("uid", "in", userUid));
-      const res = await getDocs(userQuery);
-      const uidData: IUserData[] = res.docs.map((el) => {
-        return { uid: el.id, ...(el.data() as Omit<IUserData, "uid">) };
-      });
-
-      for (let i = 0; i < data.length; i++) {
-        const userData = uidData.find(
-          (userData) => userData.uid === data[i].uid
-        );
-        if (userData) {
-          data[i].displayName = userData.displayName;
-          data[i].photoURL = userData.photoURL;
-        }
-      }
-    }
-
-    return { postDocs, data };
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
-};
-
-/**
- * 게시물 피드 페이징 데이터
- */
-export const fetchPagingFeedData = async (
-  page: QueryDocumentSnapshot<DocumentData, DocumentData>,
-  pagePerDate: number,
-  followerList: string[]
-) => {
-  try {
-    const postRef = collection(db, "post");
-    const q = query(
-      postRef,
-      orderBy("createdAt", "desc"),
-      where("uid", "in", followerList),
-      startAfter(page),
-      limit(pagePerDate)
-    );
-    const postDocs = await getDocs(q);
-    const data = postDocs.docs.map((el) => el.data());
-    if (data.length > 0) {
-      const userRef = collection(db, "user");
-      const userUid: string[] = [...data].map((item) => item.uid);
-      const userQuery = query(userRef, where("uid", "in", userUid));
-      const res = await getDocs(userQuery);
-      const uidData: IUserData[] = res.docs.map((el) => {
-        return { uid: el.id, ...(el.data() as Omit<IUserData, "uid">) };
-      });
-
-      for (let i = 0; i < data.length; i++) {
-        const userData = uidData.find(
-          (userData) => userData.uid === data[i].uid
-        );
-        if (userData) {
-          data[i].displayName = userData.displayName;
-          data[i].photoURL = userData.photoURL;
-        }
-      }
-    }
-    return { postDocs, data };
+    return { postDocs, data: data as IPostData[] };
   } catch (error) {
     console.error(error);
     throw error;
@@ -244,28 +164,14 @@ export const fetchPagingFeedData = async (
 /**
  * 게시물 업로드 함수
  */
-export const fetchUploadPost = async (
+export const uploadPost = async (
   postData: Omit<IPostUploadData, "img"> // img는 쓰이지 않기 때문에 Omit 타입으로 빼줌
 ) => {
   try {
     // post colletion
     const postRef = collection(db, "post");
     // post colletion에 postData Doc 추가
-    const addPostPromise = setDoc(doc(postRef, postData.id), postData);
-
-    // 유저에도 post 데이터를 추가
-    // user collection
-    const userRef = collection(db, "user");
-    // 현재 유저가 존재하지 않을 경우 retrun
-    if (!auth.currentUser) return;
-    // 유저 uid를 통해 Doc 가져오기
-    const userDoc = doc(userRef, auth.currentUser.uid);
-    // 해당 user의  Doc에 postList 배열에 postData 추가
-    const addUserPostListPromise = updateDoc(userDoc, {
-      postList: arrayUnion(postData.id)
-    });
-    // 비동기 처리 동시 수행
-    await Promise.all([addPostPromise, addUserPostListPromise]);
+    await setDoc(doc(postRef, postData.id), postData);
   } catch (error) {
     console.error(error);
     throw error;
@@ -276,7 +182,7 @@ export const fetchUploadPost = async (
  * 게시물 이미지 업로드 함수
  * @return 업로드 결과 fileInfo = {url, filename} 객체를 반환
  */
-export const fetchPostImg = async (files: File[]) => {
+export const uploadPostImg = async (files: File[]) => {
   try {
     // files file 수 만큼 이미지 업로드 처리 후 결과를 배열로 만듬
     const uploadPromises = files.map((file) => {
@@ -320,7 +226,7 @@ export const fetchPostImg = async (files: File[]) => {
 /**
  * 게시물 수정
  */
-export const fetchEditPost = async (
+export const updatePost = async (
   prevPostData: IPostData,
   editPostData: Pick<
     IPostUploadData,
@@ -357,7 +263,9 @@ export const fetchEditPost = async (
 /**
  * 게시물 삭제
  */
-export const fetchRemovePost = async (postData: IPostData) => {
+export const deletePost = async (
+  postData: Pick<IPostData, "id" | "imgName">
+) => {
   try {
     if (!postData.imgName) return;
     const postDoc = doc(db, `post/${postData.id}`);
@@ -402,7 +310,7 @@ export const fetchRemovePost = async (postData: IPostData) => {
 /**
  * 좋아요 추가
  */
-export const fetchAddPostLike = async (id: string) => {
+export const addPostLike = async (id: string) => {
   try {
     const postRef = doc(db, `post/${id}`);
     const postDocSnapshot = await getDoc(postRef);
@@ -428,7 +336,7 @@ export const fetchAddPostLike = async (id: string) => {
 /**
  * 좋아요 삭제
  */
-export const fetchRemovePostLike = async (id: string) => {
+export const removePostLike = async (id: string) => {
   try {
     const postDoc = doc(db, `post/${id}`);
     const postDocSnapshot = await getDoc(postDoc);
@@ -454,7 +362,7 @@ export const fetchRemovePostLike = async (id: string) => {
 /**
  * 맛집 지도 추가
  */
-export const fetchAddPostMap = async (mapData: ISearchMapData) => {
+export const addTasteMap = async (mapData: IMapData) => {
   try {
     if (!auth.currentUser) return;
     const userRef = doc(db, `user/${auth.currentUser.uid}`);
@@ -470,7 +378,7 @@ export const fetchAddPostMap = async (mapData: ISearchMapData) => {
 /**
  * 맛집 지도 삭제
  */
-export const fetchRemovePostMap = async (mapData: ISearchMapData) => {
+export const removeTasteMap = async (mapData: IMapData) => {
   try {
     if (!auth.currentUser) return;
     const userRef = doc(db, `user/${auth.currentUser.uid}`);
@@ -486,7 +394,9 @@ export const fetchRemovePostMap = async (mapData: ISearchMapData) => {
 /**
  * 게시물 신고
  */
-export const fetchReportPost = async (postData: IPostData) => {
+export const reportPost = async (
+  postData: Pick<IPostData, "id" | "reportCount">
+) => {
   try {
     if (!auth.currentUser) return;
     const postDoc = doc(db, `post/${postData.id}`);

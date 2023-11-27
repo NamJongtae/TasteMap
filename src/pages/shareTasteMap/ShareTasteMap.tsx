@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import {
   ContetnTypeBtnWrapper,
   Desc,
@@ -18,7 +18,7 @@ import Kakaomap from "../../component/units/kakaomap/Kakaomap.container";
 import MyTasteMapList from "../profile/myTasteMap/MyTasteMapList";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store/store";
-import { EContentType, tasteMapSlice } from "../../slice/tasteMapSlice";
+import { EMapContentType, tasteMapSlice } from "../../slice/tasteMapSlice";
 import {
   InvaildMap,
   InvaildMapImg,
@@ -29,13 +29,13 @@ import {
 import { resolveWebp } from "../../library/webpSupport";
 import { Helmet } from "react-helmet-async";
 import Header from "../../component/commons/layouts/header/Header";
-import { thunkFetchMyProfile } from "../../slice/userSlice";
+import { IUserProfileData } from "../../api/apiType";
+import { useUserProfileQuery } from "../../hook/query/profile/useUserProfileQuery";
 
 export default function ShareTasteMap() {
   const { uid } = useParams();
   const myInfo = useSelector((state: RootState) => state.user.myInfo);
-  const myProfile = useSelector((state: RootState) => state.user.myProfile);
-  const loadMyProfileLoading = useSelector((state: RootState) => state.user.loadMyProfileLoading);
+
   const clickMarkerData = useSelector(
     (state: RootState) => state.tasteMap.clickMarkerData
   );
@@ -44,58 +44,59 @@ export default function ShareTasteMap() {
   );
   const dispatch = useDispatch<AppDispatch>();
 
+  const { data: userProfile, isFetching: userIsFetching } = useUserProfileQuery(
+    uid || ""
+  );
+
   const onClickMapType = () => {
-    dispatch(tasteMapSlice.actions.setContentType("map"));
+    dispatch(tasteMapSlice.actions.setContentType(EMapContentType.MAP));
   };
 
   const onClickListType = () => {
-    dispatch(tasteMapSlice.actions.setContentType("list"));
+    dispatch(tasteMapSlice.actions.setContentType(EMapContentType.LIST));
   };
-
-  useEffect(() => {
-    if (uid) {
-      dispatch(thunkFetchMyProfile(uid));
-    }
-  }, []);
 
   return (
     <>
-      <Helmet>
-        <meta
-          property='og:title'
-          content={(myProfile.displayName) + "님의 TasteMap"}
-        />
-        <meta property='og:type' content='webpsite' />
-        <meta
-          property='og:url'
-          content={"https://tasteMap.site/tasteMap/share" + myProfile.uid}
-        />
-        <meta
-          property='og:image'
-          content='https://firebasestorage.googleapis.com/v0/b/tastemap-c9a2a.appspot.com/o/images%2Fog%2Fog-img.png?alt=media&token=d4503b8e-af9e-4d6b-9367-268973d3104d&_gl=1*179wgyn*_ga*MTY1NzkxNDYxOC4xNjg4NTU5ODMy*_ga_CW55HF8NVT*MTY5NjQyMTkyOS4yMDEuMS4xNjk2NDIxOTcyLjE3LjAuMA..'
-        />
-        <meta
-          property='og:description'
-          content={
-            (myProfile.displayName || "") + "님이 공유하는 나만의 맛집 지도"
-          }
-          data-react-helmet='true'
-        />
-      </Helmet>
-      {loadMyProfileLoading ? (
+      {userIsFetching ? (
         <Loading />
+      ) : !userProfile?.storedMapList ? (
+        <InvaildMap>
+          <InvaildMapImg
+            src={resolveWebp("/assets/webp/icon-cloche.webp", "svg")}
+          />
+          <InvaildMapText>유효하지 않은 맛집 지도입니다.</InvaildMapText>
+        </InvaildMap>
       ) : (
         <>
-          {!myProfile.storedMapList ? (
-            <InvaildMap>
-              <InvaildMapImg
-                src={resolveWebp("/assets/webp/icon-cloche.webp", "svg")}
-              />
-              <InvaildMapText>유효하지 않은 맛집 지도입니다.</InvaildMapText>
-            </InvaildMap>
-          ) : (
+          <Helmet>
+            <meta
+              property='og:title'
+              content={userProfile.displayName + "님의 TasteMap"}
+            />
+            <meta property='og:type' content='webpsite' />
+            <meta
+              property='og:url'
+              content={
+                "https://tasteMap.site/tasteMap/share" + userProfile!.uid
+              }
+            />
+            <meta
+              property='og:image'
+              content='https://firebasestorage.googleapis.com/v0/b/tastemap-c9a2a.appspot.com/o/images%2Fog%2Fog-img.png?alt=media&token=d4503b8e-af9e-4d6b-9367-268973d3104d&_gl=1*179wgyn*_ga*MTY1NzkxNDYxOC4xNjg4NTU5ODMy*_ga_CW55HF8NVT*MTY5NjQyMTkyOS4yMDEuMS4xNjk2NDIxOTcyLjE3LjAuMA..'
+            />
+            <meta
+              property='og:description'
+              content={
+                (userProfile.displayName || "") +
+                "님이 공유하는 나만의 맛집 지도"
+              }
+              data-react-helmet='true'
+            />
+          </Helmet>
+          <>
             <>
-              {myInfo && myInfo.uid && <Header type='profile' />}
+              {myInfo.uid && <Header type='profile' />}
               <Wrapper>
                 <ContetnTypeBtnWrapper>
                   <MapBtn
@@ -115,16 +116,14 @@ export default function ShareTasteMap() {
                 </ContetnTypeBtnWrapper>
                 <Title>
                   <TitleImg src={"/assets/icon-searchMap.svg"} alt='맛집지도' />
-                  {myProfile.displayName}님의 맛집 지도
+                  {userProfile.displayName}님의 맛집 지도
                 </Title>
                 <KakaomapWrapper contentType={contentType}>
                   <Desc>마커 클릭 시 맛집 정보가 지도 아래 표시 됩니다.</Desc>
-                  {myProfile.storedMapList && (
-                    <Kakaomap
-                      items={myProfile.storedMapList}
-                      isTasteMapPage={true}
-                    />
-                  )}
+                  <Kakaomap
+                    items={userProfile.storedMapList}
+                    isTasteMapPage={true}
+                  />
                 </KakaomapWrapper>
                 {clickMarkerData.title && (
                   <ItemSingleList contentType={contentType}>
@@ -156,15 +155,16 @@ export default function ShareTasteMap() {
                     </Item>
                   </ItemSingleList>
                 )}
-                {contentType === EContentType.MAP && (
+                {contentType === EMapContentType.LIST && (
                   <MyTasteMapList
-                    items={myProfile.storedMapList}
+                    profile={userProfile || ({} as IUserProfileData)}
+                    items={userProfile!.storedMapList}
                     isShareTasteMap={true}
                   />
                 )}
               </Wrapper>
             </>
-          )}
+          </>
         </>
       )}
     </>

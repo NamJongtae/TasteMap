@@ -20,11 +20,12 @@ import { v4 as uuid } from "uuid";
 
 import { db, storage } from "./setting";
 import {
-  IProfileData,
   IPostData,
   IUserData,
   IFollowData,
-  IEditProfileData
+  IProfileUpdateData,
+  IMyProfileData,
+  IUserProfileData
 } from "../apiType";
 import {
   UploadResult,
@@ -36,16 +37,27 @@ import {
 import { getAuth, updateProfile } from "firebase/auth";
 
 /**
- * 유저 프로필 조회
+ * 나의 프로필 조회
  */
-export const fetchProfile = async (
+export const fetchMyProfile = async (
   uid: string
-): Promise<IProfileData | undefined> => {
+): Promise<IMyProfileData | undefined> => {
   try {
     const userRef = doc(db, `user/${uid}`);
     const userDoc = await getDoc(userRef);
-    const data = userDoc.data();
-    return data as IProfileData;
+    const data = userDoc.data() as IMyProfileData;
+    const myProfile = {
+      uid: data.uid,
+      displayName: data.displayName,
+      photoURL: data.photoURL,
+      introduce: data.introduce,
+      createdAt: data.createdAt,
+      likeList: data.likeList,
+      storedMapList: data.storedMapList,
+      followerList: data.followerList,
+      followingList: data.followingList
+    }
+    return myProfile;
   } catch (error) {
     console.error(error);
     throw error;
@@ -53,43 +65,25 @@ export const fetchProfile = async (
 };
 
 /**
- * 유저 프로필 게시물 첫 페이지
+ * 유저 프로필 조회
  */
-export const fetchProfileFirstPageData = async (
-  uid: string,
-  pagePerData: number
-) => {
+export const fetchUserProfile = async (
+  uid: string
+): Promise<IUserProfileData | undefined> => {
   try {
-    const postRef = collection(db, `post`);
-    const q = query(
-      postRef,
-      where("uid", "==", uid),
-      orderBy("createdAt", "desc"),
-      limit(pagePerData)
-    );
-    const postDocs = await getDocs(q);
-    const data = postDocs.docs.map((el) => el.data());
-
-    if (data.length > 0) {
-      const userRef = collection(db, "user");
-      const userUid: string[] = [...data].map((item) => item.uid);
-      const userQuery = query(userRef, where("uid", "in", userUid));
-      const res = await getDocs(userQuery);
-      const uidData: IUserData[] = res.docs.map((el) => {
-        return { uid: el.id, ...(el.data() as Omit<IUserData, "uid">) };
-      });
-
-      for (let i = 0; i < data.length; i++) {
-        const userData = uidData.find(
-          (userData) => userData.uid === data[i].uid
-        );
-        if (userData) {
-          data[i].displayName = userData.displayName;
-          data[i].photoURL = userData.photoURL;
-        }
-      }
-    }
-    return { postDocs, data: data as IPostData[] };
+    const userRef = doc(db, `user/${uid}`);
+    const userDoc = await getDoc(userRef);
+    const data = userDoc.data() as IUserProfileData;
+    const userProfile = {
+      uid: data.uid,
+      displayName: data.displayName,
+      photoURL: data.photoURL,
+      introduce: data.introduce,
+      storedMapList: data.storedMapList,
+      followerList: data.followerList,
+      followingList: data.followingList
+    };
+    return userProfile;
   } catch (error) {
     console.error(error);
     throw error;
@@ -99,20 +93,27 @@ export const fetchProfileFirstPageData = async (
 /**
  * 유저 프로필 게시물 페이징
  */
-export const fetchProfilePagingData = async (
+export const fetchProfilePosts = async (
   uid: string,
   pagePerData: number,
-  page: QueryDocumentSnapshot<DocumentData, DocumentData>
+  page: QueryDocumentSnapshot<DocumentData, DocumentData> | null
 ) => {
   try {
     const postRef = collection(db, `post`);
-    const q = query(
-      postRef,
-      where("uid", "==", uid),
-      orderBy("createdAt", "desc"),
-      startAfter(page),
-      limit(pagePerData)
-    );
+    const q = page
+      ? query(
+          postRef,
+          where("uid", "==", uid),
+          orderBy("createdAt", "desc"),
+          startAfter(page),
+          limit(pagePerData)
+        )
+      : query(
+          postRef,
+          where("uid", "==", uid),
+          orderBy("createdAt", "desc"),
+          limit(pagePerData)
+        );
     const postDocs = await getDocs(q);
     const data = postDocs.docs.map((el) => el.data());
     if (data.length > 0) {
@@ -144,7 +145,7 @@ export const fetchProfilePagingData = async (
 /**
  * 팔로우
  */
-export const fetchFollow = async (myUid: string, userUid: string) => {
+export const follow = async (myUid: string, userUid: string) => {
   // 나의 프로필 Doc에 followingList에 해당 유저의 uid 추가
   const myProfileDoc = doc(db, `user/${myUid}`);
   const followingListRef = collection(myProfileDoc, `following`);
@@ -176,7 +177,7 @@ export const fetchFollow = async (myUid: string, userUid: string) => {
 /**
  * 언팔로우
  */
-export const fetchUnfollow = async (myUid: string, userUid: string) => {
+export const unfollow = async (myUid: string, userUid: string) => {
   // 나의 프로필 Doc에 followingList에 해당 유저의 uid 제거
   const myProfileDoc = doc(db, `user/${myUid}`);
   const followingDoc = doc(myProfileDoc, `following/${userUid}`);
@@ -204,7 +205,7 @@ export const fetchUnfollow = async (myUid: string, userUid: string) => {
 /**
  * 팔로워 첫 페이지 목록 조회
  */
-export const fetchFirstpageFollowerData = async (
+export const fetchFirstpageFollowers = async (
   uid: string,
   pagePerData: number
 ) => {
@@ -238,7 +239,7 @@ export const fetchFirstpageFollowerData = async (
 /**
  * 팔로워 페이징
  */
-export const fetchPagingFollowerData = async (
+export const fetchPagingFollowers = async (
   uid: string,
   page: QueryDocumentSnapshot<DocumentData, DocumentData>,
   pagePerData: number
@@ -273,7 +274,7 @@ export const fetchPagingFollowerData = async (
 /**
  * 팔로잉 첫 페이지 목록 조회
  */
-export const fetchFirstpageFollowingData = async (
+export const fetchFirstpageFollowing = async (
   uid: string,
   pagePerData: number
 ) => {
@@ -307,7 +308,7 @@ export const fetchFirstpageFollowingData = async (
 /**
  * 팔로잉 페이징
  */
-export const fetchPagingFollowingData = async (
+export const fetchPagingFollowing = async (
   uid: string,
   page: QueryDocumentSnapshot<DocumentData, DocumentData>,
   pagePerData: number
@@ -343,7 +344,7 @@ export const fetchPagingFollowingData = async (
  * 프로필 수정
  */
 const auth = getAuth();
-export const fetchEditProfile = async (editProfileData: IEditProfileData) => {
+export const updateMyProfile = async (editProfileData: IProfileUpdateData) => {
   try {
     // 이미지 파일 존재시 이미지 파일을 업로드
     const fileName =

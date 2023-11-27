@@ -24,8 +24,9 @@ import {
   Strong
 } from "./searchModal.styles";
 import { SweetAlertResult } from "sweetalert2";
-import { ISearchMapData } from "../../api/apiType";
+import { IMapData } from "../../api/apiType";
 import { optModalTabFocus } from "../../library/optModalTabFocus";
+import ScrollLoading from '../../component/commons/loading/ScrollLoading';
 interface IProps {
   closeSearchModal: () => void;
   onSubmitSearch: (
@@ -37,9 +38,10 @@ interface IProps {
   closeBtnRef: React.RefObject<HTMLButtonElement>;
   lastItemSelectBtn: React.RefObject<HTMLButtonElement>;
   isSarch: boolean;
-  searchMapData: ISearchMapData[];
-  onClickSelected: (item: ISearchMapData) => void;
+  searchMapData: IMapData[];
+  onClickSelected: (item: IMapData) => void;
   searchKeyword: string;
+  isPending: boolean;
 }
 export default function SearchModalUI({
   closeSearchModal,
@@ -52,7 +54,8 @@ export default function SearchModalUI({
   isSarch,
   searchMapData,
   onClickSelected,
-  searchKeyword
+  searchKeyword,
+  isPending
 }: IProps) {
   return (
     <Wrapper
@@ -123,20 +126,22 @@ export default function SearchModalUI({
               })}
             </SearchList>
           ) : (
-            <NoSearchData>
-              <NoSearchDataText>
-                <Strong>{searchKeyword}</Strong>
-                {` 와 일치하는 검색결과가 없습니다.
+            isPending ? <ScrollLoading />: (
+              <NoSearchData>
+                <NoSearchDataText>
+                  <Strong>{searchKeyword}</Strong>
+                  {` 와 일치하는 검색결과가 없습니다.
                 검색어에 잘못된 부분이 있는지 확인해주세요.
                 가게명, 상호명, 지역명을 다시 한번 확인해주세요.`}
-              </NoSearchDataText>
+                </NoSearchDataText>
 
-              <NoSearchDataText>
-                Tip &#41; 검색이 잘 안되시나요? 아래와 같이 검색해보세요.
-              </NoSearchDataText>
-              <NoSearchDataText>가게명 + 지역명</NoSearchDataText>
-              <TipExample>예&#41; 나만의 맛집 + 서울 강남</TipExample>
-            </NoSearchData>
+                <NoSearchDataText>
+                  Tip &#41; 검색이 잘 안되시나요? 아래와 같이 검색해보세요.
+                </NoSearchDataText>
+                <NoSearchDataText>가게명 + 지역명</NoSearchDataText>
+                <TipExample>예&#41; 나만의 맛집 + 서울 강남</TipExample>
+              </NoSearchData>
+            )
           )
         ) : (
           <SerachTip>

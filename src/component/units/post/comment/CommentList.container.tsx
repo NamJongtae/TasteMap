@@ -1,180 +1,222 @@
 import React, { useEffect, useRef } from "react";
-import {
-  commentSlice,
-  thunkFetchFirstPageCommentData,
-  thunkFetchPagingCommentData
-} from "../../../../slice/commentSlice";
+import { commentSlice } from "../../../../slice/commentSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../../store/store";
 import { useInView } from "react-intersection-observer";
-import {
-  replySlice,
-  thunkFetchFirstPageReplyData,
-  thunkFetchPagingReplyData
-} from "../../../../slice/replySlice";
+import { replySlice } from "../../../../slice/replySlice";
 import CommentListUI from "./CommentList.presenter";
+import { useCommentInfiniteQuery } from "../../../../hook/query/post/comment/useCommentInfiniteQuery";
+import { sweetToast } from "../../../../library/sweetAlert/sweetAlert";
+import { InfiniteData, useQueryClient } from "@tanstack/react-query";
+import { DocumentData, QuerySnapshot } from "firebase/firestore";
+import { ICommentData, IPostData } from "../../../../api/apiType";
+import { useReplyInfiniteQuery } from "../../../../hook/query/post/reply/useReplyInfiniteQuery";
 
 interface IProps {
   isReply: boolean;
   closeBtnRef: React.RefObject<HTMLButtonElement>;
   textareaRef: React.RefObject<HTMLTextAreaElement>;
   firstItemLinkRef: React.RefObject<HTMLAnchorElement>;
+  postType: "HOME" | "FEED" | "PROFILE";
 }
+
+type InfinitePostsType = {
+  commentDocs: QuerySnapshot<DocumentData, DocumentData>;
+  data: IPostData[];
+};
+
+type InfiniteCommentsType = {
+  replyDocs: QuerySnapshot<DocumentData, DocumentData>;
+  data: ICommentData[];
+};
+
 export default function CommentList({
   isReply,
   closeBtnRef,
   textareaRef,
-  firstItemLinkRef
+  firstItemLinkRef,
+  postType
 }: IProps) {
   const dispatch = useDispatch<AppDispatch>();
-  // 댓글 데이터 목록
-  const comments = useSelector(
-    (state: RootState) => state.comment.comments
-  );
-  // 댓글 모달창 로딩 여부
-  const commentLoading = useSelector(
-    (state: RootState) => state.comment.loadCommentsLoading
-  );
   // 현재 댓글들의 게시물 아이디
   const postId = useSelector((state: RootState) => state.comment.postId);
-  // 댓글 현재 페이지
-  const commentPage = useSelector((state: RootState) => state.comment.page);
-  // 다음 댓글 존재 여부
-  const commentHasMore = useSelector(
-    (state: RootState) => state.comment.hasMore
-  );
   // 페이지 당 최대 댓글 수
   const commentPagePerData = useSelector(
     (state: RootState) => state.comment.pagePerData
   );
 
-  // 답글 모달창 로딩 여부
-  const replyLoading = useSelector(
-    (state: RootState) => state.reply.loadReplyLoading
-  );
   // 답글의 부모 댓글 아이디
   const parentCommentId = useSelector(
     (state: RootState) => state.reply.parentCommentId
   );
-  // 답글 데이터 목록
-  const replies = useSelector((state: RootState) => state.reply.replies);
-  // 답글 현재 페이지
-  const repliesPage = useSelector((state: RootState) => state.reply.page);
-  // 다음 답글 존재 여부
-  const repliesHasMore = useSelector((state: RootState) => state.reply.hasMore);
   // 페이지 당 최대 답글 수
   const repliesPagePerData = useSelector(
     (state: RootState) => state.reply.pagePerData
   );
-  // 무한 스크롤 댓글/답글 추가 시 로딩
-  const loadMoreCommentsLoading = useSelector(
-    (state: RootState) => state.comment.loadMoreCommentsLoading
-  );
-  // react-intersection-observer 라이브러리
   const [ref, inview] = useInView();
   const CommentListRef = useRef<HTMLUListElement>(null);
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    // 모달창이 사라질 때 commenDataList 및 ReplyDataList 초기화
-    return () => {
-      if (!isReply) {
-        dispatch(commentSlice.actions.setCommentListData([]));
-      } else {
-        dispatch(replySlice.actions.setReplies([]));
-      }
-    };
-  }, []);
+  const {
+    data: comments,
+    hasNextPage: commentsHasNextPage,
+    fetchNextPage: commentFetchNextPage,
+    isFetching: commentsIsFetching,
+    isFetchingNextPage: commentsIsFetchingNextPage,
+    refetch: commentsRefetch,
+    isError: commentsIsError,
+    error: commentsError,
+    isRefetchError: commentsIsRefetchError
+  } = useCommentInfiniteQuery(postId, commentPagePerData, isReply);
 
-  // 무한스크롤 처리 inview의 상태가 변경될 때 마다 댓글 목록/답글 목록을 추가로 받아옴
+  const {
+    data: replies,
+    hasNextPage: repliesHasNextPage,
+    fetchNextPage: repliesFetchNextPage,
+    isFetchingNextPage: repliesIsFetchingNextPage,
+    refetch: repliesRefetch,
+    isFetching: repliesIsFetching,
+    isError: repliesIsError,
+    error: repliesError,
+    isRefetchError: repliesIsRefetchError
+  } = useReplyInfiniteQuery(parentCommentId, repliesPagePerData, isReply);
+
   // isReply props 통해 데이터를 다르게 처리
   useEffect(() => {
     // 댓글 모달인 경우
     if (!isReply) {
-      // 첫 페이지 댓글 목록 가져오기
-      if (comments.length === 0) {
-        dispatch(
-          thunkFetchFirstPageCommentData({
-            postId,
-            pagePerData: commentPagePerData
-          })
-        );
-      }
-      // 이후 페이지에 따라 댓글 목록 추가로 가져오기
       if (
-        comments.length > 0 &&
-        commentHasMore &&
-        inview &&
-        commentPage
+        (commentsHasNextPage && inview && comments?.length) ||
+        0 >= commentPagePerData
       ) {
-        dispatch(
-          thunkFetchPagingCommentData({
-            page: commentPage,
-            postId,
-            pagePerData: commentPagePerData
-          })
-        );
+        commentFetchNextPage();
       }
     } else {
       // 답글 모달인 경우
-      // 첫 페이지 답글 목록 가져오기
-      if (replies.length === 0) {
-        dispatch(
-          thunkFetchFirstPageReplyData({
-            parentCommentId,
-            pagePerData: repliesPagePerData
-          })
-        );
-      } // 이후 페이지에 따라 답글 목록 추가로 가져오기
-      if (replies.length > 0 && repliesHasMore && inview && repliesPage) {
-        dispatch(
-          thunkFetchPagingReplyData({
-            page: repliesPage,
-            parentCommentId,
-            pagePerData: repliesPagePerData
-          })
-        );
+      if (
+        (repliesHasNextPage && inview && replies?.length) ||
+        0 >= repliesPagePerData
+      ) {
+        repliesFetchNextPage();
       }
     }
-  }, [inview]);
+  }, [inview, isReply, commentsHasNextPage, repliesHasNextPage]);
 
   const handlerRefresh = () => {
     if (!isReply) {
-      dispatch(
-        thunkFetchFirstPageCommentData({
-          postId,
-          pagePerData: commentPagePerData
-        })
-      );
+      commentsRefetch();
     } else {
-      dispatch(
-        thunkFetchFirstPageReplyData({
-          parentCommentId,
-          pagePerData: repliesPagePerData
-        })
-      );
+      repliesRefetch();
     }
   };
 
+  // 초기 tab focus를 줌
   useEffect(() => {
     if (CommentListRef.current) {
       CommentListRef.current.focus();
     }
   }, [CommentListRef.current]);
 
+  // comments 무한스크롤 에러 처리
+  useEffect(() => {
+    if (commentsIsError || commentsIsRefetchError) {
+      if (commentsError?.message === "게시물이 존재하지 않습니다.") {
+        sweetToast("삭제된 게시물입니다!", "warning", 2000);
+        // 게시물 삭제
+        queryClient.setQueryData(
+          ["posts", postType],
+          (postsData: InfiniteData<InfinitePostsType, unknown>) => ({
+            ...postsData,
+            pages: postsData.pages.map((page: InfinitePostsType) => ({
+              ...page,
+              data: page.data.filter((post: IPostData) => post.id !== postId)
+            }))
+          })
+        );
+        dispatch(commentSlice.actions.setIsOpenCommentModal(false));
+      } else {
+        sweetToast(
+          "알 수 없는 에러가 발생하였습니다.\n잠시 후 다시 시도해 주세요.",
+          "warning"
+        );
+        console.error(commentsError);
+      }
+    }
+  }, [commentsIsError, commentsIsRefetchError]);
+
+  // replies 무한스크롤 에러 처리
+  useEffect(() => {
+    if (repliesIsError || repliesIsRefetchError) {
+      if (repliesError?.message === "게시물이 존재하지 않습니다.") {
+        sweetToast("삭제된 게시물입니다!", "warning", 2000);
+        // 게시물 삭제
+        queryClient.setQueryData(
+          ["posts", postType],
+          (postsData: InfiniteData<InfinitePostsType, unknown>) => ({
+            ...postsData,
+            pages: postsData.pages.map((page: InfinitePostsType) => ({
+              ...page,
+              data: page.data.filter((post: IPostData) => post.id !== postId)
+            }))
+          })
+        );
+        dispatch(commentSlice.actions.setIsOpenCommentModal(false));
+      } else if (repliesError?.message === "댓글이 존재하지 않습니다.") {
+        sweetToast("삭제된 댓글입니다!", "warning", 2000);
+        // 댓글 삭제
+        queryClient.setQueryData(
+          ["comments"],
+          (commentsData: InfiniteData<InfiniteCommentsType, unknown>) => ({
+            ...commentsData,
+            pages: commentsData.pages.map((page: InfiniteCommentsType) => ({
+              ...page,
+              data: page.data.filter(
+                (comment: ICommentData) => comment.commentId !== parentCommentId
+              )
+            }))
+          })
+        );
+        dispatch(replySlice.actions.setIsOpenReplyModal(false));
+        // 부모 댓글이 존재하지 않는경우 모든 답글 삭제 : 답글 쿼리 제거
+        queryClient.removeQueries({ queryKey: ["replies"] });
+      } else {
+        sweetToast(
+          "알 수 없는 에러가 발생하였습니다.\n잠시 후 다시 시도해 주세요.",
+          "warning"
+        );
+        console.error(repliesError);
+      }
+    }
+  }, [repliesIsError, repliesIsRefetchError]);
+
+  const isError = isReply
+    ? commentsIsError || commentsIsRefetchError
+    : repliesIsError || repliesIsRefetchError;
+
+  const loadRepliesLoading = repliesIsFetching && !repliesIsFetchingNextPage;
+
+  const loadCommentsLoading = commentsIsFetching && !commentsIsFetchingNextPage;
+
+  const loadMoreDataLoading = isReply
+    ? repliesIsFetchingNextPage
+    : commentsIsFetchingNextPage;
+
   return (
     <CommentListUI
       isReply={isReply}
-      replyLoading={replyLoading}
-      commentLoading={commentLoading}
+      isError={isError}
+      loadRepliesLoading={loadRepliesLoading}
+      loadCommentsLoading={loadCommentsLoading}
       handlerRefresh={handlerRefresh}
-      replies={replies}
-      comments={comments}
+      replies={replies || []}
+      comments={comments || []}
       infiniteScrollRef={ref}
-      isScrollLoading={loadMoreCommentsLoading}
+      loadMoreDataLoading={loadMoreDataLoading}
       closeBtnRef={closeBtnRef}
       textareaRef={textareaRef}
       CommentListRef={CommentListRef}
       firstItemLinkRef={firstItemLinkRef}
+      postType={postType}
     />
   );
 }

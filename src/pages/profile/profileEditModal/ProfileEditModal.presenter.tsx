@@ -1,4 +1,5 @@
 import React from "react";
+import ReactDOM from "react-dom";
 import { resolveWebp } from "../../../library/webpSupport";
 import UserInput from "../../../component/commons/userInput/UserInput";
 import { Label } from "../../../component/commons/userInput/userInput.styles";
@@ -24,7 +25,7 @@ import {
   ProfileImgWrapper,
   Wrapper
 } from "./ProfileEditModal.styles";
-import { IProfileData } from "../../../api/apiType";
+import { IMyProfileData } from "../../../api/apiType";
 import { optModalTabFocus } from "../../../library/optModalTabFocus";
 import ScrollLoading from "../../../component/commons/loading/ScrollLoading";
 interface IProps {
@@ -45,14 +46,15 @@ interface IProps {
   onChangeIntroduce: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
   preventKeydownEnter: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
   textareaRef: React.RefObject<HTMLTextAreaElement>;
-  myProfile: IProfileData;
+  myProfile: IMyProfileData;
   ProfileImgButtonWrapperRef: React.RefObject<HTMLDivElement>;
   resetBtnRef: React.RefObject<HTMLButtonElement>;
   editBtnRef: React.RefObject<HTMLButtonElement>;
   closeBtnRef: React.RefObject<HTMLButtonElement>;
   isImgLoading: boolean;
 }
-export default function ProfileEditModalUI({
+
+const Modal = ({
   onClickClose,
   modalRef,
   onClickSubmit,
@@ -73,7 +75,7 @@ export default function ProfileEditModalUI({
   editBtnRef,
   closeBtnRef,
   isImgLoading
-}: IProps) {
+}: IProps) => {
   return (
     <Wrapper
       onKeyDown={(e: React.KeyboardEvent<HTMLDivElement>) => {
@@ -206,5 +208,57 @@ export default function ProfileEditModalUI({
         />
       </ProfileEditModalWrapper>
     </Wrapper>
+  );
+};
+export default function ProfileEditModalUI({
+  onClickClose,
+  modalRef,
+  onClickSubmit,
+  imgInputRef,
+  onChangeImg,
+  previewImg,
+  onClickImgReset,
+  displayNameValue,
+  onChangeDisplayName,
+  displayNameValid,
+  introduceValue,
+  onChangeIntroduce,
+  preventKeydownEnter,
+  textareaRef,
+  myProfile,
+  ProfileImgButtonWrapperRef,
+  resetBtnRef,
+  editBtnRef,
+  closeBtnRef,
+  isImgLoading
+}: IProps) {
+  return (
+    <>
+      {ReactDOM.createPortal(
+        <Modal
+          onClickClose={onClickClose}
+          modalRef={modalRef}
+          onClickSubmit={onClickSubmit}
+          imgInputRef={imgInputRef}
+          onChangeImg={onChangeImg}
+          previewImg={previewImg}
+          onClickImgReset={onClickImgReset}
+          displayNameValue={displayNameValue}
+          onChangeDisplayName={onChangeDisplayName}
+          displayNameValid={displayNameValid}
+          introduceValue={introduceValue}
+          onChangeIntroduce={onChangeIntroduce}
+          preventKeydownEnter={preventKeydownEnter}
+          textareaRef={textareaRef}
+          myProfile={myProfile}
+          ProfileImgButtonWrapperRef={ProfileImgButtonWrapperRef}
+          resetBtnRef={resetBtnRef}
+          editBtnRef={editBtnRef}
+          closeBtnRef={closeBtnRef}
+          isImgLoading={isImgLoading}
+        />,
+        document.getElementById("modal-root") as HTMLDivElement
+      )}
+    </>
   );
 }

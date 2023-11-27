@@ -3,11 +3,9 @@ import { useValidationInput } from "../../hook/useValidationInput";
 import ProfileSettingUI from "./ProfileSetting.presenter";
 import { resolveWebp } from "../../library/webpSupport";
 import { getCompressionImg } from "../../library/imageCompression";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../store/store";
 import { imgValidation } from "../../library/imageValidation";
 import { isMobile } from "react-device-detect";
-import { thunkFetchSignup } from '../../slice/userSlice';
+import { UseMutateFunction } from '@tanstack/react-query';
 interface IProps {
   emailValue: string;
   passwordValue: string;
@@ -15,6 +13,24 @@ interface IProps {
   setProfile: React.Dispatch<React.SetStateAction<boolean>>;
   setPercentage: React.Dispatch<React.SetStateAction<string>>;
   setNext: React.Dispatch<React.SetStateAction<boolean>>;
+  mutate: UseMutateFunction<
+    {
+      uid: string;
+      email: string | null;
+      displayName: string | null;
+      photoURL: string | undefined;
+    },
+    Error,
+    {
+      displayName: string;
+      file: "" | File;
+      email: string;
+      password: string;
+      phone: string;
+      introduce: string;
+    },
+    unknown
+  >;
 }
 
 export default function ProfileSetting({
@@ -23,9 +39,9 @@ export default function ProfileSetting({
   phoneValue,
   setProfile,
   setPercentage,
-  setNext
+  setNext,
+  mutate,
 }: IProps) {
-  const dispatch = useDispatch<AppDispatch>();
 
   const imgInputRef = useRef<HTMLInputElement>(null);
   // 회원가입 버튼 활성화 상태 관리
@@ -39,28 +55,31 @@ export default function ProfileSetting({
   const [introduce, setIntroduce] = useState("");
   const [isImgLoading, setIsImgLoading] = useState(false);
 
-  const onChangeImg = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files) return;
-    const file = e.target.files[0];
-    const isValid = imgValidation(file);
-    if (!isValid) return;
-    if (isMobile) {
-      setIsImgLoading(true);
-    }
+  const onChangeImg = useCallback(
+    async (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (!e.target.files) return;
+      const file = e.target.files[0];
+      const isValid = imgValidation(file);
+      if (!isValid) return;
+      if (isMobile) {
+        setIsImgLoading(true);
+      }
 
-    const { compressedFile, compressedPreview } = (await getCompressionImg(
-      file,
-      "profile"
-    )) as {
-      compressedFile: File;
-      compressedPreview: string;
-    };
-    setPreviewImg(compressedPreview);
-    setUploadImg(compressedFile);
-    if (isMobile) {
-      setIsImgLoading(false);
-    }
-  },[isMobile]);
+      const { compressedFile, compressedPreview } = (await getCompressionImg(
+        file,
+        "profile"
+      )) as {
+        compressedFile: File;
+        compressedPreview: string;
+      };
+      setPreviewImg(compressedPreview);
+      setUploadImg(compressedFile);
+      if (isMobile) {
+        setIsImgLoading(false);
+      }
+    },
+    [isMobile]
+  );
 
   const onClickImgReset = () => {
     setPreviewImg(resolveWebp("/assets/webp/icon-defaultProfile.webp", "svg"));
@@ -74,16 +93,14 @@ export default function ProfileSetting({
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    dispatch(
-      thunkFetchSignup({
-        displayNameValue: displayNameValue.toLowerCase(),
-        uploadImg,
-        emailValue,
-        passwordValue,
-        phoneValue: phoneValue.replace(/-/g, ""),
-        introduce
-      })
-    );
+    mutate({
+      displayName: displayNameValue.toLowerCase(),
+      file: uploadImg,
+      email: emailValue,
+      password: passwordValue,
+      phone: phoneValue.replace(/-/g, ""),
+      introduce
+    });
   };
 
   useEffect(() => {

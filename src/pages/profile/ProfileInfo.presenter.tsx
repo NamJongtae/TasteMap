@@ -17,15 +17,12 @@ import {
   UserWrapper
 } from "./profileInfo.styles";
 import { resolveWebp } from "../../library/webpSupport";
-import { IProfileData, IUserData } from "../../api/apiType";
-import Loading from "../../component/commons/loading/Loading";
+import { IMyProfileData, IUserData, IUserProfileData } from "../../api/apiType";
 
 interface IProps {
-  loadUserProfileLoading: boolean;
-  loadMyProfileLoading: boolean;
   myInfo: IUserData;
-  userProfile: IProfileData;
-  myProfile: IProfileData;
+  userProfile: IUserProfileData;
+  myProfile: IMyProfileData;
   onClickFollower: () => void;
   onClickFollowing: () => void;
   uid: string | undefined;
@@ -39,8 +36,6 @@ interface IProps {
   onClickTasteMap: () => void;
 }
 export default function ProfileInfoUI({
-  loadUserProfileLoading,
-  loadMyProfileLoading,
   myInfo,
   userProfile,
   myProfile,
@@ -58,71 +53,65 @@ export default function ProfileInfoUI({
 }: IProps) {
   return (
     <>
-      {loadUserProfileLoading || loadMyProfileLoading ? (
-        <Loading />
-      ) : (
-        (userProfile.displayName || myProfile.displayName) && (
-          <ProfileInfoWrapper>
-            <h2 className='a11y-hidden'>유저 프로필</h2>
-            <UserWrapper>
-              <FollowerBtn onClick={onClickFollower}>
-                <FollowerCount>
-                  {uid
-                    ? userProfile.followerList?.length
-                    : myProfile.followerList?.length}
-                </FollowerCount>
-                <FollowerTag>Followers</FollowerTag>
-              </FollowerBtn>
-              <UserProfileImg
-                src={uid ? userProfile.photoURL : myProfile.photoURL}
-                alt='프로필 이미지'
-                onError={(e: React.SyntheticEvent<HTMLImageElement>) =>
-                  (e.currentTarget.src = resolveWebp(
-                    "/assets/webp/icon-defaultProfile.webp",
-                    "svg"
-                  ))
-                }
-              />
-              <FollowingBtn onClick={onClickFollowing}>
-                <FollowingCount>
-                  {uid
-                    ? userProfile.followingList?.length
-                    : myProfile.followingList?.length}
-                </FollowingCount>
-                <FollowerTag>Following</FollowerTag>
-              </FollowingBtn>
-            </UserWrapper>
-            <UserName>
-              {uid ? userProfile.displayName : myProfile.displayName}
-            </UserName>
-            <Introduce ref={introduecRef} isShowMoreTextBtn={isShowMoreTextBtn}>
-              {uid ? userProfile.introduce : myProfile.introduce}
-            </Introduce>
+      {(userProfile.displayName || myProfile.displayName) && (
+        <ProfileInfoWrapper>
+          <h2 className='a11y-hidden'>유저 프로필</h2>
+          <UserWrapper>
+            <FollowerBtn onClick={onClickFollower}>
+              <FollowerCount>
+                {uid
+                  ? userProfile.followerList?.length
+                  : myProfile.followerList?.length}
+              </FollowerCount>
+              <FollowerTag>Followers</FollowerTag>
+            </FollowerBtn>
+            <UserProfileImg
+              src={uid ? userProfile.photoURL : myProfile.photoURL}
+              alt='프로필 이미지'
+              onError={(e: React.SyntheticEvent<HTMLImageElement>) =>
+                (e.currentTarget.src = resolveWebp(
+                  "/assets/webp/icon-defaultProfile.webp",
+                  "svg"
+                ))
+              }
+            />
+            <FollowingBtn onClick={onClickFollowing}>
+              <FollowingCount>
+                {uid
+                  ? userProfile.followingList?.length
+                  : myProfile.followingList?.length}
+              </FollowingCount>
+              <FollowerTag>Following</FollowerTag>
+            </FollowingBtn>
+          </UserWrapper>
+          <UserName>
+            {uid ? userProfile.displayName : myProfile.displayName}
+          </UserName>
+          <Introduce ref={introduecRef} isShowMoreTextBtn={isShowMoreTextBtn}>
+            {uid ? userProfile.introduce : myProfile.introduce}
+          </Introduce>
 
-            {isShowMoreTextBtn && (
-              <>
-                <IntroduceTextLine></IntroduceTextLine>
-                <MoreTextBtn onClick={onClickMoreText}>더보기</MoreTextBtn>
-              </>
+          {isShowMoreTextBtn && (
+            <>
+              <IntroduceTextLine></IntroduceTextLine>
+              <MoreTextBtn onClick={onClickMoreText}>더보기</MoreTextBtn>
+            </>
+          )}
+          <ButtonWrapper>
+            {!uid || userProfile.uid === myInfo.uid ? (
+              <ProfileBtn onClick={onClickProfileEdit}>프로필 수정</ProfileBtn>
+            ) : (
+              <ProfileFollowBtn
+                isFollow={isFollow}
+                onClick={isFollow ? onClickUnfollow : onClickFollow}
+              >
+                {isFollow ? "언팔로우" : "팔로우"}
+              </ProfileFollowBtn>
             )}
-            <ButtonWrapper>
-              {!uid || userProfile.uid === myInfo.uid ? (
-                <ProfileBtn onClick={onClickProfileEdit}>
-                  프로필 수정
-                </ProfileBtn>
-              ) : (
-                <ProfileFollowBtn
-                  isFollow={isFollow}
-                  onClick={isFollow ? onClickUnfollow : onClickFollow}
-                >
-                  {isFollow ? "언팔로우" : "팔로우"}
-                </ProfileFollowBtn>
-              )}
 
-              <ProfileBtn onClick={onClickTasteMap}>맛집 지도</ProfileBtn>
-            </ButtonWrapper>
-          </ProfileInfoWrapper>
-        )
+            <ProfileBtn onClick={onClickTasteMap}>맛집 지도</ProfileBtn>
+          </ButtonWrapper>
+        </ProfileInfoWrapper>
       )}
     </>
   );
