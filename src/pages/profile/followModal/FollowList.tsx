@@ -93,7 +93,10 @@ export default function FollowList({
 
   const isError = isFollower ? followersIsError : followingIsError;
 
-  const isNoData = isError || !followers || !following
+  const isNoData =
+    isError || isFollower
+      ? !followers && !followersIsFetching
+      : !following && !followersIsFetching;
 
   return (
     <>
@@ -105,41 +108,31 @@ export default function FollowList({
             <ScrollLoading />
           ) : (
             <>
-              {(isFollower ? followers.length > 0 : following.length > 0) ? (
-                <>
-                  <FollowUl ref={followListRef} tabIndex={0}>
-                    {(isFollower ? followers : following).map((item, idx) => {
-                      return (
-                        <FollowItem
-                          key={item.uid}
-                          data={item}
-                          idx={idx}
-                          isLastItem={
-                            idx ===
-                            (isFollower
-                              ? followers.length - 1
-                              : following.length - 1)
-                          }
-                          isFollower={isFollower}
-                          closeBtnRef={closeBtnRef}
-                          firstItemLinkRef={firstItemLinkRef}
-                          lastItemFollowBtnRef={lastItemFollowBtnRef}
-                          closeFollowersModalHandler={
-                            closeFollowersModalHandler
-                          }
-                          closeFollowingModalHandler={
-                            closeFollowingModalHandler
-                          }
-                        />
-                      );
-                    })}
-                    <InfinityScrollTarget ref={ref}></InfinityScrollTarget>
-                    {loadMoreDataLoading && <ScrollLoading />}
-                  </FollowUl>
-                </>
-              ) : (
-                <NoData />
-              )}
+              <FollowUl ref={followListRef} tabIndex={0}>
+                {(isFollower ? followers : following)!.map((item, idx) => {
+                  return (
+                    <FollowItem
+                      key={item.uid}
+                      data={item}
+                      idx={idx}
+                      isLastItem={
+                        idx ===
+                        (isFollower
+                          ? followers!.length - 1
+                          : following!.length - 1)
+                      }
+                      isFollower={isFollower}
+                      closeBtnRef={closeBtnRef}
+                      firstItemLinkRef={firstItemLinkRef}
+                      lastItemFollowBtnRef={lastItemFollowBtnRef}
+                      closeFollowersModalHandler={closeFollowersModalHandler}
+                      closeFollowingModalHandler={closeFollowingModalHandler}
+                    />
+                  );
+                })}
+                <InfinityScrollTarget ref={ref}></InfinityScrollTarget>
+                {loadMoreDataLoading && <ScrollLoading />}
+              </FollowUl>
             </>
           )}
         </>
