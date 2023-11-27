@@ -11,6 +11,8 @@
 - [🙋‍♂ 프로젝트 소개](#-프로젝트-소개)
   
 - [📆 개발기간](#-개발기간)
+
+- [🧪 react-query 도입](#-react-query-도입)
   
 - [⚙ 개발환경](#-개발환경)
   
@@ -47,12 +49,29 @@
 
 **개발 완료 : 2023. 10. 08**
 
+**react-query 도입 : 2023. 11. 19 ~ 11.27**
+
+<br/>
+
+### 🧪 react-query 도입
+
+> 도입 이유
+- 기존에는 redux-toolkit thunk를 이용하여 api 처리 및 api 상태관리가 코드 양이 많아지고, 복잡하다는 단점이 있어 react-query를 도입하였습니다.
+
+> 사용 방식
+- 기존 redux-toolkit은 global state 관리를 위해 사용하고, react-query는 api 처리 및 api 상태관리에 사용하였습니다.
+
+> 도입으로 얻은 이점 
+- react-query 도입으로 서버 api 처리가 매우 간결해 졌으면 상태관리 코드를 직접 구성하지 않아도 react-query 자체 내장된 상태관리 속성을 통해 상태관리를 할 수 있었습니다.
+- react-query는 캐싱된 데이터를 사용하기 때문에 속도 향상에 도움을 줄 수 있었습니다.
+- 동일한 데이터 요청의 경우 자동으로 제거하기 때문에 중복 요청을 신경쓰지 않아도 되어 편리하게 사용할 수 있었습니다.
+
 <br>
 
 ### ⚙ 개발환경
 |프론트엔드|벡엔드|디자인|배포, 관리|
 |---|---|---|---|
-|<img alt="Html" src ="https://img.shields.io/badge/HTML5-E34F26.svg?&style=for-the-badge&logo=HTML5&logoColor=white"/> <img alt="CSS" src ="https://img.shields.io/badge/CSS3-1572B6.svg?&style=for-the-badge&logo=CSS3&logoColor=white"/> <img alt="JavaScript" src ="https://img.shields.io/badge/JavaScript-F7DF1E.svg?&style=for-the-badge&logo=JavaScript&logoColor=black"/> <img alt="TypeScript" src ="https://img.shields.io/badge/TypeScript-3178C6.svg?&style=for-the-badge&logo=TypeScript&logoColor=white"/> <img src="https://img.shields.io/badge/react-61DAFB?style=for-the-badge&logo=react&logoColor=black"> <img src="https://img.shields.io/badge/styled-components-DB7093?style=for-the-badge&logo=styledcomponents&logoColor=pink"> <img src="https://img.shields.io/badge/redux-toolkit-764ABC?style=for-the-badge&logo=redux&logoColor=fff">|<img src ="https://img.shields.io/badge/naverSerachAPI-03C75A.svg?&style=for-the-badge&logo=naver&logoColor=white"/> <img src ="https://img.shields.io/badge/KakamapAPI-FFCD00.svg?&style=for-the-badge&logo=googlemaps&logoColor=black"/> <img src ="https://img.shields.io/badge/firebase-FFCA28.svg?&style=for-the-badge&logo=firebase&logoColor=black"/>|<img src="https://img.shields.io/badge/figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white" width=150>|<img src="https://img.shields.io/badge/netlify-00C7B7?style=for-the-badge&logo=netlify&logoColor=white"> <img src="https://img.shields.io/badge/github-181717?style=for-the-badge&logo=github&logoColor=white">|
+|<img alt="Html" src ="https://img.shields.io/badge/HTML5-E34F26.svg?&style=for-the-badge&logo=HTML5&logoColor=white"/> <img alt="CSS" src ="https://img.shields.io/badge/CSS3-1572B6.svg?&style=for-the-badge&logo=CSS3&logoColor=white"/> <img alt="JavaScript" src ="https://img.shields.io/badge/JavaScript-F7DF1E.svg?&style=for-the-badge&logo=JavaScript&logoColor=black"/> <img alt="TypeScript" src ="https://img.shields.io/badge/TypeScript-3178C6.svg?&style=for-the-badge&logo=TypeScript&logoColor=white"/> <img src="https://img.shields.io/badge/react-61DAFB?style=for-the-badge&logo=react&logoColor=black"> <img src="https://img.shields.io/badge/redux-toolkit-764ABC?style=for-the-badge&logo=redux&logoColor=fff"> <img src="https://img.shields.io/badge/reactquery-FF4154?style=for-the-badge&logo=reactquery&logoColor=fff"> <img src="https://img.shields.io/badge/styled-components-DB7093?style=for-the-badge&logo=styledcomponents&logoColor=pink"> |<img src ="https://img.shields.io/badge/naverSerachAPI-03C75A.svg?&style=for-the-badge&logo=naver&logoColor=white"/> <img src ="https://img.shields.io/badge/KakamapAPI-FFCD00.svg?&style=for-the-badge&logo=googlemaps&logoColor=black"/> <img src ="https://img.shields.io/badge/firebase-FFCA28.svg?&style=for-the-badge&logo=firebase&logoColor=black"/>|<img src="https://img.shields.io/badge/figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white" width=150>|<img src="https://img.shields.io/badge/netlify-00C7B7?style=for-the-badge&logo=netlify&logoColor=white"> <img src="https://img.shields.io/badge/github-181717?style=for-the-badge&logo=github&logoColor=white">|
 
 <br>
 
@@ -64,7 +83,7 @@
 <br>
 
 ### ⛓ 아키텍처
-![architecture](https://github.com/NamJongtae/TasteMap/assets/113427991/4a22d960-d394-4187-a411-3ba63604fea2)
+![architecture](https://github.com/NamJongtae/TasteMap/assets/113427991/6154f0ba-bedd-42af-9115-e5704cb9e40f)
 
 <br>
 
