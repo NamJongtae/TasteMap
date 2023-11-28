@@ -302,7 +302,7 @@ export default function PostUpload({ isEdit }: IProps) {
       loadPostLoading={postIsPending || postIsFetching}
       isImgLoading={isImgLoading}
       isEdit={isEdit}
-      invalidPage={!post.id && !postIsPending}
+      invalidUpdatePage={isEdit && !post.id && !postIsPending}
     />
   );
 }
