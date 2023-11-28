@@ -50,84 +50,78 @@ export default function MyTasteMapUI({
   onClickShare,
   myProfileIsPending
 }: IProps) {
+  
+  if (myProfileIsPending) {
+    return <Loading />;
+  }
+
   return (
     <>
-      {myProfileIsPending ? (
-        <Loading />
-      ) : (
-        <>
-          <Header type='tasteMap' />
-          <Wrapper>
-            <h2 className='a11y-hidden'>나의 맛집 지도</h2>
-            <ContetnTypeBtnWrapper>
-              <MapBtn onClick={onClickMapType} contentType={contentType}>
-                지도
-              </MapBtn>
-              <ListBtn onClick={onClickListType} contentType={contentType}>
-                목록
-              </ListBtn>
-              {contentType === EMapContentType.MAP && (
-                <SearchModalBtn onClick={openSearchModal}>
-                  맛집 추가
-                </SearchModalBtn>
-              )}
-              {contentType === EMapContentType.MAP && (
-                <ShareBtn onClick={onClickShare} aria-label='공유' />
-              )}
-            </ContetnTypeBtnWrapper>
-            <KakaomapWrapper contentType={contentType}>
-              <Desc>마커 클릭 시 맛집 정보가 지도 아래 표시 됩니다.</Desc>
-              {myProfile.storedMapList && (
-                <Kakaomap
-                  items={myProfile.storedMapList}
-                  isTasteMapPage={true}
-                />
-              )}
-            </KakaomapWrapper>
-            {clickMarkerData.title && (
-              <ItemSingleList contentType={contentType}>
-                <Item>
-                  <ItemTag>가게명</ItemTag>
-                  <ItemText>{clickMarkerData.title}</ItemText>
-                </Item>
-                <Item>
-                  <ItemTag>도로명 주소</ItemTag>
-                  <ItemText>{clickMarkerData.roadAddress}</ItemText>
-                </Item>
-                <Item>
-                  <ItemTag>지번 주소</ItemTag>
-                  <ItemText>{clickMarkerData.address}</ItemText>
-                </Item>
-                <Item>
-                  <ItemTag>카테고리</ItemTag>
-                  <ItemText>{clickMarkerData.category}</ItemText>
-                </Item>
-                <Item>
-                  <ItemTag>홈페이지</ItemTag>
-                  <ItemLink
-                    to={clickMarkerData.link || "#"}
-                    target='
+      <Header type='tasteMap' />
+      <Wrapper>
+        <h2 className='a11y-hidden'>나의 맛집 지도</h2>
+        <ContetnTypeBtnWrapper>
+          <MapBtn onClick={onClickMapType} contentType={contentType}>
+            지도
+          </MapBtn>
+          <ListBtn onClick={onClickListType} contentType={contentType}>
+            목록
+          </ListBtn>
+          {contentType === EMapContentType.MAP && (
+            <SearchModalBtn onClick={openSearchModal}>맛집 추가</SearchModalBtn>
+          )}
+          {contentType === EMapContentType.MAP && (
+            <ShareBtn onClick={onClickShare} aria-label='공유' />
+          )}
+        </ContetnTypeBtnWrapper>
+        <KakaomapWrapper contentType={contentType}>
+          <Desc>마커 클릭 시 맛집 정보가 지도 아래 표시 됩니다.</Desc>
+          {myProfile.storedMapList && (
+            <Kakaomap items={myProfile.storedMapList} isTasteMapPage={true} />
+          )}
+        </KakaomapWrapper>
+        {clickMarkerData.title && (
+          <ItemSingleList contentType={contentType}>
+            <Item>
+              <ItemTag>가게명</ItemTag>
+              <ItemText>{clickMarkerData.title}</ItemText>
+            </Item>
+            <Item>
+              <ItemTag>도로명 주소</ItemTag>
+              <ItemText>{clickMarkerData.roadAddress}</ItemText>
+            </Item>
+            <Item>
+              <ItemTag>지번 주소</ItemTag>
+              <ItemText>{clickMarkerData.address}</ItemText>
+            </Item>
+            <Item>
+              <ItemTag>카테고리</ItemTag>
+              <ItemText>{clickMarkerData.category}</ItemText>
+            </Item>
+            <Item>
+              <ItemTag>홈페이지</ItemTag>
+              <ItemLink
+                to={clickMarkerData.link || "#"}
+                target='
                 _blank'
-                  >
-                    {clickMarkerData.link}
-                  </ItemLink>
-                </Item>
-                <BtnWrapper>
-                  <RemoveBtn aria-label='삭제' onClick={removeMap} />
-                </BtnWrapper>
-              </ItemSingleList>
-            )}
-            {contentType === EMapContentType.LIST && (
-              <MyTasteMapList
-                profile={myProfile}
-                items={myProfile.storedMapList}
-                isShareTasteMap={false}
-              />
-            )}
-            {isOpenModal && <SearchModal closeSearchModal={closeSearchModal} />}
-          </Wrapper>
-        </>
-      )}
+              >
+                {clickMarkerData.link}
+              </ItemLink>
+            </Item>
+            <BtnWrapper>
+              <RemoveBtn aria-label='삭제' onClick={removeMap} />
+            </BtnWrapper>
+          </ItemSingleList>
+        )}
+        {contentType === EMapContentType.LIST && (
+          <MyTasteMapList
+            profile={myProfile}
+            items={myProfile.storedMapList}
+            isShareTasteMap={false}
+          />
+        )}
+        {isOpenModal && <SearchModal closeSearchModal={closeSearchModal} />}
+      </Wrapper>
     </>
   );
 }
