@@ -125,7 +125,10 @@ function App() {
             />
           </Route>
           <Route path='/tasteMap/share/:uid' element={<ShareTasteMap />} />
-          <Route path='/search' element={<Search />} />
+          <Route
+            path='/search'
+            element={!myInfo.uid ? <Navigate to='/login' /> : <Search />}
+          />
           <Route path='*' element={<NotFound />} />
         </Routes>
       )}
