@@ -28,11 +28,11 @@ export default function SearchItem({ item, myProfile }: IProps) {
   const isFollow = myProfile!.followingList.includes(item.uid);
 
   const onClickFollow = () => {
-      followMuate({ myUid: myProfile!.uid, userUid: item.uid });
+    followMuate({ myUid: myProfile!.uid, userUid: item.uid });
   };
 
   const onClickUnFollow = () => {
-      unfollowMuate({ myUid: myProfile!.uid, userUid: item.uid });
+    unfollowMuate({ myUid: myProfile!.uid, userUid: item.uid });
   };
 
   // 검색 텍스트 하이라이트 효과
@@ -57,30 +57,30 @@ export default function SearchItem({ item, myProfile }: IProps) {
     );
   };
 
+  const isMe = item.uid === myProfile?.uid;
+
   return (
-    <>
-      {item.uid !== myProfile?.uid && (
-        <SearchLi key={item.uid}>
-          <UserProfileLink to={`/profile/${item.uid}`}>
-            <UserImg
-              src={item.photoURL}
-              onError={(e: React.SyntheticEvent<HTMLImageElement>) =>
-                (e.currentTarget.src = resolveWebp(
-                  "/assets/webp/icon-defaultProfile.webp",
-                  "svg"
-                ))
-              }
-            />
-            <Username>{textHighLight(item.displayName || "")}</Username>
-          </UserProfileLink>
-          <FollowBtn
-            isFollow={isFollow}
-            onClick={isFollow ? onClickUnFollow : onClickFollow}
-          >
-            {isFollow ? "언팔로우" : "팔로우"}
-          </FollowBtn>
-        </SearchLi>
+    <SearchLi key={item.uid}>
+      <UserProfileLink to={`/profile/${item.uid}`}>
+        <UserImg
+          src={item.photoURL}
+          onError={(e: React.SyntheticEvent<HTMLImageElement>) =>
+            (e.currentTarget.src = resolveWebp(
+              "/assets/webp/icon-defaultProfile.webp",
+              "svg"
+            ))
+          }
+        />
+        <Username>{textHighLight(item.displayName || "")}</Username>
+      </UserProfileLink>
+      {!isMe && (
+        <FollowBtn
+          isFollow={isFollow}
+          onClick={isFollow ? onClickUnFollow : onClickFollow}
+        >
+          {isFollow ? "언팔로우" : "팔로우"}
+        </FollowBtn>
       )}
-    </>
+    </SearchLi>
   );
 }
