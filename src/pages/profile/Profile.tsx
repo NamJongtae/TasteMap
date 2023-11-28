@@ -79,7 +79,7 @@ export default function Profile() {
   }, [uid]);
 
   const loadProfileLoading =
-    updateProfileLoading || uid ? userProfileLoading : myProfileLoading;
+    updateProfileLoading || (uid ? userProfileLoading : myProfileLoading);
 
   const isInvaildPoage = uid
     ? !userProfile?.uid && !userProfileLoading
