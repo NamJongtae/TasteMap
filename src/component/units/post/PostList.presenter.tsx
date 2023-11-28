@@ -27,41 +27,38 @@ export default function PostListUI({
   isNoPostData,
   postType
 }: IProps) {
+  
+  if (loadPostsLoading) {
+    return <ScrollLoading />;
+  }
+
+  if (isNoPostData) {
+    return <NoData />;
+  }
+
   return (
     <>
-      {
-        <>
-          <Wrapper>
-            {loadPostsLoading ? (
+      <Wrapper>
+        <PostWrapper>
+          {posts.map((item) => {
+            return (
+              <PostItem
+                key={item.id}
+                data={item}
+                myProfile={myProfile}
+                postType={postType}
+              />
+            );
+          })}
+          <InfinityScrollTarget ref={intinityScrollRef}></InfinityScrollTarget>
+          {loadMorePostsLoading && !loadPostsLoading && (
+            <li>
               <ScrollLoading />
-            ) : isNoPostData ? (
-              <NoData />
-            ) : (
-              <PostWrapper>
-                {posts.map((item) => {
-                  return (
-                      <PostItem
-                        key={item.id}
-                        data={item}
-                        myProfile={myProfile}
-                        postType={postType}
-                      />
-                  );
-                })}
-                <InfinityScrollTarget
-                  ref={intinityScrollRef}
-                ></InfinityScrollTarget>
-                {loadMorePostsLoading && !loadPostsLoading && (
-                  <li>
-                    <ScrollLoading />
-                  </li>
-                )}
-              </PostWrapper>
-            )}
-          </Wrapper>
-          {isOpenCommentModal && <Comment postType={postType} />}
-        </>
-      }
+            </li>
+          )}
+        </PostWrapper>
+      </Wrapper>
+      {isOpenCommentModal && <Comment postType={postType} />}
     </>
   );
 }

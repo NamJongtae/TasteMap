@@ -71,24 +71,21 @@ export default function PostList({ postType }: IProps) {
   // 무한 스크롤 : 추가 데이터 가져오기
   useEffect(() => {
     if (
-      postType === "HOME" &&
-      inview &&
-      homeHasNextPage &&
-      homePosts?.length || 0 >= pagePerData
+      (postType === "HOME" && inview && homeHasNextPage && homePosts?.length) ||
+      0 >= pagePerData
     ) {
       homeFetchNextPage();
     } else if (
-      postType === "FEED" &&
-      inview &&
-      feedHasNextPage &&
-      feedPosts?.length || 0 >= pagePerData
+      (postType === "FEED" && inview && feedHasNextPage && feedPosts?.length) ||
+      0 >= pagePerData
     ) {
       feedFetchNextPage();
     } else if (
-      postType === "PROFILE" &&
-      inview &&
-      profileHasNextPage &&
-      profilePosts?.length || 0 >= pagePerData
+      (postType === "PROFILE" &&
+        inview &&
+        profileHasNextPage &&
+        profilePosts?.length) ||
+      0 >= pagePerData
     ) {
       profileFetchNextPage();
     }
@@ -113,10 +110,10 @@ export default function PostList({ postType }: IProps) {
   // 게시물 추가 로딩
   const loadMorePostsLoading =
     postType === "HOME"
-      ? homeIsFetchingNextPage
+      ? homeIsFetchingNextPage && (homePosts?.length || 0) >= pagePerData
       : postType === "FEED"
-      ? feedIsFetchingNextPage
-      : profileIsFetchingNextPage;
+      ? feedIsFetchingNextPage && (feedPosts?.length || 0) >= pagePerData
+      : profileIsFetchingNextPage && (profilePosts?.length || 0) >= pagePerData;
 
   // postType별 데이터
   const data =
@@ -129,12 +126,16 @@ export default function PostList({ postType }: IProps) {
   // postType별 게시물 데이터 존재 유무
   const isNoPostsData =
     postType === "HOME"
-      ? !homeIsFetchingNextPage && !homeIsFetching && !homePosts?.length
+      ? !homeIsFetchingNextPage &&
+        !homeIsFetching &&
+        (homePosts?.length || 0) === 0
       : postType === "FEED"
-      ? !feedIsFetchingNextPage && !feedIsFetching && !feedPosts?.length
+      ? !feedIsFetchingNextPage &&
+        !feedIsFetching &&
+        (feedPosts?.length || 0) === 0
       : !profileIsFetchingNextPage &&
         !profileIsFetching &&
-        !profilePosts?.length;
+        (profilePosts?.length || 0) === 0;
 
   return (
     <PostListUI
