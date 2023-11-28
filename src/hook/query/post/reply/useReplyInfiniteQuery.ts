@@ -13,6 +13,7 @@ interface InfiniteReplyType {
 }
 
 export const useReplyInfiniteQuery = (
+  postId: string,
   parentCommentId: string,
   pagePerData: number,
   isReply: boolean
@@ -34,6 +35,7 @@ export const useReplyInfiniteQuery = (
     queryFn: async ({ pageParam }) => {
       const result = await fetchReplies(
         pageParam as QueryDocumentSnapshot<DocumentData, DocumentData> | null,
+        postId,
         parentCommentId,
         pagePerData
       );

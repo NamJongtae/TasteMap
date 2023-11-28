@@ -10,8 +10,8 @@ import NoData from "../../../commons/noData/NoData";
 import { ICommentData, IReplyData } from "../../../../api/apiType";
 interface IProps {
   isReply: boolean;
-  loadRepliesLoading: boolean;
-  loadCommentsLoading: boolean;
+  loadDataLoading: boolean;
+  isNoData: boolean;
   handlerRefresh: () => void;
   replies: IReplyData[];
   comments: ICommentData[];
@@ -26,8 +26,8 @@ interface IProps {
 }
 export default function CommentListUI({
   isReply,
-  loadRepliesLoading,
-  loadCommentsLoading,
+  loadDataLoading,
+  isNoData,
   handlerRefresh,
   replies,
   comments,
@@ -38,59 +38,53 @@ export default function CommentListUI({
   CommentListRef,
   firstItemLinkRef,
   isError,
-  postType,
+  postType
 }: IProps) {
+  if (isError) {
+    return null;
+  }
+
+  if (loadDataLoading) {
+    return <ScrollLoading />;
+  }
+
+  if (isNoData) {
+    return (
+      <>
+        <NoData /> <RefreshBtn onClick={handlerRefresh} />
+      </>
+    );
+  }
+
   return (
     <>
-      {isError ? null : (
-        <>
-          {(isReply && loadRepliesLoading) || (!isReply && loadCommentsLoading) ? (
-            <ScrollLoading />
-          ) : (
-            <>
-              {(
+      <CommentWrpper ref={CommentListRef} tabIndex={-1}>
+        {(isReply ? replies : comments).map((item, idx) => {
+          return (
+            <CommentItem
+              key={
                 isReply
-                  ? replies.length > 0
-                  : comments.filter((comment) => !comment.isBlock).length > 0
-              ) ? (
-                <CommentWrpper ref={CommentListRef} tabIndex={-1}>
-                  {(isReply ? replies : comments).map((item, idx) => {
-                    return (
-                      <CommentItem
-                        key={
-                          isReply
-                            ? (item as IReplyData).replyId
-                            : (item as ICommentData).commentId
-                        }
-                        data={item}
-                        idx={idx}
-                        isReply={isReply}
-                        closeBtnRef={closeBtnRef}
-                        textareaRef={textareaRef}
-                        firstItemLinkRef={firstItemLinkRef}
-                        postType={postType}
-                      />
-                    );
-                  })}
-                  {(!isReply ? comments.length > 0 : replies.length > 0) && (
-                    <InfinityScrollTarget
-                      ref={infiniteScrollRef}
-                    ></InfinityScrollTarget>
-                  )}
-                  {loadMoreDataLoading && (
-                    <li>
-                      <ScrollLoading />
-                    </li>
-                  )}
-                </CommentWrpper>
-              ) : (
-                <NoData />
-              )}
-              <RefreshBtn onClick={handlerRefresh} />
-            </>
-          )}
-        </>
-      )}
+                  ? (item as IReplyData).replyId
+                  : (item as ICommentData).commentId
+              }
+              data={item}
+              idx={idx}
+              isReply={isReply}
+              closeBtnRef={closeBtnRef}
+              textareaRef={textareaRef}
+              firstItemLinkRef={firstItemLinkRef}
+              postType={postType}
+            />
+          );
+        })}
+        <InfinityScrollTarget ref={infiniteScrollRef}></InfinityScrollTarget>
+        {loadMoreDataLoading && (
+          <li>
+            <ScrollLoading />
+          </li>
+        )}
+      </CommentWrpper>
+      <RefreshBtn onClick={handlerRefresh} />
     </>
   );
 }

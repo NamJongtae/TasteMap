@@ -27,12 +27,26 @@ const auth = getAuth();
  */
 export const fetchReplies = async (
   page: QueryDocumentSnapshot<DocumentData, DocumentData> | null,
+  postId: string,
   parentCommentId: string,
   pagePerData: number
 ) => {
   try {
+    const postDoc = doc(db, `post/${postId}`);
+    const postDocSnapshot = await getDoc(postDoc);
+    if (!postDocSnapshot.exists()) {
+      throw new Error("게시물이 존재하지 않습니다.");
+    }
+
     const commentDoc = doc(db, `comments/${parentCommentId}`);
+    const commentDocSnapShot = await getDoc(commentDoc);
+
+    if (!commentDocSnapShot.exists()) {
+      throw new Error("댓글이 존재하지 않습니다.");
+    }
+
     const replyRef = collection(commentDoc, `replies`);
+
     const q = page
       ? query(
           replyRef,
@@ -73,36 +87,29 @@ export const fetchReplies = async (
 /**
  * 답글 추가
  */
-export const leaveReply = async (replyCommentData: IReplyData) => {
+export const leaveReply = async (replyData: IReplyData) => {
   try {
-    // 병렬 처리할 비동기 작업 배열 생성
-    const tasks = [];
-
     // 게시물 확인 작업 추가
-    const postDoc = doc(db, `post/${replyCommentData.postId}`);
-    tasks.push(getDoc(postDoc));
+    const postDoc = doc(db, `post/${replyData.postId}`);
+    const postDocSnapshot = await getDoc(postDoc);
 
-    // 댓글 확인 작업 추가
-    const commentDoc = doc(db, `comments/${replyCommentData.parentCommentId}`);
-    tasks.push(getDoc(commentDoc));
-
-    // 모든 작업을 병렬로 실행하고 결과 배열을 얻습니다.
-    const results = await Promise.all(tasks);
-
-    // 결과 확인 및 예외 처리
-    if (!results[0].exists()) {
+    if (!postDocSnapshot.exists()) {
       throw new Error("게시물이 존재하지 않습니다.");
     }
 
-    if (!results[1].exists()) {
+    // 댓글 확인 작업 추가
+    const commentDoc = doc(db, `comments/${replyData.parentCommentId}`);
+    const commentDocSnapshot = await getDoc(commentDoc);
+
+    if (!commentDocSnapshot.exists()) {
       throw new Error("댓글이 존재하지 않습니다.");
     }
 
     const replyRef = collection(commentDoc, "replies");
     // 댓글 데이터 subCollection replies에 답글 Doc 추가
     const addReplyCommentProimse = setDoc(
-      doc(replyRef, replyCommentData.replyId),
-      { ...replyCommentData }
+      doc(replyRef, replyData.replyId),
+      { ...replyData }
     );
 
     // 댓글 데이터 답글 수 늘리기
@@ -121,46 +128,39 @@ export const leaveReply = async (replyCommentData: IReplyData) => {
  * 답글 수정
  */
 export const updateReply = async (
-  replyEditData: Pick<
+  replyData: Pick<
     IReplyData,
     "parentCommentId" | "replyId" | "content" | "postId"
   >
 ) => {
   try {
-    // 병렬 처리할 비동기 작업 배열 생성
-    const tasks = [];
-
     // 게시물 확인 작업 추가
-    const postDoc = doc(db, `post/${replyEditData.postId}`);
-    tasks.push(getDoc(postDoc));
+    const postDoc = doc(db, `post/${replyData.postId}`);
+    const postDocSnapshot = await getDoc(postDoc);
 
-    // 댓글 확인 작업 추가
-    const commentDoc = doc(db, `comments/${replyEditData.parentCommentId}`);
-    tasks.push(getDoc(commentDoc));
-
-    // 답글 확인 작업 추가
-    const replyDoc = doc(commentDoc, `replies/${replyEditData.replyId}`);
-    tasks.push(getDoc(replyDoc));
-
-    // 모든 작업을 병렬로 실행하고 결과 배열을 얻습니다.
-    const results = await Promise.all(tasks);
-
-    // 결과 확인 및 예외 처리
-    if (!results[0].exists()) {
+    if (!postDocSnapshot.exists()) {
       throw new Error("게시물이 존재하지 않습니다.");
     }
 
-    if (!results[1].exists()) {
+    // 댓글 확인 작업 추가
+    const commentDoc = doc(db, `comments/${replyData.parentCommentId}`);
+    const commentDocSnapshot = await getDoc(commentDoc);
+
+    if (!commentDocSnapshot.exists()) {
       throw new Error("댓글이 존재하지 않습니다.");
     }
 
-    if (!results[2].exists()) {
+    // 답글 확인 작업 추가
+    const replyDoc = doc(commentDoc, `replies/${replyData.replyId}`);
+    const replyDocSnapshot = await getDoc(replyDoc);
+
+    if (!replyDocSnapshot.exists()) {
       throw new Error("답글이 존재하지 않습니다.");
     }
 
     // 답글 doc의 content 수정
     await updateDoc(replyDoc, {
-      content: replyEditData.content
+      content: replyData.content
     });
   } catch (error) {
     console.error(error);
@@ -172,37 +172,30 @@ export const updateReply = async (
  * 답글 삭제
  */
 export const removeReply = async (
-  replyRemoveData: Pick<IReplyData, "parentCommentId" | "replyId" | "postId">
+  replyData: Pick<IReplyData, "parentCommentId" | "replyId" | "postId">
 ) => {
   try {
-    // 병렬 처리할 비동기 작업 배열 생성
-    const tasks = [];
-
     // 게시물 확인 작업 추가
-    const postDoc = doc(db, `post/${replyRemoveData.postId}`);
-    tasks.push(getDoc(postDoc));
+    const postDoc = doc(db, `post/${replyData.postId}`);
+    const postDocSnapshot = await getDoc(postDoc);
 
-    // 댓글 확인 작업 추가
-    const commentDoc = doc(db, `comments/${replyRemoveData.parentCommentId}`);
-    tasks.push(getDoc(commentDoc));
-
-    // 답글 확인 작업 추가
-    const replyDoc = doc(commentDoc, `replies/${replyRemoveData.replyId}`);
-    tasks.push(getDoc(replyDoc));
-
-    // 모든 작업을 병렬로 실행하고 결과 배열을 얻습니다.
-    const results = await Promise.all(tasks);
-
-    // 결과 확인 및 예외 처리
-    if (!results[0].exists()) {
+    if (!postDocSnapshot.exists()) {
       throw new Error("게시물이 존재하지 않습니다.");
     }
 
-    if (!results[1].exists()) {
+    // 댓글 확인 작업 추가
+    const commentDoc = doc(db, `comments/${replyData.parentCommentId}`);
+    const commentDocSnapshot = await getDoc(commentDoc);
+
+    if (!commentDocSnapshot.exists()) {
       throw new Error("댓글이 존재하지 않습니다.");
     }
 
-    if (!results[2].exists()) {
+    // 답글 확인 작업 추가
+    const replyDoc = doc(commentDoc, `replies/${replyData.replyId}`);
+    const replyDocSnapshot = await getDoc(replyDoc);
+
+    if (!replyDocSnapshot.exists()) {
       throw new Error("답글이 존재하지 않습니다.");
     }
 
@@ -225,57 +218,46 @@ export const removeReply = async (
  * 답글 신고
  */
 export const reportReply = async (
-  replyReportData: Pick<
+  replyData: Pick<
     IReplyData,
     "replyId" | "parentCommentId" | "reportCount" | "postId"
   >
 ) => {
   try {
-    // 병렬 처리할 비동기 작업 배열 생성
-    const tasks = [];
-
     // 게시물 확인 작업 추가
-    const postDoc = doc(db, `post/${replyReportData.postId}`);
-    tasks.push(getDoc(postDoc));
+    const postDoc = doc(db, `post/${replyData.postId}`);
+    const postDocSnapshot = await getDoc(postDoc);
 
-    // 댓글 확인 작업 추가
-    const commentDoc = doc(db, `comments/${replyReportData.parentCommentId}`);
-    tasks.push(getDoc(commentDoc));
-
-    // 답글 확인 작업 추가
-    const replyDoc = doc(commentDoc, `replies/${replyReportData.replyId}`);
-    tasks.push(getDoc(replyDoc));
-
-    // 모든 작업을 병렬로 실행하고 결과 배열을 얻습니다.
-    const results = await Promise.all(tasks);
-
-    // 결과 확인 및 예외 처리
-    if (!results[0].exists()) {
+    if (!postDocSnapshot.exists()) {
       throw new Error("게시물이 존재하지 않습니다.");
     }
 
-    if (!results[1].exists()) {
+    // 댓글 확인 작업 추가
+    const commentDoc = doc(db, `comments/${replyData.parentCommentId}`);
+    const commentDocSnapshot = await getDoc(commentDoc);
+
+    if (!commentDocSnapshot.exists()) {
       throw new Error("댓글이 존재하지 않습니다.");
     }
 
-    if (!results[2].exists()) {
+    // 답글 확인 작업 추가
+    const replyDoc = doc(commentDoc, `replies/${replyData.replyId}`);
+    const replyDocSnapshot = await getDoc(replyDoc);
+
+    if (!replyDocSnapshot.exists()) {
       throw new Error("답글이 존재하지 않습니다.");
     }
 
-    const replySnapShot = await getDoc(replyDoc);
-    if (!replySnapShot.exists()) {
-      throw new Error("답글이 존재하지 않습니다.");
-    }
     if (!auth.currentUser) return;
     const addReportCountPromise = await updateDoc(replyDoc, {
       reportCount: increment(1),
-      isBlock: replyReportData.reportCount >= 4 ? true : false,
+      isBlock: replyData.reportCount >= 4 ? true : false,
       reportUidList: arrayUnion(auth.currentUser.uid)
     });
 
     const decreaseReplyCountPromise = [];
-    if (replyReportData.reportCount >= 4) {
-      const commentDoc = doc(db, `comments/${replyReportData.parentCommentId}`);
+    if (replyData.reportCount >= 4) {
+      const commentDoc = doc(db, `comments/${replyData.parentCommentId}`);
       decreaseReplyCountPromise.push(
         updateDoc(commentDoc, {
           replyCount: increment(-1)
@@ -285,7 +267,7 @@ export const reportReply = async (
 
     await Promise.all([addReportCountPromise, ...decreaseReplyCountPromise]);
 
-    return replyReportData;
+    return replyData;
   } catch (error) {
     console.error(error);
     throw error;

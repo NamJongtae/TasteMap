@@ -49,6 +49,12 @@ export const fetchComments = async (
 ) => {
   try {
     const commentsRef = collection(db, "comments");
+
+    const postDoc = doc(db, `post/${postId}`);
+    const postDocSnapshot = await getDoc(postDoc);
+    if (!postDocSnapshot.exists()) {
+      throw new Error("게시물이 존재하지 않습니다.");
+    }
     const q = page
       ? query(
           commentsRef,
@@ -134,33 +140,26 @@ export const leaveComment = async (commentData: ICommentData) => {
  * 댓글 수정
  */
 export const updateComment = async (
-  commentEditData: Pick<ICommentData, "commentId" | "content" | "postId">
+  commentData: Pick<ICommentData, "commentId" | "content" | "postId">
 ) => {
   try {
-    // 병렬 처리할 비동기 작업 배열 생성
-    const tasks = [];
-
     // 게시물 확인 작업 추가
-    const postDoc = doc(db, `post/${commentEditData.postId}`);
-    tasks.push(getDoc(postDoc));
+    const postDoc = doc(db, `post/${commentData.postId}`);
+    const postDocSnapshot = await getDoc(postDoc);
 
-    // 댓글 확인 작업 추가
-    const commentDoc = doc(db, `comments/${commentEditData.commentId}`);
-    tasks.push(getDoc(commentDoc));
-
-    // 모든 작업을 병렬로 실행하고 결과 배열을 얻습니다.
-    const results = await Promise.all(tasks);
-
-    // 결과 확인 및 예외 처리
-    if (!results[0].exists()) {
+    if (!postDocSnapshot.exists()) {
       throw new Error("게시물이 존재하지 않습니다.");
     }
 
-    if (!results[1].exists()) {
+    // 댓글 확인 작업 추가
+    const commentDoc = doc(db, `comments/${commentData.commentId}`);
+    const commentDocSnapshot = await getDoc(commentDoc);
+
+    if (!commentDocSnapshot.exists()) {
       throw new Error("댓글이 존재하지 않습니다.");
     }
 
-    await updateDoc(commentDoc, { content: commentEditData.content });
+    await updateDoc(commentDoc, { content: commentData.content });
   } catch (error) {
     console.error(error);
     throw error;
@@ -174,26 +173,19 @@ export const removeComment = async (
   commentData: Pick<ICommentData, "postId" | "commentId">
 ): Promise<void> => {
   try {
-    // 병렬 처리할 비동기 작업 배열 생성
-    const tasks = [];
-
     // 게시물 확인 작업 추가
     const postDoc = doc(db, `post/${commentData.postId}`);
-    tasks.push(getDoc(postDoc));
+    const postDocSnapshot = await getDoc(postDoc);
 
-    // 댓글 확인 작업 추가
-    const commentDoc = doc(db, `comments/${commentData.commentId}`);
-    tasks.push(getDoc(commentDoc));
-
-    // 모든 작업을 병렬로 실행하고 결과 배열을 얻습니다.
-    const results = await Promise.all(tasks);
-
-    // 결과 확인 및 예외 처리
-    if (!results[0].exists()) {
+    if (!postDocSnapshot.exists()) {
       throw new Error("게시물이 존재하지 않습니다.");
     }
 
-    if (!results[1].exists()) {
+    // 댓글 확인 작업 추가
+    const commentDoc = doc(db, `comments/${commentData.commentId}`);
+    const commentDocSnapshot = await getDoc(commentDoc);
+
+    if (!commentDocSnapshot.exists()) {
       throw new Error("댓글이 존재하지 않습니다.");
     }
 
@@ -221,26 +213,19 @@ export const reportComment = async (
   try {
     if (!auth.currentUser) return;
 
-    // 병렬 처리할 비동기 작업 배열 생성
-    const tasks = [];
-
     // 게시물 확인 작업 추가
     const postDoc = doc(db, `post/${reportCommentData.postId}`);
-    tasks.push(getDoc(postDoc));
+    const postDocSnapshot = await getDoc(postDoc);
 
-    // 댓글 확인 작업 추가
-    const commentDoc = doc(db, `comments/${reportCommentData.commentId}`);
-    tasks.push(getDoc(commentDoc));
-
-    // 모든 작업을 병렬로 실행하고 결과 배열을 얻습니다.
-    const results = await Promise.all(tasks);
-
-    // 결과 확인 및 예외 처리
-    if (!results[0].exists()) {
+    if (!postDocSnapshot.exists()) {
       throw new Error("게시물이 존재하지 않습니다.");
     }
 
-    if (!results[1].exists()) {
+    // 댓글 확인 작업 추가
+    const commentDoc = doc(db, `comments/${reportCommentData.commentId}`);
+    const commentDocSnapshot = await getDoc(commentDoc);
+
+    if (!commentDocSnapshot.exists()) {
       throw new Error("댓글이 존재하지 않습니다.");
     }
 

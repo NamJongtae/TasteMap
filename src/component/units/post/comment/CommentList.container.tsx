@@ -79,7 +79,7 @@ export default function CommentList({
     isError: repliesIsError,
     error: repliesError,
     isRefetchError: repliesIsRefetchError
-  } = useReplyInfiniteQuery(parentCommentId, repliesPagePerData, isReply);
+  } = useReplyInfiniteQuery(postId, parentCommentId, repliesPagePerData, isReply);
 
   // isReply props 통해 데이터를 다르게 처리
   useEffect(() => {
@@ -193,20 +193,25 @@ export default function CommentList({
     ? commentsIsError || commentsIsRefetchError
     : repliesIsError || repliesIsRefetchError;
 
-  const loadRepliesLoading = repliesIsFetching && !repliesIsFetchingNextPage;
-
-  const loadCommentsLoading = commentsIsFetching && !commentsIsFetchingNextPage;
+  const loadDataLoading = isReply
+    ? repliesIsFetching && !repliesIsFetchingNextPage
+    : commentsIsFetching && !commentsIsFetchingNextPage;
 
   const loadMoreDataLoading = isReply
-    ? repliesIsFetchingNextPage
-    : commentsIsFetchingNextPage;
+    ? repliesIsFetchingNextPage && (replies?.length || 0) >= repliesPagePerData
+    : commentsIsFetchingNextPage &&
+      (comments?.length || 0) >= commentPagePerData;
+
+  const isNoData = isReply
+    ? (replies?.filter((reply) => !reply.isBlock).length || 0) === 0
+    : (comments?.filter((comment) => !comment.isBlock).length || 0) === 0;
 
   return (
     <CommentListUI
       isReply={isReply}
       isError={isError}
-      loadRepliesLoading={loadRepliesLoading}
-      loadCommentsLoading={loadCommentsLoading}
+      loadDataLoading={loadDataLoading}
+      isNoData={isNoData}
       handlerRefresh={handlerRefresh}
       replies={replies || []}
       comments={comments || []}
