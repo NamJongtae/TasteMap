@@ -4,11 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store/store";
 import { getCompressionImg } from "../../library/imageCompression";
 import { sweetToast } from "../../library/sweetAlert/sweetAlert";
-import {
-  IPostUpdateData,
-  IPostData,
-  IPostUploadData
-} from "../../api/apiType";
+import { IPostUpdateData, IPostData, IPostUploadData } from "../../api/apiType";
 import { Timestamp } from "firebase/firestore";
 import { postSlice } from "../../slice/postSlice";
 import { imgValidation } from "../../library/imageValidation";
@@ -59,29 +55,25 @@ export default function PostUpload({ isEdit }: IProps) {
   const { mutate: updatePostMutate, isPending: updatePostIsPending } =
     usePostUpdateMutation();
 
-  let post = {} as IPostData;
-  let postIsPending = false;
-  let postIsFetching = false;
   const queryClient = useQueryClient();
 
-  if (isEdit && postId) {
-    const { data, isPending, isFetching, isError, error } =
-      useLoadPostQuery(postId);
-    post = data || ({} as IPostData);
-    postIsPending = isPending;
-    postIsFetching = isFetching;
-    if (isError) {
-      if (error?.message !== "존재하지 않는 게시물입니다.") {
-        sweetToast(
-          "알 수 없는 에러가 발생하였습니다.\n잠시 후 다시 시도해 주세요.",
-          "warning"
-        );
-        console.error(error);
-        navigate("/");
-      }
-    }
+  const {
+    data: post,
+    isFetching: postIsFetching,
+    isError,
+    error
+  } = useLoadPostQuery(isEdit, postId || "");
 
-    queryClient.removeQueries({ queryKey: ["post"] });
+  if (isError) {
+    if (error?.message !== "존재하지 않는 게시물입니다.") {
+      sweetToast(
+        "알 수 없는 에러가 발생하였습니다.\n잠시 후 다시 시도해 주세요.",
+        "warning"
+      );
+      console.error(error);
+      navigate("/");
+    }
+    queryClient.removeQueries({ queryKey: ["post", postId] });
   }
 
   /**
@@ -194,9 +186,9 @@ export default function PostUpload({ isEdit }: IProps) {
   const onSubmitUpload = useCallback(async () => {
     // 내용이 비었거나 맛집을 선택하지 않았을 경우 return
     if (!contentValue || !selectedMapData.length) return;
-    if (isEdit) {
+    if (isEdit && post) {
       const editPostData: IPostUpdateData = {
-        id: post.id,
+        id: post!.id,
         content: contentValue,
         rating: ratingValue,
         mapData: selectedMapData[0],
@@ -233,15 +225,15 @@ export default function PostUpload({ isEdit }: IProps) {
   }, [post, contentValue, selectedMapData, isEdit, imgFile, ratingValue]);
 
   useEffect(() => {
-    if (imgListRef.current && post.imgURL !== preview) {
+    if (imgListRef.current && post?.imgURL !== preview) {
       imgListRef.current.scrollLeft =
         imgListRef.current.clientWidth * preview.length;
     }
   }, [preview]);
 
   useEffect(() => {
-    if (isEdit) {
-      if (post.uid && post.uid !== myInfo.uid) {
+    if (isEdit && post) {
+      if (post?.uid !== myInfo.uid) {
         sweetToast("다른 사용자의 게시물은 수정할 수 없습니다!", "warning");
         navigate("/", { replace: true });
       }
@@ -249,13 +241,13 @@ export default function PostUpload({ isEdit }: IProps) {
   }, [post]);
 
   useEffect(() => {
-    return () => {
-      dispatch(postSlice.actions.setPost([]));
-    };
-  }, []);
-
-  useEffect(() => {
-    if (isEdit && post.imgURL && post.content && post.rating && post.imgName) {
+    if (
+      isEdit &&
+      post?.imgURL &&
+      post?.content &&
+      post?.rating &&
+      post?.imgName
+    ) {
       setPreview(post.imgURL);
       setContentValue(post.content);
       setRatingValue(post.rating);
@@ -278,7 +270,7 @@ export default function PostUpload({ isEdit }: IProps) {
 
   return (
     <PostUploadUI
-      post={post}
+      post={post || ({} as IPostData)}
       contentValue={contentValue}
       selectedMapData={selectedMapData}
       ratingValue={ratingValue}
@@ -299,10 +291,10 @@ export default function PostUpload({ isEdit }: IProps) {
       closeSearchModal={closeSearchModal}
       isOpenModal={isOpenModal}
       uploadPostLoading={isPending || updatePostIsPending}
-      loadPostLoading={postIsPending || postIsFetching}
+      loadPostLoading={postIsFetching}
       isImgLoading={isImgLoading}
       isEdit={isEdit}
-      invalidUpdatePage={isEdit && !post.id && !postIsPending}
+      invalidUpdatePage={isEdit && !post?.uid && !postIsFetching}
     />
   );
 }
