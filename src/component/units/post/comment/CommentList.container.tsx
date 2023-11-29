@@ -11,6 +11,7 @@ import { InfiniteData, useQueryClient } from "@tanstack/react-query";
 import { DocumentData, QuerySnapshot } from "firebase/firestore";
 import { ICommentData, IPostData } from "../../../../api/apiType";
 import { useReplyInfiniteQuery } from "../../../../hook/query/post/reply/useReplyInfiniteQuery";
+import { useParams } from "react-router-dom";
 
 interface IProps {
   isReply: boolean;
@@ -37,6 +38,7 @@ export default function CommentList({
   firstItemLinkRef,
   postType
 }: IProps) {
+  const { uid } = useParams();
   const dispatch = useDispatch<AppDispatch>();
   // 현재 댓글들의 게시물 아이디
   const postId = useSelector((state: RootState) => state.comment.postId);
@@ -79,7 +81,12 @@ export default function CommentList({
     isError: repliesIsError,
     error: repliesError,
     isRefetchError: repliesIsRefetchError
-  } = useReplyInfiniteQuery(postId, parentCommentId, repliesPagePerData, isReply);
+  } = useReplyInfiniteQuery(
+    postId,
+    parentCommentId,
+    repliesPagePerData,
+    isReply
+  );
 
   // isReply props 통해 데이터를 다르게 처리
   useEffect(() => {
@@ -124,7 +131,9 @@ export default function CommentList({
         sweetToast("삭제된 게시물입니다!", "warning", 2000);
         // 게시물 삭제
         queryClient.setQueryData(
-          ["posts", postType],
+          postType === "PROFILE"
+            ? ["posts", postType, uid]
+            : ["posts", postType],
           (postsData: InfiniteData<InfinitePostsType, unknown>) => ({
             ...postsData,
             pages: postsData.pages.map((page: InfinitePostsType) => ({
@@ -151,7 +160,9 @@ export default function CommentList({
         sweetToast("삭제된 게시물입니다!", "warning", 2000);
         // 게시물 삭제
         queryClient.setQueryData(
-          ["posts", postType],
+          postType === "PROFILE"
+            ? ["posts", postType, uid]
+            : ["posts", postType],
           (postsData: InfiniteData<InfinitePostsType, unknown>) => ({
             ...postsData,
             pages: postsData.pages.map((page: InfinitePostsType) => ({
@@ -165,7 +176,7 @@ export default function CommentList({
         sweetToast("삭제된 댓글입니다!", "warning", 2000);
         // 댓글 삭제
         queryClient.setQueryData(
-          ["comments"],
+          ["post", postId, "comments"],
           (commentsData: InfiniteData<InfiniteCommentsType, unknown>) => ({
             ...commentsData,
             pages: commentsData.pages.map((page: InfiniteCommentsType) => ({
@@ -178,7 +189,9 @@ export default function CommentList({
         );
         dispatch(replySlice.actions.setIsOpenReplyModal(false));
         // 부모 댓글이 존재하지 않는경우 모든 답글 삭제 : 답글 쿼리 제거
-        queryClient.removeQueries({ queryKey: ["replies"] });
+        queryClient.removeQueries({
+          queryKey: ["post", postId, "comment", parentCommentId, "replies"]
+        });
       } else {
         sweetToast(
           "알 수 없는 에러가 발생하였습니다.\n잠시 후 다시 시도해 주세요.",

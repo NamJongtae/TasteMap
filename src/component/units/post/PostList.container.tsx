@@ -61,7 +61,6 @@ export default function PostList({ postType }: IProps) {
     fetchNextPage: profileFetchNextPage,
     isFetching: profileIsFetching,
     isFetchingNextPage: profileIsFetchingNextPage,
-    refetch: profileRefetch
   } = useProfilePostInfiniteQuery(
     uid ? uid : myInfo.uid,
     pagePerData,
@@ -90,14 +89,6 @@ export default function PostList({ postType }: IProps) {
       profileFetchNextPage();
     }
   }, [postType, inview, homeHasNextPage, feedHasNextPage, profileHasNextPage]);
-
-  // profilePosts가 존재할때 즉, 프로필 페이지인 경우
-  // uid가 변경될 때 마다 해당 유저의 게시물 가져오기
-  useEffect(() => {
-    if (profilePosts) {
-      profileRefetch();
-    }
-  }, [uid]);
 
   // 게시물 로딩 : 초기 로딩, 이후 리패칭, 패칭
   const loadPostsLoading =
