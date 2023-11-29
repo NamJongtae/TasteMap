@@ -3,24 +3,30 @@ import ProfileInfo from "./ProfileInfo.container";
 import ProfilePost from "./ProfilePost";
 import Header from "../../component/commons/layouts/header/Header";
 import FollowModal from "./followModal/FollowModal";
-import { useSelector } from "react-redux";
-import { RootState } from "../../store/store";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../store/store";
 import ProfileEditModal from "./profileEditModal/ProfileEditModal.container";
 import InvalidPage from "../../component/commons/invalidPage/InvalidPage";
 import TopButton from "../../component/commons/topButton/TopButton";
 import Loading from "../../component/commons/loading/Loading";
 import { useUpdateProfileMutation } from "../../hook/query/profile/useUpdateProfileMutation";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { useUserProfileQuery } from "../../hook/query/profile/useUserProfileQuery";
 import { useParams } from "react-router-dom";
 import { IMyProfileData, IUserProfileData } from "../../api/apiType";
 import { useMyProfileQuery } from "../../hook/query/profile/useMyProfileQuery";
+import { userSlice } from "../../slice/userSlice";
 
 export default function Profile() {
   const [isOpenProfileUpdateModal, setIsOpenProfileUpdateModal] =
     useState(false);
-  const [isOpenFollowersModal, setIsOpenFollowersModal] = useState(false);
-  const [isOpenFollowingModal, setIsOpenFollowingModal] = useState(false);
+  const isOpenFollowerModal = useSelector(
+    (state: RootState) => state.user.isOpenFollowerModal
+  );
+  const isOpenFollowingModal = useSelector(
+    (state: RootState) => state.user.isOpenFollowingModal
+  );
+  const dispatch = useDispatch<AppDispatch>();
 
   const openProfileUpdateModalHandler = useCallback(() => {
     document.body.style.overflow = "hidden";
@@ -33,23 +39,19 @@ export default function Profile() {
   }, []);
 
   const openFollowersModalHandler = () => {
-    document.body.style.overflow = "hidden";
-    setIsOpenFollowersModal(true);
+    dispatch(userSlice.actions.setIsOpenFollowerModal(true));
   };
 
   const openFollowingModalHanlder = () => {
-    document.body.style.overflow = "hidden";
-    setIsOpenFollowingModal(true);
+    dispatch(userSlice.actions.setIsOpenFollowingModal(true));
   };
 
   const closeFollowersModalHandler = () => {
-    document.body.style.overflow = "auto";
-    setIsOpenFollowersModal(false);
+    dispatch(userSlice.actions.setIsOpenFollowerModal(false));
   };
 
   const closeFollowingModalHandler = () => {
-    document.body.style.overflow = "auto";
-    setIsOpenFollowingModal(false);
+    dispatch(userSlice.actions.setIsOpenFollowingModal(false));
   };
 
   const { uid } = useParams();
@@ -58,25 +60,15 @@ export default function Profile() {
 
   const { mutate: updateProfileMutate, isPending: updateProfileLoading } =
     useUpdateProfileMutation(() => {
-      setIsOpenProfileUpdateModal(false);
+      closeProfileEditModalHandler();
     });
 
   const { data: myProfile, isPending: myProfileLoading } = useMyProfileQuery(
     myInfo.uid
   );
 
-  const {
-    data: userProfile,
-    refetch: userProfileRefetch,
-    isFetching: userProfileLoading
-  } = useUserProfileQuery(uid || myInfo.uid);
-
-  // uid(params)가 바뀔 때 마다 refetch를 통해 해당 유저 정보 가져오기
-  useEffect(() => {
-    if (userProfile) {
-      userProfileRefetch();
-    }
-  }, [uid]);
+  const { data: userProfile, isFetching: userProfileLoading } =
+    useUserProfileQuery(uid || myInfo.uid);
 
   const loadProfileLoading =
     updateProfileLoading || (uid ? userProfileLoading : myProfileLoading);
@@ -112,7 +104,7 @@ export default function Profile() {
         <ProfilePost />
         <TopButton />
       </Wrapper>
-      {isOpenFollowersModal && (
+      {isOpenFollowerModal && (
         <FollowModal
           isFollower={true}
           closeFollowersModalHandler={closeFollowersModalHandler}

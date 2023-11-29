@@ -1,9 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import {
-  IUserData,
-  IMyProfileData,
-  IUserProfileData,
-} from "../api/apiType";
+import { IUserData, IMyProfileData, IUserProfileData } from "../api/apiType";
 
 const userDataString = localStorage.getItem("user");
 const userData = JSON.parse(userDataString || "{}");
@@ -16,7 +12,7 @@ export const userSlice = createSlice({
     userProfile: {} as IUserProfileData,
     followsPagePerData: 20,
     isOpenFollowerModal: false,
-    isOpenFollowingModal: false,
+    isOpenFollowingModal: false
   },
   reducers: {
     setMyInfo: (state, action) => {
@@ -32,5 +28,21 @@ export const userSlice = createSlice({
     setUserProfile: (state, action) => {
       state.userProfile = action.payload;
     },
+    setIsOpenFollowerModal: (state, action: { payload: boolean }) => {
+      if (action.payload) {
+        document.body.style.overflow = "hidden";
+      } else {
+        document.body.style.overflow = "auto";
+      }
+      state.isOpenFollowerModal = action.payload;
+    },
+    setIsOpenFollowingModal: (state, action: { payload: boolean }) => {
+      if (action.payload) {
+        document.body.style.overflow = "hidden";
+      } else {
+        document.body.style.overflow = "auto";
+      }
+      state.isOpenFollowingModal = action.payload;
+    }
   }
 });
