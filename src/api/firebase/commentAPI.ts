@@ -160,6 +160,8 @@ export const updateComment = async (
     }
 
     await updateDoc(commentDoc, { content: commentData.content });
+
+    return commentData.postId;
   } catch (error) {
     console.error(error);
     throw error;
@@ -171,7 +173,7 @@ export const updateComment = async (
  */
 export const removeComment = async (
   commentData: Pick<ICommentData, "postId" | "commentId">
-): Promise<void> => {
+) => {
   try {
     // 게시물 확인 작업 추가
     const postDoc = doc(db, `post/${commentData.postId}`);
@@ -193,11 +195,29 @@ export const removeComment = async (
     const commentsDoc = doc(db, `comments/${commentData.commentId}`);
     const removeCommentPromise = deleteDoc(commentsDoc);
 
+    // 댓글 하위 답글 서브컬렉션 삭제
+    const repliesCollection = collection(commentDoc, `replies`);
+    const deleteRepliesPromise = getDocs(repliesCollection).then(
+      (querySnapshot) => {
+        const deletePromises: any[] = [];
+        querySnapshot.forEach((doc) => {
+          deletePromises.push(deleteDoc(doc.ref));
+        });
+        return Promise.all(deletePromises);
+      }
+    );
+
     // 게시물 doc에서 commentCount 줄이기
     const removeCommentCountPromise = updateDoc(postDoc, {
       commentCount: increment(-1)
     });
-    await Promise.all([removeCommentPromise, removeCommentCountPromise]);
+    await Promise.all([
+      removeCommentPromise,
+      deleteRepliesPromise,
+      removeCommentCountPromise
+    ]);
+
+    return commentData.postId;
   } catch (error) {
     console.error(error);
     throw error;

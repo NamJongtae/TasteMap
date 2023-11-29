@@ -107,10 +107,9 @@ export const leaveReply = async (replyData: IReplyData) => {
 
     const replyRef = collection(commentDoc, "replies");
     // 댓글 데이터 subCollection replies에 답글 Doc 추가
-    const addReplyCommentProimse = setDoc(
-      doc(replyRef, replyData.replyId),
-      { ...replyData }
-    );
+    const addReplyCommentProimse = setDoc(doc(replyRef, replyData.replyId), {
+      ...replyData
+    });
 
     // 댓글 데이터 답글 수 늘리기
     const addReplyCountPromise = updateDoc(commentDoc, {
@@ -118,6 +117,11 @@ export const leaveReply = async (replyData: IReplyData) => {
     });
 
     await Promise.all([addReplyCommentProimse, addReplyCountPromise]);
+
+    return {
+      postId: replyData.postId,
+      parentCommentId: replyData.parentCommentId
+    };
   } catch (error) {
     console.error(error);
     throw error;
@@ -162,6 +166,11 @@ export const updateReply = async (
     await updateDoc(replyDoc, {
       content: replyData.content
     });
+
+    return {
+      postId: replyData.postId,
+      parentCommentId: replyData.parentCommentId
+    };
   } catch (error) {
     console.error(error);
     throw error;
@@ -194,7 +203,7 @@ export const removeReply = async (
     // 답글 확인 작업 추가
     const replyDoc = doc(commentDoc, `replies/${replyData.replyId}`);
     const replyDocSnapshot = await getDoc(replyDoc);
-
+    
     if (!replyDocSnapshot.exists()) {
       throw new Error("답글이 존재하지 않습니다.");
     }
@@ -208,6 +217,11 @@ export const removeReply = async (
     });
 
     await Promise.all([removeReplyPromise, decreaseReplyCountPromise]);
+
+    return {
+      postId: replyData.postId,
+      parentCommentId: replyData.parentCommentId
+    };
   } catch (error) {
     console.error(error);
     throw error;
