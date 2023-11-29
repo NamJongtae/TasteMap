@@ -8,27 +8,36 @@ import { IPostData } from "../../../api/apiType";
 import { DocumentData, QuerySnapshot } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { sweetToast } from "../../../library/sweetAlert/sweetAlert";
+import { useParams } from "react-router-dom";
 
 type InfinitePostsType = {
   postDocs: QuerySnapshot<DocumentData, DocumentData>;
   data: IPostData[];
 };
 
-export const usePostReportMutation = (postType: "HOME" | "FEED" | "PROFILE") => {
+export const usePostReportMutation = (
+  postType: "HOME" | "FEED" | "PROFILE"
+) => {
+  const { uid } = useParams();
   const queryClient = useQueryClient();
   const { mutate } = useMutation({
     mutationFn: (reportData: Pick<IPostData, "id" | "reportCount">) =>
       reportPost(reportData),
     onMutate: async (reportData) => {
       await queryClient.cancelQueries({
-        queryKey: ["posts", postType]
+        queryKey:
+          postType === "PROFILE"
+            ? ["posts", postType, uid]
+            : ["posts", postType]
       });
 
       const previousPosts:
         | InfiniteData<InfinitePostsType, unknown>
-        | undefined = await queryClient.getQueryData(
-          ["posts", postType]
-      );
+        | undefined = await queryClient.getQueryData([
+        "posts",
+        postType,
+        postType === "PROFILE" && uid
+      ]);
 
       const newPages = previousPosts?.pages.map((page) => ({
         ...page,
@@ -48,7 +57,7 @@ export const usePostReportMutation = (postType: "HOME" | "FEED" | "PROFILE") => 
       }));
 
       queryClient.setQueryData(
-        ["posts", postType],
+        postType === "PROFILE" ? ["posts", postType, uid] : ["posts", postType],
         (data: InfiniteData<InfinitePostsType, unknown>) => ({
           ...data,
           pages: newPages
@@ -59,20 +68,25 @@ export const usePostReportMutation = (postType: "HOME" | "FEED" | "PROFILE") => 
     },
     onError: (error, data, ctx) => {
       if (ctx) {
-        queryClient.setQueryData(["posts", postType], ctx.previousPosts);
+        queryClient.setQueryData(
+          postType === "PROFILE"
+            ? ["posts", postType, uid]
+            : ["posts", postType],
+          ctx.previousPosts
+        );
       }
       if (error.message === "게시물이 존재하지 않습니다.") {
         sweetToast("삭제된 게시물입니다!", "warning");
         // 게시물 삭제
         queryClient.setQueryData(
-          ["posts", postType] ,
+          postType === "PROFILE"
+            ? ["posts", postType, uid]
+            : ["posts", postType],
           (postsData: InfiniteData<InfinitePostsType, unknown>) => ({
             ...postsData,
             pages: postsData.pages.map((page: InfinitePostsType) => ({
               ...page,
-              data: page.data.filter(
-                (post: IPostData) => post.id !== data.id
-              )
+              data: page.data.filter((post: IPostData) => post.id !== data.id)
             }))
           })
         );
@@ -89,7 +103,10 @@ export const usePostReportMutation = (postType: "HOME" | "FEED" | "PROFILE") => 
     },
     onSettled: () => {
       queryClient.invalidateQueries({
-        queryKey: ["posts", postType],
+        queryKey:
+          postType === "PROFILE"
+            ? ["posts", postType, uid]
+            : ["posts", postType],
         refetchType: "inactive"
       });
     }

@@ -30,7 +30,7 @@ export const useCommentInfiniteQuery = (
     isRefetchError,
     error
   } = useInfiniteQuery<FetchDataResponse>({
-    queryKey: ["comments"],
+    queryKey: ["post", postId,"comments"],
     queryFn: async ({ pageParam }) =>
       await fetchComments(
         pageParam as QueryDocumentSnapshot<DocumentData, DocumentData> | null,

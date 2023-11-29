@@ -6,19 +6,23 @@ import {
 import { fetchPost } from "../../../api/firebase/postAPI";
 import { DocumentData, QuerySnapshot } from "firebase/firestore";
 import { IPostData } from "../../../api/apiType";
+import { useParams } from "react-router-dom";
 
 type InfinitePostsType = {
   postDocs: QuerySnapshot<DocumentData, DocumentData>;
   data: IPostData[];
 };
 
-export const useFetchCommentCountMutation = (postType: "HOME" | "FEED" | "PROFILE") => {
+export const useFetchCommentCountMutation = (
+  postType: "HOME" | "FEED" | "PROFILE"
+) => {
+  const { uid } = useParams();
   const queryClient = useQueryClient();
   const { mutate } = useMutation({
     mutationFn: (postId: string) => fetchPost(postId),
     onSuccess: (result) => {
       queryClient.setQueryData(
-        ["posts", postType],
+        postType === "PROFILE" ? ["posts", postType, uid] : ["posts", postType],
         (data: InfiniteData<InfinitePostsType, unknown>) => ({
           ...data,
           pages: data.pages.map((page: InfinitePostsType) => ({
@@ -31,7 +35,7 @@ export const useFetchCommentCountMutation = (postType: "HOME" | "FEED" | "PROFIL
           }))
         })
       );
-    },
+    }
   });
 
   return { mutate };

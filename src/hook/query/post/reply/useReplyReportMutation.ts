@@ -11,6 +11,7 @@ import { useDispatch } from "react-redux";
 import { commentSlice } from "../../../../slice/commentSlice";
 import { AppDispatch } from "../../../../store/store";
 import { removeReply } from "../../../../api/firebase/replyAPI";
+import { useParams } from "react-router-dom";
 
 type InfiniteCommentsType = {
   commentDocs: QuerySnapshot<DocumentData, DocumentData>;
@@ -27,7 +28,10 @@ type InfiniteRepliesType = {
   data: IReplyData[];
 };
 
-export const useReplyReportMutation = (postType: "HOME" | "FEED" | "PROFILE") => {
+export const useReplyReportMutation = (
+  postType: "HOME" | "FEED" | "PROFILE"
+) => {
+  const { uid } = useParams();
   const dispatch = useDispatch<AppDispatch>();
   const queryClient = useQueryClient();
   const { mutate } = useMutation({
@@ -38,10 +42,24 @@ export const useReplyReportMutation = (postType: "HOME" | "FEED" | "PROFILE") =>
       >
     ) => removeReply(replyReportData),
     onMutate: async (replyReportData) => {
-      await queryClient.cancelQueries({ queryKey: ["replies"] });
+      await queryClient.cancelQueries({
+        queryKey: [
+          "post",
+          replyReportData.postId,
+          "comment",
+          replyReportData.parentCommentId,
+          "replies"
+        ]
+      });
       const previousReplies:
         | InfiniteData<InfiniteRepliesType, unknown>
-        | undefined = await queryClient.getQueryData(["replies"]);
+        | undefined = await queryClient.getQueryData([
+        "post",
+        replyReportData.postId,
+        "comment",
+        replyReportData.parentCommentId,
+        "replies"
+      ]);
 
       const newPages = previousReplies?.pages.map(
         (page: InfiniteRepliesType) => {
@@ -64,7 +82,13 @@ export const useReplyReportMutation = (postType: "HOME" | "FEED" | "PROFILE") =>
         }
       );
       queryClient.setQueryData(
-        ["replies"],
+        [
+          "post",
+          replyReportData.postId,
+          "comment",
+          replyReportData.parentCommentId,
+          "replies"
+        ],
         (data: InfiniteData<InfiniteRepliesType, unknown>) => ({
           ...data,
           pages: newPages
@@ -82,14 +106,19 @@ export const useReplyReportMutation = (postType: "HOME" | "FEED" | "PROFILE") =>
     },
     onError: (error, data, ctx) => {
       if (ctx) {
-        queryClient.setQueryData(["replies"], ctx.previousReplies);
+        queryClient.setQueryData(
+          ["post", data.postId, "comment", data.parentCommentId, "replies"],
+          ctx.previousReplies
+        );
       }
 
       if (error.message === "게시물이 존재하지 않습니다.") {
         sweetToast("삭제된 게시물입니다!", "warning");
         // 게시물 삭제
         queryClient.setQueryData(
-          ["posts", postType],
+          postType === "PROFILE"
+            ? ["posts", postType, uid]
+            : ["posts", postType],
           (postsData: InfiniteData<InfinitePostsType, unknown>) => ({
             ...postsData,
             pages: postsData.pages.map((page: InfinitePostsType) => ({
@@ -105,7 +134,7 @@ export const useReplyReportMutation = (postType: "HOME" | "FEED" | "PROFILE") =>
         sweetToast("삭제된 댓글입니다!", "warning");
         // 댓글 삭제
         queryClient.setQueryData(
-          ["comments"],
+          ["post", data.postId, "comments"],
           (commentsData: InfiniteData<InfiniteCommentsType, unknown>) => ({
             ...commentsData,
             pages: commentsData.pages.map((page: InfiniteCommentsType) => ({
@@ -121,7 +150,7 @@ export const useReplyReportMutation = (postType: "HOME" | "FEED" | "PROFILE") =>
         sweetToast("이미 삭제된 답글입니다.", "warning");
         // 답글 삭제
         queryClient.setQueryData(
-          ["replies"],
+          ["post", data.postId, "comment", data.parentCommentId, "replies"],
           (repliesData: InfiniteData<InfiniteRepliesType, unknown>) => ({
             ...repliesData,
             pages: repliesData.pages.map((page: InfiniteRepliesType) => ({
@@ -141,9 +170,17 @@ export const useReplyReportMutation = (postType: "HOME" | "FEED" | "PROFILE") =>
         console.log(error);
       }
     },
-    onSettled: () => {
+    onSettled: (
+      data: { postId: string; parentCommentId: string } | undefined
+    ) => {
       queryClient.invalidateQueries({
-        queryKey: ["replies"],
+        queryKey: [
+          "post",
+          data?.postId,
+          "comment",
+          data?.parentCommentId,
+          "replies"
+        ],
         refetchType: "inactive"
       });
     }

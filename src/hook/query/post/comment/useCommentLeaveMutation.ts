@@ -10,6 +10,7 @@ import { sweetToast } from "../../../../library/sweetAlert/sweetAlert";
 import { commentSlice } from "../../../../slice/commentSlice";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../../../store/store";
+import { useParams } from "react-router-dom";
 
 type InfiniteCommentsType = {
   commentDocs: QuerySnapshot<DocumentData, DocumentData>;
@@ -21,18 +22,27 @@ type InfinitePostsType = {
   data: IPostData[];
 };
 
-export const useCommentLeaveMutation = (postType: "HOME" | "FEED" | "PROFILE") => {
+export const useCommentLeaveMutation = (
+  postType: "HOME" | "FEED" | "PROFILE"
+) => {
+  const { uid } = useParams();
   const dispatch = useDispatch<AppDispatch>();
   const queryClient = useQueryClient();
   const { mutate } = useMutation({
     mutationFn: (commentData: ICommentData) => leaveComment(commentData),
     onMutate: async (newCommentData) => {
-      await queryClient.cancelQueries({ queryKey: ["comments"] });
+      await queryClient.cancelQueries({
+        queryKey: ["post", newCommentData.postId, "comments"]
+      });
 
-      const previousComments = await queryClient.getQueryData(["comments"]);
+      const previousComments = await queryClient.getQueryData([
+        "post",
+        newCommentData.postId,
+        "comments"
+      ]);
 
       queryClient.setQueryData(
-        ["comments"],
+        ["post", newCommentData.postId, "comments"],
         (data: InfiniteData<InfiniteCommentsType, unknown>) => ({
           ...data,
           pages: [
@@ -52,14 +62,19 @@ export const useCommentLeaveMutation = (postType: "HOME" | "FEED" | "PROFILE") =
     },
     onError: (error, data, ctx) => {
       if (ctx) {
-        queryClient.setQueryData(["comments"], ctx.previousComments);
+        queryClient.setQueryData(
+          ["post", data.postId, "comments"],
+          ctx.previousComments
+        );
       }
 
       if (error.message === "게시물이 존재하지 않습니다.") {
         sweetToast("삭제된 게시물입니다!", "warning");
         // 게시물 삭제
         queryClient.setQueryData(
-          ["posts", postType] ,
+          postType === "PROFILE"
+            ? ["posts", postType, uid]
+            : ["posts", postType],
           (postsData: InfiniteData<InfinitePostsType, unknown>) => ({
             ...postsData,
             pages: postsData.pages.map((page: InfinitePostsType) => ({
@@ -79,9 +94,9 @@ export const useCommentLeaveMutation = (postType: "HOME" | "FEED" | "PROFILE") =
         console.log(error);
       }
     },
-    onSettled: () => {
+    onSettled: (postId: string | undefined) => {
       queryClient.invalidateQueries({
-        queryKey: ["comments"],
+        queryKey: ["post", postId, "comments"],
         refetchType: "inactive"
       });
     }

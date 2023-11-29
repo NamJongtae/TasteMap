@@ -31,7 +31,7 @@ export const useReplyInfiniteQuery = (
     isRefetchError,
     error
   } = useInfiniteQuery<InfiniteReplyType>({
-    queryKey: ["replies"],
+    queryKey: ["post", postId, "comment", parentCommentId, "replies"],
     queryFn: async ({ pageParam }) => {
       const result = await fetchReplies(
         pageParam as QueryDocumentSnapshot<DocumentData, DocumentData> | null,
@@ -49,7 +49,8 @@ export const useReplyInfiniteQuery = (
         : undefined;
     },
     retry: 1,
-    enabled: isReply
+    enabled: isReply,
+    gcTime: 1000 * 60 * 5 * (isReply ? 1 : 0)
   });
 
   return {

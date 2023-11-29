@@ -27,7 +27,7 @@ export const useProfilePostInfiniteQuery = (
     refetch,
     isRefetching
   } = useInfiniteQuery<FetchDataResponse>({
-    queryKey: ["posts", "PROFILE"],
+    queryKey: ["posts", "PROFILE", uid],
     queryFn: async ({ pageParam }) =>
       await fetchProfilePosts(
         uid,
