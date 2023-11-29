@@ -22,12 +22,6 @@ export const postSlice = createSlice({
   },
 
   reducers: {
-    setPosts: (state, action) => {
-      state.posts = action.payload;
-    },
-    setPost: (state, action) => {
-      state.post = action.payload;
-    },
     setSelectedMapData: (state, action) => {
       state.seletedMapData = [action.payload];
     },
