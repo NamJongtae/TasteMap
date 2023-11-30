@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { TPostType } from './Home';
+import { TPostType } from "./Home";
 
 export const Wrapper = styled.main`
   width: 100%;
@@ -31,12 +31,15 @@ export const HomeBtn = styled.button`
   width: 30px;
   height: 30px;
   border-radius: 5px;
-  background: ${(props: { postType: TPostType }) =>
+  background: ${(props: {
+    postType: TPostType;
+    $isWebpSupported: boolean | null;
+  }) =>
     props.postType === "HOME"
-      ? document.body.classList.contains("webp")
+      ? props.$isWebpSupported
         ? "url(/assets/webp/icon-homeBtnActive.webp) no-repeat center / 30px"
         : "url(/assets/icon-homeBtnActive.svg) no-repeat center / 30px"
-      : document.body.classList.contains("webp")
+      : props.$isWebpSupported
       ? "url(/assets/webp/icon-homeBtn.webp) no-repeat center / 30px"
       : "url(/assets/icon-homeBtn.svg) no-repeat center / 30px"};
 `;
@@ -45,12 +48,19 @@ export const FeedBtn = styled.button`
   width: 30px;
   height: 30px;
   border-radius: 5px;
-  background: ${(props: { postType: TPostType }) =>
+  background: ${(props: {
+    postType: TPostType;
+    $isWebpSupported: boolean | null;
+  }) =>
     props.postType === "FEED"
-      ? document.body.classList.contains("webp")
-        ? "url(/assets/webp/icon-feedBtnActive.webp) no-repeat center / 30px"
-        : "url(/assets/icon-feedBtnActive.svg) no-repeat center / 30px"
-      : document.body.classList.contains("webp")
-      ? "url(/assets/webp/icon-feedBtn.webp) no-repeat center / 30px"
-      : "url(/assets/icon-feedBtn.svg) no-repeat center / 30px"};
+      ? `url(${
+          props.$isWebpSupported
+            ? "/assets/webp/icon-feedBtnActive.webp"
+            : "/assets/icon-feedBtnActive.svg"
+        }) no-repeat center / 30px`
+      : `url(${
+          props.$isWebpSupported
+            ? "/assets/webp/icon-feedBtn.webp"
+            : "/assets/icon-feedBtn.svg"
+        })  no-repeat center / 30px`};
 `;

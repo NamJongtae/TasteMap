@@ -9,6 +9,7 @@ import { sweetToast } from "../../../library/sweetAlert/sweetAlert";
 import { tasteMapSlice } from "../../../slice/tasteMapSlice";
 import { useAddTasteMapMutation } from '../../../hook/query/profile/useAddTasteMapMutation';
 import { useMyProfileQuery } from '../../../hook/query/profile/useMyProfileQuery';
+import { useSupportedWebp } from '../../../hook/useSupportedWebp';
 declare global {
   interface Window {
     kakao: any;
@@ -21,6 +22,7 @@ interface IProps {
 }
 
 function Kakaomap({ items, isTasteMapPage }: IProps) {
+  const { isWebpSupported } = useSupportedWebp();
   const [data, setData] = useState(items);
   const myInfo = useSelector((state: RootState) => state.user.myInfo);
   const seletedMapData = useSelector(
@@ -529,6 +531,7 @@ function Kakaomap({ items, isTasteMapPage }: IProps) {
       rvWrapperRef={rvWrapperRef}
       roadViewRef={roadViewRef}
       isTasteMapPage={isTasteMapPage}
+      isWebpSupported={isWebpSupported}
     />
   );
 }

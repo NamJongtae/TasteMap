@@ -9,7 +9,6 @@ import {
   UserInfoWrapper,
   UserProfileLink,
 } from "./userInfo.styles";
-import { resolveWebp } from "../../../library/webpSupport";
 import { ICommentData, IPostData, IUserData } from "../../../api/apiType";
 interface IProps {
   userData: Omit<IUserData, "email">;
@@ -27,6 +26,8 @@ interface IProps {
     e: React.MouseEvent<HTMLButtonElement>,
     postData: IPostData
   ) => void;
+  isWebpSupported: boolean | null;
+  resolveWebp: (img: string, fallbackExt: string) => string;
 }
 export default function UserInfoUI({
   userData,
@@ -38,6 +39,8 @@ export default function UserInfoUI({
   onClickEditBtn,
   onCliceRemove,
   onClickReport,
+  isWebpSupported,
+  resolveWebp,
 }: IProps) {
   return (
     <UserInfoWrapper>
@@ -61,6 +64,7 @@ export default function UserInfoUI({
           type='button'
           aria-label='게시물 메뉴'
           onClick={onClickSelect}
+          $isWebpSupported={ isWebpSupported}
         />
       )}
       {isOpenSelect && data && (

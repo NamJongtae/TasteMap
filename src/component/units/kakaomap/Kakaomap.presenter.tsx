@@ -10,7 +10,7 @@ import {
   Title,
   Wrapper,
   ZoomInBtn,
-  ZoomOutBtn,
+  ZoomOutBtn
 } from "./kakaomap.styles";
 import { IMapData } from "../../../api/apiType";
 
@@ -24,6 +24,7 @@ interface IProps {
   rvWrapperRef: React.RefObject<HTMLDivElement>;
   roadViewRef: React.RefObject<HTMLDivElement>;
   isTasteMapPage: boolean;
+  isWebpSupported: boolean | null;
 }
 export default function KakaomapUI({
   data,
@@ -35,6 +36,7 @@ export default function KakaomapUI({
   rvWrapperRef,
   roadViewRef,
   isTasteMapPage,
+  isWebpSupported
 }: IProps) {
   return (
     <>
@@ -48,9 +50,20 @@ export default function KakaomapUI({
                 onClick={() => setRoadview(!roadview)}
                 aria-label='로드뷰'
                 roadview={roadview}
+                $isWebpSupported={isWebpSupported}
               />
-              <ZoomInBtn title='확대' onClick={zoomIn} aria-label='확대' />
-              <ZoomOutBtn title='축소' onClick={zoomOut} aria-label='축소' />
+              <ZoomInBtn
+                title='확대'
+                onClick={zoomIn}
+                aria-label='확대'
+                $isWebpSupported={isWebpSupported}
+              />
+              <ZoomOutBtn
+                title='축소'
+                onClick={zoomOut}
+                aria-label='축소'
+                $isWebpSupported={isWebpSupported}
+              />
             </MapBtnWrapper>
           </MapContainer>
           {roadview && (
@@ -60,7 +73,7 @@ export default function KakaomapUI({
           )}
         </Wrapper>
       ) : (
-        <NoKakaoMap>
+        <NoKakaoMap $isWebpSupported={isWebpSupported}>
           <NoKakaoMapText>
             {isTasteMapPage
               ? "저장된 맛집이 없습니다.\n맛집 추가을 통해 맛집을 추가해주세요."

@@ -9,15 +9,16 @@ import {
 } from "./search.styles";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/store";
-import { resolveWebp } from "../../library/webpSupport";
 import { useFollowMutation } from "../../hook/query/profile/useFollowMutation";
 import { useUnfollowMutation } from "../../hook/query/profile/useUnfollowMutation";
+import { useSupportedWebp } from '../../hook/useSupportedWebp';
 
 interface IProps {
   item: IUserProfileData;
   myProfile: IMyProfileData | undefined;
 }
 export default function SearchItem({ item, myProfile }: IProps) {
+  const { resolveWebp } = useSupportedWebp();
   const searchKeyword = useSelector(
     (state: RootState) => state.search.searchKeyword
   );

@@ -12,6 +12,7 @@ import { DocumentData, QuerySnapshot } from "firebase/firestore";
 import { ICommentData, IPostData } from "../../../../api/apiType";
 import { useReplyInfiniteQuery } from "../../../../hook/query/post/reply/useReplyInfiniteQuery";
 import { useParams } from "react-router-dom";
+import { useSupportedWebp } from '../../../../hook/useSupportedWebp';
 
 interface IProps {
   isReply: boolean;
@@ -39,6 +40,7 @@ export default function CommentList({
   postType
 }: IProps) {
   const { uid } = useParams();
+  const { isWebpSupported } = useSupportedWebp();
   const dispatch = useDispatch<AppDispatch>();
   // 현재 댓글들의 게시물 아이디
   const postId = useSelector((state: RootState) => state.comment.postId);
@@ -235,6 +237,7 @@ export default function CommentList({
       CommentListRef={CommentListRef}
       firstItemLinkRef={firstItemLinkRef}
       postType={postType}
+      isWebpSupported={isWebpSupported}
     />
   );
 }

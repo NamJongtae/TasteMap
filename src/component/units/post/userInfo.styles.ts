@@ -32,12 +32,12 @@ export const UserImg = styled.img`
 export const MoreBtn = styled.button`
   width: 30px;
   height: 45px;
-  body.webp & {
-    background: url("/assets/webp/icon-more.webp") no-repeat center / 15px;
-  }
-  body.no-webp & {
-    background: url("/assets/icon-more.svg") no-repeat center / 15px;
-  }
+  background: ${(props: { $isWebpSupported: boolean | null }) =>
+    `url(${
+      props.$isWebpSupported
+        ? "/assets/webp/icon-more.webp"
+        : "/assets/icon-more.svg"
+    }) no-repeat center / 15px`};
 `;
 
 export const OptionList = styled.ul`

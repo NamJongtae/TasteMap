@@ -38,6 +38,7 @@ interface IProps {
   setNext: React.Dispatch<React.SetStateAction<boolean>>;
   resolveWebp: (img: string, fallbackExt: string) => string;
   isImgLoading: boolean;
+  isWebpSupported: boolean | null;
 }
 
 export default function ProfileSettingUI({
@@ -56,7 +57,8 @@ export default function ProfileSettingUI({
   setPercentage,
   setNext,
   resolveWebp,
-  isImgLoading
+  isImgLoading,
+  isWebpSupported,
 }: IProps) {
   return (
     <SignupForm onSubmit={handleSubmit}>
@@ -79,12 +81,14 @@ export default function ProfileSettingUI({
                 type='button'
                 onClick={onClickImgReset}
                 aria-label='초기화'
+                $isWebpSupported={isWebpSupported}
               />
               <ProfileImgButton
                 type='button'
                 onClick={() =>
                   imgInputRef.current && imgInputRef.current.click()
                 }
+                $isWebpSupported={isWebpSupported}
               >
                 <ProfileImg
                   src={previewImg}

@@ -14,6 +14,7 @@ interface IProps {
   onSubmitComment: () => void;
   textareaRef: React.RefObject<HTMLTextAreaElement>;
   closeBtnRef: React.RefObject<HTMLButtonElement>;
+  isWebpSupported: boolean | null;
 }
 export default function CommentTextAreaUI({
   textAreaType,
@@ -24,6 +25,7 @@ export default function CommentTextAreaUI({
   isReply,
   onSubmitComment,
   textareaRef,
+  isWebpSupported
 }: IProps) {
   return (
     <CommentTextAreaInner textAreaType={textAreaType}>
@@ -33,7 +35,7 @@ export default function CommentTextAreaUI({
         onChange={onChangeCommentValue}
         placeholder={isReply ? "답글을 입력하세요" : "댓글을 입력하세요."}
         rows={1}
-        onKeyDown={(e: React.KeyboardEvent<HTMLTextAreaElement>)=>{
+        onKeyDown={(e: React.KeyboardEvent<HTMLTextAreaElement>) => {
           preventKeydownEnter(e);
         }}
       />
@@ -45,6 +47,7 @@ export default function CommentTextAreaUI({
             ? commentValue === initalvalue || !commentValue
             : !commentValue
         }
+        $isWebpSupported={isWebpSupported}
       />
     </CommentTextAreaInner>
   );

@@ -10,11 +10,13 @@ import {
   NextBtn
 } from "./imgSlider.styles";
 import ProgressiveImg from "../../commons/progressiveImg/ProgressiveImg";
+import { useSupportedWebp } from '../../../hook/useSupportedWebp';
 
 interface IProps {
   imgArray: string[];
 }
 export default function ImgSlider({ imgArray }: IProps) {
+  const { isWebpSupported } = useSupportedWebp();
   const [activeButton, setActiveButton] = useState(0);
   const ImgUlRef = useRef<HTMLUListElement>(null);
   // 이미지 슬라이드를 위해 해당 이미지의 이미지 크기에 인덱스를 곱해 translateX 해줌
@@ -49,6 +51,7 @@ export default function ImgSlider({ imgArray }: IProps) {
           type='button'
           disabled={activeButton === 0}
           onClick={onClickPrevBtn}
+          $isWebpSupported={isWebpSupported}
         >
           <span className='a11y-hidden'>다음</span>
         </PrevBtn>
@@ -80,6 +83,7 @@ export default function ImgSlider({ imgArray }: IProps) {
           type='button'
           disabled={activeButton === imgArray.length - 1}
           onClick={onClickNextBtn}
+          $isWebpSupported={isWebpSupported}
         >
           <span className='a11y-hidden'>이전</span>
         </NextBtn>

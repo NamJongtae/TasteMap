@@ -45,6 +45,7 @@ interface IProps {
   kakaomapRef: (node?: Element | null | undefined) => void;
   inview: boolean;
   postType: "HOME" | "FEED" | "PROFILE";
+  isWebpSupported: boolean | null;
 }
 
 export default function PostItemUI({
@@ -65,7 +66,8 @@ export default function PostItemUI({
   openCommentModal,
   kakaomapRef,
   inview,
-  postType
+  postType,
+  isWebpSupported,
 }: IProps) {
   return (
     <>
@@ -94,6 +96,7 @@ export default function PostItemUI({
                   type='button'
                   onClick={onClickMoreText}
                   aria-label='더보기'
+                  $isWebpSupported = {isWebpSupported}
                 >
                   더보기
                 </MoreContentBtn>
@@ -108,6 +111,7 @@ export default function PostItemUI({
                   storedMap={isStoredMap}
                   onClick={() => onClickStoredMap(data)}
                   title={isStoredMap ? "맛집 삭제" : "맛집 추가"}
+                  $isWebpSupported={isWebpSupported}
                 />
               )}
               <h3 className='a11y-hidden'>
@@ -139,12 +143,14 @@ export default function PostItemUI({
             contentType={contentType}
             onClick={changePostImgType}
             aria-label='지도'
+            $isWebpSupported={isWebpSupported}
           />
           <ActiveImageBtn
             type='button'
             contentType={contentType}
             onClick={changePostMapType}
             aria-label='이미지'
+            $isWebpSupported={isWebpSupported}
           />
           <PostItemButtom>
             <ButtonWrapper>
@@ -153,6 +159,7 @@ export default function PostItemUI({
                 aria-label='좋아요'
                 onClick={() => onClickLike(data.id)}
                 like={isLike}
+                $isWebpSupported={isWebpSupported}
               />
               <Count>{likeCount}</Count>
             </ButtonWrapper>
@@ -161,6 +168,7 @@ export default function PostItemUI({
                 type='button'
                 aria-label='댓글'
                 onClick={openCommentModal}
+                $isWebpSupported={isWebpSupported}
               />
               <Count>{data.commentCount}</Count>
             </ButtonWrapper>

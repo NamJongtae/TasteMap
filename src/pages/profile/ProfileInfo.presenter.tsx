@@ -16,7 +16,6 @@ import {
   UserProfileImg,
   UserWrapper
 } from "./profileInfo.styles";
-import { resolveWebp } from "../../library/webpSupport";
 import { IMyProfileData, IUserData, IUserProfileData } from "../../api/apiType";
 
 interface IProps {
@@ -34,6 +33,8 @@ interface IProps {
   onClickFollow: () => Promise<void>;
   onClickUnfollow: () => Promise<void>;
   onClickTasteMap: () => void;
+  isWebpSupported: boolean | null;
+  resolveWebp: (img: string, fallbackExt: string) => string;
 }
 export default function ProfileInfoUI({
   myInfo,
@@ -49,7 +50,9 @@ export default function ProfileInfoUI({
   isFollow,
   onClickFollow,
   onClickUnfollow,
-  onClickTasteMap
+  onClickTasteMap,
+  isWebpSupported,
+  resolveWebp
 }: IProps) {
   return (
     <>
@@ -94,7 +97,12 @@ export default function ProfileInfoUI({
           {isShowMoreTextBtn && (
             <>
               <IntroduceTextLine></IntroduceTextLine>
-              <MoreTextBtn onClick={onClickMoreText}>더보기</MoreTextBtn>
+              <MoreTextBtn
+                onClick={onClickMoreText}
+                $isWebpSupported={isWebpSupported}
+              >
+                더보기
+              </MoreTextBtn>
             </>
           )}
           <ButtonWrapper>

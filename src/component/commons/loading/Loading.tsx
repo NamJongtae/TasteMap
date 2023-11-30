@@ -12,7 +12,7 @@ export default function Loading() {
       setImageLoaded(true);
     };
   }, []);
- 
+
   return (
     <Wrapper>
       <Title className='a11y-hidden'>로딩중</Title>

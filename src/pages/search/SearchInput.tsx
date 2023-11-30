@@ -4,8 +4,10 @@ import { debounce } from "lodash";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store/store";
 import { searchSlice } from "../../slice/searchSlice";
+import { useSupportedWebp } from "../../hook/useSupportedWebp";
 
 export default function SearchInput() {
+  const { isWebpSupported } = useSupportedWebp();
   const dispatch = useDispatch<AppDispatch>();
   const searchKeyword = useSelector(
     (state: RootState) => state.search.searchKeyword
@@ -40,6 +42,7 @@ export default function SearchInput() {
         onChange={onChangeKeyword}
         maxLength={12}
         ref={inputRef}
+        $isWebpSupported={isWebpSupported}
       />
     </SearchInputWrapper>
   );

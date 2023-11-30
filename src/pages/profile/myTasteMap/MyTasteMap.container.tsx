@@ -12,8 +12,10 @@ import { useRemoveTasteMapMutation } from "../../../hook/query/profile/useRemove
 import { useMyProfileQuery } from "../../../hook/query/profile/useMyProfileQuery";
 import { IMyProfileData } from "../../../api/apiType";
 import { userSlice } from "../../../slice/userSlice";
+import { useSupportedWebp } from '../../../hook/useSupportedWebp';
 
 export default function MyTasteMap() {
+  const { isWebpSupported } = useSupportedWebp();
   const myInfo = useSelector((state: RootState) => state.user.myInfo);
   const contentType = useSelector(
     (state: RootState) => state.tasteMap.contentType
@@ -93,6 +95,7 @@ export default function MyTasteMap() {
       removeMap={removeMap}
       onClickShare={onClickShare}
       myProfileIsPending={myProfileIsPending}
+      isWebpSupported={isWebpSupported}
     />
   );
 }

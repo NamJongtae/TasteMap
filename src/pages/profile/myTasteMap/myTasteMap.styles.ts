@@ -1,7 +1,7 @@
 import { isMobile } from "react-device-detect";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-import { EMapContentType } from '../../../slice/tasteMapSlice';
+import { EMapContentType } from "../../../slice/tasteMapSlice";
 
 export const Wrapper = styled.main`
   width: 100%;
@@ -37,12 +37,12 @@ export const ContetnTypeBtnWrapper = styled.div`
 export const ShareBtn = styled.button`
   width: 35px;
   height: 35px;
-  body.webp & {
-    background: url("/assets/webp/icon-share.webp") no-repeat center #f0f0f0;
-  }
-  body.no-webp & {
-    background: url("/assets/icon-share.svg") no-repeat center #f0f0f0;
-  }
+  background: ${(props: { $isWebpSupported: boolean | null }) =>
+    `url(${
+      props.$isWebpSupported
+        ? "/assets/webp/icon-share.webp"
+        : "/assets/icon-share.svg"
+    }) no-repeat center #f0f0f0`};
   border-radius: 5px;
   margin-bottom: 20px;
 `;
@@ -87,7 +87,8 @@ export const MapInfoList = styled.ul`
   max-width: 500px;
   margin: 0 auto;
   border: 1px solid #bdbdbd;
-  margin-top: ${(props: {isShareTasteMap: boolean})=>props.isShareTasteMap ? "20px" : "50px"};
+  margin-top: ${(props: { isShareTasteMap: boolean }) =>
+    props.isShareTasteMap ? "20px" : "50px"};
   max-height: 500px;
   overflow-y: scroll;
 `;
@@ -173,23 +174,23 @@ export const FocusMapBtn = styled.button`
   border-radius: 5px;
   width: 30px;
   height: 30px;
-  body.webp & {
-    background: url("/assets/webp/icon-thumbnailMapBtn.webp") no-repeat center /
-      18px;
-  }
-  body.no-webp & {
-    background: url("/assets/icon-thumbnailMapBtn.svg") no-repeat center / 18px;
-  }
+  background: ${(props: { $isWebpSupported: boolean | null }) =>
+    `url(${
+      props.$isWebpSupported
+        ? "/assets/webp/icon-thumbnailMapBtn.webp"
+        : "/assets/icon-thumbnailMapBtn.svg"
+    }) no-repeat center / 18px`};
+
   :hover {
     body.webp & {
-      background: ${isMobile
-        ? ""
-        : "url('/assets/webp/icon-thumbnailMapBtnActive.webp') no-repeat center / 30px"};
-    }
-    body.no-webp & {
-      background: ${isMobile
-        ? ""
-        : "url('/assets/icon-thumbnailMapBtnActive.svg') no-repeat center / 30px"};
+      background: ${(props: { $isWebpSupported: boolean | null }) =>
+        isMobile
+          ? ""
+          : `url(${
+              props.$isWebpSupported
+                ? "/assets/webp/icon-thumbnailMapBtnActive.webp"
+                : "/assets/icon-thumbnailMapBtnActive.svg"
+            }) no-repeat center / 30px`};
     }
   }
 `;
@@ -203,13 +204,12 @@ export const RemoveBtn = styled.button`
   border-radius: 5px;
   width: 30px;
   height: 30px;
-  body.webp & {
-    background: url("/assets/webp/icon-delete.webp") no-repeat center / 18px;
-  }
-  body.no-webp & {
-    background: url("/assets/icon-delete.svg") no-repeat center / 18px;
-  }
-
+  background: ${(props: { $isWebpSupported: boolean | null }) =>
+    `url(${
+      props.$isWebpSupported
+        ? "/assets/webp/icon-delete.webp"
+        : "/assets/icon-delete.svg"
+    }) no-repeat center / 18px`};
   :hover {
     background-color: ${isMobile ? "" : "coral"};
   }

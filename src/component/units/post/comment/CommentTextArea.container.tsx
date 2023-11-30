@@ -9,6 +9,7 @@ import { useCommentLeaveMutation } from "../../../../hook/query/post/comment/use
 import { useCommentUpdateMutation } from "../../../../hook/query/post/comment/useCommentUpdateMutation";
 import { useReplyLeaveMutation } from "../../../../hook/query/post/reply/useReplyLeaveMutation.";
 import { useReplyUpdateMutation } from "../../../../hook/query/post/reply/useReplyUpdateMutation";
+import { useSupportedWebp } from '../../../../hook/useSupportedWebp';
 
 interface IProps {
   textAreaType: "write" | "edit" | "reply";
@@ -33,6 +34,7 @@ export default function CommentTextArea({
   textareaRef,
   postType
 }: IProps) {
+  const { isWebpSupported } = useSupportedWebp();
   const postId = useSelector((state: RootState) => state.comment.postId);
   const myInfo = useSelector((state: RootState) => state.user.myInfo);
   const [commentValue, setCommentValue] = useState(initalvalue);
@@ -150,6 +152,7 @@ export default function CommentTextArea({
       onSubmitComment={onSubmitComment}
       textareaRef={textareaRef}
       closeBtnRef={closeBtnRef}
+      isWebpSupported={isWebpSupported}
     />
   );
 }

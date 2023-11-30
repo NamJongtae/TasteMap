@@ -6,6 +6,7 @@ import ProfileEditModalUI from "./ProfileEditModal.presenter";
 import { isMobile } from "react-device-detect";
 import { UseMutateFunction } from "@tanstack/react-query";
 import { IMyProfileData, IProfileUpdateData } from "../../../api/apiType";
+import { useSupportedWebp } from '../../../hook/useSupportedWebp';
 
 interface IProps {
   updateProfileMutate: UseMutateFunction<
@@ -32,6 +33,7 @@ export default function ProfileEditModal({
   closeProfileEditModalHandler,
   myProfile
 }: IProps) {
+  const { isWebpSupported, resolveWebp } = useSupportedWebp();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
   const imgInputRef = useRef<HTMLInputElement>(null);
@@ -206,6 +208,8 @@ export default function ProfileEditModal({
       editBtnRef={editBtnRef}
       closeBtnRef={closeBtnRef}
       isImgLoading={isImgLoading}
+      isWebpSupported={isWebpSupported}
+      resolveWebp={resolveWebp}
     />
   );
 }

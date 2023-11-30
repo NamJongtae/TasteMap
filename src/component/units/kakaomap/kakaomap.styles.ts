@@ -23,14 +23,12 @@ export const NoKakaoMap = styled(MapContainer)`
   white-space: pre-wrap;
   text-align: center;
   line-height: 1.5;
-  body.no-webp & {
-    background: url("/assets/webp/icon-searchMap.webp") no-repeat center 70px / 100px
-      #f2f2f2;
-  }
-  body.webp & {
-    background: url("/assets/icon-searchMap.svg") no-repeat center 70px / 100px
-      #f2f2f2;
-  }
+  background: ${(props: { $isWebpSupported: boolean | null }) =>
+    `url(${
+      props.$isWebpSupported
+        ? "/assets/webp/icon-searchMap.webp"
+        : "/assets/icon-searchMap.svg"
+    }) no-repeat center 70px / 100px #f2f2f2`};
   @media screen and (max-width: 468px) {
     font-size: 14px;
   }
@@ -67,31 +65,38 @@ const ZoomBtn = styled.button`
 `;
 
 export const ZoomInBtn = styled(ZoomBtn)`
-  body.webp & {
-    background: url("/assets/webp/icon-zoomIn.webp") no-repeat;
-  }
-  body.no-webp & {
-    background: url("/assets/icon-zoomIn.svg") no-repeat;
-  }
+  background: ${(props: { $isWebpSupported: boolean | null }) =>
+    `url(${
+      props.$isWebpSupported
+        ? "/assets/webp/icon-zoomIn.webp"
+        : "/assets/icon-zoomIn.svg"
+    }) no-repeat`};
 `;
 
 export const ZoomOutBtn = styled(ZoomBtn)`
-  body.webp & {
-    background: url("/assets/webp/icon-zoomOut.webp") no-repeat;
-  }
-  body.no-webp & {
-    background: url("/assets/icon-zoomOut.svg") no-repeat;
-  }
+  background: ${(props: { $isWebpSupported: boolean | null }) =>
+    `url(${
+      props.$isWebpSupported
+        ? "/assets/webp/icon-zoomOut.webp"
+        : "/assets/icon-zoomOut.svg"
+    }) no-repeat`};
 `;
 
 export const RoadViewBtn = styled(ZoomBtn)`
   transition: all 0.3s;
-  background: ${(props: { roadview: boolean }) =>
+  background: ${(props: {
+    roadview: boolean;
+    $isWebpSupported: boolean | null;
+  }) =>
     props.roadview
-      ? document.body.classList.contains("webp")
-        ? "url(/assets/webp/icon-roadViewActive.webp) no-repeat"
-        : "url(/assets/icon-roadViewActive.svg) no-repeat"
-      : document.body.classList.contains("webp")
-      ? "url(/assets/webp/icon-roadView.webp) no-repeat"
-      : "url(/assets/icon-roadView.svg) no-repeat"};
+      ? `url(${
+          props.$isWebpSupported
+            ? "/assets/webp/icon-roadViewActive.webp"
+            : "/assets/icon-roadViewActive.svg"
+        }) no-repeat`
+      : `url(${
+          props.$isWebpSupported
+            ? "/assets/webp/icon-roadView.webp"
+            : "/assets/icon-roadView.svg"
+        }) no-repeat`};
 `;

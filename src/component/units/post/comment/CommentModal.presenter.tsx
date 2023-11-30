@@ -9,7 +9,6 @@ import {
 } from "./comment.styles";
 import CommentList from "./CommentList.container";
 import CommentTextArea from "./CommentTextArea.container";
-import { resolveWebp } from "../../../../library/webpSupport";
 import { IUserData } from "../../../../api/apiType";
 import { optModalTabFocus } from "../../../../library/optModalTabFocus";
 interface IPros {
@@ -22,6 +21,8 @@ interface IPros {
   textareaRef: React.RefObject<HTMLTextAreaElement>;
   firstItemLinkRef: React.RefObject<HTMLAnchorElement>;
   postType: "HOME" | "FEED" | "PROFILE"
+  isWebpSupported: boolean | null;
+  resolveWebp: (img: string, fallbackExt: string) => string;
 }
 export default function CommentModalUI({
   isReply,
@@ -32,7 +33,9 @@ export default function CommentModalUI({
   closeBtnRef,
   textareaRef,
   firstItemLinkRef,
-  postType
+  postType,
+  isWebpSupported,
+  resolveWebp,
 }: IPros) {
   return (
     <CommentModalWrapper ref={modalRef} isReply={isReply}>
@@ -77,6 +80,7 @@ export default function CommentModalUI({
         onKeyDown={(e: React.KeyboardEvent<HTMLButtonElement>) => {
           optModalTabFocus(e, textareaRef.current, firstItemLinkRef.current);
         }}
+        $isWebpSupported={isWebpSupported}
       />
     </CommentModalWrapper>
   );

@@ -2,7 +2,6 @@ import React, { useEffect } from "react";
 import { Navigate, Outlet, Route, Routes, useLocation } from "react-router-dom";
 import Login from "./pages/login/Login";
 import DefaultInfo from "./pages/signup/DefaultInfo.container";
-import { detectWebpSupport } from "./library/webpSupport";
 import FindAccount from "./pages/findAccount/FindAccount.container";
 import Home from "./pages/home/Home";
 import PostUpload from "./pages/postUpload/PostUpload.container";
@@ -18,33 +17,18 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "./store/store";
 import { userSlice } from "./slice/userSlice";
 import Loading from "./component/commons/loading/Loading";
+import { useSupportedWebp } from "./hook/useSupportedWebp";
 
 function App() {
   const dispatch = useDispatch<AppDispatch>();
   const { pathname } = useLocation();
 
-  const checkwebp = async () => {
-    const webpSupport = await detectWebpSupport();
-    if (webpSupport) {
-      document.body.classList.add("webp");
-    } else {
-      document.body.classList.add("no-webp");
-    }
-  };
-
-  // webp 지원 유무 확인
-  useEffect(() => {
-    checkwebp();
-  }, []);
+  const { isWebpSupported } = useSupportedWebp();
 
   // 페이지 이동 시 스크롤이 최상위로 가도록 설정
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [pathname]);
-
-  const isCheckedWebpSupport =
-    document.body.classList.contains("webp") ||
-    document.body.classList.contains("no-webp");
 
   // 저장된 유저 정보 사용
   let myInfo = useSelector((state: RootState) => state.user.myInfo);
@@ -69,6 +53,10 @@ function App() {
     );
   }
 
+  if ((isPending && pathname === "/login") || isWebpSupported === null) {
+    return <Loading />;
+  }
+
   return (
     <>
       <Helmet>
@@ -86,9 +74,7 @@ function App() {
           }
         />
       </Helmet>
-      {/* 로그인 페이지에서만 유저 인증 로딩을 보여줌 */}
-      {isPending && pathname === "/login" && <Loading />}
-      {isCheckedWebpSupport && (
+      {isWebpSupported!==null && (
         <Routes>
           <Route
             path='/login'

@@ -50,6 +50,7 @@ interface IProps {
   isImgLoading: boolean;
   isEdit: boolean;
   invalidUpdatePage: boolean;
+  isWebpSupported: boolean | null;
 }
 
 export default function PostUploadUI({
@@ -76,7 +77,8 @@ export default function PostUploadUI({
   loadPostLoading,
   isImgLoading,
   isEdit,
-  invalidUpdatePage
+  invalidUpdatePage,
+  isWebpSupported
 }: IProps) {
   if (loadPostLoading) {
     return <Loading />;
@@ -123,7 +125,12 @@ export default function PostUploadUI({
 
         <Section>
           <SectionTitle>맛집 선택*</SectionTitle>
-          <SearchModalBtn onClick={openSearchModal}>맛집 검색</SearchModalBtn>
+          <SearchModalBtn
+            onClick={openSearchModal}
+            $isWebpSupported={isWebpSupported}
+          >
+            맛집 검색
+          </SearchModalBtn>
           <Kakaomap items={selectedMapData} isTasteMapPage={false} />
         </Section>
 
@@ -159,6 +166,7 @@ export default function PostUploadUI({
             type='button'
             aria-label='이미지 업로드'
             onClick={onClickUploadImg}
+            $isWebpSupported={isWebpSupported}
           >
             이미지 업로드
           </ImgUploadBtn>
@@ -173,6 +181,7 @@ export default function PostUploadUI({
                     <RemoveImgBtn
                       type='button'
                       onClick={() => onClickRemoveImg(idx)}
+                      $isWebpSupported={isWebpSupported}
                     />
                   </ImgItem>
                 );

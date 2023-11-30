@@ -29,14 +29,12 @@ export const SubTitle = styled.span`
 export const SearchModalBtn = styled.button`
   font-size: 14px;
   font-weight: 500;
-  body.webp & {
-    background: url("/assets/webp/icon-search.webp") no-repeat center right 7px /
-      16px gold;
-  }
-  body.no-webp & {
-    background: url("/assets/icon-search.svg") no-repeat center right 7px / 16px
-      gold;
-  }
+  background: ${(props: { $isWebpSupported: boolean | null }) =>
+    `url(${
+      props.$isWebpSupported
+        ? "/assets/webp/icon-search.webp"
+        : "/assets/icon-search.svg"
+    }) no-repeat center right 7px / 16px gold`};
   border-radius: 5px;
   padding: 8px 30px 8px 14px;
   margin-bottom: 20px;
@@ -136,13 +134,10 @@ export const RemoveImgBtn = styled.button`
   width: 24px;
   height: 24px;
   border-radius: 5px;
-  body.webp & {
-    background: url("/assets/webp/icon-close.webp") no-repeat center top / 24px
-      coral;
-  }
-  body.no-webp & {
-    background: url("/assets/icon-close.svg") no-repeat center / 24px;
-  }
+  background: ${(props: { $isWebpSupported: boolean | null }) =>
+    props.$isWebpSupported
+      ? "url('/assets/webp/icon-close.webp') no-repeat center top / 24px coral"
+      : "url('/assets/icon-close.svg') no-repeat center / 24px"};
 `;
 
 export const HiddenUploadBtn = styled.input``;
@@ -153,12 +148,11 @@ export const ImgUploadBtn = styled.button`
   border-radius: 5px;
   padding: 8px 32px 8px 12px;
   margin-bottom: 20px;
-  body.webp & {
-    background: url("/assets/webp/icon-uploadImg.webp") no-repeat center right
-      6px/ 20px gold;
-  }
-  body.no-webp * {
-    background: url("/assets/icon-uploadImg.svg") no-repeat center / 20px gold;
-  }
+  background: ${(props: { $isWebpSupported: boolean | null }) =>
+    `url(${
+      props.$isWebpSupported
+        ? "/assets/webp/icon-uploadImg.webp"
+        : "/assets/icon-uploadImg.svg"
+    }) no-repeat center right 6px / 20px gold`};
   z-index: 990;
 `;

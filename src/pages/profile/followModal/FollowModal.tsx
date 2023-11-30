@@ -11,6 +11,7 @@ import {
 import FollowList from "./FollowList";
 import { isMobile } from "react-device-detect";
 import { optModalTabFocus } from "../../../library/optModalTabFocus";
+import { useSupportedWebp } from '../../../hook/useSupportedWebp';
 
 interface IProps {
   isFollower: boolean;
@@ -28,6 +29,7 @@ interface IModalProps {
   isFollower: boolean;
   closeFollowersModalHandler: () => void;
   closeFollowingModalHandler: () => void;
+  isWebpSupported: boolean | null;
 }
 
 const Modal = ({
@@ -39,7 +41,8 @@ const Modal = ({
   closeModal,
   isFollower,
   closeFollowersModalHandler,
-  closeFollowingModalHandler
+  closeFollowingModalHandler,
+  isWebpSupported
 }: IModalProps) => {
   return (
     <Wrapper>
@@ -86,6 +89,7 @@ const Modal = ({
               firstItemLinkRef.current
             );
           }}
+          $isWebpSupported={isWebpSupported}
         />
       </FollowModalWrapper>
     </Wrapper>
@@ -96,6 +100,7 @@ export default function FollowModal({
   closeFollowersModalHandler,
   closeFollowingModalHandler
 }: IProps) {
+  const { isWebpSupported } = useSupportedWebp();
   const modalRef = useRef<HTMLDivElement>(null);
   const followListRef = useRef<HTMLUListElement>(null);
   const closeBtnRef = useRef<HTMLButtonElement>(null);
@@ -162,6 +167,7 @@ export default function FollowModal({
           isFollower={isFollower}
           closeFollowersModalHandler={closeFollowersModalHandler}
           closeFollowingModalHandler={closeFollowingModalHandler}
+          isWebpSupported={isWebpSupported}
         />,
         document.getElementById("modal-root") as HTMLDivElement
       )}

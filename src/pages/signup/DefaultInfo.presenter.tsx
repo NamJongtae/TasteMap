@@ -18,7 +18,7 @@ import UserInput from "../../component/commons/userInput/UserInput";
 import ErrorMsg from "../../component/commons/errorMsg/ErrorMsg";
 import ProfileSetting from "./ProfileSetting.container";
 import Loading from "../../component/commons/loading/Loading";
-import { UseMutateFunction } from '@tanstack/react-query';
+import { UseMutateFunction } from "@tanstack/react-query";
 
 interface IProps {
   defaultInfo: boolean;
@@ -73,6 +73,7 @@ interface IProps {
     },
     unknown
   >;
+  isWebpSupported: boolean | null;
 }
 
 export default function DefaultInfoUI({
@@ -98,7 +99,8 @@ export default function DefaultInfoUI({
   setNext,
   signupLoading,
   onClickCancel,
-  mutate
+  mutate,
+  isWebpSupported
 }: IProps) {
   return (
     <Wrapper>
@@ -110,12 +112,17 @@ export default function DefaultInfoUI({
             <ProgressCheck
               className='defalut'
               active={defaultInfo}
+              $isWebpSupported={isWebpSupported}
             ></ProgressCheck>
             <ProgressCheckText>기본정보 입력</ProgressCheckText>
           </ProgressCheckWrapper>
           <ProgressBar percentage={percentage}></ProgressBar>
           <ProgressCheckWrapper>
-            <ProgressCheck className='profile' active={profile}></ProgressCheck>
+            <ProgressCheck
+              className='profile'
+              active={profile}
+              $isWebpSupported={isWebpSupported}
+            ></ProgressCheck>
             <ProgressCheckText>프로필 설정</ProgressCheckText>
           </ProgressCheckWrapper>
         </ProgressWrapper>

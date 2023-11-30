@@ -45,12 +45,12 @@ export const CloseBtn = styled.button`
   right: 5px;
   width: 20px;
   height: 20px;
-  body.webp & {
-    background: url("/assets/webp/icon-close.webp") no-repeat center / 24px;
-  }
-  body.no-webp & {
-    background: url("/assets/icon-close.svg") no-repeat center / 24px;
-  }
+  background: ${(props: { $isWebpSupported: boolean | null }) =>
+    `url(${
+      props.$isWebpSupported
+        ? "/assets/webp/icon-close.webp"
+        : "/assets/icon-close.svg"
+    }) no-repeat center / 24px`};
 `;
 
 export const SearchInputForm = styled.form`
@@ -67,7 +67,12 @@ export const SearchInputForm = styled.form`
     display: block;
     width: 20px;
     height: 20px;
-    background: url("/assets/icon-search.svg") no-repeat center / 20px;
+    background: ${(props: { $isWebpSupported: boolean | null }) =>
+    `url(${
+      props.$isWebpSupported
+        ? "/assets/webp/icon-search.webp"
+        : "/assets/icon-search.svg"
+    }) no-repeat center / 20px`};
   }
 `;
 
@@ -160,17 +165,17 @@ export const NoSearchData = styled.div`
   padding: 20px;
   line-height: 1.5;
   font-size: 14px;
-`
+`;
 export const Strong = styled.strong`
- font-weight: 700;
-`
+  font-weight: 700;
+`;
 export const NoSearchDataText = styled.p`
-&:nth-child(1){
-  margin-bottom: 20px;
-}
-&:nth-child(2){
-  margin-bottom: 5px;
-  font-weight: 500;
-}
+  &:nth-child(1) {
+    margin-bottom: 20px;
+  }
+  &:nth-child(2) {
+    margin-bottom: 5px;
+    font-weight: 500;
+  }
   white-space: pre-line;
-`
+`;

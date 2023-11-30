@@ -18,11 +18,12 @@ import { useValidationInput } from "../../hook/useValidationInput";
 import Loading from "../../component/commons/loading/Loading";
 import ErrorMsg from "../../component/commons/errorMsg/ErrorMsg";
 import UserInput from "../../component/commons/userInput/UserInput";
-import { resolveWebp } from "../../library/webpSupport";
 import { useLoginMutation } from "../../hook/query/auth/useLoginMutation";
 import { useSocialLoginMutation } from "../../hook/query/auth/useSocialLoginMutation";
+import { useSupportedWebp } from '../../hook/useSupportedWebp';
 
 export default function Login() {
+  const { isWebpSupported, resolveWebp } = useSupportedWebp();
   const [disabled, setDisabled] = useState(true);
   const emailRef = useRef<HTMLInputElement>(null);
   const [emailValue, emailValid, onChangeEmail, setEmailValue] =
@@ -115,6 +116,7 @@ export default function Login() {
                 className='google'
                 type='button'
                 onClick={() => socialLoginHandler("google")}
+                $isWebpSupported={isWebpSupported}
               >
                 구글 계정으로 로그인
               </SocialLoginBtn>
@@ -124,6 +126,7 @@ export default function Login() {
                 className='github'
                 type='button'
                 onClick={() => socialLoginHandler("github")}
+                $isWebpSupported={isWebpSupported}
               >
                 깃 허브 계정으로 로그인
               </SocialLoginBtn>

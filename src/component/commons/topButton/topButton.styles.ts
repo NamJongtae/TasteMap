@@ -11,12 +11,12 @@ export const Button = styled.button`
   font-size: 10px;
   font-weight: 500;
   line-height: 6;
-  body.webp & {
-    background: url("/assets/webp/icon-top.webp") no-repeat center top 10px / 10px #eee;
-  }
-  body.no-webp & {
-    background: url("/assets/icon-topBtn.svg") no-repeat center top 10px / 10px #eee;
-  }
+  background: ${(props: { $isWebpSupported: boolean | null }) =>
+    `url(${
+      props.$isWebpSupported
+        ? "/assets/webp/icon-top.webp"
+        : "/assets/icon-topBtn.svg"
+    }) no-repeat center top 10px / 10px #eee`};
   animation: topBtnFadeIn 0.5s;
   @keyframes topBtnFadeIn {
     from {
@@ -27,7 +27,6 @@ export const Button = styled.button`
     }
   }
 
-  
   @keyframes topBtnFadeOut {
     from {
       opacity: 1;

@@ -8,6 +8,7 @@ import {
 import UserInfoUI from "./UserInfo.presenter";
 import { usePostDeleteMutation } from "../../../hook/query/post/usePostDeleteMutation";
 import { usePostReportMutation } from "../../../hook/query/post/usePostReportMutation";
+import { useSupportedWebp } from '../../../hook/useSupportedWebp';
 
 interface IProps {
   userData: Omit<IUserData, "email">;
@@ -18,6 +19,7 @@ interface IProps {
 
 export default function UserInfo({ userData, data, activeMoreBtn, postType }: IProps) {
   const navigate = useNavigate();
+  const { isWebpSupported, resolveWebp } = useSupportedWebp();
   const [isOpenSelect, setIsOpenSelect] = useState(false);
   // 더보기 메뉴 ref 메뉴창이 닫힐 때 애니메이션 효과를 바꾸기 위해 사용
   const opectionListRef = useRef<HTMLUListElement>(null);
@@ -131,6 +133,8 @@ export default function UserInfo({ userData, data, activeMoreBtn, postType }: IP
       onClickEditBtn={onClickEditBtn}
       onCliceRemove={onCliceRemove}
       onClickReport={onClickReport}
+      isWebpSupported={isWebpSupported}
+      resolveWebp={resolveWebp}
     />
   );
 }

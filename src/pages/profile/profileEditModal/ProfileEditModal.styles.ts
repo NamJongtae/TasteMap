@@ -35,12 +35,12 @@ export const CloseBtn = styled.button`
   right: 3px;
   width: 30px;
   height: 30px;
-  body.webp & {
-    background: url("/assets/webp/icon-back.webp") no-repeat center / 16px;
-  }
-  body.no-webp & {
-    background: url("/assets/icon-back.svg") no-repeat center / 16px;
-  }
+  background: ${(props: { $isWebpSupported: boolean | null }) =>
+    `url(${
+      props.$isWebpSupported
+        ? "/assets/webp/icon-back.webp"
+        : "/assets/icon-back.svg"
+    }) no-repeat center / 16px`};
   transform: rotate(180deg);
 `;
 
@@ -134,13 +134,13 @@ export const ProfileImgButton = styled.button`
     height: 40px;
     border-radius: 50%;
   }
-  body.no-webp &::after {
-    background: url("/assets/icon-uploadProfile.svg") no-repeat center / 20px
-      #79a7ff;
-  }
-  body.webp &::after {
-    background: url("/assets/webp/icon-uploadProfile.webp") no-repeat center /
-      20px #79a7ff;
+  &::after {
+    background: ${(props: { $isWebpSupported: boolean | null }) =>
+      `url(${
+        props.$isWebpSupported
+          ? "/assets/webp/icon-uploadProfile.webp"
+          : "/assets/icon-uploadProfile.svg"
+      }) no-repeat center / 20px #79a7ff`};
   }
 `;
 
@@ -157,13 +157,12 @@ export const ProfileImgResetBtn = styled.button`
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  body.webp & {
-    background: url("/assets/webp/icon-close.webp") no-repeat center top 2px /
-      16px #767676;
-  }
-  body.no-webp & {
-    background: url("/assets/icon-close.svg") no-repeat center top 2px/ 16px #767676;
-  }
+  background: ${(props: { $isWebpSupported: boolean | null }) =>
+    `url(${
+      props.$isWebpSupported
+        ? "/assets/webp/icon-close.webp"
+        : "/assets/icon-close.svg"
+    })  no-repeat center top 2px/ 16px #767676`};
 `;
 export const ProfileImgDescList = styled.ul`
   padding: 20px 10px;

@@ -1,11 +1,11 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useValidationInput } from "../../hook/useValidationInput";
 import ProfileSettingUI from "./ProfileSetting.presenter";
-import { resolveWebp } from "../../library/webpSupport";
 import { getCompressionImg } from "../../library/imageCompression";
 import { imgValidation } from "../../library/imageValidation";
 import { isMobile } from "react-device-detect";
-import { UseMutateFunction } from '@tanstack/react-query';
+import { UseMutateFunction } from "@tanstack/react-query";
+import { useSupportedWebp } from "../../hook/useSupportedWebp";
 interface IProps {
   emailValue: string;
   passwordValue: string;
@@ -40,9 +40,9 @@ export default function ProfileSetting({
   setProfile,
   setPercentage,
   setNext,
-  mutate,
+  mutate
 }: IProps) {
-
+  const { isWebpSupported, resolveWebp } = useSupportedWebp();
   const imgInputRef = useRef<HTMLInputElement>(null);
   // 회원가입 버튼 활성화 상태 관리
   const [disabled, setDisabled] = useState(true);
@@ -133,6 +133,7 @@ export default function ProfileSetting({
       setNext={setNext}
       resolveWebp={resolveWebp}
       isImgLoading={isImgLoading}
+      isWebpSupported={isWebpSupported}
     />
   );
 }

@@ -35,6 +35,7 @@ interface IProps {
   removeMap: () => void;
   onClickShare: () => Promise<void>;
   myProfileIsPending: boolean;
+  isWebpSupported: boolean | null;
 }
 
 export default function MyTasteMapUI({
@@ -48,9 +49,9 @@ export default function MyTasteMapUI({
   closeSearchModal,
   removeMap,
   onClickShare,
-  myProfileIsPending
+  myProfileIsPending,
+  isWebpSupported
 }: IProps) {
-  
   if (myProfileIsPending) {
     return <Loading />;
   }
@@ -68,10 +69,19 @@ export default function MyTasteMapUI({
             목록
           </ListBtn>
           {contentType === EMapContentType.MAP && (
-            <SearchModalBtn onClick={openSearchModal}>맛집 추가</SearchModalBtn>
+            <SearchModalBtn
+              onClick={openSearchModal}
+              $isWebpSupported={isWebpSupported}
+            >
+              맛집 추가
+            </SearchModalBtn>
           )}
           {contentType === EMapContentType.MAP && (
-            <ShareBtn onClick={onClickShare} aria-label='공유' />
+            <ShareBtn
+              onClick={onClickShare}
+              aria-label='공유'
+              $isWebpSupported={isWebpSupported}
+            />
           )}
         </ContetnTypeBtnWrapper>
         <KakaomapWrapper contentType={contentType}>
@@ -109,7 +119,11 @@ export default function MyTasteMapUI({
               </ItemLink>
             </Item>
             <BtnWrapper>
-              <RemoveBtn aria-label='삭제' onClick={removeMap} />
+              <RemoveBtn
+                aria-label='삭제'
+                onClick={removeMap}
+                $isWebpSupported={isWebpSupported}
+              />
             </BtnWrapper>
           </ItemSingleList>
         )}

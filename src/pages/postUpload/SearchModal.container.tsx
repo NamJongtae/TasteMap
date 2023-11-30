@@ -8,13 +8,14 @@ import { sweetToast } from "../../library/sweetAlert/sweetAlert";
 import SearchModalUI from "./SearchModal.presenter";
 import { useMapSearchMutation } from "../../hook/query/post/useMapSearchMutation";
 import { isMobile } from "react-device-detect";
+import { useSupportedWebp } from "../../hook/useSupportedWebp";
 
 interface IProps {
   closeSearchModal: () => void;
 }
 
 export default function SearchModal({ closeSearchModal }: IProps) {
-  // 맛집 검색 데이터 가져오기
+  const { isWebpSupported } = useSupportedWebp();
   const dispatch = useDispatch<AppDispatch>();
   const inputRef = useRef<HTMLInputElement>(null);
   const closeBtnRef = useRef<HTMLButtonElement>(null);
@@ -103,6 +104,7 @@ export default function SearchModal({ closeSearchModal }: IProps) {
       onClickSelected={onClickSelected}
       searchKeyword={searchKeyword}
       isPending={isPending}
+      isWebpSupported={isWebpSupported}
     />
   );
 }

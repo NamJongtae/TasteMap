@@ -23,6 +23,7 @@ interface IProps {
   firstItemLinkRef: React.RefObject<HTMLAnchorElement>;
   isError: boolean | undefined;
   postType: "HOME" | "FEED" | "PROFILE";
+  isWebpSupported: boolean | null;
 }
 export default function CommentListUI({
   isReply,
@@ -38,7 +39,8 @@ export default function CommentListUI({
   CommentListRef,
   firstItemLinkRef,
   isError,
-  postType
+  postType,
+  isWebpSupported
 }: IProps) {
   if (isError) {
     return null;
@@ -51,7 +53,11 @@ export default function CommentListUI({
   if (isNoData) {
     return (
       <>
-        <NoData /> <RefreshBtn onClick={handlerRefresh} />
+        <NoData />{" "}
+        <RefreshBtn
+          onClick={handlerRefresh}
+          $isWebpSupported={isWebpSupported}
+        />
       </>
     );
   }
@@ -84,7 +90,7 @@ export default function CommentListUI({
           </li>
         )}
       </CommentWrpper>
-      <RefreshBtn onClick={handlerRefresh} />
+      <RefreshBtn onClick={handlerRefresh} $isWebpSupported={isWebpSupported} />
     </>
   );
 }

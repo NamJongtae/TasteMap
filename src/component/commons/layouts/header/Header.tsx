@@ -14,10 +14,10 @@ import {
   CancelBtn,
   LogoutBtn
 } from "./header.styles";
-import { resolveWebp } from "../../../../library/webpSupport";
 import { useNavigate, useParams } from "react-router-dom";
 import { sweetConfirm } from "../../../../library/sweetAlert/sweetAlert";
-import { useLogoutMutation } from '../../../../hook/query/auth/useLogoutMutation';
+import { useLogoutMutation } from "../../../../hook/query/auth/useLogoutMutation";
+import { useSupportedWebp } from '../../../../hook/useSupportedWebp';
 
 interface IParms {
   type: string;
@@ -29,7 +29,7 @@ export default function Header({ type, onSubmit, btnText, disabled }: IParms) {
   const navigate = useNavigate();
   const { uid } = useParams();
   const { mutate } = useLogoutMutation();
-
+  const { isWebpSupported, resolveWebp } = useSupportedWebp();
   const onClickLogout = () => {
     sweetConfirm("정말 로그아웃 하시겠습니까?", "확인", "취소", () => {
       mutate();
@@ -41,7 +41,11 @@ export default function Header({ type, onSubmit, btnText, disabled }: IParms) {
         return (
           <>
             <LeftSideWrapper>
-              <UploadLink to={"/post/upload"} aria-label='작성'></UploadLink>
+              <UploadLink
+                to={"/post/upload"}
+                $isWebpSupported={isWebpSupported}
+                aria-label='작성'
+              ></UploadLink>
               <LogoLink to={"/"}>
                 <Title>
                   <span className='a11y-hidden'>TasteMap</span>
@@ -53,8 +57,16 @@ export default function Header({ type, onSubmit, btnText, disabled }: IParms) {
               </LogoLink>
             </LeftSideWrapper>
             <RightSideWrapper>
-              <SearchLink aria-label='검색' to={"/search"} />
-              <ProfileLink aria-label='프로필' to={"/profile"} />
+              <SearchLink
+                aria-label='검색'
+                to={"/search"}
+                $isWebpSupported={isWebpSupported}
+              />
+              <ProfileLink
+                aria-label='프로필'
+                to={"/profile"}
+                $isWebpSupported={isWebpSupported}
+              />
             </RightSideWrapper>
           </>
         );
@@ -94,6 +106,7 @@ export default function Header({ type, onSubmit, btnText, disabled }: IParms) {
                 type='button'
                 aria-label='뒤로가기'
                 onClick={() => navigate(-1)}
+                $isWebpSupported={isWebpSupported}
               />
               <LogoLink to={"/"}>
                 <Title>
@@ -106,7 +119,11 @@ export default function Header({ type, onSubmit, btnText, disabled }: IParms) {
               </LogoLink>
             </LeftSideWrapper>
             <RightSideWrapper>
-              <ProfileLink aria-label='프로필' to={"/profile"} />
+              <ProfileLink
+                aria-label='프로필'
+                to={"/profile"}
+                $isWebpSupported={isWebpSupported}
+              />
             </RightSideWrapper>
           </>
         );
@@ -118,6 +135,7 @@ export default function Header({ type, onSubmit, btnText, disabled }: IParms) {
                 type='button'
                 aria-label='뒤로가기'
                 onClick={() => navigate(-1)}
+                $isWebpSupported={isWebpSupported}
               />
               <LogoLink to={"/"}>
                 <Title>
@@ -132,10 +150,18 @@ export default function Header({ type, onSubmit, btnText, disabled }: IParms) {
             <RightSideWrapper>
               {uid ? (
                 <>
-                  <ProfileLink aria-label='프로필' to={"/profile"} />
+                  <ProfileLink
+                    aria-label='프로필'
+                    to={"/profile"}
+                    $isWebpSupported={isWebpSupported}
+                  />
                 </>
               ) : (
-                <LogoutBtn aria-label='로그아웃' onClick={onClickLogout} />
+                <LogoutBtn
+                  aria-label='로그아웃'
+                  onClick={onClickLogout}
+                  $isWebpSupported={isWebpSupported}
+                />
               )}
             </RightSideWrapper>
           </>
@@ -149,6 +175,7 @@ export default function Header({ type, onSubmit, btnText, disabled }: IParms) {
                 type='button'
                 aria-label='뒤로가기'
                 onClick={() => navigate(-1)}
+                $isWebpSupported={isWebpSupported}
               />
               <LogoLink to={"/"}>
                 <Title>
@@ -161,7 +188,11 @@ export default function Header({ type, onSubmit, btnText, disabled }: IParms) {
               </LogoLink>
             </LeftSideWrapper>
             <RightSideWrapper>
-              <ProfileLink aria-label='프로필' to={"/profile"} />
+              <ProfileLink
+                aria-label='프로필'
+                to={"/profile"}
+                $isWebpSupported={isWebpSupported}
+              />
             </RightSideWrapper>
           </>
         );

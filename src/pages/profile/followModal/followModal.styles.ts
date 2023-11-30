@@ -36,12 +36,12 @@ export const CloseBtn = styled.button`
   right: 3px;
   width: 30px;
   height: 30px;
-  body.webp & {
-    background: url("/assets/webp/icon-back.webp") no-repeat center / 16px;
-  }
-  body.no-webp & {
-    background: url("/assets/icon-back.svg") no-repeat center / 16px;
-  }
+  background: ${(props: { $isWebpSupported: boolean | null }) =>
+    `url(${
+      props.$isWebpSupported
+        ? "/assets/webp/icon-back.webp"
+        : "/assets/icon-back.svg"
+    }) no-repeat center / 16px`};
   transform: rotate(180deg);
 `;
 
@@ -85,9 +85,9 @@ export const FollowUl = styled.ul`
   height: 100%;
   overflow-y: scroll;
   padding: 20px;
-  li:last-child{
-  padding-bottom: 20px;
- }
+  li:last-child {
+    padding-bottom: 20px;
+  }
 `;
 
 export const FollowLi = styled.li`

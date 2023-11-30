@@ -33,18 +33,23 @@ export const ModalTitle = styled.h2`
 export const CloseBtn = styled.button`
   position: absolute;
   top: 3px;
-  right: ${(props: { isReply: boolean }) => !props.isReply && "3px"};
-  left: ${(props: { isReply: boolean }) => props.isReply && "3px"};
+  right: ${(props: { isReply: boolean; $isWebpSupported: boolean | null }) =>
+    !props.isReply && "3px"};
+  left: ${(props: { isReply: boolean; $isWebpSupported: boolean | null }) =>
+    props.isReply && "3px"};
   width: 30px;
   height: 30px;
-  body.webp & {
-    background: url("/assets/webp/icon-back.webp") no-repeat center / 16px;
-  }
-  body.no-webp & {
-    background: url("/assets/icon-back.svg") no-repeat center / 16px;
-  }
-  transform: ${(props: { isReply: boolean }) =>
-    props.isReply ? "rotate(0deg)" : "rotate(180deg)"};
+  background: ${(props: { $isWebpSupported: boolean | null }) =>
+    `url(${
+      props.$isWebpSupported
+        ? "/assets/webp/icon-back.webp"
+        : "/assets/icon-back.svg"
+    }) no-repeat center / 16px`};
+
+  transform: ${(props: {
+    isReply: boolean;
+    $isWebpSupported: boolean | null;
+  }) => (props.isReply ? "rotate(0deg)" : "rotate(180deg)")};
 `;
 
 export const CommentModalWrapper = styled.article`
@@ -227,15 +232,19 @@ export const CommentSubmitBtn = styled.button`
   right: 10px;
   width: 20px;
   height: 20px;
-  body.webp & {
-    background: url("/assets/webp/icon-commentSend.webp") no-repeat center /
-      20px;
-  }
-  body.no-webp & {
-    background: url("/assets/icon-commentSend.svg") no-repeat center / 20px;
-  }
-
-  opacity: ${(props: { disabled: boolean }) => (props.disabled ? "0.3" : "1")};
+  background: ${(props: {
+    disabled: boolean;
+    $isWebpSupported: boolean | null;
+  }) =>
+    `url(${
+      props.$isWebpSupported
+        ? "/assets/webp/icon-commentSend.webp"
+        : "/assets/icon-commentSend.svg"
+    }) no-repeat center / 20px`};
+  opacity: ${(props: {
+    disabled: boolean;
+    $isWebpSupported: boolean | null;
+  }) => (props.disabled ? "0.3" : "1")};
 `;
 
 export const ReplyCountBtn = styled.button`
@@ -258,10 +267,10 @@ export const RefreshBtn = styled.button`
   right: 10px;
   width: 30px;
   height: 30px;
-  body.webp & {
-    background: url("/assets/webp/icon-refresh.webp") no-repeat center / 25px;
-  }
-  body.no-webp & {
-    background: url("/assets/icon-refresh.svg") no-repeat center / 25px;
-  }
+  background: ${(props: { $isWebpSupported: boolean | null }) =>
+    `url(${
+      props.$isWebpSupported
+        ? "/assets/webp/icon-refresh.webp"
+        : "/assets/icon-refresh.svg"
+    }) no-repeat center / 25px`};
 `;

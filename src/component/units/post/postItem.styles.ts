@@ -15,12 +15,12 @@ export const UserInfoWrapper = styled.section``;
 export const MoreBtn = styled.button`
   width: 30px;
   height: 45px;
-  body.webp & {
-    background: url("/assets/webp/icon-more.webp") no-repeat center / 15px;
-  }
-  body.no-webp & {
-    background: url("/assets/icon-more.svg") no-repeat center / 15px;
-  }
+  background: ${(props: { $isWebpSupported: boolean | null }) =>
+    `url(${
+      props.$isWebpSupported
+        ? "/assets/webp/icon-more.webp"
+        : "/assets/icon-more.svg"
+    }) no-repeat center / 15px`};
 `;
 
 export const OptionList = styled.ul`
@@ -117,15 +117,12 @@ export const ContentTextLine = styled.div`
 export const MoreContentBtn = styled.button`
   display: block;
   margin: 0 auto 16px auto;
-  body.webp & {
-    background: url("/assets/webp/icon-moreTextBtn.webp") no-repeat right 2px
-      top 7px / 9px;
-  }
-  body.no-webp & {
-    background: url("/assets/icon-moreTextBtn.svg") no-repeat right 2px top 7px /
-      9px;
-  }
-
+  background: ${(props: { $isWebpSupported: boolean | null }) =>
+    `url(${
+      props.$isWebpSupported
+        ? "/assets/webp/icon-moreTextBtn.webp"
+        : "/assets/icon-moreTextBtn.svg"
+    }) no-repeat right 2px top 7px / 9px`};
   padding-right: 16px;
   font-weight: 500;
 `;
@@ -138,15 +135,18 @@ export const StoredMapBtn = styled.button`
   width: 35px;
   height: 35px;
   transition: all 0.3s;
-  background: ${(props: { storedMap: boolean }) =>
+  background: ${(props: {
+    storedMap: boolean;
+    $isWebpSupported: boolean | null;
+  }) =>
     props.storedMap
       ? `url(${
-          document.body.classList.contains("webp")
+          props.$isWebpSupported
             ? "/assets/webp/icon-yummyActive.webp"
             : "/assets/icon-yummyActive.svg"
         }) no-repeat center / cover`
       : `url(${
-          document.body.classList.contains("webp")
+          props.$isWebpSupported
             ? "/assets/webp/icon-yummy.webp"
             : "/assets/icon-yummy.svg"
         }) no-repeat center / cover`};
@@ -159,12 +159,15 @@ export const ActiveMapBtn = styled.button`
   width: 30px;
   height: 30px;
   border-radius: 5px;
-  background: ${(props: { contentType: EContentType }) =>
+  background: ${(props: {
+    contentType: EContentType;
+    $isWebpSupported: boolean | null;
+  }) =>
     props.contentType === EContentType.MAP
-      ? document.body.classList.contains("webp")
+      ? props.$isWebpSupported
         ? 'url("/assets/webp/icon-thumbnailMapBtnActive.webp") no-repeat center / 30px'
         : 'url("/assets/icon-thumbnailMapBtnActive.svg") no-repeat center / 30px'
-      : document.body.classList.contains("webp")
+      : props.$isWebpSupported
       ? 'url("/assets/webp/icon-thumbnailMapBtn.webp") no-repeat center / 18px #E9E9E9'
       : 'url("/assets/icon-thumbnailMapBtn.svg") no-repeat center / 18px #E9E9E9'};
 `;
@@ -176,12 +179,15 @@ export const ActiveImageBtn = styled.button`
   width: 30px;
   height: 30px;
   border-radius: 5px;
-  background: ${(props: { contentType: EContentType }) =>
+  background: ${(props: {
+    contentType: EContentType;
+    $isWebpSupported: boolean | null;
+  }) =>
     props.contentType === EContentType.IMAGE
-      ? document.body.classList.contains("webp")
+      ? props.$isWebpSupported
         ? 'url("/assets/webp/icon-thumbnailImgBtnActive.webp") no-repeat center / 30px'
         : 'url("/assets/icon-thumbnailImgBtnActive.svg") no-repeat center / 30px'
-      : document.body.classList.contains("webp")
+      : props.$isWebpSupported
       ? 'url("/assets/webp/icon-thumbnailImgBtn.webp") no-repeat center / 30px'
       : 'url("/assets/icon-thumbnailImgBtn.svg") no-repeat center / 30px'};
 `;
@@ -209,15 +215,15 @@ export const ButtonWrapper = styled.div`
 export const LikeBtn = styled.button`
   width: 20px;
   height: 20px;
-  background: ${(props: { like: boolean }) =>
+  background: ${(props: { like: boolean; $isWebpSupported: boolean | null }) =>
     props.like
       ? `url(${
-          document.body.classList.contains("webp")
+          props.$isWebpSupported
             ? "/assets/webp/icon-heartFill.webp"
             : "/assets/icon-heartFill.svg"
         }) no-repeat center / cover`
       : `url(${
-          document.body.classList.contains("webp")
+          props.$isWebpSupported
             ? "/assets/webp/icon-heart.webp"
             : "/assets/icon-heart.svg"
         }) no-repeat center / cover`};
@@ -226,12 +232,12 @@ export const LikeBtn = styled.button`
 export const CommentBtn = styled.button`
   width: 20px;
   height: 20px;
-  body.webp & {
-    background: url("/assets/webp/icon-comment.webp") no-repeat center / 20px;
-  }
-  body.no-webp & {
-    background: url("/assets/icon-comment.svg") no-repeat center / 20px;
-  }
+  background: ${(props: { $isWebpSupported: boolean | null }) =>
+    `url(${
+      props.$isWebpSupported
+        ? "/assets/webp/icon-comment.webp"
+        : "/assets/icon-comment.svg"
+    }) no-repeat center / 20px`};
 `;
 
 export const Count = styled.span`

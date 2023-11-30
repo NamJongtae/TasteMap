@@ -17,6 +17,7 @@ import { useAddTasteMapMutation } from "../../../hook/query/profile/useAddTasteM
 import { useRemoveTasteMapMutation } from "../../../hook/query/profile/useRemoveTasteMapMutation";
 import { useAddLikeMutation } from "../../../hook/query/profile/useAddLikeMutation";
 import { useRemoveLikeMutation } from "../../../hook/query/profile/useRemoveLikeMutation";
+import { useSupportedWebp } from '../../../hook/useSupportedWebp';
 
 interface IProps {
   data: IPostData;
@@ -30,6 +31,7 @@ export const enum EContentType {
 }
 
 export default function PostItem({ data, myProfile, postType }: IProps) {
+  const { isWebpSupported } = useSupportedWebp();
   const dispatch = useDispatch<AppDispatch>();
   // 좋아요 유무
   const isLike = myProfile.likeList.includes(data.id);
@@ -159,6 +161,7 @@ export default function PostItem({ data, myProfile, postType }: IProps) {
       kakaomapRef={kakaomapRef}
       inview={inview}
       postType={postType}
+      isWebpSupported={isWebpSupported}
     />
   );
 }

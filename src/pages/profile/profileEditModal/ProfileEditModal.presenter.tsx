@@ -1,6 +1,5 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { resolveWebp } from "../../../library/webpSupport";
 import UserInput from "../../../component/commons/userInput/UserInput";
 import { Label } from "../../../component/commons/userInput/userInput.styles";
 import ErrorMsg from "../../../component/commons/errorMsg/ErrorMsg";
@@ -52,6 +51,8 @@ interface IProps {
   editBtnRef: React.RefObject<HTMLButtonElement>;
   closeBtnRef: React.RefObject<HTMLButtonElement>;
   isImgLoading: boolean;
+  isWebpSupported: boolean | null;
+  resolveWebp: (img: string, fallbackExt: string) => string;
 }
 
 const Modal = ({
@@ -74,7 +75,9 @@ const Modal = ({
   resetBtnRef,
   editBtnRef,
   closeBtnRef,
-  isImgLoading
+  isImgLoading,
+  isWebpSupported,
+  resolveWebp,
 }: IProps) => {
   return (
     <Wrapper
@@ -115,6 +118,7 @@ const Modal = ({
                       optModalTabFocus(e, closeBtnRef.current);
                     }}
                     aria-label='초기화'
+                    $isWebpSupported={isWebpSupported}
                   />
                   <ProfileImgButton
                     type='button'
@@ -122,6 +126,7 @@ const Modal = ({
                       imgInputRef.current && imgInputRef.current.click()
                     }
                     ref={resetBtnRef}
+                    $isWebpSupported={isWebpSupported}
                   >
                     <ProfileImg
                       src={previewImg}
@@ -205,6 +210,7 @@ const Modal = ({
             );
           }}
           ref={closeBtnRef}
+          $isWebpSupported={isWebpSupported}
         />
       </ProfileEditModalWrapper>
     </Wrapper>
@@ -230,7 +236,9 @@ export default function ProfileEditModalUI({
   resetBtnRef,
   editBtnRef,
   closeBtnRef,
-  isImgLoading
+  isImgLoading,
+  isWebpSupported,
+  resolveWebp,
 }: IProps) {
   return (
     <>
@@ -256,6 +264,8 @@ export default function ProfileEditModalUI({
           editBtnRef={editBtnRef}
           closeBtnRef={closeBtnRef}
           isImgLoading={isImgLoading}
+          isWebpSupported={isWebpSupported}
+          resolveWebp={resolveWebp}
         />,
         document.getElementById("modal-root") as HTMLDivElement
       )}

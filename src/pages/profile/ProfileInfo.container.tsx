@@ -8,6 +8,7 @@ import ProfileInfoUI from "./ProfileInfo.presenter";
 import { useFollowMutation } from "../../hook/query/profile/useFollowMutation";
 import { useUnfollowMutation } from "../../hook/query/profile/useUnfollowMutation";
 import { IMyProfileData, IUserProfileData } from "../../api/apiType";
+import { useSupportedWebp } from "../../hook/useSupportedWebp";
 
 interface IProps {
   openFollowersModalHandler: () => void;
@@ -24,6 +25,7 @@ export default function ProfileInfo({
   userProfile
 }: IProps) {
   const { uid } = useParams();
+  const { isWebpSupported, resolveWebp } = useSupportedWebp();
   const myInfo = useSelector((state: RootState) => state.user.myInfo);
   const navigate = useNavigate();
   const introduecRef = useRef<HTMLParagraphElement>(null);
@@ -109,6 +111,8 @@ export default function ProfileInfo({
       onClickFollow={onClickFollow}
       onClickUnfollow={onClickUnfollow}
       onClickTasteMap={onClickTasteMap}
+      isWebpSupported={isWebpSupported}
+      resolveWebp={resolveWebp}
     />
   );
 }

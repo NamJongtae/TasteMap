@@ -26,14 +26,15 @@ import {
   Title,
   TitleImg
 } from "./ShareTasteMap.styles";
-import { resolveWebp } from "../../library/webpSupport";
 import { Helmet } from "react-helmet-async";
 import Header from "../../component/commons/layouts/header/Header";
 import { IUserProfileData } from "../../api/apiType";
 import { useUserProfileQuery } from "../../hook/query/profile/useUserProfileQuery";
+import { useSupportedWebp } from '../../hook/useSupportedWebp';
 
 export default function ShareTasteMap() {
   const { uid } = useParams();
+  const { resolveWebp } = useSupportedWebp();
   const myInfo = useSelector((state: RootState) => state.user.myInfo);
 
   const clickMarkerData = useSelector(

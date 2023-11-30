@@ -20,15 +20,13 @@ export const SearchLabel = styled.label``;
 export const Input = styled.input`
   width: 100%;
   padding: 0 28px 0 10px;
-  background: none;
-  body.no-webp & {
-    background: url("/assets/icon-search.svg") no-repeat right 5px center / 20px;
-  }
+  background: ${(props: { $isWebpSupported: boolean | null }) =>
+    `url(${
+      props.$isWebpSupported
+        ? "/assets/webp/icon-search.webp"
+        : "/assets/icon-search.svg"
+    }) no-repeat right 5px center / 20px`};
   border: none;
-  body.webp & {
-    background: url("/assets/webp/icon-search.webp") no-repeat right 5px center /
-      20px;
-  }
   ::placeholder {
     color: #b5b5b5;
     font-weight: 300;

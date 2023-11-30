@@ -19,12 +19,12 @@ export const Wrapper = styled.header`
 export const UploadLink = styled(Link)`
   width: 24px;
   height: 24px;
-  body.webp & {
-    background: url("/assets/webp/icon-uploadPost.webp") no-repeat center / 24px;
-  }
-  body.no-webp & {
-    background: url("/assets/icon-uploadPost.svg") no-repeat center / 24px;
-  }
+  background: ${(props: { $isWebpSupported: boolean | null }) =>
+    `url(${
+      props.$isWebpSupported
+        ? "/assets/webp/icon-uploadPost.webp"
+        : "/assets/icon-uploadPost.svg'"
+    }) no-repeat center / 24px`};
 `;
 
 export const LeftSideWrapper = styled.div`
@@ -44,12 +44,12 @@ export const CancelBtn = styled.button`
 export const BackBtn = styled.button`
   width: 20px;
   height: 20px;
-  body.webp & {
-    background: url("/assets/webp/icon-back.webp") no-repeat center / 20px;
-  }
-  body.no-webp & {
-    background: url("/assets/icon-back.svg") no-repeat center / 20px;
-  }
+  background: ${(props: { $isWebpSupported: boolean | null }) =>
+    `url(${
+      props.$isWebpSupported
+        ? "/assets/webp/icon-back.webp"
+        : "/assets/icon-back.svg'"
+    }) no-repeat center / 20px`};
 `;
 
 export const LogoLink = styled(Link)``;
@@ -69,36 +69,34 @@ export const RightSideWrapper = styled.div`
 export const SearchLink = styled(Link)`
   width: 24px;
   height: 24px;
-  body.webp & {
-    background: url("/assets/webp/icon-search.webp") no-repeat center / 24px;
-  }
-  body.no-webp & {
-    background: url("/assets/icon-search.svg") no-repeat center / 24px;
-  }
+  background: ${(props: { $isWebpSupported: boolean | null }) =>
+    `url(${
+      props.$isWebpSupported
+        ? "/assets/webp/icon-search.webp"
+        : "/assets/icon-search.svg'"
+    }) no-repeat center / 24px`};
 `;
 
 export const ProfileLink = styled(Link)`
   width: 30px;
   height: 30px;
-  body.webp & {
-    background: url("/assets/webp/icon-defaultProfile.webp") no-repeat center /
-      30px;
-  }
-  body.no-webp & {
-    background: url("/assets/icon-defaultProfile.svg") no-repeat center / 30px;
-  }
+  background: ${(props: { $isWebpSupported: boolean | null }) =>
+    `url(${
+      props.$isWebpSupported
+        ? "/assets/webp/icon-defaultProfile.webp"
+        : "/assets/icon-defaultProfile.svg"
+    }) no-repeat center / 30px`};
 `;
 
 export const LogoutBtn = styled.button`
   width: 20px;
   height: 20px;
-  body.webp & {
-    background: url("/assets/webp/icon-logout.webp") no-repeat center / cover;
-  }
-  body.no-webp& {
-    background: url("/assets/icon-logout.svg") no-repeat center / cover;
-  }
-  
+  background: ${(props: { $isWebpSupported: boolean | null }) =>
+    `url(${
+      props.$isWebpSupported
+        ? "/assets/webp/icon-logout.webp"
+        : "/assets/icon-logout.svg"
+    }) no-repeat center / cover`};
 `;
 
 export const SubmitBtn = styled.button`

@@ -15,12 +15,14 @@ import { usePostUploadMutation } from "../../hook/query/post/usePostUploadMutati
 import { usePostUpdateMutation } from "../../hook/query/post/usePostUpdateMutation";
 import { useLoadPostQuery } from "../../hook/query/post/useLoadPostQuery";
 import { useQueryClient } from "@tanstack/react-query";
+import { useSupportedWebp } from '../../hook/useSupportedWebp';
 
 interface IProps {
   isEdit: boolean;
 }
 
 export default function PostUpload({ isEdit }: IProps) {
+  const { isWebpSupported } = useSupportedWebp();
   const { postId } = useParams();
   const navigate = useNavigate();
   // 작성자의 프로필을 넣기위해 myInfo를 가져옴
@@ -295,6 +297,7 @@ export default function PostUpload({ isEdit }: IProps) {
       isImgLoading={isImgLoading}
       isEdit={isEdit}
       invalidUpdatePage={isEdit && !post?.uid && !postIsFetching}
+      isWebpSupported={isWebpSupported}
     />
   );
 }

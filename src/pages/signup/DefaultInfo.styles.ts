@@ -59,15 +59,15 @@ export const ProgressCheck = styled.div`
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  border: ${(props: { active: boolean }) =>
+  border: ${(props: { active: boolean; $isWebpSupported: boolean | null }) =>
     props.active ? "2px solid #627af5" : "2px solid #bdbdbd"};
   flex-shrink: 0;
   background: ${(props) =>
       props.active
-        ? document.body.classList.contains("webp")
+        ? props.$isWebpSupported
           ? 'url("/assets/webp/icon-check-active.webp")'
           : 'url("/assets/icon-check-active.svg")'
-        : document.body.classList.contains("webp")
+        : props.$isWebpSupported
         ? 'url("/assets/webp/icon-check.webp")'
         : 'url("/assets/icon-check.svg")'}
     no-repeat center / 20px;

@@ -3,8 +3,10 @@ import { useValidationInput } from "../../hook/useValidationInput";
 import DefaultInfoUI from "./DefaultInfo.presenter";
 import { useNavigate } from "react-router-dom";
 import { useSignupMutation } from "../../hook/query/auth/useSignupMutation";
+import { useSupportedWebp } from "../../hook/useSupportedWebp";
 
 export default function DefaultInfo() {
+  const { isWebpSupported } = useSupportedWebp();
   const navigate = useNavigate();
   const [defaultInfo, setDefaultInfo] = useState(false);
   const [profile, setProfile] = useState(false);
@@ -65,7 +67,10 @@ export default function DefaultInfo() {
     if (passwordReg.test(e.target.value.trim())) {
       return setPasswordVaild({ errorMsg: "", valid: true });
     } else {
-      setPasswordVaild({ errorMsg: "8-16자 특수문자, 숫자, 영문을 포함해야합니다.", valid: false });
+      setPasswordVaild({
+        errorMsg: "8-16자 특수문자, 숫자, 영문을 포함해야합니다.",
+        valid: false
+      });
     }
   };
 
@@ -128,6 +133,7 @@ export default function DefaultInfo() {
       signupLoading={isPending}
       onClickCancel={onClickCancel}
       mutate={mutate}
+      isWebpSupported={isWebpSupported}
     />
   );
 }

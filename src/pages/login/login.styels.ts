@@ -94,30 +94,23 @@ export const SocialLoginBtn = styled.button`
   padding: 15px 0;
   border: px solid #bdbdbd;
   transition: all 0.2s;
-  body.webp & {
-    &.google {
-      background: url("/assets/webp/icon-google.webp") no-repeat center left
-        15px / 24px #fff;
-    }
-    &.github {
-      background: url("/assets/webp/icon-github.webp") no-repeat center left
-        15px / 24px #fff;
-    }
-    &:hover {
-      background-color: ${isMobile ? "" : "#ddd"};
-    }
+  &.google {
+    background: ${(props: { $isWebpSupported: boolean | null }) =>
+      `url(${
+        props.$isWebpSupported
+          ? "/assets/webp/icon-google.webp"
+          : "/assets/icon-google.svg"
+      }) no-repeat center left 15px / 24px #fff`};
   }
-  body.no-webp & {
-    &.google {
-      background: url("/assets/icon-google.svg") no-repeat center left 15px /
-        24px #fff;
-    }
-    &.github {
-      background: url("/assets/icon-github.svg") no-repeat center left 15px /
-        24px #fff;
-    }
-    &:hover {
-      background-color: ${isMobile ? "" : "#ddd"};
-    }
+  &.github {
+    background: ${(props: { $isWebpSupported: boolean | null }) =>
+      `url(${
+        props.$isWebpSupported
+          ? "/assets/webp/icon-github.webp"
+          : "/assets/icon-github.svg"
+      }) no-repeat center left 15px / 24px #fff`};
+  }
+  &:hover {
+    background-color: ${isMobile ? "" : "#ddd"};
   }
 `;

@@ -1,5 +1,9 @@
 import React, { useCallback } from "react";
-import { IMapData, IMyProfileData, IUserProfileData } from "../../../api/apiType";
+import {
+  IMapData,
+  IMyProfileData,
+  IUserProfileData
+} from "../../../api/apiType";
 import {
   BtnWrapper,
   FocusMapBtn,
@@ -19,6 +23,7 @@ import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../../store/store";
 import { EMapContentType, tasteMapSlice } from "../../../slice/tasteMapSlice";
 import { useRemoveTasteMapMutation } from "../../../hook/query/profile/useRemoveTasteMapMutation";
+import { useSupportedWebp } from '../../../hook/useSupportedWebp';
 
 interface IProps {
   item: IMapData;
@@ -30,8 +35,8 @@ export default function MyTasteMapItem({
   isShareTasteMap,
   profile
 }: IProps) {
+  const { isWebpSupported } = useSupportedWebp();
   const dispatch = useDispatch<AppDispatch>();
-
   const { mutate: removeTasteMapMutate } = useRemoveTasteMapMutation();
   const removeMap = useCallback(() => {
     sweetConfirm("정말 삭제하시겠습니까?", "삭제", "취소", () => {
@@ -74,8 +79,18 @@ export default function MyTasteMapItem({
           </ItemLink>
         </Item>
         <BtnWrapper>
-          <FocusMapBtn onClick={onClickFocusMap} title={"지도로 보기"} />
-          {!isShareTasteMap && <RemoveBtn onClick={removeMap} title={"삭제"} />}
+          <FocusMapBtn
+            onClick={onClickFocusMap}
+            title={"지도로 보기"}
+            $isWebpSupported={isWebpSupported}
+          />
+          {!isShareTasteMap && (
+            <RemoveBtn
+              onClick={removeMap}
+              title={"삭제"}
+              $isWebpSupported={isWebpSupported}
+            />
+          )}
         </BtnWrapper>
       </ItemList>
     </MapInfoItem>

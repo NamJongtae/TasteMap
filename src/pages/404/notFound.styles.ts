@@ -19,12 +19,12 @@ export const BackBtn = styled.button`
   display: block;
   padding: 5px 20px;
   color: #fff;
-  body.webp & {
-    background: url("/assets/webp/icon-404BackBtn.webp") no-repeat center;
-  }
-  body.no-webo & {
-    background: url("/assets/icon-404BackBtn.svg") no-repeat center;
-  }
+  background: ${(props: { $isWebpSupported: boolean | null }) =>
+    `url(${
+      props.$isWebpSupported
+        ? "/assets/webp/icon-404BackBtn.webp"
+        : "/assets/icon-404BackBtn.svg"
+    }) no-repeat center`};
   border-radius: 20px;
   margin: 0 auto;
   width: 120px;

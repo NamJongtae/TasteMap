@@ -9,6 +9,7 @@ import { replySlice } from "../../../../slice/replySlice";
 import { isMobile } from "react-device-detect";
 import CommentModalUI from "./CommentModal.presenter";
 import { useFetchCommentCountMutation } from "../../../../hook/query/post/useFetchCommentCountMutation";
+import { useSupportedWebp } from '../../../../hook/useSupportedWebp';
 
 interface IProps {
   commentModalRef: React.RefObject<HTMLDivElement>;
@@ -23,7 +24,7 @@ export default function CommentModal({
   isReply,
   postType
 }: IProps) {
-
+  const { isWebpSupported, resolveWebp } = useSupportedWebp();
   const isOpenCommnetModal = useSelector(
     (state: RootState) => state.comment.isOpenCommentModal
   );
@@ -125,6 +126,8 @@ export default function CommentModal({
       textareaRef={textareaRef}
       firstItemLinkRef={firstItemLinkRef}
       postType={postType}
+      isWebpSupported={isWebpSupported}
+      resolveWebp={resolveWebp}
     />
   );
 }

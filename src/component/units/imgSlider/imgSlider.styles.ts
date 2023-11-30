@@ -67,7 +67,12 @@ export const PrevBtn = styled.button`
   width: 30px;
   height: 30px;
   border-radius: 50%;
-  background: url("/assets/icon-prev.svg") no-repeat center left 6px / 15px #fff;
+  background: ${(props: { $isWebpSupported: boolean | null }) =>
+    `url(${
+      props.$isWebpSupported
+        ? "/assets/webp/icon-prev.webp"
+        : "/assets/icon-prev.svg"
+    }) no-repeat center left 6px / 15px #fff`};
   opacity: ${(props) => props.disabled && 0.5};
   z-index: 99;
 `;
@@ -80,7 +85,12 @@ export const NextBtn = styled.button`
   width: 30px;
   height: 30px;
   border-radius: 50%;
-  background: url("/assets/icon-next.svg") no-repeat center right 6px/ 15px #fff;
+  background: ${(props: { $isWebpSupported: boolean | null }) =>
+    `url(${
+      props.$isWebpSupported
+        ? "/assets/webp/icon-next.webp"
+        : "/assets/icon-next.svg"
+    }) no-repeat center right 6px / 15px #fff`};
   opacity: ${(props) => props.disabled && 0.5};
   z-index: 99;
 `;

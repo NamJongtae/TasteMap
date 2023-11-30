@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Img } from "./progressiveImg.style";
 import { useInView } from "react-intersection-observer";
-import { resolveWebp } from "../../../library/webpSupport";
 import { CSSProperties } from "styled-components";
+import { useSupportedWebp } from '../../../hook/useSupportedWebp';
 
 interface IProps {
   src: string;
@@ -10,6 +10,7 @@ interface IProps {
   styles: CSSProperties;
 }
 export default function ProgressiveImg({ src, styles, alt }: IProps) {
+  const { resolveWebp } = useSupportedWebp();
   const placeholderSrc = resolveWebp("/assets/webp/placeholder.webp", "svg");
   const [imgSrc, setImgSrc] = useState(placeholderSrc || src);
   const [isLazy, setIsLazy] = useState(true);
