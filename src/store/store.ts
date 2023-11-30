@@ -5,6 +5,7 @@ import { commentSlice } from "../slice/commentSlice";
 import { replySlice } from '../slice/replySlice';
 import { tasteMapSlice } from '../slice/tasteMapSlice';
 import { searchSlice } from '../slice/searchSlice';
+import { settingSlice } from '../slice/settingSlice';
 export const store = configureStore({
   reducer: {
     user: userSlice.reducer,
@@ -13,6 +14,7 @@ export const store = configureStore({
     reply: replySlice.reducer,
     tasteMap: tasteMapSlice.reducer,
     search: searchSlice.reducer,
+    setting: settingSlice.reducer,
   },
   devTools: process.env.NODE_ENV !== 'production',
   middleware: getDefaultMiddleware({
