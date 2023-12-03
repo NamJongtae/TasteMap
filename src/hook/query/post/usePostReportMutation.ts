@@ -33,28 +33,28 @@ export const usePostReportMutation = (
 
       const previousPosts:
         | InfiniteData<InfinitePostsType, unknown>
-        | undefined = await queryClient.getQueryData([
-        "posts",
-        postType,
-        postType === "PROFILE" && uid
-      ]);
+        | undefined = await queryClient.getQueryData(
+        postType === "PROFILE" ? ["posts", postType, uid] : ["posts", postType]
+      );
 
-      const newPages = previousPosts?.pages.map((page) => ({
-        ...page,
-        data: page.data.map((post: IPostData) =>
-          post.id === reportData.id
-            ? {
-                ...post,
-                reportCount: post.reportCount + 1,
-                isBlock: post.reportCount > 4,
-                reportUidList: [
-                  ...post.reportUidList,
-                  getAuth().currentUser?.uid
-                ]
-              }
-            : post
-        )
-      }));
+      const newPages = previousPosts?.pages.map((page: InfinitePostsType) => {
+        return {
+          ...page,
+          data: page.data.map((post: IPostData) =>
+            post.id === reportData.id
+              ? {
+                  ...post,
+                  reportCount: post.reportCount + 1,
+                  isBlock: post.reportCount >= 4,
+                  reportUidList: [
+                    ...post.reportUidList,
+                    getAuth().currentUser?.uid
+                  ]
+                }
+              : post
+          )
+        };
+      });
 
       queryClient.setQueryData(
         postType === "PROFILE" ? ["posts", postType, uid] : ["posts", postType],

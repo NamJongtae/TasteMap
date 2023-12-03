@@ -13,12 +13,9 @@ import {
   Wrapper
 } from "../profile/myTasteMap/myTasteMap.styles";
 import Loading from "../../component/commons/loading/Loading";
-import { useParams } from "react-router-dom";
-import Kakaomap from "../../component/units/kakaomap/Kakaomap.container";
+import Kakaomap from "../../component/units/kakaomap/Kakaomap";
 import MyTasteMapList from "../profile/myTasteMap/MyTasteMapList";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../../store/store";
-import { EMapContentType, tasteMapSlice } from "../../slice/tasteMapSlice";
+import { EMapContentType } from "../../slice/tasteMapSlice";
 import {
   InvaildMap,
   InvaildMapImg,
@@ -28,36 +25,22 @@ import {
 } from "./ShareTasteMap.styles";
 import { Helmet } from "react-helmet-async";
 import Header from "../../component/commons/layouts/header/Header";
-import { IUserProfileData } from "../../api/apiType";
-import { useUserProfileQuery } from "../../hook/query/profile/useUserProfileQuery";
-import { useSupportedWebp } from '../../hook/useSupportedWebp';
+import { IMapData, IUserProfileData } from "../../api/apiType";
+import { useSupportedWebp } from "../../hook/useSupportedWebp";
+import { useShareTasteMap } from "../../hook/logic/shareTasteMap/useShareTasteMap";
 
 export default function ShareTasteMap() {
-  const { uid } = useParams();
   const { resolveWebp } = useSupportedWebp();
-  const myInfo = useSelector((state: RootState) => state.user.myInfo);
-
-  const clickMarkerData = useSelector(
-    (state: RootState) => state.tasteMap.clickMarkerData
-  );
-  const contentType = useSelector(
-    (state: RootState) => state.tasteMap.contentType
-  );
-  const dispatch = useDispatch<AppDispatch>();
-
-  const { data: userProfile, isFetching: userIsFetching } = useUserProfileQuery(
-    uid || ""
-  );
-
-  const onClickMapType = () => {
-    dispatch(tasteMapSlice.actions.setContentType(EMapContentType.MAP));
-  };
-
-  const onClickListType = () => {
-    dispatch(tasteMapSlice.actions.setContentType(EMapContentType.LIST));
-  };
-
-  const isInvalidMap = !userProfile?.storedMapList;
+  const {
+    myInfo,
+    userProfile,
+    userIsFetching,
+    clickedMarkerData,
+    contentType,
+    activeMapTypeHandler,
+    activeListTypeHandler,
+    isInvalidMap
+  } = useShareTasteMap();
 
   if (userIsFetching) {
     return <Loading />;
@@ -79,7 +62,7 @@ export default function ShareTasteMap() {
       <Helmet>
         <meta
           property='og:title'
-          content={userProfile.displayName + "님의 TasteMap"}
+          content={userProfile?.displayName + "님의 TasteMap"}
         />
         <meta property='og:type' content='webpsite' />
         <meta
@@ -93,7 +76,7 @@ export default function ShareTasteMap() {
         <meta
           property='og:description'
           content={
-            (userProfile.displayName || "") + "님이 공유하는 나만의 맛집 지도"
+            (userProfile?.displayName || "") + "님이 공유하는 나만의 맛집 지도"
           }
           data-react-helmet='true'
         />
@@ -104,14 +87,14 @@ export default function ShareTasteMap() {
           <Wrapper>
             <ContetnTypeBtnWrapper>
               <MapBtn
-                onClick={onClickMapType}
+                onClick={activeMapTypeHandler}
                 contentType={contentType}
                 style={{ top: "0px" }}
               >
                 지도
               </MapBtn>
               <ListBtn
-                onClick={onClickListType}
+                onClick={activeListTypeHandler}
                 contentType={contentType}
                 style={{ top: "0px" }}
               >
@@ -120,41 +103,41 @@ export default function ShareTasteMap() {
             </ContetnTypeBtnWrapper>
             <Title>
               <TitleImg src={"/assets/icon-searchMap.svg"} alt='맛집지도' />
-              {userProfile.displayName}님의 맛집 지도
+              {userProfile?.displayName}님의 맛집 지도
             </Title>
             <KakaomapWrapper contentType={contentType}>
               <Desc>마커 클릭 시 맛집 정보가 지도 아래 표시 됩니다.</Desc>
               <Kakaomap
-                items={userProfile.storedMapList}
+                items={userProfile?.storedMapList || ({} as IMapData[])}
                 isTasteMapPage={true}
               />
             </KakaomapWrapper>
-            {clickMarkerData.title && (
+            {clickedMarkerData.title && (
               <ItemSingleList contentType={contentType}>
                 <Item>
                   <ItemTag>가게명</ItemTag>
-                  <ItemText>{clickMarkerData.title}</ItemText>
+                  <ItemText>{clickedMarkerData.title}</ItemText>
                 </Item>
                 <Item>
                   <ItemTag>도로명 주소</ItemTag>
-                  <ItemText>{clickMarkerData.roadAddress}</ItemText>
+                  <ItemText>{clickedMarkerData.roadAddress}</ItemText>
                 </Item>
                 <Item>
                   <ItemTag>지번 주소</ItemTag>
-                  <ItemText>{clickMarkerData.address}</ItemText>
+                  <ItemText>{clickedMarkerData.address}</ItemText>
                 </Item>
                 <Item>
                   <ItemTag>카테고리</ItemTag>
-                  <ItemText>{clickMarkerData.category}</ItemText>
+                  <ItemText>{clickedMarkerData.category}</ItemText>
                 </Item>
                 <Item>
                   <ItemTag>홈페이지</ItemTag>
                   <ItemLink
-                    to={clickMarkerData.link || "#"}
+                    to={clickedMarkerData.link || "#"}
                     target='
               _blank'
                   >
-                    {clickMarkerData.link}
+                    {clickedMarkerData.link}
                   </ItemLink>
                 </Item>
               </ItemSingleList>

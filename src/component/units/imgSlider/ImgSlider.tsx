@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React from "react";
 import {
   ImgBtnList,
   ImgItem,
@@ -10,47 +10,29 @@ import {
   NextBtn
 } from "./imgSlider.styles";
 import ProgressiveImg from "../../commons/progressiveImg/ProgressiveImg";
-import { useSupportedWebp } from '../../../hook/useSupportedWebp';
+import { useSupportedWebp } from "../../../hook/useSupportedWebp";
+import { useImgSlider } from "../../../hook/logic/UI/useImgSlider";
 
 interface IProps {
   imgArray: string[];
 }
 export default function ImgSlider({ imgArray }: IProps) {
   const { isWebpSupported } = useSupportedWebp();
-  const [activeButton, setActiveButton] = useState(0);
-  const ImgUlRef = useRef<HTMLUListElement>(null);
-  // 이미지 슬라이드를 위해 해당 이미지의 이미지 크기에 인덱스를 곱해 translateX 해줌
-  const onClickSliderBtn = (idx: number) => {
-    if (ImgUlRef.current) {
-      ImgUlRef.current.style.transform = `translateX(-${326 * idx}px)`;
-      setActiveButton(idx);
-    }
-  };
+  const {
+    activeButton,
+    ImgUlRef,
+    sliderBtnHandler,
+    prevBtnHandler,
+    nextBtnHandler
+  } = useImgSlider({ imgArray });
 
-  const onClickPrevBtn = () => {
-    if (ImgUlRef.current && activeButton > 0) {
-      ImgUlRef.current.style.transform = `translateX(-${
-        326 * (activeButton - 1)
-      }px)`;
-      setActiveButton((prev) => prev - 1);
-    }
-  };
-
-  const onClickNextBtn = () => {
-    if (ImgUlRef.current && activeButton < imgArray.length) {
-      ImgUlRef.current.style.transform = `translateX(-${
-        326 * (activeButton + 1)
-      }px)`;
-      setActiveButton((prev) => prev + 1);
-    }
-  };
   return (
     <ImgWrapper>
       {imgArray.length > 1 && (
         <PrevBtn
           type='button'
           disabled={activeButton === 0}
-          onClick={onClickPrevBtn}
+          onClick={prevBtnHandler}
           $isWebpSupported={isWebpSupported}
         >
           <span className='a11y-hidden'>다음</span>
@@ -82,7 +64,7 @@ export default function ImgSlider({ imgArray }: IProps) {
         <NextBtn
           type='button'
           disabled={activeButton === imgArray.length - 1}
-          onClick={onClickNextBtn}
+          onClick={nextBtnHandler}
           $isWebpSupported={isWebpSupported}
         >
           <span className='a11y-hidden'>이전</span>
@@ -96,7 +78,7 @@ export default function ImgSlider({ imgArray }: IProps) {
               {imgArray.length > 1 && (
                 <ImgBtn
                   className={activeButton === idx ? "active" : ""}
-                  onClick={() => onClickSliderBtn(idx)}
+                  onClick={() => sliderBtnHandler(idx)}
                 >
                   <span className='a11y-hidden'>이미지 슬라이드 버튼</span>
                 </ImgBtn>

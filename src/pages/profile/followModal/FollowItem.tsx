@@ -9,11 +9,7 @@ import {
 import { IFollowData } from "../../../api/apiType";
 import { isMobile } from "react-device-detect";
 import { optModalTabFocus } from "../../../library/optModalTabFocus";
-import { useFollowMutation } from "../../../hook/query/profile/useFollowMutation";
-import { useUnfollowMutation } from "../../../hook/query/profile/useUnfollowMutation";
-import { useMyProfileQuery } from "../../../hook/query/profile/useMyProfileQuery";
-import { RootState } from "../../../store/store";
-import { useSelector } from "react-redux";
+import { useFollowItem } from "../../../hook/logic/followModal/useFollowItem";
 interface IProps {
   data: IFollowData;
   idx: number;
@@ -22,8 +18,6 @@ interface IProps {
   closeBtnRef: React.RefObject<HTMLButtonElement>;
   firstItemLinkRef: React.RefObject<HTMLAnchorElement>;
   lastItemFollowBtnRef: React.RefObject<HTMLButtonElement>;
-  closeFollowersModalHandler: () => void;
-  closeFollowingModalHandler: () => void;
 }
 
 export default function FollowItem({
@@ -33,44 +27,25 @@ export default function FollowItem({
   isFollower,
   closeBtnRef,
   firstItemLinkRef,
-  lastItemFollowBtnRef,
-  closeFollowersModalHandler,
-  closeFollowingModalHandler
+  lastItemFollowBtnRef
 }: IProps) {
-  const { mutate: followMutate } = useFollowMutation();
-  const { mutate: unfollowMutate } = useUnfollowMutation();
-  const myInfo = useSelector((state: RootState) => state.user.myInfo);
-
-  const { data: myProfile } = useMyProfileQuery(myInfo.uid);
-
-  const isFollow = myProfile?.followingList.includes(data.uid) || false;
-
-  const onClickUnFollow = () => {
-    if (myProfile?.uid && data.uid) {
-      unfollowMutate({ myUid: myProfile.uid, userUid: data.uid });
-    }
-  };
-
-  const onClickFollow = () => {
-    if (myProfile?.uid && data.uid) {
-      followMutate({ myUid: myProfile.uid, userUid: data.uid });
-    }
-  };
-
-  const onClickProfileLink = () => {
-    if (isFollower) {
-      closeFollowersModalHandler();
-    } else {
-      closeFollowingModalHandler();
-    }
-  };
+  const {
+    isFollow,
+    myProfile,
+    unFollowHandler,
+    followHandler,
+    profileLinkHandler
+  } = useFollowItem({
+    data,
+    isFollower
+  });
 
   return (
     <FollowLi>
       <UserLink
         to={`/profile/${data.uid}`}
         replace={isMobile}
-        onClick={onClickProfileLink}
+        onClick={profileLinkHandler}
         ref={idx === 0 ? firstItemLinkRef : null}
         onKeyDown={(e: React.KeyboardEvent<HTMLAnchorElement>) => {
           if (idx === 0) {
@@ -84,7 +59,7 @@ export default function FollowItem({
       {myProfile?.uid !== data.uid && (
         <FollowBtn
           isFollow={isFollow}
-          onClick={isFollow ? onClickUnFollow : onClickFollow}
+          onClick={isFollow ? unFollowHandler : followHandler}
           ref={isLastItem ? lastItemFollowBtnRef : null}
         >
           {isFollow ? "언팔로우" : "팔로우"}

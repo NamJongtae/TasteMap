@@ -8,7 +8,7 @@ import {
 import { IPostData } from "../../../api/apiType";
 
 type FetchDataResponse = {
-  postDocs: QuerySnapshot<DocumentData, DocumentData>;
+  postDocs: QuerySnapshot<DocumentData, DocumentData> | null;
   data: IPostData[];
 };
 
@@ -36,7 +36,7 @@ export const useFeedPostInfiniteQuery = (
     initialPageParam: null,
     getNextPageParam: (lastpage) => {
       return lastpage.data.length > 0
-        ? lastpage.postDocs.docs[lastpage.postDocs.docs.length - 1]
+        ? lastpage.postDocs?.docs[lastpage.postDocs.docs.length - 1]
         : undefined;
     },
     enabled: postType === "FEED"

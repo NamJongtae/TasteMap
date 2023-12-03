@@ -20,6 +20,9 @@ export const useAddTasteMapMutation = () => {
 
       return { previousProfile };
     },
+    onSuccess: () => {
+      sweetToast("나의 맛집 지도에 맛집이 추가되었습니다", "success");
+    },
     onError: (error, data, ctx) => {
       if (ctx) {
         queryClient.setQueryData(["profile", "my"], ctx.previousProfile);

@@ -1,4 +1,8 @@
-import React, { useEffect, useRef, useState } from "react";
+import React from "react";
+import Loading from "../../component/commons/loading/Loading";
+import ErrorMsg from "../../component/commons/errorMsg/ErrorMsg";
+import UserInput from "../../component/commons/userInput/UserInput";
+import { useSupportedWebp } from "../../hook/useSupportedWebp";
 import {
   LoginBtn,
   LoginForm,
@@ -13,59 +17,30 @@ import {
   InputWrapper,
   SocialLoginItem
 } from "./login.styels";
-
-import { useValidationInput } from "../../hook/useValidationInput";
-import Loading from "../../component/commons/loading/Loading";
-import ErrorMsg from "../../component/commons/errorMsg/ErrorMsg";
-import UserInput from "../../component/commons/userInput/UserInput";
-import { useLoginMutation } from "../../hook/query/auth/useLoginMutation";
-import { useSocialLoginMutation } from "../../hook/query/auth/useSocialLoginMutation";
-import { useSupportedWebp } from '../../hook/useSupportedWebp';
+import { useLogin } from "../../hook/logic/login/useLogin";
 
 export default function Login() {
   const { isWebpSupported, resolveWebp } = useSupportedWebp();
-  const [disabled, setDisabled] = useState(true);
-  const emailRef = useRef<HTMLInputElement>(null);
-  const [emailValue, emailValid, onChangeEmail, setEmailValue] =
-    useValidationInput("", "email", false);
-  const [passwordValue, passwordValid, onChangePassword, setPasswordValue] =
-    useValidationInput("", "password", false);
-
-  const { mutate: loginMutate, isPending: loginIsPending } = useLoginMutation();
-  const { mutate: socialLoginMutate, isPending: socialLoginIsPending } =
-    useSocialLoginMutation();
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (emailValid.valid && passwordValid.valid) {
-      loginMutate({ email: emailValue, password: passwordValue });
-      setEmailValue("");
-      setPasswordValue("");
-      setDisabled(true);
-    }
-  };
-
-  const socialLoginHandler = (type: "google" | "github") => {
-    socialLoginMutate(type);
-  };
-
-  useEffect(() => {
-    emailRef.current && emailRef.current.focus();
-  }, []);
-
-  useEffect(() => {
-    if (emailValid.valid && passwordValid.valid) {
-      setDisabled(false);
-    } else {
-      setDisabled(true);
-    }
-  }, [emailValid, passwordValid]);
+  const {
+    loginHandler,
+    socialLoginHandler,
+    disabled,
+    onChangeEmail,
+    onChangePassword,
+    loginIsPending,
+    socialLoginIsPending,
+    emailValue,
+    emailRef,
+    emailValid,
+    passwordValue,
+    passwordValid
+  } = useLogin();
 
   return (
     <>
       <Title className='a11y-hidden'>로그인 페이지</Title>
       <Wrapper>
-        <LoginForm onSubmit={handleSubmit}>
+        <LoginForm onSubmit={loginHandler}>
           <LoginFormTitle>
             <img src={resolveWebp("/assets/webp/icon-loginLogo.webp", "svg")} />
           </LoginFormTitle>

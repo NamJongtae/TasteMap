@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import { TPostType } from "./Home";
 
 export const Wrapper = styled.main`
   width: 100%;
@@ -32,7 +31,7 @@ export const HomeBtn = styled.button`
   height: 30px;
   border-radius: 5px;
   background: ${(props: {
-    postType: TPostType;
+    postType:  "HOME" | "FEED";
     $isWebpSupported: boolean | null;
   }) =>
     props.postType === "HOME"
@@ -49,7 +48,7 @@ export const FeedBtn = styled.button`
   height: 30px;
   border-radius: 5px;
   background: ${(props: {
-    postType: TPostType;
+    postType:  "HOME" | "FEED";
     $isWebpSupported: boolean | null;
   }) =>
     props.postType === "FEED"

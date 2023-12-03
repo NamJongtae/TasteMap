@@ -1,7 +1,7 @@
 import { Rate } from "antd";
 import { isMobile } from "react-device-detect";
 import styled from "styled-components";
-import { EContentType } from "./PostItem.container";
+import { EContentType } from "./PostItem";
 
 export const Wrapper = styled.li`
   width: 100%;

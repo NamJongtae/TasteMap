@@ -17,17 +17,10 @@ export const postSlice = createSlice({
     postsPagePerData: 5,
     postsHasMore: false,
     searchMapData: [] as IMapData[], // 검색 데이터
-    seletedMapData: [] as IMapData[], // 선택한 검색 데이터,
     userPostsPagePerData: 5,
   },
 
   reducers: {
-    setSelectedMapData: (state, action) => {
-      state.seletedMapData = [action.payload];
-    },
-    resetSelectedMapData: (state) => {
-      state.seletedMapData = [] as IMapData[];
-    },
     resetSearchMapData: (state) => {
       state.searchMapData = [];
     },

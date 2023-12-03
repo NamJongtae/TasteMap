@@ -1,17 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { LoadingImg, LoadingText, Title, Wrapper } from "./loading.styles";
+import { useLoading } from "../../../hook/logic/loading/useLoading";
 
 export default function Loading() {
-  const [imageLoaded, setImageLoaded] = useState(false);
-
-  // 로딩 gif 이미지 로딩 상태를 확인하고 이미지가 로딩 완료되면 상태를 변경합니다.
-  useEffect(() => {
-    const img = new Image();
-    img.src = "/assets/spinner.gif";
-    img.onload = () => {
-      setImageLoaded(true);
-    };
-  }, []);
+  const { imageLoaded } = useLoading();
 
   return (
     <Wrapper>

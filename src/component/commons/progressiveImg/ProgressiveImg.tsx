@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Img } from "./progressiveImg.style";
-import { useInView } from "react-intersection-observer";
 import { CSSProperties } from "styled-components";
-import { useSupportedWebp } from '../../../hook/useSupportedWebp';
+import { useProgressiveImg } from "../../../hook/logic/UI/useProgressiveImg";
 
 interface IProps {
   src: string;
@@ -10,27 +9,7 @@ interface IProps {
   styles: CSSProperties;
 }
 export default function ProgressiveImg({ src, styles, alt }: IProps) {
-  const { resolveWebp } = useSupportedWebp();
-  const placeholderSrc = resolveWebp("/assets/webp/placeholder.webp", "svg");
-  const [imgSrc, setImgSrc] = useState(placeholderSrc || src);
-  const [isLazy, setIsLazy] = useState(true);
-  const { ref, inView } = useInView();
-  const customClass = isLazy ? "loading" : "loaded";
-
-  useEffect(() => {
-    if (inView && imgSrc === placeholderSrc) {
-      const img = new Image();
-      img.src = src;
-      img.onload = () => {
-        setImgSrc(src);
-        setIsLazy(false);
-      };
-      img.onerror = () => {
-        setImgSrc(resolveWebp("/assets/webp/no-image.webp", "svg"));
-        setIsLazy(false);
-      };
-    }
-  }, [src, inView]);
+  const { imgSrc, customClass, ref } = useProgressiveImg({ src });
 
   return (
     <Img

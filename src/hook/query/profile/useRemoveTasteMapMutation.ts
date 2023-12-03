@@ -1,7 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import {
-  removeTasteMap
-} from "../../../api/firebase/postAPI";
+import { removeTasteMap } from "../../../api/firebase/postAPI";
 import { IMyProfileData, IMapData } from "../../../api/apiType";
 import { sweetToast } from "../../../library/sweetAlert/sweetAlert";
 
@@ -10,6 +8,7 @@ export const useRemoveTasteMapMutation = () => {
   const { mutate } = useMutation({
     mutationFn: (mapData: IMapData) => removeTasteMap(mapData),
     onMutate: async (data) => {
+      console.log(data.title);
       await queryClient.cancelQueries({ queryKey: ["profile", "my"] });
       const previousProfile = await queryClient.getQueryData(["profile", "my"]);
       queryClient.setQueryData(
@@ -23,6 +22,9 @@ export const useRemoveTasteMapMutation = () => {
       );
 
       return { previousProfile };
+    },
+    onSuccess: () => {
+      sweetToast("나의 맛집 지도에 맛집이 삭제되었습니다", "success");
     },
     onError: (error, data, ctx) => {
       if (ctx) {

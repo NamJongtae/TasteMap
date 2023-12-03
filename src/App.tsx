@@ -1,13 +1,12 @@
 import React, { useEffect } from "react";
 import { Navigate, Outlet, Route, Routes, useLocation } from "react-router-dom";
 import Login from "./pages/login/Login";
-import DefaultInfo from "./pages/signup/DefaultInfo.container";
-import FindAccount from "./pages/findAccount/FindAccount.container";
+import FindAccount from "./pages/findAccount/FindAccount";
 import Home from "./pages/home/Home";
-import PostUpload from "./pages/postUpload/PostUpload.container";
+import PostUpload from "./pages/postUpload/PostUpload";
 import PostEdit from "./pages/postEdit/PostEdit";
 import Profile from "./pages/profile/Profile";
-import MyTasteMap from "./pages/profile/myTasteMap/MyTasteMap.container";
+import MyTasteMap from "./pages/profile/myTasteMap/MyTasteMap";
 import NotFound from "./pages/404/NotFound";
 import Search from "./pages/search/Search";
 import ShareTasteMap from "./pages/shareTasteMap/ShareTasteMap";
@@ -18,6 +17,7 @@ import { AppDispatch, RootState } from "./store/store";
 import { userSlice } from "./slice/userSlice";
 import Loading from "./component/commons/loading/Loading";
 import { useSupportedWebp } from "./hook/useSupportedWebp";
+import Signup from './pages/signup/Signup';
 
 function App() {
   const dispatch = useDispatch<AppDispatch>();
@@ -74,7 +74,7 @@ function App() {
           }
         />
       </Helmet>
-      {isWebpSupported!==null && (
+      {isWebpSupported !== null && (
         <Routes>
           <Route
             path='/login'
@@ -82,7 +82,7 @@ function App() {
           />
           <Route
             path='/signup'
-            element={myInfo.uid ? <Navigate to='/' /> : <DefaultInfo />}
+            element={myInfo.uid ? <Navigate to='/' /> : <Signup />}
           />
           <Route
             path='/findAccount'

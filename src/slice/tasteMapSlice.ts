@@ -1,22 +1,26 @@
-import { createSlice } from '@reduxjs/toolkit';
-import { IMapData } from '../api/apiType';
+import { createSlice } from "@reduxjs/toolkit";
+import { IMapData } from "../api/apiType";
 
 export const enum EMapContentType {
-  MAP="MAP",
-  LIST="LIST"
+  MAP = "MAP",
+  LIST = "LIST"
 }
 export const tasteMapSlice = createSlice({
   name: "tasteMapSlice",
-  initialState:{
+  initialState: {
+    searchSelectedMap: {} as IMapData,
     clickMarkerData: {} as IMapData,
-    contentType: EMapContentType.MAP as EMapContentType,
+    contentType: EMapContentType.MAP as EMapContentType
   },
-  reducers:{
-    setClickMarkerData: (state, action) => {
-      state.clickMarkerData = action.payload
+  reducers: {
+    setSearchSelectedMap: (state, action: { payload: IMapData }) => {
+      state.searchSelectedMap = action.payload;
     },
-    setContentType: (state, action:{payload: EMapContentType}) => {
+    setClickMarkerData: (state, action: { payload: IMapData }) => {
+      state.clickMarkerData = action.payload;
+    },
+    setContentType: (state, action: { payload: EMapContentType }) => {
       state.contentType = action.payload;
     }
   }
-})
+});

@@ -1,9 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { IUserData, IMyProfileData, IUserProfileData } from "../api/apiType";
 
+// locatlStroage에 저장된 유저 데이터 불러오기
 const userDataString = localStorage.getItem("user");
 const userData = JSON.parse(userDataString || "{}");
 
+// user data, profile 페이지 관련 data 및 state 관리
 export const userSlice = createSlice({
   name: "userSlice",
   initialState: {
@@ -12,7 +14,8 @@ export const userSlice = createSlice({
     userProfile: {} as IUserProfileData,
     followsPagePerData: 20,
     isOpenFollowerModal: false,
-    isOpenFollowingModal: false
+    isOpenFollowingModal: false,
+    isOpenUpdateProfileModal: false,
   },
   reducers: {
     setMyInfo: (state, action) => {
@@ -43,6 +46,14 @@ export const userSlice = createSlice({
         document.body.style.overflow = "auto";
       }
       state.isOpenFollowingModal = action.payload;
+    },
+    setIsOpenUpdateProfileModal: (state, action: { payload: boolean }) => {
+      if (action.payload) {
+        document.body.style.overflow = "hidden";
+      } else {
+        document.body.style.overflow = "auto";
+      }
+      state.isOpenUpdateProfileModal = action.payload;
     }
   }
 });

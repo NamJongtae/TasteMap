@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import {
   InfinityScrollTarget,
   NoUserData,
@@ -6,10 +6,7 @@ import {
   NoUserText,
   SearchUl
 } from "./search.styles";
-import { useSelector } from "react-redux";
-import { RootState } from "../../store/store";
 import SearchItem from "./SearchItem";
-import { useInView } from "react-intersection-observer";
 import ScrollLoading from "../../component/commons/loading/ScrollLoading";
 import {
   FetchNextPageOptions,
@@ -18,6 +15,7 @@ import {
 } from "@tanstack/react-query";
 import { IMyProfileData, IUserProfileData } from "../../api/apiType";
 import { DocumentData, QuerySnapshot } from "firebase/firestore";
+import { useSearchList } from "../../hook/logic/search/useSearchList";
 
 interface InfiniteSearchType {
   userDocs: QuerySnapshot<DocumentData, DocumentData>;
@@ -40,6 +38,7 @@ interface IProps {
   isFetchingNextPage: boolean;
   isRefetching: boolean;
 }
+
 export default function SearchList({
   myProfile,
   fetchNextPage,
@@ -49,18 +48,11 @@ export default function SearchList({
   isFetchingNextPage,
   isRefetching
 }: IProps) {
-  const searchKeyword = useSelector(
-    (state: RootState) => state.search.searchKeyword
-  );
-
-  const [ref, inview] = useInView();
-  const pagePerData = useSelector((state: RootState) => state.search.pagePerData);
-
-  useEffect(() => {
-    if (searchKeyword && searchResult?.length || 0 >= pagePerData && inview && hasNextPage) {
-      fetchNextPage();
-    }
-  }, [inview]);
+  const { searchKeyword, infiniteScrollRef } = useSearchList({
+    fetchNextPage,
+    hasNextPage,
+    searchResult
+  });
 
   return (
     <>
@@ -81,7 +73,9 @@ export default function SearchList({
                       />
                     );
                   })}
-                  <InfinityScrollTarget ref={ref}></InfinityScrollTarget>
+                  <InfinityScrollTarget
+                    ref={infiniteScrollRef}
+                  ></InfinityScrollTarget>
                 </>
               ) : (
                 <>

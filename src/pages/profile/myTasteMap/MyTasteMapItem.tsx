@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React from "react";
 import {
   IMapData,
   IMyProfileData,
@@ -15,15 +15,8 @@ import {
   MapInfoItem,
   RemoveBtn
 } from "./myTasteMap.styles";
-import {
-  sweetConfirm,
-  sweetToast
-} from "../../../library/sweetAlert/sweetAlert";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../../store/store";
-import { EMapContentType, tasteMapSlice } from "../../../slice/tasteMapSlice";
-import { useRemoveTasteMapMutation } from "../../../hook/query/profile/useRemoveTasteMapMutation";
-import { useSupportedWebp } from '../../../hook/useSupportedWebp';
+import { useSupportedWebp } from "../../../hook/useSupportedWebp";
+import { useMyTasteMapItem } from "../../../hook/logic/layouts/useMyTasetMapItem";
 
 interface IProps {
   item: IMapData;
@@ -36,23 +29,11 @@ export default function MyTasteMapItem({
   profile
 }: IProps) {
   const { isWebpSupported } = useSupportedWebp();
-  const dispatch = useDispatch<AppDispatch>();
-  const { mutate: removeTasteMapMutate } = useRemoveTasteMapMutation();
-  const removeMap = useCallback(() => {
-    sweetConfirm("정말 삭제하시겠습니까?", "삭제", "취소", () => {
-      removeTasteMapMutate(item);
-      sweetToast("삭제가 완료되었습니다.", "success");
-      dispatch(tasteMapSlice.actions.setClickMarkerData({}));
-      if (profile.storedMapList.length === 1) {
-        dispatch(tasteMapSlice.actions.setContentType(EMapContentType.MAP));
-      }
-    });
-  }, [profile.storedMapList]);
+  const { removeMapHandler, activeMapTypeHandler } = useMyTasteMapItem({
+    item,
+    profile
+  });
 
-  const onClickFocusMap = () => {
-    dispatch(tasteMapSlice.actions.setClickMarkerData(item));
-    dispatch(tasteMapSlice.actions.setContentType(EMapContentType.MAP));
-  };
   return (
     <MapInfoItem>
       <ItemList>
@@ -80,13 +61,13 @@ export default function MyTasteMapItem({
         </Item>
         <BtnWrapper>
           <FocusMapBtn
-            onClick={onClickFocusMap}
+            onClick={activeMapTypeHandler}
             title={"지도로 보기"}
             $isWebpSupported={isWebpSupported}
           />
           {!isShareTasteMap && (
             <RemoveBtn
-              onClick={removeMap}
+              onClick={removeMapHandler}
               title={"삭제"}
               $isWebpSupported={isWebpSupported}
             />

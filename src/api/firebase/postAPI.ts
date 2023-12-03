@@ -118,6 +118,9 @@ export const fetchFeedPosts = async (
   followingList: string[]
 ) => {
   try {
+    if (followingList.length === 0) {
+      return { postDocs: null, data: [] as IPostData[] };
+    }
     const postRef = collection(db, "post");
     const q = page
       ? query(
