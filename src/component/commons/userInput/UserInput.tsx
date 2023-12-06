@@ -9,8 +9,9 @@ interface IProps {
   value?: string | number | readonly string[] | undefined;
   label_hidden?: boolean;
   label?: string;
+  name: string;
   id?: string;
-  onChange?: ChangeEventHandler<HTMLInputElement>;
+  onChange?: ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>;
   onBlur?: FocusEventHandler<HTMLInputElement>;
   maxLength?: number;
   minLength?: number;
@@ -23,6 +24,7 @@ export default function UserInput({
   value,
   label_hidden,
   label,
+  name,
   id,
   onChange,
   onBlur,
@@ -42,6 +44,7 @@ export default function UserInput({
         placeholder={placeholder}
         onChange={onChange}
         id={id}
+        name={name}
         value={value}
         onBlur={onBlur}
         maxLength={maxLength}
