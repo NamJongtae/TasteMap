@@ -1,66 +1,6 @@
 import styled from "styled-components";
+import { useSupportedWebp } from "../../hook/useSupportedWebp";
 import { isMobile } from "react-device-detect";
-import { Link } from "react-router-dom";
-
-export const Title = styled.h1``;
-export const Wrapper = styled.main`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: #f5f5f5;
-  height: 100vh;
-  overflow: auto;
-`;
-export const LoginFormTitle = styled.h2`
-  text-align: center;
-  font-weight: 500;
-`;
-export const LoginForm = styled.form`
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  gap: 20px;
-  max-width: 400px;
-  width: calc(100% - 60px);
-  padding: 100px 40px 0 40px;
-  @media screen and (max-width: 431px) {
-    width: calc(100% - 40px);
-    padding: 30px 20px;
-  }
-`;
-export const InputWrapper = styled.div`
-  & > p {
-    margin-top: 10px;
-  }
-`;
-export const LoginBtn = styled.button`
-  width: 100%;
-  background-color: ${(props) => (props.disabled ? "#cbcbcb" : "gold")};
-  padding: 14px 0;
-  border-radius: 4px;
-  font-size: 18px;
-  font-weight: 500;
-  margin-top: 10px;
-  transition: all 0.5s;
-`;
-
-export const SignupText = styled.p`
-  display: inline-block;
-  font-size: 12px;
-  color: #111;
-  text-align: center;
-`;
-
-export const SignupLink = styled(Link)`
-  font-size: 12px;
-  margin-left: 5px;
-  font-weight: 500;
-`;
-
-export const FindAccountLink = styled(Link)`
-  font-size: 12px;
-  align-self: flex-end;
-`;
 
 export const SocialLoginWrapper = styled.ul`
   position: relative;
@@ -114,3 +54,35 @@ export const SocialLoginBtn = styled.button`
     background-color: ${isMobile ? "" : "#ddd"};
   }
 `;
+
+interface IPrpos {
+  buttonTypeArr: string[];
+  textArr: string[];
+  onClickArr: React.MouseEventHandler<HTMLButtonElement>[];
+}
+
+export const SocialLoginBtns = ({
+  buttonTypeArr,
+  textArr,
+  onClickArr
+}: IPrpos) => {
+  const { isWebpSupported } = useSupportedWebp();
+  return (
+    <SocialLoginWrapper>
+      {textArr.map((text: string, i: number) => {
+        return (
+          <SocialLoginItem key={text + i}>
+            <SocialLoginBtn
+              className={buttonTypeArr[i]}
+              type='button'
+              onClick={onClickArr[i]}
+              $isWebpSupported={isWebpSupported}
+            >
+              {text}
+            </SocialLoginBtn>
+          </SocialLoginItem>
+        );
+      })}
+    </SocialLoginWrapper>
+  );
+};
