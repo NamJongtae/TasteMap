@@ -12,7 +12,6 @@ interface IProps {
   onChangeDisplayName: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 export default function ProfileUpdateDisplayName({
-  
   displayNameValue,
   displayNameValid,
   onChangeDisplayName,
