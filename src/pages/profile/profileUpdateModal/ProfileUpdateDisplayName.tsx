@@ -22,6 +22,7 @@ export default function ProfileUpdateDisplayName({
       <UserInput
         type='text'
         label={"닉네임"}
+        name={"nickname"}
         id={"input-nickname"}
         placeholder={"4-10자 영문, 영문 + 숫자"}
         value={displayNameValue}
