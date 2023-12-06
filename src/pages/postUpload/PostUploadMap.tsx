@@ -1,7 +1,8 @@
+import { useSelector } from 'react-redux';
 import { IMapData } from '../../api/apiType';
 import Kakaomap from "../../component/units/kakaomap/Kakaomap";
-import { useSupportedWebp } from "../../hook/useSupportedWebp";
 import { SearchModalBtn, Section, SectionTitle } from "./postUpload.styles";
+import { RootState } from '../../store/store';
 
 interface IProps {
   openSearchModal: ()=>void;
@@ -11,7 +12,7 @@ export const PostUploadMap = ({
   openSearchModal,
   searchSelectedMap
 }: IProps) => {
-  const { isWebpSupported } = useSupportedWebp();
+  const isWebpSupported = useSelector((state: RootState) => state.setting.isWebpSupported);
   return (
     <Section>
       <SectionTitle>맛집 선택*</SectionTitle>

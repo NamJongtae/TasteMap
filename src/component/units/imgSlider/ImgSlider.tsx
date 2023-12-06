@@ -10,14 +10,17 @@ import {
   NextBtn
 } from "./imgSlider.styles";
 import ProgressiveImg from "../../commons/progressiveImg/ProgressiveImg";
-import { useSupportedWebp } from "../../../hook/useSupportedWebp";
 import { useImgSlider } from "../../../hook/logic/UI/useImgSlider";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../store/store";
 
 interface IProps {
   imgArray: string[];
 }
 export default function ImgSlider({ imgArray }: IProps) {
-  const { isWebpSupported } = useSupportedWebp();
+  const isWebpSupported = useSelector(
+    (state: RootState) => state.setting.isWebpSupported
+  );
   const {
     activeButton,
     ImgUlRef,

@@ -1,10 +1,13 @@
 import React from "react";
 import { Button } from "./topButton.styles";
-import { useSupportedWebp } from "../../../hook/useSupportedWebp";
 import { useTopButton } from "../../../hook/logic/topButton/useTopButton";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../store/store";
 
 export default function TopButton() {
-  const { isWebpSupported, resolveWebp } = useSupportedWebp();
+  const isWebpSupported = useSelector(
+    (state: RootState) => state.setting.isWebpSupported
+  );
   const { isActive, scrollToTop, buttonRef } = useTopButton();
   return (
     <>
@@ -13,7 +16,6 @@ export default function TopButton() {
           type='button'
           onClick={scrollToTop}
           ref={buttonRef}
-          style={{ background: `url(${resolveWebp})` }}
           $isWebpSupported={isWebpSupported}
         >
           TOP

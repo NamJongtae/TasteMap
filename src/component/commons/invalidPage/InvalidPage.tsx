@@ -1,12 +1,12 @@
 import React from "react";
 import { BackBtn, InvalidImg, Title, Wrapper } from "./invalidPage.styles";
 import { useNavigate } from "react-router-dom";
-import { useSupportedWebp } from '../../../hook/useSupportedWebp';
+import { resolveWebp } from '../../../library/resolveWebp';
+
 interface IProps {
   text: string;
 }
 export default function InvalidPage({text}: IProps) {
-  const { resolveWebp } = useSupportedWebp();
   const navigate = useNavigate();
   return (
     <Wrapper>

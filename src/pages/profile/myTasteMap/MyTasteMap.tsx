@@ -1,5 +1,4 @@
 import React from "react";
-import { useSupportedWebp } from "../../../hook/useSupportedWebp";
 import { useMyTasteMap } from "../../../hook/logic/MyTasetMap/useMyTasteMap";
 import { SearchModalBtn } from "../../postUpload/postUpload.styles";
 import Header from "../../../component/commons/layouts/header/Header";
@@ -25,8 +24,10 @@ import {
   Wrapper
 } from "./myTasteMap.styles";
 import { IMyProfileData } from "../../../api/apiType";
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../store/store';
 export default function MyTasteMap() {
-  const { isWebpSupported } = useSupportedWebp();
+  const isWebpSupported = useSelector((state: RootState) => state.setting.isWebpSupported);
   const {
     myProfile,
     onClickMapType,

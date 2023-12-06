@@ -6,10 +6,12 @@ import {
   NotFoundContent
 } from "./notFound.styles";
 import { useNavigate } from "react-router-dom";
-import { useSupportedWebp } from "../../hook/useSupportedWebp";
+import { useSelector } from 'react-redux';
+import { RootState } from '../../store/store';
+import { resolveWebp } from '../../library/resolveWebp';
 
 export default function NotFound() {
-  const { isWebpSupported, resolveWebp } = useSupportedWebp();
+  const isWebpSupported = useSelector((state: RootState) => state.setting.isWebpSupported);
   const navigate = useNavigate();
   return (
     <Wrapper>

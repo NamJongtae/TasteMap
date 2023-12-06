@@ -7,7 +7,8 @@ import {
   ProgressTitle,
   ProgressWrapper
 } from "./ProgressiveBar.styles";
-import { useSupportedWebp } from "../../hook/useSupportedWebp";
+import { useSelector } from 'react-redux';
+import { RootState } from '../../store/store';
 interface IProps {
   completedUserInfo: boolean;
   percentage: string;
@@ -19,7 +20,7 @@ export default function ProgressiveBar({
   percentage,
   profile
 }: IProps) {
-  const { isWebpSupported } = useSupportedWebp();
+  const isWebpSupported = useSelector((state: RootState) => state.setting.isWebpSupported);
   return (
     <ProgressWrapper>
       <ProgressTitle className='a11y-hidden'>회원가입 진행바</ProgressTitle>

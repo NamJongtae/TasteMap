@@ -1,7 +1,6 @@
 import React from "react";
 import "./kakaomap.styles.css";
 import { IMapData } from "../../../api/apiType";
-import { useSupportedWebp } from "../../../hook/useSupportedWebp";
 import { useKakaomap } from "../../../hook/logic/kakaomap/useKakaomap";
 import {
   MapBtnWrapper,
@@ -16,6 +15,8 @@ import {
   ZoomInBtn,
   ZoomOutBtn
 } from "./kakaomap.styles";
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../store/store';
 declare global {
   interface Window {
     kakao: any;
@@ -28,7 +29,9 @@ interface IProps {
 }
 
 function Kakaomap({ items, isTasteMapPage }: IProps) {
-  const { isWebpSupported } = useSupportedWebp();
+  const isWebpSupported = useSelector(
+    (state: RootState) => state.setting.isWebpSupported
+  );
   const {
     data,
     mapRef,

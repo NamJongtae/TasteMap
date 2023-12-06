@@ -1,5 +1,5 @@
+import { useSelector } from 'react-redux';
 import ScrollLoading from "../../../component/commons/loading/ScrollLoading";
-import { useSupportedWebp } from "../../../hook/useSupportedWebp";
 import { optModalTabFocus } from "../../../library/optModalTabFocus";
 import {
   ProfileImg,
@@ -12,6 +12,8 @@ import {
   ProfileImgResetBtn,
   ProfileImgWrapper
 } from "./ProfileUpdateModal.styles";
+import { RootState } from '../../../store/store';
+import { resolveWebp } from '../../../library/resolveWebp';
 
 interface IProps {
   imgInputRef: React.RefObject<HTMLInputElement>;
@@ -34,7 +36,7 @@ export const ProfileUpdateImg = ({
   changeImgHandler,
   imgResetHandler
 }: IProps) => {
-  const { isWebpSupported, resolveWebp } = useSupportedWebp();
+  const isWebpSupported = useSelector((state: RootState) => state.setting.isWebpSupported);
 
   return (
     <ProfileImgWrapper>

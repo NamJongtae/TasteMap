@@ -1,10 +1,11 @@
 import React from "react";
 import { SearchInputWrapper, SearchLabel, Input } from "./search.styles";
-import { useSupportedWebp } from "../../hook/useSupportedWebp";
 import { useSearchInput } from "../../hook/logic/search/useSearchInput";
+import { useSelector } from 'react-redux';
+import { RootState } from '../../store/store';
 
 export default function SearchInput() {
-  const { isWebpSupported } = useSupportedWebp();
+  const isWebpSupported = useSelector((state: RootState) => state.setting.isWebpSupported);
   const { keyword, onChangeKeyword, inputRef } = useSearchInput();
 
   return (

@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../store/store";
 import { settingSlice } from "../slice/settingSlice";
-import { useCallback, useEffect } from "react";
+import { useEffect } from "react";
 
 export const useSupportedWebp = () => {
   const disaptch = useDispatch<AppDispatch>();
@@ -37,18 +37,5 @@ export const useSupportedWebp = () => {
     }
   }, [isWebpSupported]);
 
-  const resolveWebp = useCallback(
-    (img: string, fallbackExt: string) => {
-      // 이미지 포맷
-      const ext = img.split(".").pop();
-      // webpSupported false, ext가 webp인 경우
-      if (!isWebpSupported && ext === "webp") {
-        return img.replace("/webp", "").replace(".webp", `.${fallbackExt}`);
-      }
-      return img;
-    },
-    [isWebpSupported]
-  );
-
-  return { isWebpSupported, resolveWebp };
+  return { isWebpSupported };
 };

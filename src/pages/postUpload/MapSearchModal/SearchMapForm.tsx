@@ -5,7 +5,8 @@ import { optModalTabFocus } from "../../../library/optModalTabFocus";
 import { useSearchMapForm } from "../../../hook/logic/searchMapModal/useSearchMapForm";
 import { UseMutateFunction } from "@tanstack/react-query";
 import { IMapData } from "../../../api/apiType";
-import { useSupportedWebp } from "../../../hook/useSupportedWebp";
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../store/store';
 
 interface IProps {
   setIsSearch: React.Dispatch<React.SetStateAction<boolean>>;
@@ -23,7 +24,7 @@ export default function SearchMapForm({
   inputRef,
   closeBtnRef
 }: IProps) {
-  const { isWebpSupported } = useSupportedWebp();
+  const isWebpSupported = useSelector((state: RootState) => state.setting.isWebpSupported);
   const { onChangeValue, searchMapHandler } = useSearchMapForm({
     setIsSearch,
     searchKeyword,

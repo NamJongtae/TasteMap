@@ -1,6 +1,5 @@
 import React from "react";
 import { ICommentData, IPostData, IUserData } from "../../../api/apiType";
-import { useSupportedWebp } from "../../../hook/useSupportedWebp";
 import { useUserInfo } from "../../../hook/logic/post/useUserInfo";
 import {
   Username,
@@ -12,6 +11,9 @@ import {
   UserInfoWrapper,
   UserProfileLink
 } from "./userInfo.styles";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../store/store";
+import { resolveWebp } from "../../../library/resolveWebp";
 interface IProps {
   userData: Omit<IUserData, "email">;
   data?: IPostData | ICommentData;
@@ -25,7 +27,9 @@ export default function UserInfo({
   activeMoreBtn,
   postType
 }: IProps) {
-  const { isWebpSupported, resolveWebp } = useSupportedWebp();
+  const isWebpSupported = useSelector(
+    (state: RootState) => state.setting.isWebpSupported
+  );
   const {
     isOpenSelect,
     openSelectHandler,

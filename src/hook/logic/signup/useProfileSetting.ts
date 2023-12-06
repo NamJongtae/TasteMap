@@ -3,8 +3,8 @@ import { useValidationInput } from "../../useValidationInput";
 import { imgValidation } from "../../../library/imageValidation";
 import { isMobile } from "react-device-detect";
 import { getCompressionImg } from "../../../library/imageCompression";
-import { useSupportedWebp } from "../../useSupportedWebp";
 import { UseMutateFunction } from "@tanstack/react-query";
+import { resolveWebp } from '../../../library/resolveWebp';
 
 interface IProps {
   emailValue: string;
@@ -40,7 +40,6 @@ export const useProfileSetting = ({
   setPercentage,
   signupMutate
 }: IProps) => {
-  const { resolveWebp } = useSupportedWebp();
   const imgInputRef = useRef<HTMLInputElement>(null);
   const [completedProfile, setCompletedProfile] = useState(false);
   // 회원가입 버튼 활성화 상태 관리

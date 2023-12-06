@@ -1,7 +1,6 @@
 import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useLogoutMutation } from "../../query/auth/useLogoutMutation";
-import { useSupportedWebp } from "../../useSupportedWebp";
 import { sweetConfirm } from "../../../library/sweetAlert/sweetAlert";
 
 import {
@@ -18,6 +17,9 @@ import {
   CancelBtn,
   LogoutBtn
 } from "../../../component/commons/layouts/header/header.styles";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../store/store";
+import { resolveWebp } from '../../../library/resolveWebp';
 
 interface IProps {
   type: string;
@@ -30,7 +32,9 @@ export const useHeader = ({ type, onSubmit, btnText, disabled }: IProps) => {
   const navigate = useNavigate();
   const { uid } = useParams();
   const { mutate } = useLogoutMutation();
-  const { isWebpSupported, resolveWebp } = useSupportedWebp();
+  const isWebpSupported = useSelector(
+    (state: RootState) => state.setting.isWebpSupported
+  );
 
   const logoutHandler = () => {
     sweetConfirm("정말 로그아웃 하시겠습니까?", "확인", "취소", () => {

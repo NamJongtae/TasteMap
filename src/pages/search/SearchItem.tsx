@@ -7,8 +7,8 @@ import {
   UserProfileLink,
   Username
 } from "./search.styles";
-import { useSupportedWebp } from "../../hook/useSupportedWebp";
 import { useSearchItem } from "../../hook/logic/search/useSearchItem";
+import { resolveWebp } from '../../library/resolveWebp';
 
 interface IProps {
   item: IUserProfileData;
@@ -16,7 +16,6 @@ interface IProps {
 }
 
 export default function SearchItem({ item, myProfile }: IProps) {
-  const { resolveWebp } = useSupportedWebp();
   const { isFollow, followHandler, unfollowHandler, getTextHighLight, isMe } =
     useSearchItem({ item, myProfile });
 

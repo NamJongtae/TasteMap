@@ -26,11 +26,10 @@ import {
 import { Helmet } from "react-helmet-async";
 import Header from "../../component/commons/layouts/header/Header";
 import { IMapData, IUserProfileData } from "../../api/apiType";
-import { useSupportedWebp } from "../../hook/useSupportedWebp";
 import { useShareTasteMap } from "../../hook/logic/shareTasteMap/useShareTasteMap";
+import { resolveWebp } from '../../library/resolveWebp';
 
 export default function ShareTasteMap() {
-  const { resolveWebp } = useSupportedWebp();
   const {
     myInfo,
     userProfile,

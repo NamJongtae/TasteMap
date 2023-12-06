@@ -1,11 +1,12 @@
 import React from "react";
-import { useSupportedWebp } from "../../../hook/useSupportedWebp";
 import { useCommentTextarea } from "../../../hook/logic/comment/useCommentTextarea";
 import {
   CommentSubmitBtn,
   CommentTextAreaInner,
   TextArea
 } from "./comment.styles";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../store/store";
 
 interface IProps {
   textareaType: "write" | "edit" | "reply";
@@ -29,7 +30,9 @@ export default function CommentTextArea({
   textareaRef,
   postType
 }: IProps) {
-  const { isWebpSupported } = useSupportedWebp();
+  const isWebpSupported = useSelector(
+    (state: RootState) => state.setting.isWebpSupported
+  );
   const {
     commentValue,
     onChangeCommentValue,

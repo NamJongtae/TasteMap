@@ -1,5 +1,4 @@
 import React, { SyntheticEvent } from "react";
-import { useSupportedWebp } from "../../../hook/useSupportedWebp";
 import { useCommentModal } from "../../../hook/logic/comment/useCommentModal";
 import CommentList from "./CommentList";
 import CommentTextarea from "./CommentTextarea";
@@ -12,6 +11,9 @@ import {
   UserImg
 } from "./comment.styles";
 import { optModalTabFocus } from "../../../library/optModalTabFocus";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../store/store";
+import { resolveWebp } from "../../../library/resolveWebp";
 
 interface IProps {
   commentModalRef: React.RefObject<HTMLDivElement>;
@@ -26,7 +28,9 @@ export default function CommentModal({
   isReply,
   postType
 }: IProps) {
-  const { isWebpSupported, resolveWebp } = useSupportedWebp();
+  const isWebpSupported = useSelector(
+    (state: RootState) => state.setting.isWebpSupported
+  );
   const {
     myInfo,
     parentCommentId,

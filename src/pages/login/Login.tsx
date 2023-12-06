@@ -2,7 +2,6 @@ import React from "react";
 import Loading from "../../component/commons/loading/Loading";
 import ErrorMsg from "../../component/commons/errorMsg/ErrorMsg";
 import UserInput from "../../component/commons/userInput/UserInput";
-import { useSupportedWebp } from "../../hook/useSupportedWebp";
 import {
   LoginBtn,
   LoginForm,
@@ -18,9 +17,12 @@ import {
   SocialLoginItem
 } from "./login.styels";
 import { useLogin } from "../../hook/logic/login/useLogin";
+import { useSelector } from 'react-redux';
+import { RootState } from '../../store/store';
+import { resolveWebp } from '../../library/resolveWebp';
 
 export default function Login() {
-  const { isWebpSupported, resolveWebp } = useSupportedWebp();
+  const isWebpSupported = useSelector((state: RootState) => state.setting.isWebpSupported);
   const {
     loginHandler,
     socialLoginHandler,

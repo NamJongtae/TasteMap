@@ -1,9 +1,8 @@
 import React from "react";
 import { NoDataImg, Title, Wrapper } from "./noData.styles";
-import { useSupportedWebp } from '../../../hook/useSupportedWebp';
+import { resolveWebp } from '../../../library/resolveWebp';
 
 export default function NoData() {
-  const { resolveWebp } = useSupportedWebp();
   return (
     <Wrapper>
       <NoDataImg src={resolveWebp("/assets/webp/icon-noData.webp", "svg")} />

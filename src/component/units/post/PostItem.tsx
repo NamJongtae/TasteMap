@@ -1,6 +1,5 @@
 import React from "react";
 import { IPostData, IMyProfileData } from "../../../api/apiType";
-import { useSupportedWebp } from "../../../hook/useSupportedWebp";
 import { usePostItem } from "../../../hook/logic/post/usePostItem";
 import ImgSlider from "../imgSlider/ImgSlider";
 import Kakaomap from "../kakaomap/Kakaomap";
@@ -27,6 +26,8 @@ import {
   ContentTextLine,
   Placeholder
 } from "./postItem.styles";
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../store/store';
 
 interface IProps {
   data: IPostData;
@@ -40,7 +41,9 @@ export const enum EContentType {
 }
 
 export default function PostItem({ data, myProfile, postType }: IProps) {
-  const { isWebpSupported } = useSupportedWebp();
+  const isWebpSupported = useSelector(
+    (state: RootState) => state.setting.isWebpSupported
+  );
   const {
     isLike,
     likeCount,

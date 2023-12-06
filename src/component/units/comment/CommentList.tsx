@@ -1,6 +1,5 @@
 import React from "react";
 import { useCommentList } from "../../../hook/logic/comment/useCommentList";
-import { useSupportedWebp } from "../../../hook/useSupportedWebp";
 import CommentItem from "./CommentItem";
 import ScrollLoading from "../../commons/loading/ScrollLoading";
 import NoData from "../../commons/noData/NoData";
@@ -10,6 +9,8 @@ import {
   RefreshBtn
 } from "./comment.styles";
 import { ICommentData, IReplyData } from "../../../api/apiType";
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../store/store';
 interface IProps {
   isReply: boolean;
   closeBtnRef: React.RefObject<HTMLButtonElement>;
@@ -25,7 +26,7 @@ export default function CommentList({
   firstItemLinkRef,
   postType
 }: IProps) {
-  const { isWebpSupported } = useSupportedWebp();
+  const isWebpSupported = useSelector((state: RootState) => state.setting.isWebpSupported);
   const {
     isError,
     loadDataLoading,

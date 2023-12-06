@@ -2,7 +2,6 @@ import React from "react";
 import UserInput from "../../component/commons/userInput/UserInput";
 import ErrorMsg from "../../component/commons/errorMsg/ErrorMsg";
 import ScrollLoading from "../../component/commons/loading/ScrollLoading";
-import { useSupportedWebp } from '../../hook/useSupportedWebp';
 import {
   InputWrapper,
   PrevBtn,
@@ -18,6 +17,9 @@ import {
   SignupBtn,
   SignupForm
 } from "./ProfileSetting.styles";
+import { useSelector } from 'react-redux';
+import { RootState } from '../../store/store';
+import { resolveWebp } from '../../library/resolveWebp';
 
 
 interface IProps {
@@ -58,7 +60,7 @@ export default function ProfileSetting({
   signupDisabled,
   isImgLoading
 }: IProps) {
-  const { isWebpSupported, resolveWebp } = useSupportedWebp();
+  const isWebpSupported = useSelector((state: RootState) => state.setting.isWebpSupported);
 
   return (
     <SignupForm onSubmit={signupHandler}>

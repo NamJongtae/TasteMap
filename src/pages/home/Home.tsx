@@ -9,11 +9,12 @@ import {
 } from "./home.styles";
 import Header from "../../component/commons/layouts/header/Header";
 import TopButton from "../../component/commons/topButton/TopButton";
-import { useSupportedWebp } from "../../hook/useSupportedWebp";
 import { useHome } from '../../hook/logic/home/useHome';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../store/store';
 
 export default function Home() {
-  const { isWebpSupported } = useSupportedWebp();
+  const isWebpSupported = useSelector((state: RootState) => state.setting.isWebpSupported);
   const { postType, homeBtnActiveHandler, FeedBtnActiveHandler } = useHome();
 
   return (

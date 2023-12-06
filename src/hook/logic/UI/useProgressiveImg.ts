@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
-import { useSupportedWebp } from "../../useSupportedWebp";
 import { useInView } from "react-intersection-observer";
+import { resolveWebp } from '../../../library/resolveWebp';
 
 interface IProps {
   src: string;
 }
 export const useProgressiveImg = ({ src }: IProps) => {
-  const { resolveWebp } = useSupportedWebp();
   const placeholderSrc = resolveWebp("/assets/webp/placeholder.webp", "svg");
   const [imgSrc, setImgSrc] = useState(placeholderSrc || src);
   const [isLazy, setIsLazy] = useState(true);

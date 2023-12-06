@@ -9,7 +9,8 @@ import {
   SectionTitle
 } from "./postUpload.styles";
 import ScrollLoading from "../../component/commons/loading/ScrollLoading";
-import { useSupportedWebp } from "../../hook/useSupportedWebp";
+import { useSelector } from 'react-redux';
+import { RootState } from '../../store/store';
 
 interface IProps {
   onClickUploadImg: () => void;
@@ -26,7 +27,7 @@ export default function PostUploadImg({
   preview,
   onClickRemoveImg
 }: IProps) {
-  const { isWebpSupported } = useSupportedWebp();
+  const isWebpSupported = useSelector((state: RootState) => state.setting.isWebpSupported);
   return (
     <Section>
       <SectionTitle>이미지( 최대 5개 )</SectionTitle>

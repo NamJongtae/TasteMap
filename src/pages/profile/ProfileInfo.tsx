@@ -1,7 +1,6 @@
 import React from "react";
 import { IMyProfileData, IUserProfileData } from "../../api/apiType";
 import { useProfileInfo } from "../../hook/logic/profile/useProfileInfo";
-import { useSupportedWebp } from "../../hook/useSupportedWebp";
 import {
   ButtonWrapper,
   FollowerBtn,
@@ -19,12 +18,15 @@ import {
   UserProfileImg,
   UserWrapper
 } from "./profileInfo.styles";
+import { useSelector } from 'react-redux';
+import { RootState } from '../../store/store';
+import { resolveWebp } from '../../library/resolveWebp';
 interface IProps {
   myProfile: IMyProfileData;
   userProfile: IUserProfileData;
 }
 export default function ProfileInfo({ myProfile, userProfile }: IProps) {
-  const { isWebpSupported, resolveWebp } = useSupportedWebp();
+  const isWebpSupported = useSelector((state: RootState) => state.setting.isWebpSupported);
   const {
     myInfo,
     isShowMoreTextBtn,
