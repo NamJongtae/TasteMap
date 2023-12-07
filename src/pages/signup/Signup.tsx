@@ -1,7 +1,6 @@
 import React from "react";
-import ProgressiveBar from "./ProgressiveBar";
-import UserInfoSetting from "./UserInfoSetting";
-import ProfileSetting from "./ProfileSetting";
+import UserInfoSetting from "./userInfoSetting/UserInfoSetting";
+import ProfileSetting from "./profileSetting/ProfileSetting";
 import Loading from "../../component/commons/loading/Loading";
 import { useUserInfoSettingEmailInput } from "../../hook/logic/signup/useUserInfoSettingEmailInput";
 import { useUserInfoSettingPwInput } from "../../hook/logic/signup/useUserInfoSettingPwInput";
@@ -13,39 +12,8 @@ import { useProfileSettingImg } from "../../hook/logic/signup/useProfileSettingI
 import { useSignupDataFetch } from "../../hook/logic/signup/useSignupDataFetch";
 import { useProfileSettingIntroduceInput } from "../../hook/logic/signup/useProfileSettingIntroduceInput";
 import { useSingupSetScreenSize } from "../../hook/logic/signup/useSignupSetScreenSize";
-import styled from "styled-components";
-
-const Wrapper = styled.main`
-  width: 100%;
-  height: calc(var(--vh, 1vh) * 100);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  overflow-x: hidden;
-  background-color: #f5f5f5;
-`;
-
-const FormWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-  height: calc(var(--vh, 1vh) * 100);
-  max-width: 450px;
-  padding: 0px 40px;
-  @media screen and (max-width: 431px) {
-    padding: 0px 30px;
-  }
-  background-color: #f5f5f5;
-`;
-
-const Title = styled.h1`
-  margin-top: 20px;
-  font-size: 25px;
-  margin-bottom: 20px;
-  font-weight: 500;
-`;
+import ProgressBar from "./progressBar/ProgressBar";
+import { FormWrapper, Title, Wrapper } from './signup.styles';
 
 export default function Signup() {
   const { emailValue, emailValid, onChangeEmail } =
@@ -175,7 +143,7 @@ export default function Signup() {
   return (
     <Wrapper>
       <Title>회원가입</Title>
-      <ProgressiveBar
+      <ProgressBar
         percentage={percentage}
         completedUserInfoSetting={completedUserInfoSetting}
         completedProfileSetting={completedProfileSetting}

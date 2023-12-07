@@ -1,5 +1,5 @@
 import React from "react";
-import { InputField } from "../../component/commons/UI/InputField";
+import { InputField } from "../../../component/commons/UI/InputField";
 import styled from "styled-components";
 
 const SignupForm = styled.form`

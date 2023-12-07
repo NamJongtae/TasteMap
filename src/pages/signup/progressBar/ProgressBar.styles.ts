@@ -1,9 +1,6 @@
-import React from "react";
-import { useSelector } from "react-redux";
-import { RootState } from "../../store/store";
-import styled from "styled-components";
+import styled from 'styled-components';
 
-const ProgressWrapper = styled.section`
+export const ProgressWrapper = styled.section`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -11,12 +8,13 @@ const ProgressWrapper = styled.section`
   max-width: 450px;
   margin-bottom: 50px;
 `;
-const ProgressTitle = styled.h2``;
-const ProgressCheckWrapper = styled.div`
+export const ProgressTitle = styled.h2``;
+
+export const ProgressCheckWrapper = styled.div`
   position: relative;
 `;
 
-const ProgressCheckText = styled.p`
+export const ProgressCheckText = styled.p`
   position: absolute;
   font-size: 14px;
   width: 100px;
@@ -27,7 +25,7 @@ const ProgressCheckText = styled.p`
     left: -10px;
   }
 `;
-const ProgressCheck = styled.div`
+export const ProgressCheck = styled.div`
   width: 40px;
   height: 40px;
   border-radius: 50%;
@@ -52,7 +50,8 @@ const ProgressCheck = styled.div`
     transition-delay: ${(props) => (props.active ? "0.3s" : "")};
   }
 `;
-const ProgressBar = styled.div`
+
+export const PercentageBar = styled.div`
   position: relative;
   height: 2px;
   background-color: #bdbdbd;
@@ -73,41 +72,3 @@ const ProgressBar = styled.div`
     }
   }
 `;
-
-interface IProps {
-  percentage: string;
-  completedUserInfoSetting: boolean;
-  completedProfileSetting: boolean;
-}
-
-export default function ProgressiveBar({
-  percentage,
-  completedUserInfoSetting,
-  completedProfileSetting
-}: IProps) {
-  const isWebpSupported = useSelector(
-    (state: RootState) => state.setting.isWebpSupported
-  );
-  return (
-    <ProgressWrapper>
-      <ProgressTitle className='a11y-hidden'>회원가입 진행바</ProgressTitle>
-      <ProgressCheckWrapper>
-        <ProgressCheck
-          className='defalut'
-          active={completedUserInfoSetting}
-          $isWebpSupported={isWebpSupported}
-        ></ProgressCheck>
-        <ProgressCheckText>기본정보 입력</ProgressCheckText>
-      </ProgressCheckWrapper>
-      <ProgressBar percentage={percentage}></ProgressBar>
-      <ProgressCheckWrapper>
-        <ProgressCheck
-          className='profile'
-          active={completedProfileSetting}
-          $isWebpSupported={isWebpSupported}
-        ></ProgressCheck>
-        <ProgressCheckText>프로필 설정</ProgressCheckText>
-      </ProgressCheckWrapper>
-    </ProgressWrapper>
-  );
-}

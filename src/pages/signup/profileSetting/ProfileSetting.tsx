@@ -1,7 +1,7 @@
 import React from "react";
-import TextAreaField from "../../component/commons/UI/TextAreaField";
-import ProfileSettingImg from "./ProfileSettingImg";
-import { InputField } from "../../component/commons/UI/InputField";
+import TextAreaField from "../../../component/commons/UI/TextAreaField";
+import ProfileSettingImg from "./profileSettingImg/ProfileSettingImg";
+import { InputField } from "../../../component/commons/UI/InputField";
 import styled from "styled-components";
 
 const SignupForm = styled.form`

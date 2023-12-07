@@ -1,19 +1,7 @@
 import React from "react";
-import styled from "styled-components";
-import ProfileSettingImgButton from "./ProfileSettingImgButton";
-import ProfileSettingImgDesc from "./ProfileSettingImgDesc";
-
-const ProfileImgWrapper = styled.div`
-  position: relative;
-  border-bottom: 2px solid #bdbdbd;
-`;
-const ProfileImgLabel = styled.label`
-  display: block;
-  text-align: center;
-  font-size: 14px;
-  margin-bottom: 10px;
-`;
-const ProfileImgInput = styled.input``;
+import ProfileSettingImgButton from "./profileSettingImgButton/ProfileSettingImgButton";
+import ProfileSettingImgDesc from "./profileSettingImgDesc/ProfileSettingImgDesc";
+import { ProfileImgInput, ProfileImgLabel, ProfileImgWrapper } from '../../../profile/profileUpdateModal/ProfileUpdateModal.styles';
 
 interface IProps {
   isImgLoading: boolean;
@@ -22,6 +10,7 @@ interface IProps {
   imgInputRef: React.RefObject<HTMLInputElement>;
   previewImg: string;
 }
+
 export default function ProfileSettingImg({
   isImgLoading,
   imgResetHandler,
