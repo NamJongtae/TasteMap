@@ -7,7 +7,7 @@ export const Wrapper = styled.div`
   justify-content: center;
   align-items: center;
 `;
-export const PostWrapper = styled.ul`
+export const PostListWrapper = styled.ul`
   width: 100%;
   max-width: 360px;
   padding: 10px 20px 20px 20px;

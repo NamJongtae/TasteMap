@@ -1,7 +1,6 @@
 import { Rate } from "antd";
 import { isMobile } from "react-device-detect";
 import styled from "styled-components";
-import { EContentType } from "./PostItem";
 
 export const Wrapper = styled.li`
   width: 100%;
@@ -160,10 +159,10 @@ export const ActiveMapBtn = styled.button`
   height: 30px;
   border-radius: 5px;
   background: ${(props: {
-    contentType: EContentType;
+    contentType: "MAP" | "IMAGE";
     $isWebpSupported: boolean | null;
   }) =>
-    props.contentType === EContentType.MAP
+    props.contentType === "MAP"
       ? props.$isWebpSupported
         ? 'url("/assets/webp/icon-thumbnailMapBtnActive.webp") no-repeat center / 30px'
         : 'url("/assets/icon-thumbnailMapBtnActive.svg") no-repeat center / 30px'
@@ -180,10 +179,10 @@ export const ActiveImageBtn = styled.button`
   height: 30px;
   border-radius: 5px;
   background: ${(props: {
-    contentType: EContentType;
+    contentType: "MAP" | "IMAGE";
     $isWebpSupported: boolean | null;
   }) =>
-    props.contentType === EContentType.IMAGE
+    props.contentType === "IMAGE"
       ? props.$isWebpSupported
         ? 'url("/assets/webp/icon-thumbnailImgBtnActive.webp") no-repeat center / 30px'
         : 'url("/assets/icon-thumbnailImgBtnActive.svg") no-repeat center / 30px'
@@ -195,11 +194,11 @@ export const ActiveImageBtn = styled.button`
 export const KakaoMapWrapper = styled.section`
   position: relative;
   width: 100%;
-  height: ${(props: { contentType: EContentType }) =>
-    props.contentType === EContentType.IMAGE && "300px"};
+  height: ${(props: { contentType: "MAP" | "IMAGE" }) =>
+    props.contentType === "IMAGE" && "300px"};
 `;
 
-export const PostItemButtom = styled.div`
+export const PostItemBottomWrapper = styled.div`
   display: flex;
   align-items: center;
   gap: 10px;

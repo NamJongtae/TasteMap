@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { usePostDeleteMutation } from "../../query/post/usePostDeleteMutation";
-import { usePostReportMutation } from "../../query/post/usePostReportMutation";
-import { ICommentData, IPostData, IUserData } from "../../../api/apiType";
+import { usePostDeleteMutation } from "../../../query/post/usePostDeleteMutation";
+import { usePostReportMutation } from "../../../query/post/usePostReportMutation";
+import { ICommentData, IPostData, IUserData } from "../../../../api/apiType";
 import {
   sweetConfirm,
   sweetToast
-} from "../../../library/sweetAlert/sweetAlert";
+} from "../../../../library/sweetAlert/sweetAlert";
 
 interface IProps {
   userData: Omit<IUserData, "email">;
