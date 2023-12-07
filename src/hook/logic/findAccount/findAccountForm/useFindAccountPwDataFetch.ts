@@ -1,13 +1,11 @@
 import { useEffect } from "react";
-import { useFindPasswordMuataion } from "../../query/auth/useFindPasswordMutation";
+import { useFindPasswordMuataion } from "../../../query/auth/useFindPasswordMutation";
 
 interface IParms {
   activeMenu: "email" | "password";
 }
 
-export const useFindAccountPwDataFetch = ({
-  activeMenu,
-}: IParms) => {
+export const useFindAccountPwDataFetch = ({ activeMenu }: IParms) => {
   const {
     mutate: findPasswordMuate,
     isPending: findPasswordIsPending,

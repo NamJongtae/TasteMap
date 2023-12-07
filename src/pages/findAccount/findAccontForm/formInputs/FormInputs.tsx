@@ -1,5 +1,5 @@
 import React from "react";
-import { InputField } from "../../component/commons/UI/InputField";
+import { InputField } from "../../../../component/commons/UI/InputField";
 
 interface IProps {
   activeMenu: "email" | "password";
@@ -13,6 +13,7 @@ interface IProps {
   onChangePhone: (e: React.ChangeEvent<HTMLInputElement>) => void;
   phoneErrorMsg: string;
 }
+
 export default function FormInputs({
   activeMenu,
   emailValue,

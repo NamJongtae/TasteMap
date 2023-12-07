@@ -1,12 +1,10 @@
 import { useEffect } from "react";
-import { useFindAccountMutation } from "../../query/auth/useFindEmailMutation";
+import { useFindAccountMutation } from "../../../query/auth/useFindEmailMutation";
 
 interface IParms {
-  activeMenu: "email"|"password";
+  activeMenu: "email" | "password";
 }
-export const useFindAccountEmailDataFetch = ({
-  activeMenu,
-}: IParms) => {
+export const useFindAccountEmailDataFetch = ({ activeMenu }: IParms) => {
   const {
     mutate: findEmailMuate,
     isPending: findEmailIsPending,
@@ -27,7 +25,7 @@ export const useFindAccountEmailDataFetch = ({
   };
 
   useEffect(() => {
-      findEmailReset();
+    findEmailReset();
   }, [activeMenu]);
 
   return {

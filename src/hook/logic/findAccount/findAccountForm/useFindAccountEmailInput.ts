@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useValidationInput } from "../../useValidationInput";
+import { useValidationInput } from "../../../useValidationInput";
 
 interface IParms {
   activeMenu: "email" | "password";

@@ -1,27 +1,7 @@
 import { useFindAccountControllFormMenu } from "../../hook/logic/findAccount/useFindAccountControllFormMenu";
-import FormMenu from "./FormMenu";
-import FindAccountForm from "./FindAccountForm";
-import styled from "styled-components";
-
-export const Wrapper = styled.main`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  height: 100vh;
-  overflow: auto;
-  background-color: #f5f5f5;
-`;
-
-export const FormWrapper = styled.div`
-  width: 100%;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding-top: 100px;
-`;
-
-export const Title = styled.h1``;
+import FormMenu from "./formMenu/FormMenu";
+import FindAccountForm from "./findAccontForm/FindAccountForm";
+import { FormWrapper, Title, Wrapper } from './findAccount.styles';
 
 export default function FindAccount() {
   const {
@@ -29,7 +9,6 @@ export default function FindAccount() {
     activeFindEmailMenuHandler,
     activeFindPasswordMenuHandler
   } = useFindAccountControllFormMenu();
-
 
   return (
     <Wrapper>

@@ -1,30 +1,13 @@
 import React from "react";
-import styled from "styled-components";
-import FindValueContent from "./FindValueContent";
-import { InputField } from "../../component/commons/UI/InputField";
-import FormButton from "./FormButton";
-import { useFindAccountDisplayNameInput } from "../../hook/logic/findAccount/useFindAccountDisplayNameInput";
-import { useFindAccountPhoneInput } from "../../hook/logic/findAccount/useFindAccountPhoneInput";
-import { useFindAccountEmailInput } from "../../hook/logic/findAccount/useFindAccountEmailInput";
-import { useFindAccountEmailDataFetch } from "../../hook/logic/findAccount/useFindAccountEmailDataFetch";
-import { useFindAccountPwDataFetch } from "../../hook/logic/findAccount/useFindAccountPwDataFetch";
-
-export const Form = styled.form`
-  display: flex;
-  flex-direction: column;
-  border-radius: 10px;
-  border-top-right-radius: 0;
-  border-top-left-radius: 0;
-  padding: 30px 20px;
-  background: none;
-  width: calc(100% - 60px);
-  max-width: 400px;
-  gap: 20px;
-  @media screen and (max-width: 431px) {
-    width: calc(100% - 40px);
-    padding: 30px 20px;
-  }
-`;
+import FindValueContent from "./findValueContent/FindValueContent";
+import { InputField } from "../../../component/commons/UI/InputField";
+import FormButton from "./formButton/FormButton";
+import { useFindAccountDisplayNameInput } from "../../../hook/logic/findAccount/findAccountForm/useFindAccountDisplayNameInput";
+import { useFindAccountPhoneInput } from "../../../hook/logic/findAccount/findAccountForm/useFindAccountPhoneInput";
+import { useFindAccountEmailInput } from "../../../hook/logic/findAccount/findAccountForm/useFindAccountEmailInput";
+import { useFindAccountEmailDataFetch } from "../../../hook/logic/findAccount/findAccountForm/useFindAccountEmailDataFetch";
+import { useFindAccountPwDataFetch } from "../../../hook/logic/findAccount/findAccountForm/useFindAccountPwDataFetch";
+import { Form } from './findAccountForm.styles';
 
 interface IProps {
   activeMenu: "email" | "password";
