@@ -8,10 +8,10 @@ import {
   CommentLi,
   CommentText,
   ReplyCountBtn,
+  UserImg,
   UserLink,
   UserName
 } from "./comment.styles";
-import { UserImg } from "../post/userInfo.styles";
 import { isMobile } from "react-device-detect";
 import { optModalTabFocus } from "../../../library/optModalTabFocus";
 import CommentTextArea from "./CommentTextarea";
