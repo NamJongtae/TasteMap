@@ -44,7 +44,7 @@ export default function Profile() {
           myProfile={myProfile || ({} as IMyProfileData)}
           userProfile={userProfile || ({} as IUserProfileData)}
         />
-        <ProfilePost />
+        <ProfilePost myProfile={myProfile || ({} as IMyProfileData)} />
         <TopButton />
       </Wrapper>
       {isOpenFollowerModal && <FollowModal isFollower={true} />}
