@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export const useHome = () => {
+export const usePostTypeBtnActions = () => {
   const [postType, setPostType] = useState<"HOME" | "FEED">("HOME");
 
   const homeBtnActiveHandler = () => {
@@ -11,5 +11,9 @@ export const useHome = () => {
     setPostType("FEED");
   };
 
-  return { postType, homeBtnActiveHandler, FeedBtnActiveHandler };
+  return {
+    postType,
+    homeBtnActiveHandler,
+    FeedBtnActiveHandler,
+  };
 };

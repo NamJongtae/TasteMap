@@ -182,16 +182,14 @@ export const FocusMapBtn = styled.button`
     }) no-repeat center / 18px`};
 
   :hover {
-    body.webp & {
-      background: ${(props: { $isWebpSupported: boolean | null }) =>
-        isMobile
-          ? ""
-          : `url(${
-              props.$isWebpSupported
-                ? "/assets/webp/icon-thumbnailMapBtnActive.webp"
-                : "/assets/icon-thumbnailMapBtnActive.svg"
-            }) no-repeat center / 30px`};
-    }
+    background: ${(props: { $isWebpSupported: boolean | null }) =>
+      isMobile
+        ? ""
+        : `url(${
+            props.$isWebpSupported
+              ? "/assets/webp/icon-thumbnailMapBtnActive.webp"
+              : "/assets/icon-thumbnailMapBtnActive.svg"
+          }) no-repeat center / 30px`};
   }
 `;
 
