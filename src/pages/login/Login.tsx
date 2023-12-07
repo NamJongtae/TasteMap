@@ -1,16 +1,6 @@
 import React from "react";
-import styled from "styled-components";
-import LoginForm from "./LoginForm";
-export const Title = styled.h1``;
-
-export const Wrapper = styled.main`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: #f5f5f5;
-  height: 100vh;
-  overflow: auto;
-`;
+import LoginForm from "./LoginForm/LoginForm";
+import { Title, Wrapper } from './login.styles';
 
 export default function Login() {
   return (

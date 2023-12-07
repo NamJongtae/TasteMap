@@ -1,6 +1,5 @@
-import styled from "styled-components";
-import { useSupportedWebp } from "../../hook/useSupportedWebp";
-import { isMobile } from "react-device-detect";
+import { isMobile } from 'react-device-detect';
+import styled from 'styled-components';
 
 export const SocialLoginWrapper = styled.ul`
   position: relative;
@@ -54,35 +53,3 @@ export const SocialLoginBtn = styled.button`
     background-color: ${isMobile ? "" : "#ddd"};
   }
 `;
-
-interface IPrpos {
-  buttonTypeArr: string[];
-  textArr: string[];
-  onClickArr: React.MouseEventHandler<HTMLButtonElement>[];
-}
-
-export const SocialLoginBtns = ({
-  buttonTypeArr,
-  textArr,
-  onClickArr
-}: IPrpos) => {
-  const { isWebpSupported } = useSupportedWebp();
-  return (
-    <SocialLoginWrapper>
-      {textArr.map((text: string, i: number) => {
-        return (
-          <SocialLoginItem key={text + i}>
-            <SocialLoginBtn
-              className={buttonTypeArr[i]}
-              type='button'
-              onClick={onClickArr[i]}
-              $isWebpSupported={isWebpSupported}
-            >
-              {text}
-            </SocialLoginBtn>
-          </SocialLoginItem>
-        );
-      })}
-    </SocialLoginWrapper>
-  );
-};

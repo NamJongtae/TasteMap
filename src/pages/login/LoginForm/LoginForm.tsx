@@ -1,44 +1,15 @@
 import React from "react";
-import { InputField } from "../../component/commons/UI/InputField";
-import LoginFormTitle from "./LoginFormTitle";
-import FindAccountLink from "./FindAccountLink";
-import SignupLink from "./SignupLink";
-import { SocialLoginBtns } from "./SocialLoginBtns";
-import styled from "styled-components";
-import { useLoginDataFetch } from "../../hook/logic/login/useLoginDataFetch";
-import { useSocialLoginDataFetch } from "../../hook/logic/login/useSocialLoginDataFetch";
-import { useLoginEmailInput } from "../../hook/logic/login/useLoginEmailInput";
-import Loading from "../../component/commons/loading/Loading";
-import { useLoginPasswordInput } from "../../hook/logic/login/useLoginPasswordInput";
-
-export const Form = styled.form`
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  gap: 20px;
-  max-width: 400px;
-  width: calc(100% - 60px);
-  padding: 100px 40px 0 40px;
-  @media screen and (max-width: 431px) {
-    width: calc(100% - 40px);
-    padding: 30px 20px;
-  }
-`;
-export const InputWrapper = styled.div`
-  & > p {
-    margin-top: 10px;
-  }
-`;
-export const LoginBtn = styled.button`
-  width: 100%;
-  background-color: ${(props) => (props.disabled ? "#cbcbcb" : "gold")};
-  padding: 14px 0;
-  border-radius: 4px;
-  font-size: 18px;
-  font-weight: 500;
-  margin-top: 10px;
-  transition: all 0.5s;
-`;
+import { InputField } from "../../../component/commons/UI/InputField";
+import LoginFormTitle from "./LoginFormTitle/LoginFormTitle";
+import FindAccountLink from "../FindAccountLink/FindAccountLink";
+import SignupLink from "../SignupLink/SignupLink";
+import { SocialLoginBtns } from "../socialLoginBtn/SocialLoginBtns";
+import { useLoginDataFetch } from "../../../hook/logic/login/useLoginDataFetch";
+import { useSocialLoginDataFetch } from "../../../hook/logic/login/useSocialLoginDataFetch";
+import { useLoginEmailInput } from "../../../hook/logic/login/useLoginEmailInput";
+import Loading from "../../../component/commons/loading/Loading";
+import { useLoginPasswordInput } from "../../../hook/logic/login/useLoginPasswordInput";
+import { Form, LoginBtn } from './loginForm.style';
 
 export default function LoginForm() {
   const { emailValue, emailValid, onChangeEmail, emailRef } =

@@ -1,11 +1,6 @@
 import React from "react";
-import styled from "styled-components";
-import { resolveWebp } from "../../library/resolveWebp";
-
-export const Title = styled.h2`
-  text-align: center;
-  font-weight: 500;
-`;
+import { resolveWebp } from "../../../../library/resolveWebp";
+import { Title } from './loginFormTitle.styles';
 
 export default function LoginFormTitle() {
   return (
