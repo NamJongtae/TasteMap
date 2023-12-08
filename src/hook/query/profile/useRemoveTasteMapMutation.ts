@@ -8,7 +8,6 @@ export const useRemoveTasteMapMutation = () => {
   const { mutate } = useMutation({
     mutationFn: (mapData: IMapData) => removeTasteMap(mapData),
     onMutate: async (data) => {
-      console.log(data.title);
       await queryClient.cancelQueries({ queryKey: ["profile", "my"] });
       const previousProfile = await queryClient.getQueryData(["profile", "my"]);
       queryClient.setQueryData(
