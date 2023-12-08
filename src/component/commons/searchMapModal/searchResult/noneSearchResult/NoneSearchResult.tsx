@@ -4,8 +4,7 @@ import {
   NoSearchDataText,
   Strong,
   TipExample
-} from "./searchModal.styles";
-
+} from "./noneSearchResult.styles";
 interface IProps {
   searchKeyword: string;
 }

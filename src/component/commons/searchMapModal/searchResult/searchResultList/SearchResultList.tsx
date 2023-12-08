@@ -1,4 +1,4 @@
-import { IMapData } from '../../../api/apiType';
+import { IMapData } from "../../../../../api/apiType";
 import {
   Item,
   ItemList,
@@ -7,17 +7,17 @@ import {
   SearchItemText,
   SearchList,
   SelectBtn
-} from "./searchModal.styles";
+} from "./searchResultList.styles";
 
 interface IProps {
   data: IMapData[] | undefined;
-  selectedMapHandler: (item: IMapData) => void;
-  lastItemSelectBtnRef: React.RefObject<HTMLButtonElement>;
+  selectedResultMapHandler: (item: IMapData) => void;
+  lastResultSelectBtnRef: React.RefObject<HTMLButtonElement>;
 }
 export const SearchResultList = ({
   data,
-  selectedMapHandler,
-  lastItemSelectBtnRef
+  selectedResultMapHandler,
+  lastResultSelectBtnRef
 }: IProps) => {
   return (
     <SearchList>
@@ -48,8 +48,8 @@ export const SearchResultList = ({
             </ItemList>
             <SelectBtn
               type='button'
-              onClick={() => selectedMapHandler(item)}
-              ref={idx === data.length - 1 ? lastItemSelectBtnRef : null}
+              onClick={() => selectedResultMapHandler(item)}
+              ref={idx === data.length - 1 ? lastResultSelectBtnRef : null}
             >
               선택
             </SelectBtn>
