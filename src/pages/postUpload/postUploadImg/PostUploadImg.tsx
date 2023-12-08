@@ -1,23 +1,23 @@
 import React from "react";
+import ScrollLoading from "../../../component/commons/loading/ScrollLoading";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../store/store";
 import {
   Img,
   ImgItem,
   ImgList,
+  ImgSection,
+  ImgTitle,
   ImgUploadBtn,
-  RemoveImgBtn,
-  Section,
-  SectionTitle
-} from "./postUpload.styles";
-import ScrollLoading from "../../component/commons/loading/ScrollLoading";
-import { useSelector } from 'react-redux';
-import { RootState } from '../../store/store';
+  RemoveImgBtn
+} from "./postUploadImg.styles";
 
 interface IProps {
   onClickUploadImg: () => void;
   isImgLoading: boolean;
   imgListRef: React.RefObject<HTMLUListElement>;
   preview: string[];
-  onClickRemoveImg:  (idx: number) => void;
+  onClickRemoveImg: (idx: number) => void;
 }
 
 export default function PostUploadImg({
@@ -27,10 +27,12 @@ export default function PostUploadImg({
   preview,
   onClickRemoveImg
 }: IProps) {
-  const isWebpSupported = useSelector((state: RootState) => state.setting.isWebpSupported);
+  const isWebpSupported = useSelector(
+    (state: RootState) => state.setting.isWebpSupported
+  );
   return (
-    <Section>
-      <SectionTitle>이미지( 최대 5개 )</SectionTitle>
+    <ImgSection>
+      <ImgTitle>이미지( 최대 5개 )</ImgTitle>
       <ImgUploadBtn
         type='button'
         aria-label='이미지 업로드'
@@ -57,6 +59,6 @@ export default function PostUploadImg({
           })}
         </ImgList>
       )}
-    </Section>
+    </ImgSection>
   );
 }

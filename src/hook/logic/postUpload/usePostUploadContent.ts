@@ -1,19 +1,19 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { IPostData } from "../../../api/apiType";
-import { useTextarea } from "../profile/profileUpdate/useTextarea";
+import { useTextarea } from "../../useTextarea";
 
 interface IProps {
   isEdit: boolean;
   post: IPostData | undefined;
-  textareaRef: React.RefObject<HTMLTextAreaElement>;
 }
-export const usePostUploadContent = ({ isEdit, post, textareaRef }: IProps) => {
+export const usePostUploadContent = ({ isEdit, post }: IProps) => {
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   // content textarea 관리 customhook
   const {
     value: contentValue,
     setValue: setContentValue,
     onChangeValue: onChangeContentValue
-  } = useTextarea("", textareaRef);
+  } = useTextarea("", textareaRef, 30);
 
   /**
    * 게시물 수정시 기존 초기값 설정 */
@@ -28,6 +28,7 @@ export const usePostUploadContent = ({ isEdit, post, textareaRef }: IProps) => {
   }, [post]);
 
   return {
+    textareaRef,
     contentValue,
     setContentValue,
     onChangeContentValue,

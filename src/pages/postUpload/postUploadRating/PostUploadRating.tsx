@@ -1,12 +1,5 @@
 import React from "react";
-import {
-  Rating,
-  RatingCount,
-  RatingWrapper,
-  Section,
-  SectionTitle
-} from "./postUpload.styles";
-
+import { Rating, RatingCount, RatingSection, RatingTitle, RatingWrapper } from './postUploadRating.styles';
 interface IProps {
   ratingValue: number;
   setRatingValue: React.Dispatch<React.SetStateAction<number>>;
@@ -16,8 +9,8 @@ export default function PostUploadRating({
   setRatingValue
 }: IProps) {
   return (
-    <Section>
-      <SectionTitle>평점*</SectionTitle>
+    <RatingSection>
+      <RatingTitle>평점*</RatingTitle>
       <RatingWrapper>
         <Rating
           count={5}
@@ -28,6 +21,6 @@ export default function PostUploadRating({
         />
         {ratingValue !== 0 && <RatingCount>{ratingValue}</RatingCount>}
       </RatingWrapper>
-    </Section>
+    </RatingSection>
   );
 }

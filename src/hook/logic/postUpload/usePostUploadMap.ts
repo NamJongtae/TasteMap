@@ -15,7 +15,7 @@ export const usePostUploadMap = ({ isEdit, post }: IProps) => {
     (state: RootState) => state.search.isOpenSearchMapModal
   );
   const dispatch = useDispatch<AppDispatch>();
-  const selectedMap = useSelector(
+  const searchSelectedMap = useSelector(
     (state: RootState) => state.tasteMap.searchSelectedMap
   );
 
@@ -33,12 +33,13 @@ export const usePostUploadMap = ({ isEdit, post }: IProps) => {
     }
   };
 
+
   useEffect(() => {
     setUpdateInitalValue();
   }, [post]);
 
   return {
-    selectedMap,
+    searchSelectedMap,
     isOpenSearchMapModal,
     openSearchModal
   };

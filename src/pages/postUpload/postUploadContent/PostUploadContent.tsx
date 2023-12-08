@@ -1,5 +1,9 @@
 import React from "react";
-import { Section, SectionTitle, TextArea } from "./postUpload.styles";
+import {
+  ContentSection,
+  ContentTextArea,
+  ContentTitle
+} from "./postUploadContent.styles";
 
 interface IProps {
   textareaRef: React.RefObject<HTMLTextAreaElement>;
@@ -12,9 +16,9 @@ export default function PostUploadContent({
   onChangeContentValue
 }: IProps) {
   return (
-    <Section>
-      <SectionTitle>소개 내용*</SectionTitle>
-      <TextArea
+    <ContentSection>
+      <ContentTitle>소개 내용*</ContentTitle>
+      <ContentTextArea
         ref={textareaRef}
         placeholder='추천메뉴 / 맛 / 가격 / 팁 / 상세 위치 / 한줄 평 등'
         value={contentValue}
@@ -22,6 +26,6 @@ export default function PostUploadContent({
         maxLength={1000}
         rows={1}
       />
-    </Section>
+    </ContentSection>
   );
 }

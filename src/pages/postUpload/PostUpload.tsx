@@ -1,48 +1,58 @@
 import React from "react";
 import Header from "../../component/commons/layouts/header/Header";
-import SearchModal from "./MapSearchModal/SearchModal";
+import SearchModal from "../../component/commons/searchMapModal/SearchMapModal";
 import Loading from "../../component/commons/loading/Loading";
 import InvalidPage from "../../component/commons/invalidPage/InvalidPage";
-import { usePostUpload } from "../../hook/logic/postUpload/usePostUpload";
 import { HiddenUploadBtn, Wrapper } from "./postUpload.styles";
-import PostUploadImg from "./PostUploadImg";
-import PostUploadContent from "./PostUploadContent";
-import PostUploadRating from "./PostUploadRating";
-import { PostUploadMap } from "./PostUploadMap";
+import PostUploadImg from "./postUploadImg/PostUploadImg";
+import PostUploadContent from "./postUploadContent/PostUploadContent";
+import PostUploadRating from "./postUploadRating/PostUploadRating";
+import { PostUploadMap } from "./postUploadMap/PostUploadMap";
 import { usePostUploadImg } from "../../hook/logic/postUpload/usePostUploadImg";
 import { usePostUploadContent } from "../../hook/logic/postUpload/usePostUploadContent";
 import { usePostUploadRating } from "../../hook/logic/postUpload/usePostUploadRating";
 import { usePostUploadMap } from "../../hook/logic/postUpload/usePostUploadMap";
+import { usePostUpdateDataFetch } from "../../hook/logic/postUpload/usePostUpdateDataFetch";
+import { usePostUploadDataFetch } from "../../hook/logic/postUpload/usePostUploadDataFetch";
+import { useSubmitBtnController } from "../../hook/logic/postUpload/useSubmitBtnController";
+import { useLoadPostData } from "../../hook/logic/postUpload/useLoadPostData";
+import { useUnMountResetMap } from "../../hook/logic/postUpload/useUnMountResetMap";
 interface IProps {
   isEdit: boolean;
 }
 
+// 컴포넌트를 재활용하여 PostUpdate 페이지에 사용
+// isEdit props를 통해 update, upload 로직 구분
 export default function PostUpload({ isEdit }: IProps) {
-  // post upload 제어 관련 로직 customhook
-  const {
-    post,
-    onSubmitUpload,
-    searchSelectedMap,
-    textareaRef,
-    uploadPostLoading,
-    isDisabled,
-    loadPostLoading,
-    invalidUpdatePage
-  } = usePostUpload({ isEdit });
+  // 수정 페이지 일때 post Data 가져오기
+  const { post, loadPostLoading, invalidPostData } = useLoadPostData({
+    isEdit
+  });
 
   // post upload map 관련 로직 customhook
-  const { selectedMap, isOpenSearchMapModal, openSearchModal } =
+  const { searchSelectedMap, isOpenSearchMapModal, openSearchModal } =
     usePostUploadMap({ isEdit, post });
 
   // post upload rating 관련 로직 customhook
   const { ratingValue, setRatingValue } = usePostUploadRating({ isEdit, post });
 
   // post upload content 관련 로직 customhook
-  const { contentValue, onChangeContentValue } = usePostUploadContent({
-    isEdit,
-    post,
-    textareaRef
+  const { textareaRef, contentValue, onChangeContentValue } =
+    usePostUploadContent({
+      isEdit,
+      post
+    });
+
+  // postUpdate 데이터 처리
+  const { postUpdateHandler, updatePostLoading } = usePostUpdateDataFetch({
+    post
   });
+
+  // postUpload 데이터 처리
+  const { postUploadHandler, uploadPostLoading } = usePostUploadDataFetch();
+
+  // 업로드 버튼 제어
+  const { isDisabled } = useSubmitBtnController({ isEdit, post });
 
   // post upload img 관련 로직 customhook
   const {
@@ -59,11 +69,14 @@ export default function PostUpload({ isEdit }: IProps) {
     onClickRemoveImg
   } = usePostUploadImg({ isEdit, post });
 
-  if (loadPostLoading) {
+  // clean-up map data 초기화
+  useUnMountResetMap();
+
+  if (loadPostLoading || updatePostLoading) {
     return <Loading />;
   }
 
-  if (invalidUpdatePage) {
+  if (invalidPostData) {
     return (
       <>
         <Header type='upload' btnText='수정' disabled={true} />
@@ -78,16 +91,23 @@ export default function PostUpload({ isEdit }: IProps) {
         type='upload'
         btnText={isEdit ? "수정" : "업로드"}
         disabled={isDisabled(contentValue, preview, ratingValue)}
-        onSubmit={() =>
-          onSubmitUpload(
-            contentValue,
-            ratingValue,
-            selectedMap,
-            updateImgURL,
-            updateImgName,
-            imgFile
-          )
-        }
+        onSubmit={() => {
+          isEdit
+            ? postUpdateHandler(
+                contentValue,
+                ratingValue,
+                searchSelectedMap,
+                updateImgURL,
+                updateImgName,
+                imgFile
+              )
+            : postUploadHandler(
+                contentValue,
+                ratingValue,
+                searchSelectedMap,
+                imgFile
+              );
+        }}
       />
       <Wrapper ref={wrapperRef}>
         <h2 className='a11y-hidden'>
