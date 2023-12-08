@@ -1,14 +1,18 @@
 import { useEffect, useRef, useState } from "react";
 import { IMapData } from "../../../api/apiType";
 import { useLVMarkersAndCustomoverlays } from "./useLVMarkersAndCustomoverlays";
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../store/store';
 
 interface IProps {
   data: IMapData[];
   myMap: any;
-  clickMarkerData: IMapData;
 }
 
-export const useLoadView = ({ data, myMap, clickMarkerData }: IProps) => {
+export const useLoadView = ({ data, myMap }: IProps) => {
+  const clickMarkerData = useSelector(
+    (state: RootState) => state.tasteMap.clickMarkerData
+  );
   // roadview의 유무
   const [roadview, setRoadview] = useState(false);
   const [roadWalker, setRoadWalker] = useState<any>(null);
@@ -23,6 +27,21 @@ export const useLoadView = ({ data, myMap, clickMarkerData }: IProps) => {
       roadviewRef,
       setRoadWalker
     });
+
+  const resetRoadview = (position: any) => {
+    myMap.removeOverlayMapTypeId(window.kakao.maps.MapTypeId.ROADVIEW);
+    setRoadview(false);
+    myMap.setCenter(position);
+  };
+
+  const resetMarkers = () => {
+    if (roadMarker) {
+      roadMarker.setMap(null);
+    }
+    if (roadWalker) {
+      roadWalker.setMap(null);
+    }
+  };
 
   // 로드뷰를 비활성화 했을 때 roadWalker가 남아있을 경우 제거
   useEffect(() => {
@@ -65,8 +84,10 @@ export const useLoadView = ({ data, myMap, clickMarkerData }: IProps) => {
   return {
     roadview,
     setRoadview,
+    resetRoadview,
     roadWalker,
     roadMarker,
+    resetMarkers,
     roadViewMarkers,
     roadViewCutsomOverlays,
     roadviewRef,

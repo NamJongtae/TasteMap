@@ -78,6 +78,7 @@ export const useMarkerAndCustomoverlays = ({
       setCustomOverlays((prev) => [...prev, customOverlay]);
     }
   };
+  
 
   useEffect(() => {
     if (myMap === null || data.length === 0) {

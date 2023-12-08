@@ -1,22 +1,20 @@
 import React from "react";
-import "./kakaomap.styles.css";
+import "./mapWalker.style.css";
 import { IMapData } from "../../../api/apiType";
 import { useKakaomap } from "../../../hook/logic/kakaomap/useKakaomap";
 import {
   MapBtnWrapper,
   MapContainer,
-  NoKakaoMap,
-  NoKakaoMapText,
   RoadViewBtn,
-  Roadview,
-  RvWrapper,
   Title,
   Wrapper,
   ZoomInBtn,
   ZoomOutBtn
 } from "./kakaomap.styles";
-import { useSelector } from 'react-redux';
-import { RootState } from '../../../store/store';
+import { useSelector } from "react-redux";
+import { RootState } from "../../../store/store";
+import NoMapData from "./NoMapData/NoMapData";
+import Roadview from "./roadview/Roadview";
 declare global {
   interface Window {
     kakao: any;
@@ -72,19 +70,11 @@ function Kakaomap({ items, isTasteMapPage }: IProps) {
             </MapBtnWrapper>
           </MapContainer>
           {roadview && (
-            <RvWrapper ref={rvWrapperRef}>
-              <Roadview ref={roadviewRef}></Roadview>
-            </RvWrapper>
+            <Roadview rvWrapperRef={rvWrapperRef} roadviewRef={roadviewRef} />
           )}
         </Wrapper>
       ) : (
-        <NoKakaoMap $isWebpSupported={isWebpSupported}>
-          <NoKakaoMapText>
-            {isTasteMapPage
-              ? "저장된 맛집이 없습니다.\n맛집 추가을 통해 맛집을 추가해주세요."
-              : "선택된 맛집이 없습니다.\n맛집 검색을 통해 맛집을 선택해주세요."}
-          </NoKakaoMapText>
-        </NoKakaoMap>
+        <NoMapData isTasteMapPage={isTasteMapPage} />
       )}
     </>
   );

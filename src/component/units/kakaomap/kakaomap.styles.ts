@@ -38,16 +38,6 @@ export const NoKakaoMapText = styled.p`
   padding-top: 100px;
 `;
 
-export const RvWrapper = styled.div`
-  width: 100%;
-  height: 300px;
-`;
-
-export const Roadview = styled.div`
-  width: 100%;
-  height: 100%;
-`;
-
 export const MapBtnWrapper = styled.div`
   position: absolute;
   left: 15px;
