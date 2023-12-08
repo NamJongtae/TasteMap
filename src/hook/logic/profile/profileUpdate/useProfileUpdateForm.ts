@@ -1,5 +1,5 @@
 import { UseMutateFunction } from "@tanstack/react-query";
-import { useTextarea } from "./useTextarea";
+import { useTextarea } from "../../../useTextarea";
 import { IMyProfileData, IProfileUpdateData } from "../../../../api/apiType";
 import { useProfileUpdateImg } from "./useProfileUpdateImg";
 import { useValidationInput } from "../../../useValidationInput";
@@ -34,7 +34,7 @@ export const useProfileUpdateForm = ({
     onChangeValue: onChangeIntroduce,
     resizeTextAreaHeight,
     preventKeydownEnter
-  } = useTextarea(myProfile.introduce, textareaRef);
+  } = useTextarea(myProfile.introduce, textareaRef, 30);
 
   const {
     imgInputRef,

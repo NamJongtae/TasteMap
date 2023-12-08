@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { useTextarea } from "../profile/profileUpdate/useTextarea";
+import { useTextarea } from "../../useTextarea";
 
 export const useProfileSettingIntroduceInput = () => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -9,7 +9,7 @@ export const useProfileSettingIntroduceInput = () => {
     onChangeValue: onChangeIntroduce,
     setValue: setIntroduceValue,
     preventKeydownEnter
-  } = useTextarea("", textareaRef);
+  } = useTextarea("", textareaRef, 30);
 
   return {
     introduceValue,
