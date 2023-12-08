@@ -1,5 +1,4 @@
 import React from "react";
-import ReactDOM from "react-dom";
 import {
   CloseBtn,
   FollowModalWrapper,
@@ -9,8 +8,8 @@ import {
 import FollowList from "./FollowList";
 import { optModalTabFocus } from "../../../library/optModalTabFocus";
 import { useSupportedWebp } from "../../../hook/useSupportedWebp";
-import { Modal } from "../../../component/commons/UI/Modal";
 import { useFollowModal } from "../../../hook/logic/followModal/useFollowModal";
+import { PortalModal } from "../../../component/commons/UI/PortalModal";
 
 interface IProps {
   isFollower: boolean;
@@ -38,39 +37,37 @@ const ModalPortal = ({
   isWebpSupported
 }: IModalProps) => {
   return (
-    <Modal closeModalHanlder={closAndAnimationeModal}>
-      <FollowModalWrapper
-        ref={modalRef}
-        onKeyDown={(e: React.KeyboardEvent<HTMLDivElement>) => {
-          if (e.keyCode === 27) {
-            closAndAnimationeModal();
-          }
+    <FollowModalWrapper
+      ref={modalRef}
+      onKeyDown={(e: React.KeyboardEvent<HTMLDivElement>) => {
+        if (e.keyCode === 27) {
+          closAndAnimationeModal();
+        }
+      }}
+    >
+      <ModalTitleBar>
+        <ModalTitle>{isFollower ? "팔로워" : "팔로잉"}</ModalTitle>
+      </ModalTitleBar>
+      <FollowList
+        isFollower={isFollower}
+        followListRef={followListRef}
+        closeBtnRef={closeBtnRef}
+        firstItemLinkRef={firstItemLinkRef}
+        lastItemFollowBtnRef={lastItemFollowBtnRef}
+      />
+      <CloseBtn
+        onClick={closAndAnimationeModal}
+        ref={closeBtnRef}
+        onKeyDown={(e: React.KeyboardEvent<HTMLButtonElement>) => {
+          optModalTabFocus(
+            e,
+            lastItemFollowBtnRef.current,
+            firstItemLinkRef.current
+          );
         }}
-      >
-        <ModalTitleBar>
-          <ModalTitle>{isFollower ? "팔로워" : "팔로잉"}</ModalTitle>
-        </ModalTitleBar>
-        <FollowList
-          isFollower={isFollower}
-          followListRef={followListRef}
-          closeBtnRef={closeBtnRef}
-          firstItemLinkRef={firstItemLinkRef}
-          lastItemFollowBtnRef={lastItemFollowBtnRef}
-        />
-        <CloseBtn
-          onClick={closAndAnimationeModal}
-          ref={closeBtnRef}
-          onKeyDown={(e: React.KeyboardEvent<HTMLButtonElement>) => {
-            optModalTabFocus(
-              e,
-              lastItemFollowBtnRef.current,
-              firstItemLinkRef.current
-            );
-          }}
-          $isWebpSupported={isWebpSupported}
-        />
-      </FollowModalWrapper>
-    </Modal>
+        $isWebpSupported={isWebpSupported}
+      />
+    </FollowModalWrapper>
   );
 };
 
@@ -87,20 +84,20 @@ export default function FollowModal({ isFollower }: IProps) {
     isFollower
   });
   return (
-    <>
-      {ReactDOM.createPortal(
-        <ModalPortal
-          modalRef={modalRef}
-          followListRef={followListRef}
-          closeBtnRef={closeBtnRef}
-          firstItemLinkRef={firstItemLinkRef}
-          lastItemFollowBtnRef={lastItemFollowBtnRef}
-          closAndAnimationeModal={closAndAnimationeModal}
-          isFollower={isFollower}
-          isWebpSupported={isWebpSupported}
-        />,
-        document.getElementById("modal-root") as HTMLDivElement
-      )}
-    </>
+    <PortalModal
+      closeModalHandler={closAndAnimationeModal}
+      targetId='modal-root'
+    >
+      <ModalPortal
+        modalRef={modalRef}
+        followListRef={followListRef}
+        closeBtnRef={closeBtnRef}
+        firstItemLinkRef={firstItemLinkRef}
+        lastItemFollowBtnRef={lastItemFollowBtnRef}
+        closAndAnimationeModal={closAndAnimationeModal}
+        isFollower={isFollower}
+        isWebpSupported={isWebpSupported}
+      />
+    </PortalModal>
   );
 }
