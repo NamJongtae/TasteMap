@@ -16,7 +16,7 @@ import {
   RemoveBtn
 } from "./myTasteMap.styles";
 import { useSupportedWebp } from "../../../hook/useSupportedWebp";
-import { useMyTasteMapItem } from "../../../hook/logic/layouts/useMyTasetMapItem";
+import { useMyTasteMapItem } from "../../../hook/logic/MyTasetMap/useMyTasteMapItem";
 
 interface IProps {
   item: IMapData;
