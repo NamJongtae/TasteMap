@@ -1,16 +1,16 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import { AppDispatch, RootState } from "../../../store/store";
+import { AppDispatch, RootState } from "../../../../store/store";
 import { useInView } from "react-intersection-observer";
 import { useEffect, useRef } from "react";
 import { InfiniteData, useQueryClient } from "@tanstack/react-query";
-import { useCommentInfiniteQuery } from "../../query/post/comment/useCommentInfiniteQuery";
-import { useReplyInfiniteQuery } from "../../query/post/reply/useReplyInfiniteQuery";
-import { sweetToast } from "../../../library/sweetAlert/sweetAlert";
+import { useCommentInfiniteQuery } from "../../../query/post/comment/useCommentInfiniteQuery";
+import { useReplyInfiniteQuery } from "../../../query/post/reply/useReplyInfiniteQuery";
+import { sweetToast } from "../../../../library/sweetAlert/sweetAlert";
 import { DocumentData, QuerySnapshot } from "firebase/firestore";
-import { ICommentData, IPostData, IReplyData } from "../../../api/apiType";
-import { commentSlice } from "../../../slice/commentSlice";
-import { replySlice } from "../../../slice/replySlice";
+import { ICommentData, IPostData, IReplyData } from "../../../../api/apiType";
+import { commentSlice } from "../../../../slice/commentSlice";
+import { replySlice } from "../../../../slice/replySlice";
 
 interface IProps {
   isReply: boolean;
@@ -26,7 +26,7 @@ type InfiniteCommentsType = {
   data: ICommentData[];
 };
 
-export const useCommentList = ({ isReply, postType }: IProps) => {
+export const useCommentsInfiniteScroll = ({ isReply, postType }: IProps) => {
   const { uid } = useParams();
   const dispatch = useDispatch<AppDispatch>();
   // 현재 댓글들의 게시물 아이디
@@ -63,14 +63,13 @@ export const useCommentList = ({ isReply, postType }: IProps) => {
     isRefetchError
   } = infiniteQueries[infiniteQueriesType]();
 
-  // isReply props 통해 데이터를 다르게 처리
   useEffect(() => {
     // 댓글 모달인 경우
-
     if ((hasNextPage && inview && data?.length) || 0 >= pagePerData) {
       fetchNextPage();
     }
   }, [inview, isReply, hasNextPage]);
+
   const handlerRefresh = () => {
     refetch();
   };

@@ -1,22 +1,24 @@
 import React from "react";
-import { useCommentList } from "../../../hook/logic/comment/useCommentList";
-import CommentItem from "./CommentItem";
-import ScrollLoading from "../../commons/loading/ScrollLoading";
-import NoData from "../../commons/noData/NoData";
+import CommentItem from "./commentItem/CommentItem";
+import ScrollLoading from "../../../../commons/loading/ScrollLoading";
+import NoData from "../../../../commons/noData/NoData";
+import { ICommentData, IReplyData } from "../../../../../api/apiType";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../../../store/store";
+import { useCommentsInfiniteScroll } from "../../../../../hook/logic/comment/commentList/useCommentsInfiniteScroll";
 import {
   CommentWrpper,
   InfinityScrollTarget,
   RefreshBtn
-} from "./comment.styles";
-import { ICommentData, IReplyData } from "../../../api/apiType";
-import { useSelector } from 'react-redux';
-import { RootState } from '../../../store/store';
+} from "./commentList.styles";
 interface IProps {
   isReply: boolean;
   closeBtnRef: React.RefObject<HTMLButtonElement>;
   textareaRef: React.RefObject<HTMLTextAreaElement>;
   firstItemLinkRef: React.RefObject<HTMLAnchorElement>;
   postType: "HOME" | "FEED" | "PROFILE";
+  openReplyModalHandler: (data: ICommentData) => void;
+  closeNoHistoryBackModalHandler: () => void;
 }
 
 export default function CommentList({
@@ -24,9 +26,13 @@ export default function CommentList({
   closeBtnRef,
   textareaRef,
   firstItemLinkRef,
-  postType
+  postType,
+  openReplyModalHandler,
+  closeNoHistoryBackModalHandler
 }: IProps) {
-  const isWebpSupported = useSelector((state: RootState) => state.setting.isWebpSupported);
+  const isWebpSupported = useSelector(
+    (state: RootState) => state.setting.isWebpSupported
+  );
   const {
     isError,
     loadDataLoading,
@@ -36,7 +42,7 @@ export default function CommentList({
     infiniteScrollRef,
     loadMoreDataLoading,
     commentListRef
-  } = useCommentList({ isReply, postType });
+  } = useCommentsInfiniteScroll({ isReply, postType });
 
   if (isError) {
     return null;
@@ -76,6 +82,8 @@ export default function CommentList({
               textareaRef={textareaRef}
               firstItemLinkRef={firstItemLinkRef}
               postType={postType}
+              openReplyModalHandler={openReplyModalHandler}
+              closeNoHistoryBackModalHandler={closeNoHistoryBackModalHandler}
             />
           );
         })}

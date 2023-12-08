@@ -1,52 +1,57 @@
 import React, { SyntheticEvent } from "react";
-import { useCommentModal } from "../../../hook/logic/comment/useCommentModal";
-import CommentList from "./CommentList";
-import CommentTextarea from "./CommentTextarea";
+import CommentList from "./commentList/CommentList";
+import CommentTextarea from "./textAreaField/commentTextArea/CommentTextarea";
+import { optModalTabFocus } from "../../../../library/optModalTabFocus";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../../store/store";
+import { resolveWebp } from "../../../../library/resolveWebp";
+import { ICommentData } from "../../../../api/apiType";
 import {
   CloseBtn,
-  CommentModalWrapper,
   CommentTextAreaWrapper,
   ModalTitle,
   ModalTitleBar,
+  ModalWrapper,
   UserImg
-} from "./comment.styles";
-import { optModalTabFocus } from "../../../library/optModalTabFocus";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../store/store";
-import { resolveWebp } from "../../../library/resolveWebp";
+} from "./commentModal.styles";
 
 interface IProps {
+  closeCommentModal: () => void;
+  closeMoveLeftReplyModal: () => void;
   commentModalRef: React.RefObject<HTMLDivElement>;
   replyModalRef: React.RefObject<HTMLDivElement>;
+  closeBtnRef: React.RefObject<HTMLButtonElement>;
+  textareaRef: React.RefObject<HTMLTextAreaElement>;
+  firstItemLinkRef: React.RefObject<HTMLAnchorElement>;
   isReply: boolean;
   postType: "HOME" | "FEED" | "PROFILE";
+  openReplyModalHandler: (data: ICommentData) => void;
+  closeNoHistoryBackModalHandler: () => void;
 }
 
 export default function CommentModal({
+  closeCommentModal,
+  closeMoveLeftReplyModal,
   commentModalRef,
   replyModalRef,
+  closeBtnRef,
+  textareaRef,
+  firstItemLinkRef,
   isReply,
-  postType
+  postType,
+  openReplyModalHandler,
+  closeNoHistoryBackModalHandler
 }: IProps) {
   const isWebpSupported = useSelector(
     (state: RootState) => state.setting.isWebpSupported
   );
-  const {
-    myInfo,
-    parentCommentId,
-    closeCommentModal,
-    closeBtnRef,
-    textareaRef,
-    firstItemLinkRef
-  } = useCommentModal({
-    commentModalRef,
-    replyModalRef,
-    isReply,
-    postType
-  });
+  const myInfo = useSelector((state: RootState) => state.user.myInfo);
+  const parentCommentId = useSelector(
+    (state: RootState) => state.reply.parentCommentId
+  );
 
   return (
-    <CommentModalWrapper
+    <ModalWrapper
       ref={isReply ? replyModalRef : commentModalRef}
       isReply={isReply}
     >
@@ -60,6 +65,8 @@ export default function CommentModal({
         textareaRef={textareaRef}
         firstItemLinkRef={firstItemLinkRef}
         postType={postType}
+        openReplyModalHandler={openReplyModalHandler}
+        closeNoHistoryBackModalHandler={closeNoHistoryBackModalHandler}
       />
       <CommentTextAreaWrapper>
         <UserImg
@@ -85,7 +92,7 @@ export default function CommentModal({
       <CloseBtn
         type='button'
         aria-label='닫기'
-        onClick={closeCommentModal}
+        onClick={isReply ? closeMoveLeftReplyModal : closeCommentModal}
         isReply={isReply}
         ref={closeBtnRef}
         onKeyDown={(e: React.KeyboardEvent<HTMLButtonElement>) => {
@@ -93,6 +100,6 @@ export default function CommentModal({
         }}
         $isWebpSupported={isWebpSupported}
       />
-    </CommentModalWrapper>
+    </ModalWrapper>
   );
 }

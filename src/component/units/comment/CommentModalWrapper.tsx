@@ -1,38 +1,57 @@
 import React from "react";
-import ReactDOM from "react-dom";
-import CommentModal from "./CommentModal";
-import { Modal } from "../../commons/UI/Modal";
-import { useCommentWrapper } from "../../../hook/logic/comment/useCommentWrapper";
+import CommentModal from "./commentModal/CommentModal";
+import { useCommentModalController } from "../../../hook/logic/comment/useCommentModalController";
+import { ICommentData } from "../../../api/apiType";
+import { PortalModal } from "../../commons/UI/PortalModal";
 
 interface IProps {
   postType: "HOME" | "FEED" | "PROFILE";
 }
 
 interface IModalProps {
-  closeCommentModal: () => void;
   isOpenCommentModal: boolean;
   isOpenReplyModal: boolean;
+  closeCommentModal: () => void;
+  closeMoveLeftReplyModal: () => void;
+  openReplyModalHandler: (data: ICommentData) => void;
+  closeNoHistoryBackModalHandler: () => void;
   commentModalRef: React.RefObject<HTMLDivElement>;
   replyModalRef: React.RefObject<HTMLDivElement>;
+  closeBtnRef: React.RefObject<HTMLButtonElement>;
+  textareaRef: React.RefObject<HTMLTextAreaElement>;
+  firstItemLinkRef: React.RefObject<HTMLAnchorElement>;
   postType: "HOME" | "FEED" | "PROFILE";
 }
 
 const ModalPortal = ({
-  closeCommentModal,
   isOpenCommentModal,
   isOpenReplyModal,
+  closeCommentModal,
+  closeMoveLeftReplyModal,
+  openReplyModalHandler,
+  closeNoHistoryBackModalHandler,
   commentModalRef,
   replyModalRef,
+  closeBtnRef,
+  textareaRef,
+  firstItemLinkRef,
   postType
 }: IModalProps) => {
   return (
-    <Modal closeModalHanlder={closeCommentModal}>
+    <>
       {isOpenCommentModal && (
         <CommentModal
           commentModalRef={commentModalRef}
           replyModalRef={replyModalRef}
           isReply={false}
+          closeCommentModal={closeCommentModal}
+          closeMoveLeftReplyModal={closeMoveLeftReplyModal}
+          closeBtnRef={closeBtnRef}
+          textareaRef={textareaRef}
+          firstItemLinkRef={firstItemLinkRef}
           postType={postType}
+          openReplyModalHandler={openReplyModalHandler}
+          closeNoHistoryBackModalHandler={closeNoHistoryBackModalHandler}
         />
       )}
       {isOpenReplyModal && (
@@ -40,10 +59,17 @@ const ModalPortal = ({
           commentModalRef={commentModalRef}
           replyModalRef={replyModalRef}
           isReply={true}
+          closeCommentModal={closeCommentModal}
+          closeMoveLeftReplyModal={closeMoveLeftReplyModal}
+          closeBtnRef={closeBtnRef}
+          textareaRef={textareaRef}
+          firstItemLinkRef={firstItemLinkRef}
           postType={postType}
+          openReplyModalHandler={openReplyModalHandler}
+          closeNoHistoryBackModalHandler={closeNoHistoryBackModalHandler}
         />
       )}
-    </Modal>
+    </>
   );
 };
 
@@ -52,23 +78,33 @@ export default function CommentModalWrapper({ postType }: IProps) {
     isOpenCommentModal,
     isOpenReplyModal,
     closeCommentModal,
+    closeMoveLeftReplyModal,
+    openReplyModalHandler,
+    closeAllModalHandler,
+    closeNoHistoryBackModalHandler,
     commentModalRef,
-    replyModalRef
-  } = useCommentWrapper();
+    replyModalRef,
+    closeBtnRef,
+    textareaRef,
+    firstItemLinkRef
+  } = useCommentModalController({ postType });
 
   return (
-    <>
-      {ReactDOM.createPortal(
-        <ModalPortal
-          closeCommentModal={closeCommentModal}
-          isOpenCommentModal={isOpenCommentModal}
-          isOpenReplyModal={isOpenReplyModal}
-          commentModalRef={commentModalRef}
-          replyModalRef={replyModalRef}
-          postType={postType}
-        />,
-        document.getElementById("modal-root") as HTMLDivElement
-      )}
-    </>
+    <PortalModal closeModalHandler={closeAllModalHandler} targetId='modal-root'>
+      <ModalPortal
+        isOpenCommentModal={isOpenCommentModal}
+        isOpenReplyModal={isOpenReplyModal}
+        closeCommentModal={closeCommentModal}
+        closeMoveLeftReplyModal={closeMoveLeftReplyModal}
+        openReplyModalHandler={openReplyModalHandler}
+        closeNoHistoryBackModalHandler={closeNoHistoryBackModalHandler}
+        commentModalRef={commentModalRef}
+        replyModalRef={replyModalRef}
+        closeBtnRef={closeBtnRef}
+        textareaRef={textareaRef}
+        firstItemLinkRef={firstItemLinkRef}
+        postType={postType}
+      />
+    </PortalModal>
   );
 }
