@@ -4,7 +4,6 @@ import Kakaomap from "../../../kakaomap/Kakaomap";
 import ImgSlider from "../../../imgSlider/ImgSlider";
 import { usePostTasteMap } from "../../../../../hook/logic/post/postItem/usePostTasteMap";
 import { usePostMoreTextBtn } from "../../../../../hook/logic/post/postItem/usePostMoreTextBtn";
-import { useKakaomapLazy } from "../../../../../hook/logic/post/postItem/useKakaomapLazy";
 import { IMyProfileData, IPostData } from "../../../../../api/apiType";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../../store/store";
@@ -14,7 +13,6 @@ import {
   ContentWrapper,
   KakaoMapWrapper,
   MoreContentBtn,
-  Placeholder,
   StoredMapBtn
 } from "../postItem.styles";
 
@@ -40,8 +38,6 @@ export default function ContentSection({
   const { isShowMoreTextBtn, contentTextRef, openMoreTextHandler } =
     usePostMoreTextBtn();
 
-  const { kakaomapRef, inview } = useKakaomapLazy();
-
   return (
     <ContentWrapper>
       <h3 className='a11y-hidden'>내용</h3>
@@ -60,7 +56,7 @@ export default function ContentSection({
         </>
       )}
 
-      <KakaoMapWrapper contentType={contentType} ref={kakaomapRef}>
+      <KakaoMapWrapper contentType={contentType}>
         {contentType === "MAP" && (
           <StoredMapBtn
             type='button'
@@ -75,12 +71,9 @@ export default function ContentSection({
           {contentType === "MAP" ? "지도" : "이미지"}
         </h3>
         {contentType === "MAP"
-          ? data.mapData?.mapx &&
-            (inview ? (
+          ? data.mapData?.mapx && (
               <Kakaomap items={[{ ...data.mapData }]} isTasteMapPage={false} />
-            ) : (
-              <Placeholder />
-            ))
+            )
           : data.imgURL &&
             data.imgURL.length > 0 && <ImgSlider imgArray={data.imgURL} />}
       </KakaoMapWrapper>
