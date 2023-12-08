@@ -4,25 +4,38 @@ import {
   Username,
   UserImg,
   UserInfoWrapper,
-  UserProfileLink,
+  UserProfileLink
 } from "./userInfo.styles";
 import { resolveWebp } from "../../../library/resolveWebp";
 interface IProps {
   userData: Omit<IUserData, "email">;
+  onClick?: React.MouseEventHandler<HTMLAnchorElement>;
+  replace?: boolean;
   data?: IPostData | ICommentData;
-  children: React.ReactNode;
+  children?: React.ReactNode;
+  userLinkRef?: React.RefObject<HTMLAnchorElement>;
+  onKeyDown?: React.KeyboardEventHandler<HTMLAnchorElement>;
 }
 
 export default function UserInfo({
   userData,
   data,
   children,
+  replace,
+  onClick,
+  userLinkRef,
+  onKeyDown
 }: IProps) {
-
   return (
     <UserInfoWrapper>
       <h2 className='a11y-hidden'>유저 프로필</h2>
-      <UserProfileLink to={`/profile/${data?.uid || userData.uid}`}>
+      <UserProfileLink
+        to={`/profile/${data?.uid || userData.uid}`}
+        ref={userLinkRef}
+        replace={replace}
+        onClick={onClick}
+        onKeyDown={onKeyDown}
+      >
         <UserImg
           src={data?.photoURL || userData.photoURL}
           alt='프로필 이미지'
