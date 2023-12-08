@@ -1,10 +1,9 @@
 import React from "react";
 import { useMyTasteMap } from "../../../hook/logic/MyTasetMap/useMyTasteMap";
-import { SearchModalBtn } from "../../postUpload/postUpload.styles";
 import Header from "../../../component/commons/layouts/header/Header";
 import Kakaomap from "../../../component/units/kakaomap/Kakaomap";
 import MyTasteMapList from "./MyTasteMapList";
-import SearchModal from "../../postUpload/MapSearchModal/SearchModal";
+import SearchModal from "../../../component/commons/searchMapModal/SearchMapModal";
 import Loading from "../../../component/commons/loading/Loading";
 import { EMapContentType } from "../../../slice/tasteMapSlice";
 import {
@@ -21,13 +20,16 @@ import {
   MapBtn,
   RemoveBtn,
   ShareBtn,
-  Wrapper
+  Wrapper,
+  SearchModalBtn,
 } from "./myTasteMap.styles";
 import { IMyProfileData } from "../../../api/apiType";
-import { useSelector } from 'react-redux';
-import { RootState } from '../../../store/store';
+import { useSelector } from "react-redux";
+import { RootState } from "../../../store/store";
 export default function MyTasteMap() {
-  const isWebpSupported = useSelector((state: RootState) => state.setting.isWebpSupported);
+  const isWebpSupported = useSelector(
+    (state: RootState) => state.setting.isWebpSupported
+  );
   const {
     myProfile,
     onClickMapType,
