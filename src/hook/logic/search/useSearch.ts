@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux";
 import { RootState } from "../../../store/store";
-import { useSearchQuery } from "../../query/search/useSearchQuery";
+import { useSearchUserInfiniteQuery } from "../../query/search/useSearchUserInfiniteQuery";
 import { useMyProfileQuery } from "../../query/profile/useMyProfileQuery";
 import { useEffect } from "react";
 import { sweetToast } from "../../../library/sweetAlert/sweetAlert";
@@ -20,7 +20,7 @@ export const useSearch = () => {
     refetch,
     isError,
     error
-  } = useSearchQuery(searchKeyword, 20);
+  } = useSearchUserInfiniteQuery(searchKeyword, 20);
 
   const myInfo = useSelector((state: RootState) => state.user.myInfo);
   const queryClient = useQueryClient();

@@ -1,11 +1,14 @@
-import { Link } from "react-router-dom";
 import styled from "styled-components";
+
+// ----------------Search style----------------
 
 export const Wrapper = styled.main`
   width: 100%;
   height: 100%;
   padding: 20px;
 `;
+
+// ----------------SearchInput style----------------
 
 export const SearchInputWrapper = styled.div`
   padding: 5px 3px;
@@ -36,14 +39,23 @@ export const Input = styled.input`
   }
 `;
 
-export const SearchUl = styled.ul`
+// ----------------SearchResultList style----------------
+
+export const SearchList = styled.ul`
   width: 100%;
   height: 100%;
   max-width: 360px;
   margin: 0 auto;
 `;
 
-export const SearchLi = styled.li`
+export const InfinityScrollTarget = styled.li`
+  position: relative;
+  bottom: 20px;
+`;
+
+// ----------------SearchResultItem style----------------
+
+export const SearchItem = styled.li`
   width: 100%;
   height: 100%;
   display: flex;
@@ -52,24 +64,7 @@ export const SearchLi = styled.li`
   margin-bottom: 20px;
 `;
 
-export const UserProfileLink = styled(Link)`
-  display: flex;
-  align-items: center;
-  gap: 15px;
-`;
-
-export const Username = styled.span`
-  font-size: 16px;
-  font-weight: 500;
-`;
-
-export const UserImg = styled.img`
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  background-color: #f2f2f2;
-  padding: 3px;
-`;
+// ----------------FollowButton style----------------
 
 export const FollowBtn = styled.button`
   border-radius: 20px;
@@ -78,18 +73,19 @@ export const FollowBtn = styled.button`
   font-size: 12px;
   border: none;
   width: 77px;
-  color: ${(props: { isFollow: boolean }) =>
-    props.isFollow ? "#767676" : "#fff"};
-  background-color: ${(props: { isFollow: boolean }) =>
-    props.isFollow ? "" : "#208AFA"};
+  color: 767676;
 `;
 
-export const InfinityScrollTarget = styled.li`
-  position: relative;
-  bottom: 20px;
+// ----------------UnfollowButton style----------------
+
+export const UnfollowBtn = styled(FollowBtn)`
+  color: #fff;
+  background-color: #208afa;
 `;
 
-export const NoUserData = styled.div`
+// ----------------NoSearchResult style----------------
+
+export const NoResultWrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -97,7 +93,7 @@ export const NoUserData = styled.div`
   margin-top: 30px;
 `;
 
-export const NoUserText = styled.p`
+export const NoResultText = styled.p`
   font-size: 16px;
   font-weight: 500;
   color: #888;
@@ -106,6 +102,6 @@ export const NoUserText = styled.p`
   line-height: 1.3;
 `;
 
-export const NoUserKeyword = styled.strong`
+export const NoResultKeyword = styled.strong`
   color: #555;
 `;

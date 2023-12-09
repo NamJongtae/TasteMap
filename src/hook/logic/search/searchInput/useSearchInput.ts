@@ -1,8 +1,8 @@
 import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../../../store/store";
+import { AppDispatch, RootState } from "../../../../store/store";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { debounce } from "lodash";
-import { searchSlice } from "../../../slice/searchSlice";
+import { searchSlice } from "../../../../slice/searchSlice";
 
 export const useSearchInput = () => {
   const dispatch = useDispatch<AppDispatch>();

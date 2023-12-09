@@ -12,7 +12,7 @@ interface InfiniteSearchType {
   data: IUserProfileData[];
 }
 
-export const useSearchQuery = (keyword: string, pagePerData: number) => {
+export const useSearchUserInfiniteQuery = (keyword: string, pagePerData: number) => {
   const {
     data,
     hasNextPage,
