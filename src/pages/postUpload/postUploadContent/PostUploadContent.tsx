@@ -1,9 +1,9 @@
 import React from "react";
 import {
-  ContentSection,
   ContentTextArea,
-  ContentTitle
-} from "./postUploadContent.styles";
+  ContentTitle,
+  ContentSection
+} from "../postUpload.styles";
 
 interface IProps {
   textareaRef: React.RefObject<HTMLTextAreaElement>;

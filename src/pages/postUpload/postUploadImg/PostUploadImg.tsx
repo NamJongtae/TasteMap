@@ -2,15 +2,7 @@ import React from "react";
 import ScrollLoading from "../../../component/commons/loading/ScrollLoading";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../store/store";
-import {
-  Img,
-  ImgItem,
-  ImgList,
-  ImgSection,
-  ImgTitle,
-  ImgUploadBtn,
-  RemoveImgBtn
-} from "./postUploadImg.styles";
+import { Img, ImgItem, ImgList, ImgSection, ImgTitle, ImgUploadBtn, RemoveImgBtn } from '../postUpload.styles';
 
 interface IProps {
   onClickUploadImg: () => void;

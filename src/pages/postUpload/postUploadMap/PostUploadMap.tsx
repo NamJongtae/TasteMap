@@ -2,7 +2,7 @@ import { useSelector } from "react-redux";
 import { IMapData } from "../../../api/apiType";
 import Kakaomap from "../../../component/units/kakaomap/Kakaomap";
 import { RootState } from "../../../store/store";
-import { MapSection, MapTitle, SearchModalBtn } from "./postUploadMap.styles";
+import { MapSection, MapTitle, SearchModalBtn } from '../postUpload.styles';
 
 interface IProps {
   openSearchModal: () => void;

@@ -1,9 +1,17 @@
 import React from "react";
-import { Rating, RatingCount, RatingSection, RatingTitle, RatingWrapper } from './postUploadRating.styles';
+import {
+  Rating,
+  RatingCount,
+  RatingSection,
+  RatingTitle,
+  RatingWrapper
+} from "../postUpload.styles";
+
 interface IProps {
   ratingValue: number;
   setRatingValue: React.Dispatch<React.SetStateAction<number>>;
 }
+
 export default function PostUploadRating({
   ratingValue,
   setRatingValue
