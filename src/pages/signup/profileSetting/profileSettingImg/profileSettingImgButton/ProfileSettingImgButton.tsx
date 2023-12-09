@@ -3,7 +3,7 @@ import ScrollLoading from "../../../../../component/commons/loading/ScrollLoadin
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../../store/store";
 import { resolveWebp } from "../../../../../library/resolveWebp";
-import { ProfileImg, ProfileImgButton, ProfileImgButtonWrapper, ProfileImgResetBtn } from './profileSettingImgButton.styles';
+import { ProfileImg, ProfileImgButton, ProfileImgButtonWrapper, ProfileImgResetBtn } from '../../../signup.styles';
 
 interface IProps {
   isImgLoading: boolean;

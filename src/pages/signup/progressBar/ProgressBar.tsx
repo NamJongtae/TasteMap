@@ -1,7 +1,7 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../store/store";
-import { PercentageBar, ProgressCheck, ProgressCheckText, ProgressCheckWrapper, ProgressTitle, ProgressWrapper } from './ProgressBar.styles';
+import { PercentageBar, ProgressCheck, ProgressCheckText, ProgressCheckWrapper, ProgressTitle, ProgressWrapper } from '../signup.styles';
 
 interface IProps {
   percentage: string;

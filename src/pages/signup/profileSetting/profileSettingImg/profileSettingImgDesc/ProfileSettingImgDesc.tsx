@@ -1,5 +1,5 @@
 import React from "react";
-import { ProfileImgDescItem, ProfileImgDescList } from './profileSettingImgDesc.styles';
+import { ProfileImgDescItem, ProfileImgDescList } from "../../../signup.styles";
 
 export default function ProfileSettingImgDesc() {
   return (

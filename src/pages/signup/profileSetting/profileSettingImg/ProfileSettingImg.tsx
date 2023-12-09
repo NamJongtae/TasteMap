@@ -1,7 +1,7 @@
 import React from "react";
 import ProfileSettingImgButton from "./profileSettingImgButton/ProfileSettingImgButton";
 import ProfileSettingImgDesc from "./profileSettingImgDesc/ProfileSettingImgDesc";
-import { ProfileImgInput, ProfileImgLabel, ProfileImgWrapper } from '../../../profile/profileUpdateModal/ProfileUpdateModal.styles';
+import { ProfileImgInput, ProfileImgLabel, ProfileImgWrapper } from '../../signup.styles';
 
 interface IProps {
   isImgLoading: boolean;

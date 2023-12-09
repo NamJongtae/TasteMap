@@ -1,35 +1,6 @@
 import React from "react";
 import { InputField } from "../../../component/commons/UI/InputField";
-import styled from "styled-components";
-
-const SignupForm = styled.form`
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  width: 100%;
-`;
-
-const SignupBtn = styled.button`
-  width: 100%;
-  background-color: ${(props) => (props.disabled ? "#cbcbcb" : "gold")};
-  cursor: ${(props) => (props.disabled ? "default" : "cursor")};
-  padding: 14px 0;
-  border-radius: 4px;
-  font-size: 18px;
-  font-weight: 500;
-  margin-top: 10px;
-  transition: all 0.5s;
-`;
-
-const CancelBtn = styled.button`
-  width: 100%;
-  background-color: #eee;
-  padding: 14px 0;
-  border-radius: 4px;
-  font-size: 16px;
-  font-weight: 500;
-  color: #111;
-`;
+import { CancelBtn, SignupBtn, SignupForm } from '../signup.styles';
 
 interface IProps {
   emailValue: string;
