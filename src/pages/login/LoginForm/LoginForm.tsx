@@ -1,15 +1,15 @@
 import React from "react";
 import { InputField } from "../../../component/commons/UI/InputField";
 import LoginFormTitle from "./LoginFormTitle/LoginFormTitle";
-import FindAccountLink from "../FindAccountLink/FindAccountLink";
-import SignupLink from "../SignupLink/SignupLink";
-import { SocialLoginBtns } from "../socialLoginBtn/SocialLoginBtns";
+import FindAccountLink from "./FindAccountLink/FindAccountLink";
+import SignupLink from "./SignupLink/SignupLink";
+import { SocialLoginBtns } from "./socialLoginBtns/SocialLoginBtns";
 import { useLoginDataFetch } from "../../../hook/logic/login/useLoginDataFetch";
 import { useSocialLoginDataFetch } from "../../../hook/logic/login/useSocialLoginDataFetch";
 import { useLoginEmailInput } from "../../../hook/logic/login/useLoginEmailInput";
 import Loading from "../../../component/commons/loading/Loading";
 import { useLoginPasswordInput } from "../../../hook/logic/login/useLoginPasswordInput";
-import { Form, LoginBtn } from './loginForm.style';
+import { Form, LoginBtn } from '../login.styles';
 
 export default function LoginForm() {
   const { emailValue, emailValid, onChangeEmail, emailRef } =

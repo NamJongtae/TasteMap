@@ -1,5 +1,5 @@
 import React from "react";
-import { SignupLinkWrapper, StyledSignupLink } from "./signupLink.styles";
+import { SignupLinkWrapper, StyledSignupLink } from "../../login.styles";
 
 export default function SignupLink() {
   return (

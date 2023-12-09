@@ -1,5 +1,5 @@
 import React from "react";
-import { Line, StyledFindAccountLink } from "./findAccount.styles";
+import { Line, StyledFindAccountLink } from '../../login.styles';
 
 export default function FindAccountLink() {
   return (

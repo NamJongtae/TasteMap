@@ -1,5 +1,5 @@
-import { useSupportedWebp } from "../../../hook/useSupportedWebp";
-import { SocialLoginBtn, SocialLoginItem, SocialLoginWrapper } from './socialLoginBtns.styles';
+import { useSupportedWebp } from "../../../../hook/useSupportedWebp";
+import { SocialLoginBtn, SocialLoginItem, SocialLoginWrapper } from '../../login.styles';
 
 interface IPrpos {
   buttonTypeArr: string[];
