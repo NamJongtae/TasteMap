@@ -1,5 +1,5 @@
 import React from "react";
-import { ICommentData, IPostData, IUserData } from "../../../api/apiType";
+import { ICommentData, IPostData } from "../../../api/apiType";
 import {
   Username,
   UserImg,
@@ -7,8 +7,14 @@ import {
   UserProfileLink
 } from "./userInfo.styles";
 import { resolveWebp } from "../../../library/resolveWebp";
+
+type UserInfoType = {
+  displayName: string | JSX.Element;
+  photoURL: string;
+  uid: string;
+}
 interface IProps {
-  userData: Omit<IUserData, "email">;
+  userData: UserInfoType;
   onClick?: React.MouseEventHandler<HTMLAnchorElement>;
   replace?: boolean;
   data?: IPostData | ICommentData;
