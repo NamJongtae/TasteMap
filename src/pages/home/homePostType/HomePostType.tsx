@@ -1,12 +1,7 @@
 import React from "react";
-import {
-  PostTypeWrapper,
-  FeedBtn,
-  HomeBtn,
-  PostTypeTitle
-} from "./homePostType.styles";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../store/store";
+import { FeedBtn, HomeBtn, PostTypeTitle, PostTypeWrapper } from '../home.styles';
 
 interface IProps {
   postType: "HOME" | "FEED";
