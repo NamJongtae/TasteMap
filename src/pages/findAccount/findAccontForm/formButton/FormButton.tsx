@@ -1,4 +1,4 @@
-import { FindAccountBtn, LoginLink } from './formButton.styles';
+import { FindAccountBtn, LoginLink } from "../../findAccount.styles";
 
 interface IProps {
   activeMenu: "email" | "password";
@@ -15,7 +15,6 @@ export default function FormButton({
   submitBtnDisabled,
   isLoading
 }: IProps) {
-
   if (isLoading) {
     return (
       <FindAccountBtn type='button' disabled={isLoading}>

@@ -3,8 +3,7 @@ import {
   FindInfoDate,
   FindInfoText,
   FindInfoWrapper
-} from "./findValue.styles";
-
+} from "../../findAccount.styles";
 interface IProps {
   findEmailValue: { email: string; createdAt: string } | undefined;
   isFindPassword: boolean | undefined;

@@ -1,5 +1,5 @@
 import React from "react";
-import { FormMenuBtn, FormMenuLi, FormMenuList } from './formMenu.styles';
+import { FormMenuBtn, FormMenuLi, FormMenuList } from '../findAccount.styles';
 
 interface IProps {
   activeMenu: "email" | "password";

@@ -7,7 +7,7 @@ import { useFindAccountPhoneInput } from "../../../hook/logic/findAccount/findAc
 import { useFindAccountEmailInput } from "../../../hook/logic/findAccount/findAccountForm/useFindAccountEmailInput";
 import { useFindAccountEmailDataFetch } from "../../../hook/logic/findAccount/findAccountForm/useFindAccountEmailDataFetch";
 import { useFindAccountPwDataFetch } from "../../../hook/logic/findAccount/findAccountForm/useFindAccountPwDataFetch";
-import { Form } from './findAccountForm.styles';
+import { Form } from '../findAccount.styles';
 
 interface IProps {
   activeMenu: "email" | "password";
