@@ -1,5 +1,4 @@
 import { useEffect, useRef } from "react";
-import { isMobile } from "react-device-detect";
 import { useHistoryMobileBackBtn } from "../../../useHistoryMobileBackBtn";
 import useOpenFollowerModal from "./useOpenFollowerModal";
 import useOpenFollowingModal from "./useOpenFollowingModal";
@@ -24,32 +23,16 @@ export const useFollowModalController = () => {
 
   const { openFollowerModalHandler } = useOpenFollowerModal();
   const { openFollowingModalHandler } = useOpenFollowingModal();
-  const { closeFollowerModalHandler } = useCloseFollowerModal();
-  const { closeFollowingModalHandler } = useCloseFollowingModal();
-
-  const closeFollowerModalAnimationHandler = () => {
-    if (modalRef.current) {
-      modalRef.current.style.animation = "FollowModalmoveDown 1s";
-      setTimeout(() => {
-        if (isMobile) {
-          history.back();
-        }
-        closeFollowerModalHandler();
-      }, 700);
-    }
-  };
-
-  const closeFollowingModalAnimdationHandler = () => {
-    if (modalRef.current) {
-      modalRef.current.style.animation = "FollowModalmoveDown 1s";
-      setTimeout(() => {
-        if (isMobile) {
-          history.back();
-        }
-        closeFollowingModalHandler();
-      }, 700);
-    }
-  };
+  const {
+    closeFollowerModalHandler,
+    closeFollowerModalAnimationHandler,
+    closeFollowerModalMobileBackBtn
+  } = useCloseFollowerModal();
+  const {
+    closeFollowingModalHandler,
+    closeFollowingModalAnimdationHandler,
+    closeFollowingModalMobileBackBtn
+  } = useCloseFollowingModal();
 
   const closeOpenedModal = () => {
     if (isOpenFollowerModal) {
@@ -60,7 +43,16 @@ export const useFollowModalController = () => {
     }
   };
 
-  useHistoryMobileBackBtn({ handlePopStateCb: closeOpenedModal });
+  const closeOpendModalMobileBackBtn = () => {
+    if (isOpenFollowerModal) {
+      closeFollowerModalMobileBackBtn(modalRef);
+    }
+    if (isOpenFollowingModal) {
+      closeFollowingModalMobileBackBtn(modalRef);
+    }
+  };
+
+  useHistoryMobileBackBtn({ handlePopStateCb: closeOpendModalMobileBackBtn });
 
   useEffect(() => {
     return () => {
@@ -76,7 +68,9 @@ export const useFollowModalController = () => {
     lastItemFollowBtnRef,
     openFollowerModalHandler,
     openFollowingModalHandler,
-    closeFollowerModalAnimationHandler,
-    closeFollowingModalAnimdationHandler
+    closeFollowerModalAnimationHandler: () =>
+      closeFollowerModalAnimationHandler(modalRef),
+    closeFollowingModalAnimdationHandler: () =>
+      closeFollowingModalAnimdationHandler(modalRef)
   };
 };

@@ -6,21 +6,38 @@ import { isMobile } from "react-device-detect";
 export default function useCloseFollowingModal() {
   const dispatch = useDispatch<AppDispatch>();
 
-  const closeFollowingModalHandler = (
-    modalRef?: React.RefObject<HTMLDivElement>
+  const closeFollowingModalHandler = () => {
+    dispatch(userSlice.actions.setIsOpenFollowingModal(false));
+  };
+
+  const closeFollowingModalAnimdationHandler = (
+    modalRef: React.RefObject<HTMLElement>
   ) => {
-    if (modalRef?.current) {
+    if (modalRef.current) {
       modalRef.current.style.animation = "FollowModalmoveDown 1s";
       setTimeout(() => {
         if (isMobile) {
           history.back();
         }
-        dispatch(userSlice.actions.setIsOpenFollowingModal(false));
+        closeFollowingModalHandler();
       }, 700);
-    } else {
-      dispatch(userSlice.actions.setIsOpenFollowingModal(false));
     }
   };
 
-  return { closeFollowingModalHandler };
+  const closeFollowingModalMobileBackBtn = (
+    modalRef: React.RefObject<HTMLElement>
+  ) => {
+    if (modalRef.current) {
+      modalRef.current.style.animation = "FollowModalmoveDown 1s";
+      setTimeout(() => {
+        closeFollowingModalHandler();
+      }, 700);
+    }
+  };
+
+  return {
+    closeFollowingModalHandler,
+    closeFollowingModalAnimdationHandler,
+    closeFollowingModalMobileBackBtn
+  };
 }
