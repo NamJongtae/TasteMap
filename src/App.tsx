@@ -5,8 +5,7 @@ import FindAccount from "./pages/findAccount/FindAccount";
 import Home from "./pages/home/Home";
 import PostUpload from "./pages/postUpload/PostUpload";
 import PostEdit from "./pages/postEdit/PostEdit";
-import Profile from "./pages/profile/Profile";
-import MyTasteMap from "./pages/profile/myTasteMap/MyTasteMap";
+import MyTasteMap from "./pages/myTasteMap/MyTasteMap";
 import NotFound from "./pages/404/NotFound";
 import Search from "./pages/search/Search";
 import ShareTasteMap from "./pages/shareTasteMap/ShareTasteMap";
@@ -17,7 +16,8 @@ import { AppDispatch, RootState } from "./store/store";
 import { userSlice } from "./slice/userSlice";
 import Loading from "./component/commons/loading/Loading";
 import { useSupportedWebp } from "./hook/useSupportedWebp";
-import Signup from './pages/signup/Signup';
+import Signup from "./pages/signup/Signup";
+import ProfilePage from './pages/profilePage/ProfilePage';
 
 function App() {
   const dispatch = useDispatch<AppDispatch>();
@@ -103,8 +103,8 @@ function App() {
             path='/profile'
             element={!myInfo.uid ? <Navigate to='/login' /> : <Outlet />}
           >
-            <Route index element={<Profile />} />
-            <Route path=':uid/' element={<Profile />} />
+            <Route index element={<ProfilePage />} />
+            <Route path=':uid/' element={<ProfilePage />} />
             <Route
               path='tasteMap'
               element={!myInfo.uid ? <Navigate to='/login' /> : <MyTasteMap />}

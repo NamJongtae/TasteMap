@@ -50,10 +50,12 @@ export const usePostsInfiniteScroll = ({ myProfile, postType }: IProps) => {
   }, [postType, inview, hasNextPage]);
 
   const loadPostsLoading = !isFetchingNextPage && isFetching;
+
   const loadMorePostsLoading =
     isFetchingNextPage && (posts?.length || 0) >= pagePerData;
+
   const isNoPostsData =
-    !isFetchingNextPage && !isFetching && (posts?.length || 0) === 0;
+    (posts?.filter((post) => !post.isBlock).length || 0) === 0;
 
   return {
     loadPostsLoading,
