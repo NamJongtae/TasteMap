@@ -11,10 +11,10 @@ import {
   ListBtn,
   MapBtn,
   Wrapper
-} from "../profile/myTasteMap/myTasteMap.styles";
+} from "../myTasteMap/myTasteMap.styles";
 import Loading from "../../component/commons/loading/Loading";
 import Kakaomap from "../../component/units/kakaomap/Kakaomap";
-import MyTasteMapList from "../profile/myTasteMap/MyTasteMapList";
+import MyTasteMapList from "../myTasteMap/MyTasteMapList";
 import { EMapContentType } from "../../slice/tasteMapSlice";
 import {
   InvaildMap,
@@ -27,7 +27,7 @@ import { Helmet } from "react-helmet-async";
 import Header from "../../component/commons/layouts/header/Header";
 import { IMapData, IUserProfileData } from "../../api/apiType";
 import { useShareTasteMap } from "../../hook/logic/shareTasteMap/useShareTasteMap";
-import { resolveWebp } from '../../library/resolveWebp';
+import { resolveWebp } from "../../library/resolveWebp";
 
 export default function ShareTasteMap() {
   const {
