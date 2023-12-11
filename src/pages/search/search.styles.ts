@@ -73,14 +73,15 @@ export const FollowBtn = styled.button`
   font-size: 12px;
   border: none;
   width: 77px;
-  color: 767676;
+  color: #fff;
+  background-color: #208afa;
 `;
 
 // ----------------UnfollowButton style----------------
 
 export const UnfollowBtn = styled(FollowBtn)`
-  color: #fff;
-  background-color: #208afa;
+  color: #767676;
+  background-color: #f0f0f0;
 `;
 
 // ----------------NoSearchResult style----------------

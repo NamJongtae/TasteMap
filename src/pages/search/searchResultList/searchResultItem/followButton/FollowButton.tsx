@@ -1,6 +1,6 @@
 import React from "react";
 import { FollowBtn } from "../../../search.styles";
-import { useFollowFetchData } from "../../../../../hook/logic/search/searchResultItem/useFollowFetchData";
+import { useFollowFetchData } from "../../../../../hook/useFollowFetchData";
 import { IMyProfileData, IUserProfileData } from "../../../../../api/apiType";
 
 interface IProps {
@@ -8,6 +8,9 @@ interface IProps {
   userProfile: IUserProfileData;
 }
 export default function FollowButton({ myProfile, userProfile }: IProps) {
-  const { followHandler } = useFollowFetchData({ myProfile, userProfile });
+  const { followHandler } = useFollowFetchData({
+    myUid: myProfile.uid,
+    userUid: userProfile.uid
+  });
   return <FollowBtn onClick={followHandler}>팔로우</FollowBtn>;
 }

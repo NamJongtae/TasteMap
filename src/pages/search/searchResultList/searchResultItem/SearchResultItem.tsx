@@ -1,10 +1,11 @@
 import React from "react";
 import { IMyProfileData, IUserProfileData } from "../../../../api/apiType";
 import { SearchItem } from "../../search.styles";
-import useCheckFollow from "../../../../hook/logic/search/searchResultItem/useCheckFollow";
+import useCheckIsFollow from "../../../../hook/useCheckIsFollow";
 import FollowButton from "./followButton/FollowButton";
 import UnfollowButton from "./unfollowButton/UnfollowButton";
 import HighLightedUserInfo from "./highLightUserInfo/HighLightedUserInfo";
+import useCheckIsMe from "../../../../hook/useCheckIsMe";
 
 interface IProps {
   userProfile: IUserProfileData;
@@ -17,7 +18,15 @@ export default function SearchResultItem({
   myProfile,
   searchKeyword
 }: IProps) {
-  const { isFollow, isMe } = useCheckFollow({ myProfile, userProfile });
+  const { isFollow } = useCheckIsFollow({
+    userUid: userProfile.uid,
+    myFollowingList: myProfile.followingList
+  });
+
+  const { isMe } = useCheckIsMe({
+    myUid: myProfile.uid,
+    userUid: userProfile.uid
+  });
 
   return (
     <SearchItem key={userProfile.uid}>
