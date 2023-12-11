@@ -55,6 +55,8 @@ interface IProps {
   maxLength?: number;
   minLength?: number;
   placeholder?: string;
+  textareaRef?: React.RefObject<HTMLTextAreaElement>;
+  textareaStyle?: React.CSSProperties;
 }
 
 export default function TextAreaField({
@@ -67,7 +69,9 @@ export default function TextAreaField({
   id,
   maxLength,
   minLength,
-  placeholder
+  placeholder,
+  textareaRef,
+  textareaStyle
 }: IProps) {
   return (
     <Wrapper>
@@ -83,6 +87,8 @@ export default function TextAreaField({
         onKeyDown={onKeyDown}
         maxLength={maxLength}
         minLength={minLength}
+        style={textareaStyle}
+        ref={textareaRef}
       />
     </Wrapper>
   );
