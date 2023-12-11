@@ -1,10 +1,9 @@
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../store/store";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useHistoryMobileBackBtn } from "../../../useHistoryMobileBackBtn";
 import { useCloseProfileUpdateModal } from "./useCloseProfileUpdateModal";
 import { useOpenProfileUpdateModal } from "./useOpenProfileUpdateModal";
-import { isMobile } from "react-device-detect";
 
 export const useProfileUpdateModalController = () => {
   const [profileUpdateLoading, setProfileUpdateLoading] = useState(false);
@@ -30,21 +29,15 @@ export const useProfileUpdateModalController = () => {
 
   const { openProfileUpdateModalHandler } = useOpenProfileUpdateModal();
 
-  const { closeProfileUpdateModalHandler } = useCloseProfileUpdateModal();
+  const {
+    closeProfileUpdateModalHandler,
+    closeProfileUpdateModalAndAnimationHandler,
+    closeProfileUpdateModalMobileBackBtn
+  } = useCloseProfileUpdateModal();
 
-  useHistoryMobileBackBtn({ handlePopStateCb: closeProfileUpdateModalHandler });
-
-  const closeProfileUpdateModalAndAnimationHandler = useCallback(() => {
-    if (modalRef.current) {
-      modalRef.current.style.animation = "ProfileUpdateModalmoveDown 1s";
-    }
-    setTimeout(() => {
-      if (isMobile) {
-        history.back();
-      }
-      closeProfileUpdateModalHandler();
-    }, 700);
-  }, []);
+  useHistoryMobileBackBtn({
+    handlePopStateCb: () => closeProfileUpdateModalMobileBackBtn(modalRef)
+  });
 
   useEffect(() => {
     return () => {
@@ -67,6 +60,7 @@ export const useProfileUpdateModalController = () => {
     ProfileImgButtonWrapperRef,
     openProfileUpdateModalHandler,
     closeProfileUpdateModalHandler,
-    closeProfileUpdateModalAndAnimationHandler
+    closeProfileUpdateModalAndAnimationHandler: () =>
+      closeProfileUpdateModalAndAnimationHandler(modalRef),
   };
 };

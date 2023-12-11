@@ -88,8 +88,10 @@ export default function ProfileUpdateModal({ myProfile }: IProps) {
     updateBtnRef,
     closeBtnRef,
     ProfileImgButtonWrapperRef,
-    closeProfileUpdateModalAndAnimationHandler
+    closeProfileUpdateModalAndAnimationHandler,
   } = useProfileUpdateModalController();
+
+
 
   if (!isOpenProfileUpdateModal) {
     return null;
