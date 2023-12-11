@@ -13,7 +13,7 @@ interface IProps {
   onChange?: ChangeEventHandler<HTMLInputElement>;
   label_hidden?: boolean;
   label?: string;
-  name:string;
+  name: string;
   id?: string;
   onBlur?: FocusEventHandler<HTMLInputElement>;
   maxLength?: number;
@@ -21,6 +21,7 @@ interface IProps {
   placeholder?: string;
   type: HTMLInputTypeAttribute;
   InputRef?: RefObject<HTMLInputElement> | null | undefined;
+  inputStyle?: React.CSSProperties;
   errorMsg: string;
   errorMsgSize?: "small";
 }
@@ -44,6 +45,7 @@ export const InputField = ({
   placeholder,
   type,
   InputRef,
+  inputStyle,
   errorMsg,
   errorMsgSize
 }: IProps) => {
@@ -60,6 +62,7 @@ export const InputField = ({
         onChange={onChange}
         onBlur={onBlur}
         InputRef={InputRef}
+        inputStyle={inputStyle}
         maxLength={maxLength}
         minLength={minLength}
       />

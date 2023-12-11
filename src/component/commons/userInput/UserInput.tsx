@@ -18,6 +18,7 @@ interface IProps {
   placeholder?: string;
   type: HTMLInputTypeAttribute;
   InputRef?: RefObject<HTMLInputElement> | null | undefined;
+  inputStyle?: React.CSSProperties;
 }
 
 export default function UserInput({
@@ -32,7 +33,8 @@ export default function UserInput({
   minLength,
   placeholder,
   type,
-  InputRef
+  InputRef,
+  inputStyle
 }: IProps) {
   return (
     <Wrapper>
@@ -50,6 +52,7 @@ export default function UserInput({
         maxLength={maxLength}
         minLength={minLength}
         ref={InputRef}
+        style={inputStyle}
       />
     </Wrapper>
   );
