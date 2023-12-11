@@ -1,8 +1,8 @@
 import React from "react";
 import { MapInfoList, NoDataWrapper } from "./myTasteMap.styles";
-import { IMapData, IMyProfileData, IUserProfileData } from "../../../api/apiType";
+import { IMapData, IMyProfileData, IUserProfileData } from "../../api/apiType";
 import MyTasteMapItem from "./MyTasteMapItem";
-import NoData from "../../../component/commons/noData/NoData";
+import NoData from "../../component/commons/noData/NoData";
 
 interface IProps {
   items: IMapData[];

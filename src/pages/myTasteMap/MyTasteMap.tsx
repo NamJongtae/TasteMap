@@ -1,11 +1,11 @@
 import React from "react";
-import { useMyTasteMap } from "../../../hook/logic/MyTasetMap/useMyTasteMap";
-import Header from "../../../component/commons/layouts/header/Header";
-import Kakaomap from "../../../component/units/kakaomap/Kakaomap";
+import { useMyTasteMap } from "../../hook/logic/MyTasetMap/useMyTasteMap";
+import Header from "../../component/commons/layouts/header/Header";
+import Kakaomap from "../../component/units/kakaomap/Kakaomap";
 import MyTasteMapList from "./MyTasteMapList";
-import SearchModal from "../../../component/commons/searchMapModal/SearchMapModal";
-import Loading from "../../../component/commons/loading/Loading";
-import { EMapContentType } from "../../../slice/tasteMapSlice";
+import SearchModal from "../../component/commons/searchMapModal/SearchMapModal";
+import Loading from "../../component/commons/loading/Loading";
+import { EMapContentType } from "../../slice/tasteMapSlice";
 import {
   BtnWrapper,
   ContetnTypeBtnWrapper,
@@ -21,11 +21,11 @@ import {
   RemoveBtn,
   ShareBtn,
   Wrapper,
-  SearchModalBtn,
+  SearchModalBtn
 } from "./myTasteMap.styles";
-import { IMyProfileData } from "../../../api/apiType";
+import { IMyProfileData } from "../../api/apiType";
 import { useSelector } from "react-redux";
-import { RootState } from "../../../store/store";
+import { RootState } from "../../store/store";
 export default function MyTasteMap() {
   const isWebpSupported = useSelector(
     (state: RootState) => state.setting.isWebpSupported

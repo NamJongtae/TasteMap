@@ -1,9 +1,5 @@
 import React from "react";
-import {
-  IMapData,
-  IMyProfileData,
-  IUserProfileData
-} from "../../../api/apiType";
+import { IMapData, IMyProfileData, IUserProfileData } from "../../api/apiType";
 import {
   BtnWrapper,
   FocusMapBtn,
@@ -15,8 +11,8 @@ import {
   MapInfoItem,
   RemoveBtn
 } from "./myTasteMap.styles";
-import { useSupportedWebp } from "../../../hook/useSupportedWebp";
-import { useMyTasteMapItem } from "../../../hook/logic/MyTasetMap/useMyTasteMapItem";
+import { useSupportedWebp } from "../../hook/useSupportedWebp";
+import { useMyTasteMapItem } from "../../hook/logic/MyTasetMap/useMyTasteMapItem";
 
 interface IProps {
   item: IMapData;
