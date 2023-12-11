@@ -18,7 +18,6 @@ interface InfiniteFollowersType {
 export const useFollowersInfiniteQuery = (
   uid: string,
   pagePerData: number,
-  isFollower: boolean
 ) => {
   const {
     data,
@@ -49,7 +48,6 @@ export const useFollowersInfiniteQuery = (
         ? lastpage.followerDocs.docs[lastpage.followerDocs.docs.length - 1]
         : undefined;
     },
-    enabled: isFollower
   });
 
   return {
