@@ -63,6 +63,7 @@ export const ModalWrapper = styled.article`
   width: 100%;
   height: 100%;
   max-width: 500px;
+  max-height: 900px;
   background-color: #fff;
   z-index: 999;
   animation: ${(props: { isReply: boolean }) =>

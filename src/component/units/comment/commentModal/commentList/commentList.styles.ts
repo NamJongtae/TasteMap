@@ -3,8 +3,8 @@ import styled from "styled-components";
 export const CommentWrpper = styled.ul`
   position: relative;
   padding: 20px;
-  padding-bottom: 115px;
-  height: 100%;
+  padding-bottom: 80px;
+  height: calc(100% - 41px);
   overflow-y: scroll;
   ::-webkit-scrollbar {
     display: none;

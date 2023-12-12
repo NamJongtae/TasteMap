@@ -10,6 +10,7 @@ export const FollowModalWrapper = styled.article`
   width: 100%;
   height: 100%;
   max-width: 500px;
+  max-height: 900px;
   min-height: 300px;
   background-color: #fff;
   z-index: 999;
@@ -68,12 +69,9 @@ export const CloseBtn = styled.button`
 
 export const FollowUl = styled.ul`
   width: 100%;
-  height: 100%;
+  height: calc(100% - 41px);
   overflow-y: scroll;
   padding: 20px;
-  li:last-child {
-    padding-bottom: 20px;
-  }
 `;
 
 export const InfinityScrollTarget = styled.li`

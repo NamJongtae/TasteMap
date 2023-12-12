@@ -9,11 +9,12 @@ export const ProfileUpdateModalWrapper = styled.article`
   transform: translate(-50%, -50%);
   width: 100%;
   height: 100%;
-  max-width: 500px;
+  max-width: 550px;
+  max-height: 900px;
   background-color: #fff;
   z-index: 999;
   animation: ProfileEditModalmoveUp 1s;
-  @keyframes ProfileEditModalmoveUp { 
+  @keyframes ProfileEditModalmoveUp {
     from {
       transform: translate(-50%, 100%);
       opacity: 0;
@@ -188,4 +189,3 @@ export const ProfileImgDescItem = styled.li`
     font-size: 11px;
   }
 `;
-
