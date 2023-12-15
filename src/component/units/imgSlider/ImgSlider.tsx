@@ -1,95 +1,44 @@
 import React from "react";
-import {
-  ImgBtnList,
-  ImgItem,
-  ImgList,
-  ImgWrapper,
-  ImgBtnItem,
-  ImgBtn,
-  PrevBtn,
-  NextBtn
-} from "./imgSlider.styles";
-import ProgressiveImg from "../../commons/progressiveImg/ProgressiveImg";
-import { useImgSlider } from "../../../hook/logic/UI/useImgSlider";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../store/store";
+import { ImgSliderWrapper } from "./imgSlider.styles";
+import { useImgSliderController } from "../../../hook/logic/UI/useImgSliderController";
+import ImgSilderPrevBtn from "./imgSliderPrevBtn/ImgSilderPrevBtn";
+import ImgSliderNextBtn from "./imgSliderNextBtn/ImgSliderNextBtn";
+import ImgSilderImgList from "./ImgSliderImgList/ImgSilderImgList";
+import ImgSliderBulletBtn from "./imgSliderBulletBtn/ImgSliderBulletBtn";
 
 interface IProps {
   imgArray: string[];
 }
 export default function ImgSlider({ imgArray }: IProps) {
-  const isWebpSupported = useSelector(
-    (state: RootState) => state.setting.isWebpSupported
-  );
   const {
     activeButton,
-    ImgUlRef,
-    sliderBtnHandler,
-    prevBtnHandler,
-    nextBtnHandler
-  } = useImgSlider({ imgArray });
+    imgListRef,
+    clickBulletBtnHandler,
+    prevImgHandler,
+    nextImgHandler
+  } = useImgSliderController({ imgArray });
 
   return (
-    <ImgWrapper>
+    <ImgSliderWrapper>
       {imgArray.length > 1 && (
-        <PrevBtn
-          type='button'
+        <ImgSilderPrevBtn
           disabled={activeButton === 0}
-          onClick={prevBtnHandler}
-          $isWebpSupported={isWebpSupported}
-        >
-          <span className='a11y-hidden'>다음</span>
-        </PrevBtn>
+          prevImgHandler={prevImgHandler}
+        />
       )}
-      <ImgList ref={ImgUlRef}>
-        {imgArray.map((item, idx) => {
-          return (
-            <ImgItem key={item + idx}>
-              <ProgressiveImg
-                src={item}
-                alt='게시물 이미지'
-                styles={{
-                  objectFit: "contain",
-                  backgroundColor: "#fff",
-                  verticalAlign: "top",
-                  height: "100%",
-                  width: "100%",
-                  maxWidth: "320px",
-                  maxHeight: "228px",
-                  minHeight: "228px"
-                }}
-              />
-            </ImgItem>
-          );
-        })}
-      </ImgList>
+      <ImgSilderImgList imgListRef={imgListRef} imgArray={imgArray} />
       {imgArray.length > 1 && (
-        <NextBtn
-          type='button'
+        <ImgSliderNextBtn
+          nextImgHandler={nextImgHandler}
           disabled={activeButton === imgArray.length - 1}
-          onClick={nextBtnHandler}
-          $isWebpSupported={isWebpSupported}
-        >
-          <span className='a11y-hidden'>이전</span>
-        </NextBtn>
+        />
       )}
 
-      <ImgBtnList>
-        {imgArray.map((image, idx) => {
-          return (
-            <ImgBtnItem key={image + idx}>
-              {imgArray.length > 1 && (
-                <ImgBtn
-                  className={activeButton === idx ? "active" : ""}
-                  onClick={() => sliderBtnHandler(idx)}
-                >
-                  <span className='a11y-hidden'>이미지 슬라이드 버튼</span>
-                </ImgBtn>
-              )}
-            </ImgBtnItem>
-          );
-        })}
-      </ImgBtnList>
-    </ImgWrapper>
+      <ImgSliderBulletBtn
+        imgArray={imgArray}
+        activeButton={activeButton}
+        clickBulletBtnHandler={clickBulletBtnHandler}
+      />
+    </ImgSliderWrapper>
   );
 }

@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-export const ImgWrapper = styled.div`
+export const ImgSliderWrapper = styled.div`
   position: relative;
   width: 100%;
   margin-bottom: 16px;
@@ -23,7 +23,7 @@ export const ImgItem = styled.li`
   overflow: hidden;
 `;
 
-export const ImgBtnList = styled.ul`
+export const ImgBulletBtnList = styled.ul`
   position: absolute;
   display: flex;
   gap: 6px;
@@ -32,12 +32,12 @@ export const ImgBtnList = styled.ul`
   transform: translateX(-50%);
 `;
 
-export const ImgBtnItem = styled.li`
+export const ImgBulletBtnItem = styled.li`
   width: 100%;
   height: 100%;
 `;
 
-export const ImgBtn = styled.button`
+export const ImgBulletBtn = styled.button`
   position: relative;
   width: 8px;
   height: 8px;
