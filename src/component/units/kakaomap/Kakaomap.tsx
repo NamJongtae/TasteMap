@@ -24,9 +24,10 @@ declare global {
 interface IProps {
   items: IMapData[];
   isTasteMapPage: boolean;
+  isSharePage:boolean;
 }
 
-function Kakaomap({ items, isTasteMapPage }: IProps) {
+function Kakaomap({ items, isTasteMapPage, isSharePage }: IProps) {
   const isWebpSupported = useSelector(
     (state: RootState) => state.setting.isWebpSupported
   );
@@ -39,7 +40,7 @@ function Kakaomap({ items, isTasteMapPage }: IProps) {
     zoomOut,
     rvWrapperRef,
     roadviewRef
-  } = useKakaomap({ items, isTasteMapPage });
+  } = useKakaomap({ items, isTasteMapPage, isSharePage });
 
   return (
     <>

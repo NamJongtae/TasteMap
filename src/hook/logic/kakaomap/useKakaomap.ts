@@ -12,11 +12,12 @@ import { RootState } from "../../../store/store";
 interface IProps {
   items: IMapData[];
   isTasteMapPage: boolean;
+  isSharePage: boolean;
 }
 
 const INITAL_MAP_LEVEL = 14;
 
-export const useKakaomap = ({ items, isTasteMapPage }: IProps) => {
+export const useKakaomap = ({ items, isTasteMapPage, isSharePage }: IProps) => {
   // 맛집 정보 데이터
   const [data, setData] = useState(items);
   // 생성한 map를 저장
@@ -25,7 +26,6 @@ export const useKakaomap = ({ items, isTasteMapPage }: IProps) => {
   const mapRef = useRef<HTMLDivElement>(null);
 
   const { myProfile } = useLoadMyProfile();
-
   // map loadview 관련 customhook
   const {
     roadview,
@@ -85,13 +85,13 @@ export const useKakaomap = ({ items, isTasteMapPage }: IProps) => {
 
   // 저장된 맵 변경시 data 변경, 지도 레벨 초기화
   useEffect(() => {
-    if (isTasteMapPage) {
-      if (myProfile?.storedMapList) {
+    if (isTasteMapPage && !isSharePage) {
+      if (myProfile?.storedMapList.length || 0 > 0) {
         setData(myProfile!.storedMapList);
         if (myMap) myMap.setLevel(INITAL_MAP_LEVEL);
       }
       // 저장된 맛집 지도 데이터가 없는 경우 맵 초기화
-      if (myProfile?.storedMapList?.length === 0) {
+      if (myProfile?.storedMapList.length === 0) {
         setMyMap(null);
       }
     }
