@@ -27,6 +27,7 @@ export const PostUploadMap = ({
       <Kakaomap
         items={searchSelectedMap.mapx ? [searchSelectedMap] : []}
         isTasteMapPage={false}
+        isSharePage={false}
       />
     </MapSection>
   );

@@ -72,7 +72,11 @@ export default function ContentSection({
         </h3>
         {contentType === "MAP"
           ? data.mapData?.mapx && (
-              <Kakaomap items={[{ ...data.mapData }]} isTasteMapPage={false} />
+              <Kakaomap
+                items={[{ ...data.mapData }]}
+                isTasteMapPage={false}
+                isSharePage={false}
+              />
             )
           : data.imgURL &&
             data.imgURL.length > 0 && <ImgSlider imgArray={data.imgURL} />}
