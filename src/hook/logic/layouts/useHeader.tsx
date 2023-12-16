@@ -19,10 +19,10 @@ import {
 } from "../../../component/commons/layouts/header/header.styles";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../store/store";
-import { resolveWebp } from '../../../library/resolveWebp';
+import { resolveWebp } from "../../../library/resolveWebp";
 
 interface IProps {
-  type: string;
+  type: "home" | "upload" | "search" | "profile" | "tasteMap";
   onSubmit?: () => void;
   btnText?: string;
   disabled?: boolean;

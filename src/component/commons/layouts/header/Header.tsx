@@ -2,7 +2,7 @@ import React from "react";
 import { Wrapper } from "./header.styles";
 import { useHeader } from "../../../../hook/logic/layouts/useHeader";
 interface IProps {
-  type: string;
+  type: "home" | "upload" | "search" | "profile" | "tasteMap";
   onSubmit?: () => void;
   btnText?: string;
   disabled?: boolean;
