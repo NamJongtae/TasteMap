@@ -13,9 +13,10 @@ export const useAddTasteMapDataFetch = () => {
 
   const isMaxiumStoredMap = myProfile!.storedMapList.length > 20;
 
-  const isCheckStoredMap = myProfile!.storedMapList?.find(
-    (data: IMapData) => data.address === data.address
-  );
+  const isCheckStoredMap = (data: IMapData) =>
+    myProfile!.storedMapList?.find(
+      (storedMap: IMapData) => storedMap.address === data.address
+    );
 
   const addTasteMapHandler = (data: IMapData) => {
     if (myProfileIsError) {
@@ -35,7 +36,7 @@ export const useAddTasteMapDataFetch = () => {
       return;
     }
     // 저장된 맛집 데이터에 추가할 맛집 데이터가 있다면 저장 제한
-    if (isCheckStoredMap) {
+    if (isCheckStoredMap(data)) {
       sweetToast("이미 추가된 맛집입니다!", "warning");
       return;
     }

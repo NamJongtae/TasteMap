@@ -12,6 +12,10 @@ export const useSearchMapModalController = () => {
     (state: RootState) => state.search.isOpenSearchMapModal
   );
 
+  const openSearchModalHandler = useCallback(() => {
+    dispatch(searchSlice.actions.setIsOpenSearchMapModal(true));
+  }, []);
+
   /**
    * 검색 모달창 닫기 */
   const closeSearchModalHandler = useCallback(() => {
@@ -33,6 +37,8 @@ export const useSearchMapModalController = () => {
 
   return {
     closeBtnRef,
+    isOpenSearchMapModal,
+    openSearchModalHandler,
     closeSearchModalHandler
   };
 };
