@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-export const Title = styled.h2`
+export const ShareTasteMapTitle = styled.h2`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -14,7 +14,7 @@ export const Title = styled.h2`
   }
 `;
 
-export const TitleImg = styled.img`
+export const ShareTasteMapTitleImg = styled.img`
   margin-right: 5px;
   width: 25px;
 `;

@@ -5,10 +5,8 @@ import FindAccount from "./pages/findAccount/FindAccount";
 import Home from "./pages/home/Home";
 import PostUpload from "./pages/postUpload/PostUpload";
 import PostEdit from "./pages/postEdit/PostEdit";
-import MyTasteMap from "./pages/myTasteMap/MyTasteMap";
 import NotFound from "./pages/404/NotFound";
 import Search from "./pages/search/Search";
-import ShareTasteMap from "./pages/shareTasteMap/ShareTasteMap";
 import { Helmet } from "react-helmet-async";
 import { useAuthQuery } from "./hook/query/auth/useAuthQuery";
 import { useDispatch, useSelector } from "react-redux";
@@ -16,8 +14,10 @@ import { AppDispatch, RootState } from "./store/store";
 import { userSlice } from "./slice/userSlice";
 import Loading from "./component/commons/loading/Loading";
 import { useSupportedWebp } from "./hook/useSupportedWebp";
+import ProfilePage from "./pages/profilePage/ProfilePage";
 import Signup from "./pages/signup/Signup";
-import ProfilePage from './pages/profilePage/ProfilePage';
+import MyTasteMap from './pages/myTasteMap/MyTasteMap';
+import ShareTasteMap from './pages/shareTasteMap/ShareTasteMap';
 
 function App() {
   const dispatch = useDispatch<AppDispatch>();
@@ -107,7 +107,9 @@ function App() {
             <Route path=':uid/' element={<ProfilePage />} />
             <Route
               path='tasteMap'
-              element={!myInfo.uid ? <Navigate to='/login' /> : <MyTasteMap />}
+              element={
+                !myInfo.uid ? <Navigate to='/login' /> : <MyTasteMap />
+              }
             />
           </Route>
           <Route path='/tasteMap/share/:uid' element={<ShareTasteMap />} />
