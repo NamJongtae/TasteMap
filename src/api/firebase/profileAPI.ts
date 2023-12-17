@@ -56,7 +56,7 @@ export const fetchMyProfile = async (
       storedMapList: data.storedMapList,
       followerList: data.followerList,
       followingList: data.followingList
-    }
+    };
     return myProfile;
   } catch (error) {
     console.error(error);
@@ -372,11 +372,11 @@ export const updateMyProfile = async (editProfileData: IProfileUpdateData) => {
 
     // 이미지 파일 존재 시 기존 프로필 이미지 삭제
     if (
-      (typeof editProfileData.file !== "string" ||
-        editProfileData.file === "defaultImg") &&
+      typeof editProfileData.file !== "string" &&
       user &&
       user.photoFileName
     ) {
+      // 기본 프로필이 아닌 경우에만 이미지 파일 삭제(기본 프로필 삭제 방지)
       if (user.photoURL !== process.env.REACT_APP_DEFAULT_PROFILE_IMG)
         promise.push(
           deleteObject(
@@ -399,14 +399,16 @@ export const updateMyProfile = async (editProfileData: IProfileUpdateData) => {
     // photoURL 속성이 uploadfileUrl에 존재하면 업데이트 객체에 추가합니다.
     if (uploadfileUrl) {
       updateFields.photoURL = uploadfileUrl;
-    } else if (editProfileData.file === "defaultImg") {
+    } else if (
+      editProfileData.file === process.env.REACT_APP_DEFAULT_PROFILE_IMG
+    ) {
       updateFields.photoURL = process.env.REACT_APP_DEFAULT_PROFILE_IMG;
     }
     promise.push(updateProfile(auth.currentUser, updateFields));
     // photoFileName 속성이 fileName에 존재하면 업데이트 객체에 추가합니다.
     if (fileName) {
       updateFields.photoFileName = fileName;
-    } else if (editProfileData.file === "defaultImg") {
+    } else if (editProfileData.file === process.env.REACT_APP_DEFAULT_PROFILE_IMG) {
       updateFields.photoFileName = "icon-defaultProfileImg.png";
     }
 

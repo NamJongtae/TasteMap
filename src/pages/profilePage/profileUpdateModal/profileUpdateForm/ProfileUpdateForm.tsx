@@ -1,12 +1,8 @@
 import React from "react";
-import { UpdateForm } from "../ProfileUpdateModal.styles";
-import { ProfileUpdateImg } from "./profileUpdateImg/profileUpdateImg";
 import { IMyProfileData } from "../../../../api/apiType";
-import ProfileUpdateBtn from "./profileUpdateBtn/ProfileUpdateBtn";
-import { useProfileUpdateBtnController } from "../../../../hook/logic/profile/profileUpdateModal/useProfileUpdateBtnController";
-import ProfileUpdateDisplayName from "./profileUpdateDisplayName/ProfileUpdateDisplayName";
-import ProfileUpdateIntroduce from "./profileUpdateIntroduce/ProfileUpdateIntroduce";
 import { useProfileUpdateFetchData } from "../../../../hook/logic/profile/profileUpdateModal/useProfileUpdateFetchData";
+import { MyForm } from "../../../../component/commons/UI/myForm/MyForm";
+import FormContent from "./FormContent/FormContent";
 
 interface IProps {
   myProfile: IMyProfileData;
@@ -18,7 +14,7 @@ interface IProps {
   ProfileImgButtonWrapperRef: React.RefObject<HTMLDivElement>;
 }
 
-export default function ProfileUpdateForm({
+export default function ProfileUpdateFormWrapper({
   myProfile,
   introduceRef,
   imgResetBtnRef,
@@ -27,45 +23,31 @@ export default function ProfileUpdateForm({
   imgInputRef,
   ProfileImgButtonWrapperRef
 }: IProps) {
-  const {
-    controllDisplayNameHandler,
-    controllDisplayNameValidHandler,
-    controllPreviewImgHandler,
-    controllIntroduceHandler,
-    isDisabledUpdateBtn
-  } = useProfileUpdateBtnController({ myProfile });
-
   const { updateProfileHandler, updateUserProfileLoading } =
     useProfileUpdateFetchData();
 
   return (
-    <UpdateForm onSubmit={updateProfileHandler}>
-      <ProfileUpdateImg
+    <MyForm
+      onSubmit={updateProfileHandler}
+      formOptions={{
+        mode: "onChange",
+        defaultValues: {
+          img: myProfile.photoURL,
+          displayName: myProfile.displayName,
+          introduce: myProfile.introduce
+        }
+      }}
+    >
+      <FormContent
+        myProfile={myProfile}
+        introduceRef={introduceRef}
+        imgResetBtnRef={imgResetBtnRef}
+        closeBtnRef={closeBtnRef}
+        updateBtnRef={updateBtnRef}
         imgInputRef={imgInputRef}
         ProfileImgButtonWrapperRef={ProfileImgButtonWrapperRef}
-        closeBtnRef={closeBtnRef}
-        imgResetBtnRef={imgResetBtnRef}
-        myProfile={myProfile}
-        controllPreviewImgHandler={controllPreviewImgHandler}
-      />
-
-      <ProfileUpdateDisplayName
-        myProfile={myProfile}
-        controllDisplayNameHandler={controllDisplayNameHandler}
-        controllDisplayNameValidHandler={controllDisplayNameValidHandler}
-      />
-
-      <ProfileUpdateIntroduce
-        controllIntroduceHandler={controllIntroduceHandler}
-        introduceRef={introduceRef}
-        myProfile={myProfile}
-      />
-
-      <ProfileUpdateBtn
         updateUserProfileLoading={updateUserProfileLoading}
-        isDisabledUpdateBtn={isDisabledUpdateBtn || updateUserProfileLoading}
-        updateBtnRef={updateBtnRef}
       />
-    </UpdateForm>
+    </MyForm>
   );
 }

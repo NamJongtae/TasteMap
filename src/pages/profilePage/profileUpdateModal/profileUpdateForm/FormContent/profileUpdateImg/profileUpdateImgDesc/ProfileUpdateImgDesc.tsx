@@ -2,7 +2,7 @@ import React from "react";
 import {
   ProfileImgDescItem,
   ProfileImgDescList
-} from "../../../ProfileUpdateModal.styles";
+} from "../../../../ProfileUpdateModal.styles";
 
 interface IProps {
   descList: string[];

@@ -2,17 +2,26 @@ import { useCallback, useState } from "react";
 import { imgValidation } from "../../../../library/imageValidation";
 import { isMobile } from "react-device-detect";
 import { getCompressionImg } from "../../../../library/imageCompression";
-
+import { useFormContext } from "react-hook-form";
 interface IProps {
   initalPreviewImg: string;
 }
-export const useProfileUpdateImg = ({
-  initalPreviewImg,
-}: IProps) => {
-  const [uploadImg, setUploadImg] = useState<File | string>("");
+export const useProfileUpdateImg = ({ initalPreviewImg }: IProps) => {
   const [previewImg, setPreviewImg] = useState(initalPreviewImg);
   const [isImgLoading, setIsImgLoading] = useState(false);
-  
+
+  const { setValue } = useFormContext();
+
+  const resetImgFileHandler = () => {
+    setValue("img", process.env.REACT_APP_DEFAULT_PROFILE_IMG, {
+      shouldDirty: true
+    });
+  };
+
+  const handleUploadImgFile = (file: File) => {
+    setValue("img", file, { shouldDirty: true });
+  };
+
   const changeImgHandler = useCallback(
     async (e: React.ChangeEvent<HTMLInputElement>) => {
       if (!e.target.files) return;
@@ -22,6 +31,7 @@ export const useProfileUpdateImg = ({
       if (isMobile) {
         setIsImgLoading(true);
       }
+
       const { compressedFile, compressedPreview } = (await getCompressionImg(
         file,
         "profile"
@@ -30,7 +40,7 @@ export const useProfileUpdateImg = ({
         compressedPreview: string;
       };
       setPreviewImg(compressedPreview);
-      setUploadImg(compressedFile);
+      handleUploadImgFile(compressedFile);
       if (isMobile) {
         setIsImgLoading(false);
       }
@@ -38,19 +48,20 @@ export const useProfileUpdateImg = ({
     [isMobile]
   );
 
-  const imgResetHandler = () => {
+  const resetPreviewHandler = () => {
     setPreviewImg(process.env.REACT_APP_DEFAULT_PROFILE_IMG || "");
-    setUploadImg("defaultImg");
   };
 
+  const resetImgHandler = () => {
+    resetPreviewHandler();
+    resetImgFileHandler();
+  };
 
   return {
     previewImg,
     setPreviewImg,
-    uploadImg,
-    setUploadImg,
     isImgLoading,
     changeImgHandler,
-    imgResetHandler
+    resetImgHandler
   };
 };

@@ -1,8 +1,9 @@
 import React from "react";
-import { ProfileUpdateBtnsWrapper } from "../../../ProfileUpdateModal.styles";
+import { ProfileUpdateBtnsWrapper } from "../../../../ProfileUpdateModal.styles";
 import ProfileUpdateImgResetBtn from "./profileUpdateImgResetBtn/ProfileUpdateImgResetBtn";
 import ProfileUpdateImgBtn from "./profileIUpdateImgBtn/ProfileUpdateImgBtn";
-import ScrollLoading from "../../../../../../component/commons/loading/ScrollLoading";
+import ScrollLoading from "../../../../../../../component/commons/loading/ScrollLoading";
+import { useFocusing } from "../../../../../../../hook/useFocusing";
 
 interface IProps {
   ProfileImgButtonWrapperRef: React.RefObject<HTMLDivElement>;
@@ -22,6 +23,9 @@ export default function ProfileUpdateImgBtns({
   imgInputRef,
   imgResetBtnRef
 }: IProps) {
+  // tab focus 최적화를 위한 초기 focus 설정
+  useFocusing(ProfileImgButtonWrapperRef);
+
   if (isImgLoading) {
     return <ScrollLoading />;
   }

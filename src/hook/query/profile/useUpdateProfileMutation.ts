@@ -13,7 +13,7 @@ import { sweetToast } from "../../../library/sweetAlert/sweetAlert";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../store/store";
 import { DocumentData, QuerySnapshot } from "firebase/firestore";
-import { userSlice } from '../../../slice/userSlice';
+import { userSlice } from "../../../slice/userSlice";
 
 type InfinitePostsType = {
   postDocs: QuerySnapshot<DocumentData, DocumentData>;
@@ -33,6 +33,8 @@ export const useUpdateProfileMutation = () => {
       let imgURL: string = "";
       if (typeof img !== "string") {
         imgURL = URL.createObjectURL(img);
+      } else {
+        imgURL = process.env.REACT_APP_DEFAULT_PROFILE_IMG || "";
       }
 
       await queryClient.cancelQueries({

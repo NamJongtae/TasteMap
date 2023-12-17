@@ -1,14 +1,14 @@
 import React from "react";
 import {
-  ImgInput,
+  ProfileImgInput,
   ProfileImgInputLabel
-} from "../../../ProfileUpdateModal.styles";
+} from "../../../../ProfileUpdateModal.styles";
 
 interface IProps {
   imgInputRef: React.RefObject<HTMLInputElement>;
   changeImgHandler: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
-export default function ProfileUpdateImgInput({
+export default function ProfileUpdateImgField({
   imgInputRef,
   changeImgHandler
 }: IProps) {
@@ -17,10 +17,10 @@ export default function ProfileUpdateImgInput({
       <ProfileImgInputLabel htmlFor='input-img'>
         프로필 이미지
       </ProfileImgInputLabel>
-      <ImgInput
-        id={"input-img"}
-        type='file'
-        name='uploadImg'
+      <ProfileImgInput
+        id={"img"}
+        type={"file"}
+        name={"img"}
         ref={imgInputRef}
         className='a11y-hidden'
         onChange={changeImgHandler}

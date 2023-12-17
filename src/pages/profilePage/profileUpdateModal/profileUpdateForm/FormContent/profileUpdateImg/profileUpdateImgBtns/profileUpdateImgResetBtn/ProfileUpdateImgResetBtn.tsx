@@ -1,8 +1,8 @@
 import React from "react";
-import { ResetBtn } from "../../../../ProfileUpdateModal.styles";
-import { optModalTabFocus } from "../../../../../../../library/optModalTabFocus";
+import { ResetBtn } from "../../../../../ProfileUpdateModal.styles";
+import { optModalTabFocus } from "../../../../../../../../library/optModalTabFocus";
 import { useSelector } from "react-redux";
-import { RootState } from "../../../../../../../store/store";
+import { RootState } from "../../../../../../../../store/store";
 
 interface IProps {
   imgResetHandler: () => void;

@@ -1,7 +1,10 @@
 import React from "react";
-import { ImgButton, ProfileImg } from "../../../../ProfileUpdateModal.styles";
-import { resolveWebp } from "../../../../../../../library/resolveWebp";
-import { RootState } from "../../../../../../../store/store";
+import {
+  ImgButton,
+  ProfileImg
+} from "../../../../../ProfileUpdateModal.styles";
+import { resolveWebp } from "../../../../../../../../library/resolveWebp";
+import { RootState } from "../../../../../../../../store/store";
 import { useSelector } from "react-redux";
 
 interface IProps {

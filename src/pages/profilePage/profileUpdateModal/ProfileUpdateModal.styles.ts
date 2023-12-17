@@ -66,7 +66,7 @@ export const CloseBtn = styled.button`
 
 // -------------------ProfileUpdateForm style-------------------
 
-export const UpdateForm = styled.form`
+export const FormContentWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -90,7 +90,7 @@ export const UpdateBtn = styled.button`
 
 // -------------------ProfileUpdateImg style-------------------
 
-export const ProfileImgWrapper = styled.div`
+export const ProfileUpdateImgWrapper = styled.div`
   position: relative;
   border-bottom: 1px solid #bdbdbd;
   margin-bottom: 10px;
@@ -106,7 +106,7 @@ export const ProfileImgInputLabel = styled.label`
   pointer-events: none;
 `;
 
-export const ImgInput = styled.input``;
+export const ProfileImgInput = styled.input``;
 
 // -------------------ProfileUpdateImgBtns style-------------------
 

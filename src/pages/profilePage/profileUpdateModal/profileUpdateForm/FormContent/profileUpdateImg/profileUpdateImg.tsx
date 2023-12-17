@@ -1,18 +1,15 @@
-import { ProfileImgWrapper } from "../../ProfileUpdateModal.styles";
-import { useFocusing } from "../../../../../hook/useFocusing";
-import ProfileUpdateImgInput from "./profileUpdateImgInput/ProfileUpdateImgInput";
+import { ProfileUpdateImgWrapper } from "../../../ProfileUpdateModal.styles";
 import ProfileUpdateImgBtns from "./profileUpdateImgBtns/ProfileUpdateImgBtns";
 import ProfileUpdateImgDesc from "./profileUpdateImgDesc/ProfileUpdateImgDesc";
-import { useProfileUpdateImg } from "../../../../../hook/logic/profile/profileUpdateModal/useProfileUpdateImg";
-import { IMyProfileData } from "../../../../../api/apiType";
-
+import { useProfileUpdateImg } from "../../../../../../hook/logic/profile/profileUpdateModal/useProfileUpdateImg";
+import { IMyProfileData } from "../../../../../../api/apiType";
+import ProfileUpdateImgField from "./profileUpdateImgField/ProfileUpdateImgField";
 interface IProps {
   imgInputRef: React.RefObject<HTMLInputElement>;
   ProfileImgButtonWrapperRef: React.RefObject<HTMLDivElement>;
   imgResetBtnRef: React.RefObject<HTMLButtonElement>;
   closeBtnRef: React.RefObject<HTMLButtonElement>;
   myProfile: IMyProfileData;
-  controllPreviewImgHandler: (previewImg: string) => void;
 }
 
 export const ProfileUpdateImg = ({
@@ -20,29 +17,22 @@ export const ProfileUpdateImg = ({
   ProfileImgButtonWrapperRef,
   closeBtnRef,
   imgResetBtnRef,
-  myProfile,
-  controllPreviewImgHandler
+  myProfile
 }: IProps) => {
-  const { previewImg, isImgLoading, changeImgHandler, imgResetHandler } =
+  const { previewImg, isImgLoading, changeImgHandler, resetImgHandler } =
     useProfileUpdateImg({ initalPreviewImg: myProfile.photoURL });
 
-  // tab focus 최적화를 위한 초기 focus 설정
-  useFocusing(ProfileImgButtonWrapperRef);
-
   return (
-    <ProfileImgWrapper>
-      <ProfileUpdateImgInput
+    <ProfileUpdateImgWrapper>
+      <ProfileUpdateImgField
         imgInputRef={imgInputRef}
-        changeImgHandler={(e) => {
-          changeImgHandler(e);
-          controllPreviewImgHandler(e.target.value);
-        }}
+        changeImgHandler={changeImgHandler}
       />
 
       <ProfileUpdateImgBtns
         ProfileImgButtonWrapperRef={ProfileImgButtonWrapperRef}
         isImgLoading={isImgLoading}
-        imgResetHandler={imgResetHandler}
+        imgResetHandler={resetImgHandler}
         closeBtnRef={closeBtnRef}
         previewImg={previewImg}
         imgInputRef={imgInputRef}
@@ -56,6 +46,6 @@ export const ProfileUpdateImg = ({
           ".jpg, .jpge, .png, .bmp 이미지 형식을 지원합니다."
         ]}
       />
-    </ProfileImgWrapper>
+    </ProfileUpdateImgWrapper>
   );
 };
