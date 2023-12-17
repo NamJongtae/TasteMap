@@ -1,22 +1,26 @@
 import React from "react";
-import ScrollLoading from "../../../../../component/commons/loading/ScrollLoading";
+import {
+  ProfileImg,
+  ProfileImgButton,
+  ProfileImgButtonWrapper,
+  ProfileImgResetBtn
+} from "../../../../signup.styles";
+import ScrollLoading from "../../../../../../component/commons/loading/ScrollLoading";
+import { resolveWebp } from "../../../../../../library/resolveWebp";
 import { useSelector } from "react-redux";
-import { RootState } from "../../../../../store/store";
-import { resolveWebp } from "../../../../../library/resolveWebp";
-import { ProfileImg, ProfileImgButton, ProfileImgButtonWrapper, ProfileImgResetBtn } from '../../../signup.styles';
+import { RootState } from "../../../../../../store/store";
 
 interface IProps {
-  isImgLoading: boolean;
-  imgResetHandler: () => void;
-  imgInputRef: React.RefObject<HTMLInputElement>;
   previewImg: string;
+  isImgLoading: boolean;
+  resetImgHandler: () => void;
+  imgInputRef: React.MutableRefObject<HTMLInputElement | null>;
 }
-
 export default function ProfileSettingImgButton({
+  previewImg,
   isImgLoading,
-  imgResetHandler,
-  imgInputRef,
-  previewImg
+  resetImgHandler,
+  imgInputRef
 }: IProps) {
   const isWebpSupported = useSelector(
     (state: RootState) => state.setting.isWebpSupported
@@ -30,7 +34,7 @@ export default function ProfileSettingImgButton({
         <>
           <ProfileImgResetBtn
             type='button'
-            onClick={imgResetHandler}
+            onClick={resetImgHandler}
             aria-label='초기화'
             $isWebpSupported={isWebpSupported}
           />

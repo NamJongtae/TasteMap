@@ -1,19 +1,24 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../store/store";
-import { PercentageBar, ProgressCheck, ProgressCheckText, ProgressCheckWrapper, ProgressTitle, ProgressWrapper } from '../signup.styles';
+import {
+  PercentageBar,
+  ProgressCheck,
+  ProgressCheckText,
+  ProgressCheckWrapper,
+  ProgressTitle,
+  ProgressWrapper
+} from "../signup.styles";
+import { useStepProgressController } from "../../../hook/logic/signup/useSetpPercentageController";
 
 interface IProps {
-  percentage: string;
-  completedUserInfoSetting: boolean;
-  completedProfileSetting: boolean;
+  currentStep: string;
+  steps: string[];
 }
 
-export default function ProgressBar({
-  percentage,
-  completedUserInfoSetting,
-  completedProfileSetting
-}: IProps) {
+export default function ProgressBar({ currentStep, steps }: IProps) {
+  const { percentage } = useStepProgressController({ currentStep, steps });
+
   const isWebpSupported = useSelector(
     (state: RootState) => state.setting.isWebpSupported
   );
@@ -23,7 +28,7 @@ export default function ProgressBar({
       <ProgressCheckWrapper>
         <ProgressCheck
           className='defalut'
-          active={completedUserInfoSetting}
+          active={percentage >= 50}
           $isWebpSupported={isWebpSupported}
         ></ProgressCheck>
         <ProgressCheckText>기본정보 입력</ProgressCheckText>
@@ -32,7 +37,7 @@ export default function ProgressBar({
       <ProgressCheckWrapper>
         <ProgressCheck
           className='profile'
-          active={completedProfileSetting}
+          active={percentage === 100}
           $isWebpSupported={isWebpSupported}
         ></ProgressCheck>
         <ProgressCheckText>프로필 설정</ProgressCheckText>

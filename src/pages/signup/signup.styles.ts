@@ -7,20 +7,19 @@ export const Wrapper = styled.main`
   height: calc(var(--vh, 1vh) * 100);
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
   overflow-x: hidden;
   background-color: #f5f5f5;
 `;
 
-export const FormWrapper = styled.div`
+export const FormContentWrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
   width: 100%;
-  height: calc(var(--vh, 1vh) * 100);
   max-width: 450px;
   padding: 0px 40px;
+  margin: 0 auto;
   @media screen and (max-width: 431px) {
     padding: 0px 30px;
   }
@@ -42,7 +41,7 @@ export const ProgressWrapper = styled.section`
   justify-content: center;
   width: 100%;
   max-width: 450px;
-  margin-bottom: 50px;
+  margin-bottom: 40px;
 `;
 export const ProgressTitle = styled.h2``;
 
@@ -95,13 +94,13 @@ export const PercentageBar = styled.div`
   ::after {
     position: absolute;
     content: "";
-    width: ${(props: { percentage: string }) =>
-      props.percentage ? props.percentage : "0"};
+    width: ${(props: { percentage: number }) =>
+      props.percentage ? props.percentage + "%" : 0};
     height: 2px;
     background-color: #627af5;
     transition: all 0.5s;
-    transition-delay: ${(props: { percentage: string }) =>
-      props.percentage === "50%" ? "0.3s" : ""};
+    transition-delay: ${(props: { percentage: number }) =>
+      props.percentage === 50 ? "0.3s" : ""};
 
     @media screen and (max-width: 431px) {
       width: ${(props) => (props.percentage ? props.percentage : "0")};
@@ -111,14 +110,14 @@ export const PercentageBar = styled.div`
 
 // ----------------commons----------------
 
-export const SignupForm = styled.form`
+export const FieldWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 20px;
   width: 100%;
 `;
 
-export const SignupBtn = styled.button`
+export const FormBtn = styled.button`
   width: 100%;
   background-color: ${(props) => (props.disabled ? "#cbcbcb" : "gold")};
   cursor: ${(props) => (props.disabled ? "default" : "cursor")};
@@ -126,7 +125,6 @@ export const SignupBtn = styled.button`
   border-radius: 4px;
   font-size: 18px;
   font-weight: 500;
-  margin-top: 10px;
   transition: all 0.5s;
 `;
 
@@ -154,22 +152,21 @@ export const PrevBtn = styled.button`
   color: #111;
 `;
 
-
 // ----------------profileSettingImg style----------------
 
 export const ProfileImgWrapper = styled.div`
-position: relative;
-border-bottom: 1px solid #bdbdbd;
-margin-bottom: 10px;
+  position: relative;
+  border-bottom: 1px solid #bdbdbd;
+  margin-bottom: 10px;
 `;
 
 export const ProfileImgInput = styled.input``;
 
 export const ProfileImgLabel = styled.label`
-display: block;
-text-align: center;
-font-size: 14px;
-margin-bottom: 10px;
+  display: block;
+  text-align: center;
+  font-size: 14px;
+  margin-bottom: 10px;
 `;
 
 // ----------------profileSettingImgDesc style----------------

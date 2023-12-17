@@ -1,33 +1,18 @@
+import { FieldValues } from "react-hook-form";
 import { useSignupMutation } from "../../query/auth/useSignupMutation";
 
-interface IParms {
-  displayNameValue: string;
-  uploadImg: File | "";
-  emailValue: string;
-  passwordValue: string;
-  phoneValue: string;
-  introduceValue: string;
-}
-export const useSignupDataFetch = ({
-  displayNameValue,
-  uploadImg,
-  emailValue,
-  passwordValue,
-  phoneValue,
-  introduceValue
-}: IParms) => {
+export const useSignupDataFetch = () => {
   const { mutate: signupMutate, isPending: signupLoading } =
     useSignupMutation();
 
-  const signupHandler = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const signupHandler = async (data: FieldValues) => {
     signupMutate({
-      displayName: displayNameValue.toLowerCase(),
-      file: uploadImg,
-      email: emailValue,
-      password: passwordValue,
-      phone: phoneValue.replace(/-/g, ""),
-      introduce: introduceValue
+      displayName: data.displayName.toLowerCase(),
+      file: data.img,
+      email: data.email,
+      password: data.password,
+      phone: data.phone.replace(/-/g, ""),
+      introduce: data.introduce
     });
   };
 

@@ -2,15 +2,25 @@ import { useCallback, useRef, useState } from "react";
 import { imgValidation } from "../../../library/imageValidation";
 import { getCompressionImg } from "../../../library/imageCompression";
 import { isMobile } from "react-device-detect";
-import { resolveWebp } from '../../../library/resolveWebp';
+import { resolveWebp } from "../../../library/resolveWebp";
+import { useFormContext } from "react-hook-form";
 
 export const useProfileSettingImg = () => {
-  const imgInputRef = useRef<HTMLInputElement>(null);
+  const imgInputRef = useRef<HTMLInputElement | null>(null);
   const [previewImg, setPreviewImg] = useState(
     resolveWebp("/assets/webp/icon-defaultProfile.webp", "svg")
   );
-  const [uploadImg, setUploadImg] = useState<File | "">("");
   const [isImgLoading, setIsImgLoading] = useState(false);
+
+  const { setValue } = useFormContext();
+
+  const handleUploadImgFile = (file: File) => {
+    setValue("img", file);
+  };
+
+  const resetImgFileHandler = () => {
+    setValue("img", process.env.REACT_APP_DEFAULT_PROFILE_IMG);
+  };
 
   const changeImgHandler = useCallback(
     async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -30,7 +40,7 @@ export const useProfileSettingImg = () => {
         compressedPreview: string;
       };
       setPreviewImg(compressedPreview);
-      setUploadImg(compressedFile);
+      handleUploadImgFile(compressedFile);
       if (isMobile) {
         setIsImgLoading(false);
       }
@@ -38,17 +48,20 @@ export const useProfileSettingImg = () => {
     [isMobile]
   );
 
-  const imgResetHandler = () => {
+  const resetPreviewHandler = () => {
     setPreviewImg(resolveWebp("/assets/webp/icon-defaultProfile.webp", "svg"));
-    setUploadImg("");
+  };
+
+  const resetImgHandler = () => {
+    resetPreviewHandler();
+    resetImgFileHandler();
   };
 
   return {
     imgInputRef,
     previewImg,
-    uploadImg,
     isImgLoading,
     changeImgHandler,
-    imgResetHandler
+    resetImgHandler
   };
 };
