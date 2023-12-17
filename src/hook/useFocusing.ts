@@ -5,5 +5,5 @@ export const useFocusing = (targetRef: React.RefObject<HTMLElement>) => {
     if (targetRef.current) {
       targetRef.current.focus();
     }
-  }, [targetRef.current]);
+  }, []);
 };
