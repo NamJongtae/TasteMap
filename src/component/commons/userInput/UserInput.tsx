@@ -1,12 +1,18 @@
 import {
   ChangeEventHandler,
   FocusEventHandler,
-  HTMLInputTypeAttribute,
-  RefObject
+  HTMLInputTypeAttribute
 } from "react";
 import { Input, Label, Wrapper } from "./userInput.styles";
+import {
+  FieldValues,
+  Validate,
+  ValidationRule,
+  useFormContext
+} from "react-hook-form";
+import ErrorMsg from "../errorMsg/ErrorMsg";
+
 interface IProps {
-  value?: string | number | readonly string[] | undefined;
   label_hidden?: boolean;
   label?: string;
   name: string;
@@ -17,12 +23,18 @@ interface IProps {
   minLength?: number;
   placeholder?: string;
   type: HTMLInputTypeAttribute;
-  InputRef?: RefObject<HTMLInputElement> | null | undefined;
   inputStyle?: React.CSSProperties;
+  pattern: ValidationRule<RegExp> | undefined;
+  duplicationErrorMsg?: string;
+  errorMsgSize?: "small";
+  required: boolean;
+  validate?:
+    | Validate<any, FieldValues>
+    | Record<string, Validate<any, FieldValues>>
+    | undefined;
 }
 
 export default function UserInput({
-  value,
   label_hidden,
   label,
   name,
@@ -33,27 +45,43 @@ export default function UserInput({
   minLength,
   placeholder,
   type,
-  InputRef,
-  inputStyle
+  inputStyle,
+  pattern,
+  errorMsgSize,
+  required,
+  validate
 }: IProps) {
+  const { register, formState } = useFormContext();
+  const error = formState.errors[name];
+
   return (
-    <Wrapper>
-      <Label className={label_hidden ? "a11y-hidden" : ""} htmlFor={id}>
-        {label}
-      </Label>
-      <Input
-        type={type}
-        placeholder={placeholder}
-        onChange={onChange}
-        id={id}
-        name={name}
-        value={value}
-        onBlur={onBlur}
-        maxLength={maxLength}
-        minLength={minLength}
-        ref={InputRef}
-        style={inputStyle}
-      />
-    </Wrapper>
+    <>
+      <Wrapper>
+        <Label className={label_hidden ? "a11y-hidden" : ""} htmlFor={id}>
+          {label}
+        </Label>
+        <Input
+          type={type}
+          placeholder={placeholder}
+          id={id}
+          maxLength={maxLength}
+          minLength={minLength}
+          style={inputStyle}
+          {...register(name, {
+            required,
+            onChange,
+            onBlur,
+            pattern,
+            validate
+          })}
+        />
+      </Wrapper>
+      {error && (
+        <ErrorMsg
+          message={typeof error.message === "string" ? error.message : ""}
+          className={errorMsgSize}
+        />
+      )}
+    </>
   );
 }

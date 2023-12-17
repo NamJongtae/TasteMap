@@ -4,12 +4,11 @@ import {
   HTMLInputTypeAttribute,
   RefObject
 } from "react";
-import ErrorMsg from "../errorMsg/ErrorMsg";
-import UserInput from "../userInput/UserInput";
-import styled from "styled-components";
+import UserInput from "../../userInput/UserInput";
+import { FieldValues, Validate, ValidationRule } from "react-hook-form";
+import { Wrapper } from './inputField.styles';
 
 interface IProps {
-  value: string;
   onChange?: ChangeEventHandler<HTMLInputElement>;
   label_hidden?: boolean;
   label?: string;
@@ -22,18 +21,19 @@ interface IProps {
   type: HTMLInputTypeAttribute;
   InputRef?: RefObject<HTMLInputElement> | null | undefined;
   inputStyle?: React.CSSProperties;
-  errorMsg: string;
+  duplicationErrorMsg?: string;
   errorMsgSize?: "small";
+  required: boolean;
+  pattern?: ValidationRule<RegExp> | undefined;
+  validate?:
+    | Validate<any, FieldValues>
+    | Record<string, Validate<any, FieldValues>>
+    | undefined;
 }
 
-const Wrapper = styled.div`
-  & > p {
-    margin-top: 10px;
-  }
-`;
+
 
 export const InputField = ({
-  value,
   onChange,
   label_hidden,
   label,
@@ -44,29 +44,33 @@ export const InputField = ({
   minLength,
   placeholder,
   type,
-  InputRef,
   inputStyle,
-  errorMsg,
-  errorMsgSize
+  pattern,
+  duplicationErrorMsg,
+  errorMsgSize,
+  required,
+  validate
 }: IProps) => {
   return (
     <Wrapper>
       <UserInput
         label_hidden={label_hidden}
         label={label}
-        name={name}
         id={id}
+        name={name}
         placeholder={placeholder}
         type={type}
-        value={value}
-        onChange={onChange}
-        onBlur={onBlur}
-        InputRef={InputRef}
         inputStyle={inputStyle}
         maxLength={maxLength}
         minLength={minLength}
+        pattern={pattern}
+        duplicationErrorMsg={duplicationErrorMsg}
+        errorMsgSize={errorMsgSize}
+        required={required}
+        onChange={onChange}
+        onBlur={onBlur}
+        validate={validate}
       />
-      {errorMsg && <ErrorMsg message={errorMsg} className={errorMsgSize} />}
     </Wrapper>
   );
 };
