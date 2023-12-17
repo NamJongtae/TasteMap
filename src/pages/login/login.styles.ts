@@ -1,4 +1,4 @@
-import { isMobile } from 'react-device-detect';
+import { isMobile } from "react-device-detect";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 
@@ -17,8 +17,9 @@ export const Wrapper = styled.main`
 
 // ----------------LoginForm style----------------
 
-export const Form = styled.form`
+export const FormContentWrapper = styled.div`
   display: flex;
+  margin: 0 auto;
   flex-direction: column;
   height: 100vh;
   gap: 20px;
@@ -31,7 +32,7 @@ export const Form = styled.form`
   }
 `;
 
-export const LoginBtn = styled.button`
+export const StyledLoginBtn = styled.button`
   width: 100%;
   background-color: ${(props) => (props.disabled ? "#cbcbcb" : "gold")};
   padding: 14px 0;
@@ -76,7 +77,7 @@ export const StyledSignupLink = styled(Link)`
   font-weight: 500;
 `;
 
-// ----------------SocialLoginBtns style----------------
+// ----------------SocialLogin style----------------
 
 export const SocialLoginWrapper = styled.ul`
   position: relative;
@@ -97,12 +98,14 @@ export const SocialLoginWrapper = styled.ul`
   }
 `;
 
-export const SocialLoginItem = styled.li`
+// ----------------SocialLoginBtn style----------------
+
+export const SocialLoginBtnWrapper = styled.li`
   margin-bottom: 20px;
   text-align: center;
 `;
 
-export const SocialLoginBtn = styled.button`
+export const StyledSocialLoginBtn = styled.button`
   width: 100%;
   max-width: 300px;
   border-radius: 5px;

@@ -1,5 +1,5 @@
-import { useSupportedWebp } from "../../../../hook/useSupportedWebp";
-import { SocialLoginBtn, SocialLoginItem, SocialLoginWrapper } from '../../login.styles';
+import { useSupportedWebp } from "../../../hook/useSupportedWebp";
+import { SocialLoginBtnWrapper, SocialLoginWrapper, StyledSocialLoginBtn } from '../login.styles';
 
 interface IPrpos {
   buttonTypeArr: string[];
@@ -17,16 +17,16 @@ export const SocialLoginBtns = ({
     <SocialLoginWrapper>
       {textArr.map((text: string, i: number) => {
         return (
-          <SocialLoginItem key={text + i}>
-            <SocialLoginBtn
+          <SocialLoginBtnWrapper key={text + i}>
+            <StyledSocialLoginBtn
               className={buttonTypeArr[i]}
               type='button'
               onClick={onClickArr[i]}
               $isWebpSupported={isWebpSupported}
             >
               {text}
-            </SocialLoginBtn>
-          </SocialLoginItem>
+            </StyledSocialLoginBtn>
+          </SocialLoginBtnWrapper>
         );
       })}
     </SocialLoginWrapper>
