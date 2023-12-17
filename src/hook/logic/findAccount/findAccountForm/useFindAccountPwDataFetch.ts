@@ -1,37 +1,32 @@
 import { useEffect } from "react";
 import { useFindPasswordMuataion } from "../../../query/auth/useFindPasswordMutation";
-
-interface IParms {
-  activeMenu: "email" | "password";
-}
-
-export const useFindAccountPwDataFetch = ({ activeMenu }: IParms) => {
+import { FieldValues } from 'react-hook-form';
+export const useFindAccountPwDataFetch = () => {
   const {
     mutate: findPasswordMuate,
     isPending: findPasswordIsPending,
     data: isFindPassword,
-    reset: findPasswordReset
+    reset: findPasswordReset,
+    error: findPasswordError,
   } = useFindPasswordMuataion();
 
-  const findPasswordHandler = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const email = formData.get("email") as string;
-    const phone = formData.get("phone") as string;
-
+  const findPasswordHandler = async (data: FieldValues) => {
     findPasswordMuate({
-      email,
-      phone: phone.replace(/-/g, "")
+      email: data.email,
+      phone: data.phone.replace(/-/g, "")
     });
   };
 
   useEffect(() => {
-    findPasswordReset();
-  }, [activeMenu]);
+    return () => {
+      findPasswordReset();
+    };
+  }, []);
 
   return {
     findPasswordHandler,
     findPasswordIsPending,
-    isFindPassword
+    isFindPassword,
+    findPasswordError
   };
 };

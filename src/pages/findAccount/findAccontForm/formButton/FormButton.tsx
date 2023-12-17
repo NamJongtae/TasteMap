@@ -1,36 +1,30 @@
+import { useFormContext } from "react-hook-form";
 import { FindAccountBtn, LoginLink } from "../../findAccount.styles";
 
 interface IProps {
-  activeMenu: "email" | "password";
-  isFindEmailValue: boolean;
-  isFindPassword: boolean;
-  submitBtnDisabled: boolean;
+  menu: "email" | "password";
+  isFind: boolean;
   isLoading: boolean;
 }
 
-export default function FormButton({
-  activeMenu,
-  isFindEmailValue,
-  isFindPassword,
-  submitBtnDisabled,
-  isLoading
-}: IProps) {
+export default function FormButton({ menu, isFind, isLoading }: IProps) {
+  const { formState } = useFormContext();
+
+  if (isFind) {
+    return <LoginLink to='/login'>로그인 하러가기</LoginLink>;
+  }
+
   if (isLoading) {
     return (
-      <FindAccountBtn type='button' disabled={isLoading}>
+      <FindAccountBtn type='submit' disabled={isLoading}>
         Loading...
       </FindAccountBtn>
     );
   }
+
   return (
-    <>
-      {isFindEmailValue || isFindPassword ? (
-        <LoginLink to='/login'>로그인 하러가기</LoginLink>
-      ) : (
-        <FindAccountBtn type='submit' disabled={submitBtnDisabled}>
-          {activeMenu === "email" ? "이메일 찾기" : "비밀번호 찾기"}
-        </FindAccountBtn>
-      )}
-    </>
+    <FindAccountBtn type='submit' disabled={!formState.isValid}>
+      {menu === "email" ? "이메일 찾기" : "비밀번호 찾기"}
+    </FindAccountBtn>
   );
 }

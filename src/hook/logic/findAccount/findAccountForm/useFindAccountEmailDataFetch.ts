@@ -1,36 +1,33 @@
 import { useEffect } from "react";
 import { useFindAccountMutation } from "../../../query/auth/useFindEmailMutation";
+import { FieldValues } from "react-hook-form";
 
-interface IParms {
-  activeMenu: "email" | "password";
-}
-export const useFindAccountEmailDataFetch = ({ activeMenu }: IParms) => {
+export const useFindAccountEmailDataFetch = () => {
   const {
     mutate: findEmailMuate,
     isPending: findEmailIsPending,
     data: findEmailValue,
-    reset: findEmailReset
+    reset: findEmailReset,
+    error: findEmailError
   } = useFindAccountMutation();
 
-  const findEmailHandler = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const displayName = formData.get("nickname") as string;
-    const phone = formData.get("phone") as string;
-
+  const findEmailHandler = async (data: FieldValues) => {
     findEmailMuate({
-      displayName,
-      phone: phone.replace(/-/g, "")
+      displayName: data.nickname,
+      phone: data.phone.replace(/-/g, "")
     });
   };
 
   useEffect(() => {
-    findEmailReset();
-  }, [activeMenu]);
+    return () => {
+      findEmailReset();
+    };
+  }, []);
 
   return {
     findEmailHandler,
     findEmailValue,
-    findEmailIsPending
+    findEmailIsPending,
+    findEmailError
   };
 };

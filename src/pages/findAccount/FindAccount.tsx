@@ -1,14 +1,16 @@
-import { useFindAccountControllFormMenu } from "../../hook/logic/findAccount/useFindAccountControllFormMenu";
+
 import FormMenu from "./formMenu/FormMenu";
 import FindAccountForm from "./findAccontForm/FindAccountForm";
 import { FormWrapper, Title, Wrapper } from './findAccount.styles';
+import { useFindAccountFormMenuController } from '../../hook/logic/findAccount/useFindAccountFormMenuController';
 
 export default function FindAccount() {
   const {
     activeMenu,
     activeFindEmailMenuHandler,
     activeFindPasswordMenuHandler
-  } = useFindAccountControllFormMenu();
+  } = useFindAccountFormMenuController();
+
 
   return (
     <Wrapper>

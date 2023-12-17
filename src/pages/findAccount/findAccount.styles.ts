@@ -36,7 +36,7 @@ export const FormMenuList = styled.ul`
   }
 `;
 
-export const FormMenuLi = styled.li`
+export const FormMenuItemWrapper = styled.li`
   flex-basis: 50%;
   display: flex;
   height: 50px;
@@ -64,7 +64,7 @@ export const FormMenuBtn = styled.button`
 
 // ----------------FindAccountForm style----------------
 
-export const Form = styled.form`
+export const FormContentWrapper = styled.div`
   display: flex;
   flex-direction: column;
   border-radius: 10px;
@@ -74,6 +74,7 @@ export const Form = styled.form`
   background: none;
   width: calc(100% - 60px);
   max-width: 400px;
+  margin: 0 auto;
   gap: 20px;
   @media screen and (max-width: 431px) {
     width: calc(100% - 40px);

@@ -1,11 +1,11 @@
 import { useMutation } from "@tanstack/react-query";
-import { fetchChangePassword } from '../../../api/firebase/findAccountAPI';
+import { fetchChangePassword } from "../../../api/firebase/findAccountAPI";
 
 export const useFindPasswordMuataion = () => {
-  const { mutate, isPending, data, reset } = useMutation({
+  const { mutate, isPending, data, reset, error } = useMutation({
     mutationFn: ({ email, phone }: { email: string; phone: string }) =>
       fetchChangePassword(email, phone)
   });
 
-  return { mutate, isPending, data, reset}
+  return { mutate, isPending, data, reset, error };
 };

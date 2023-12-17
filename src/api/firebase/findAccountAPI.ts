@@ -1,7 +1,6 @@
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { getAuth, sendPasswordResetEmail } from "firebase/auth";
 import { db } from "./setting";
-import { sweetToast } from "../../library/sweetAlert/sweetAlert";
 
 const auth = getAuth();
 
@@ -27,7 +26,7 @@ export const fetchFindEmail = async (displayName: string, phone: string) => {
         createdAt: changeFormateDate(datas[0].createdAt.toDate())
       };
     else {
-      throw new Error("일치하는 정보가 없습니다!")
+      throw new Error("닉네임 또는 휴대폰 번호가 일치하지 않습니다.");
     }
   } catch (error) {
     console.error(error);
@@ -52,8 +51,7 @@ export const fetchChangePassword = async (email: string, phone: string) => {
       });
       return true;
     } else {
-      sweetToast("일치하는 정보가 없습니다!", "warning");
-      return false;
+      throw new Error("이메일 또는 휴대폰 번호가 일치하지 않습니다.");
     }
   } catch (error) {
     console.error(error);

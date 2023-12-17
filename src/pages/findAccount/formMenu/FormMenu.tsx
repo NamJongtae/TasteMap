@@ -1,5 +1,6 @@
 import React from "react";
-import { FormMenuBtn, FormMenuLi, FormMenuList } from '../findAccount.styles';
+import { FormMenuList } from "../findAccount.styles";
+import FormMenuItem from "./FormMenuItem";
 
 interface IProps {
   activeMenu: "email" | "password";
@@ -12,27 +13,20 @@ export default function FormMenu({
   activeFindEmailMenuHandler,
   activeFindPasswordMenuHandler
 }: IProps) {
-
   return (
     <FormMenuList>
-      <FormMenuLi active={activeMenu === "email"}>
-        <FormMenuBtn
-          active={activeMenu === "email"}
-          type='button'
-          onClick={activeFindEmailMenuHandler}
-        >
-          이메일 찾기
-        </FormMenuBtn>
-      </FormMenuLi>
-      <FormMenuLi active={activeMenu === "password"}>
-        <FormMenuBtn
-          active={activeMenu === "password"}
-          type='button'
-          onClick={activeFindPasswordMenuHandler}
-        >
-          비밀번호 찾기
-        </FormMenuBtn>
-      </FormMenuLi>
+      <FormMenuItem
+        activeMenu={activeMenu}
+        menu='email'
+        activeMenuHandler={activeFindEmailMenuHandler}
+        menuText='이메일 찾기'
+      />
+      <FormMenuItem
+        activeMenu={activeMenu}
+        menu='password'
+        activeMenuHandler={activeFindPasswordMenuHandler}
+        menuText='비밀번호 찾기'
+      />
     </FormMenuList>
   );
 }
