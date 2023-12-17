@@ -9,7 +9,7 @@ import {
   ProfileUpdateModalWrapper
 } from "./ProfileUpdateModal.styles";
 import ProfileUpdateForm from "./profileUpdateForm/ProfileUpdateForm";
-import { PortalModal } from "../../../component/commons/UI/PortalModal";
+import { PortalModal } from "../../../component/commons/UI/portalModal/PortalModal";
 import { useProfileUpdateModalController } from "../../../hook/logic/profile/profileUpdateModal/useProfileUpdateModalController";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../store/store";
@@ -44,6 +44,7 @@ const ModalPortal = ({
       <ModalTitleBar>
         <ModalTitle>프로필 수정</ModalTitle>
       </ModalTitleBar>
+
       <ProfileUpdateForm
         myProfile={myProfile}
         imgInputRef={imgInputRef}
@@ -53,6 +54,7 @@ const ModalPortal = ({
         closeBtnRef={closeBtnRef}
         updateBtnRef={updateBtnRef}
       />
+
       <CloseBtn
         onClick={closeProfileUpdateModalAndAnimationHandler}
         onKeyDown={(e: React.KeyboardEvent<HTMLButtonElement>) => {
@@ -88,10 +90,8 @@ export default function ProfileUpdateModal({ myProfile }: IProps) {
     updateBtnRef,
     closeBtnRef,
     ProfileImgButtonWrapperRef,
-    closeProfileUpdateModalAndAnimationHandler,
+    closeProfileUpdateModalAndAnimationHandler
   } = useProfileUpdateModalController();
-
-
 
   if (!isOpenProfileUpdateModal) {
     return null;

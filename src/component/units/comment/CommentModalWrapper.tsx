@@ -2,7 +2,7 @@ import React from "react";
 import CommentModal from "./commentModal/CommentModal";
 import { useCommentModalController } from "../../../hook/logic/comment/useCommentModalController";
 import { ICommentData } from "../../../api/apiType";
-import { PortalModal } from "../../commons/UI/PortalModal";
+import { PortalModal } from "../../commons/UI/portalModal/PortalModal";
 
 interface IProps {
   postType: "HOME" | "FEED" | "PROFILE";

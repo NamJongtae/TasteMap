@@ -8,7 +8,7 @@ import {
 import FollowList from "./followList/FollowList";
 import { optModalTabFocus } from "../../../library/optModalTabFocus";
 import { useSupportedWebp } from "../../../hook/useSupportedWebp";
-import { PortalModal } from "../../../component/commons/UI/PortalModal";
+import { PortalModal } from "../../../component/commons/UI/portalModal/PortalModal";
 import { useFollowModalController } from "../../../hook/logic/profile/followModal/useFollowModalController";
 import { IMyProfileData } from "../../../api/apiType";
 

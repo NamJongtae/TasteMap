@@ -14,7 +14,7 @@ import useSearchMapInput from "../../../hook/logic/searchMapModal/useSearchMapIn
 import { useSearchMapDataFetch } from "../../../hook/logic/searchMapModal/useSearchMapDataFetch";
 import { IMapData } from "../../../api/apiType";
 import SearchResult from "./searchResult/SearchResult";
-import { PortalModal } from "../UI/PortalModal";
+import { PortalModal } from "../UI/portalModal/PortalModal";
 
 interface IPortalProps {
   isWebpSupported: boolean | null;

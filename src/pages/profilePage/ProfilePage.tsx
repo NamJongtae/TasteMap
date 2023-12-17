@@ -3,12 +3,12 @@ import FollowModal from "./followModal/FollowModal";
 import InvalidPage from "../../component/commons/invalidPage/InvalidPage";
 import Loading from "../../component/commons/loading/Loading";
 import { IMyProfileData, IUserProfileData } from "../../api/apiType";
-import ProfileUpdateModal from "./profileUpdateModal/ProfileUpdateModal";
 import { useProfileFetchData } from "../../hook/logic/profile/profileInfo/useProfileFetchData";
 import { useCheckIsMyProfilePage } from "../../hook/logic/profile/profileInfo/useCheckIsMyProfilePage";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/store";
 import Profile from "./profile/Profile";
+import ProfileUpdateModal from './profileUpdateModal/ProfileUpdateModal';
 
 export default function ProfilePage() {
   const isOpenFollowerModal = useSelector(
