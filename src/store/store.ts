@@ -6,6 +6,7 @@ import { replySlice } from '../slice/replySlice';
 import { tasteMapSlice } from '../slice/tasteMapSlice';
 import { searchSlice } from '../slice/searchSlice';
 import { settingSlice } from '../slice/settingSlice';
+import { signupSlice } from '../slice/signupSlice';
 export const store = configureStore({
   reducer: {
     user: userSlice.reducer,
@@ -14,6 +15,7 @@ export const store = configureStore({
     reply: replySlice.reducer,
     tasteMap: tasteMapSlice.reducer,
     search: searchSlice.reducer,
+    signup: signupSlice.reducer,
     setting: settingSlice.reducer,
   },
   devTools: process.env.NODE_ENV !== 'production',
