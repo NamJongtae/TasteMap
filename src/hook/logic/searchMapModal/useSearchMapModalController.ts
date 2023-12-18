@@ -8,6 +8,8 @@ import { useHistoryMobileBackBtn } from "../../useHistoryMobileBackBtn";
 export const useSearchMapModalController = () => {
   const dispatch = useDispatch<AppDispatch>();
   const closeBtnRef = useRef<HTMLButtonElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const lastResultSelectBtnRef = useRef<HTMLButtonElement>(null);
   const isOpenSearchMapModal = useSelector(
     (state: RootState) => state.search.isOpenSearchMapModal
   );
@@ -37,6 +39,8 @@ export const useSearchMapModalController = () => {
 
   return {
     closeBtnRef,
+    inputRef,
+    lastResultSelectBtnRef,
     isOpenSearchMapModal,
     openSearchModalHandler,
     closeSearchModalHandler

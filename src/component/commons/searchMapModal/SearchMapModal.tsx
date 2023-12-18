@@ -8,44 +8,25 @@ import {
   ModalTitle,
   ModalTitleBar,
   ModalWrapper
-} from "./searchModal.styles";
-import useSearchMapResult from "../../../hook/logic/searchMapModal/useSearchMapResult";
-import useSearchMapInput from "../../../hook/logic/searchMapModal/useSearchMapInput";
-import { useSearchMapDataFetch } from "../../../hook/logic/searchMapModal/useSearchMapDataFetch";
-import { IMapData } from "../../../api/apiType";
-import SearchResult from "./searchResult/SearchResult";
+} from "./searchMapModal.styles";
 import { PortalModal } from "../UI/portalModal/PortalModal";
 
 interface IPortalProps {
   isWebpSupported: boolean | null;
   closeBtnRef: React.RefObject<HTMLButtonElement>;
   closeSearchModalHandler: () => void;
-  isSearched: boolean;
-  setIsSearched: React.Dispatch<React.SetStateAction<boolean>>;
-  selectedResultMapHandler: (data: IMapData) => void;
   lastResultSelectBtnRef: React.RefObject<HTMLButtonElement>;
   inputRef: React.RefObject<HTMLInputElement>;
-  searchKeyword: string;
-  onChangeKeyword: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  searchMapHandler: (e: React.FormEvent<HTMLFormElement>) => void;
-  searchResult: IMapData[] | undefined;
-  searchLoading: boolean;
+  isTasteMapPage: boolean;
 }
 
 const SearchModalPortal = ({
   isWebpSupported,
   closeBtnRef,
   closeSearchModalHandler,
-  isSearched,
-  setIsSearched,
-  selectedResultMapHandler,
   lastResultSelectBtnRef,
   inputRef,
-  searchKeyword,
-  onChangeKeyword,
-  searchMapHandler,
-  searchResult,
-  searchLoading
+  isTasteMapPage
 }: IPortalProps) => {
   return (
     <ModalWrapper>
@@ -56,19 +37,8 @@ const SearchModalPortal = ({
       <SearchMapForm
         inputRef={inputRef}
         closeBtnRef={closeBtnRef}
-        setIsSearched={setIsSearched}
-        searchKeyword={searchKeyword}
-        onChangeKeyword={onChangeKeyword}
-        searchMapHandler={searchMapHandler}
-      />
-
-      <SearchResult
-        isSearched={isSearched}
-        searchKeyword={searchKeyword}
-        searchResult={searchResult}
-        selectedResultMapHandler={selectedResultMapHandler}
-        searchLoading={searchLoading}
         lastResultSelectBtnRef={lastResultSelectBtnRef}
+        isTasteMapPage={isTasteMapPage}
       />
 
       <CloseBtn
@@ -95,20 +65,12 @@ interface IProps {
 export default function SearchMapModal({ isTasteMapPage }: IProps) {
   const { isWebpSupported } = useSupportedWebp();
 
-  const { closeBtnRef, closeSearchModalHandler } =
-    useSearchMapModalController();
-
   const {
-    isSearched,
-    setIsSearched,
-    selectedResultMapHandler,
-    lastResultSelectBtnRef
-  } = useSearchMapResult({ isTasteMapPage });
-
-  const { inputRef, searchKeyword, onChangeKeyword } = useSearchMapInput();
-
-  const { searchMapHandler, searchResult, searchLoading } =
-    useSearchMapDataFetch();
+    closeBtnRef,
+    inputRef,
+    lastResultSelectBtnRef,
+    closeSearchModalHandler
+  } = useSearchMapModalController();
 
   return (
     <PortalModal
@@ -118,17 +80,10 @@ export default function SearchMapModal({ isTasteMapPage }: IProps) {
       <SearchModalPortal
         isWebpSupported={isWebpSupported}
         closeBtnRef={closeBtnRef}
-        closeSearchModalHandler={closeSearchModalHandler}
-        isSearched={isSearched}
-        setIsSearched={setIsSearched}
-        selectedResultMapHandler={selectedResultMapHandler}
-        lastResultSelectBtnRef={lastResultSelectBtnRef}
         inputRef={inputRef}
-        searchKeyword={searchKeyword}
-        onChangeKeyword={onChangeKeyword}
-        searchMapHandler={searchMapHandler}
-        searchResult={searchResult}
-        searchLoading={searchLoading}
+        closeSearchModalHandler={closeSearchModalHandler}
+        lastResultSelectBtnRef={lastResultSelectBtnRef}
+        isTasteMapPage={isTasteMapPage}
       />
     </PortalModal>
   );

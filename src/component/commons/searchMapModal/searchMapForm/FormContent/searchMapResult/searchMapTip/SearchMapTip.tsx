@@ -1,11 +1,7 @@
 import React from "react";
-import {
-  SerachTipWrapper,
-  TipDescription,
-  TipExample,
-  TipTitle
-} from "./searchTip.styles";
-export default function SearchTip() {
+import { SerachTipWrapper, TipDescription, TipExample, TipTitle } from '../../../../searchMapModal.styles';
+
+export default function SearchMapTip() {
   return (
     <SerachTipWrapper>
       <TipTitle>tip</TipTitle>

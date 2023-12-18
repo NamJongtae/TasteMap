@@ -1,14 +1,10 @@
 import React from "react";
-import {
-  NoSearchData,
-  NoSearchDataText,
-  Strong,
-  TipExample
-} from "./noneSearchResult.styles";
+import { NoSearchData, NoSearchDataText, Strong, TipExample } from '../../../../searchMapModal.styles';
+
 interface IProps {
   searchKeyword: string;
 }
-export default function NoneSearchResult({ searchKeyword }: IProps) {
+export default function NoneSearchMapResult({ searchKeyword }: IProps) {
   return (
     <NoSearchData>
       <NoSearchDataText>

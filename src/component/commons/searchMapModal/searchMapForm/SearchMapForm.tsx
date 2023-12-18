@@ -1,48 +1,41 @@
 import React from "react";
-import { optModalTabFocus } from "../../../../library/optModalTabFocus";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../../store/store";
-import { SearchInput, SearchInputForm } from "./searchMapForm.styles";
+import { MyForm } from "../../UI/myForm/MyForm";
+import { useSearchMapDataFetch } from "../../../../hook/logic/searchMapModal/useSearchMapDataFetch";
+import FormContent from "./FormContent/FormContent";
 
 interface IProps {
-  setIsSearched: React.Dispatch<React.SetStateAction<boolean>>;
-  searchKeyword: string;
-  onChangeKeyword: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  searchMapHandler: (e: React.FormEvent<HTMLFormElement>) => void;
   inputRef: React.RefObject<HTMLInputElement>;
   closeBtnRef: React.RefObject<HTMLButtonElement>;
+  lastResultSelectBtnRef: React.RefObject<HTMLButtonElement>;
+  isTasteMapPage: boolean;
 }
 export default function SearchMapForm({
-  setIsSearched,
-  onChangeKeyword,
-  searchMapHandler,
-  searchKeyword,
   inputRef,
-  closeBtnRef
+  closeBtnRef,
+  lastResultSelectBtnRef,
+  isTasteMapPage
 }: IProps) {
-  const isWebpSupported = useSelector(
-    (state: RootState) => state.setting.isWebpSupported
-  );
+  const {
+    searchMapHandler,
+    searchResult,
+    searchLoading,
+    isSearched
+  } = useSearchMapDataFetch();
 
   return (
-    <SearchInputForm
-      onSubmit={(e) => {
-        searchMapHandler(e);
-        setIsSearched(true);
-      }}
-      $isWebpSupported={isWebpSupported}
+    <MyForm
+      onSubmit={searchMapHandler}
+      formOptions={{ mode: "onSubmit", defaultValues: { searchKeyword: "" } }}
     >
-      <SearchInput
-        type='text'
-        name='searchKeyword'
-        value={searchKeyword}
-        onChange={onChangeKeyword}
-        placeholder='가게명, 상호명 검색'
-        ref={inputRef}
-        onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
-          optModalTabFocus(e, closeBtnRef.current);
-        }}
+      <FormContent
+        inputRef={inputRef}
+        closeBtnRef={closeBtnRef}
+        searchResult={searchResult}
+        searchLoading={searchLoading}
+        isSearched={isSearched}
+        lastResultSelectBtnRef={lastResultSelectBtnRef}
+        isTasteMapPage={isTasteMapPage}
       />
-    </SearchInputForm>
+    </MyForm>
   );
 }
