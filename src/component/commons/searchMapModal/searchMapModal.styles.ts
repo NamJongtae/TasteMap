@@ -96,7 +96,8 @@ export const TipExample = styled.p`
 
 export const SearchList = styled.ul`
   width: 100%;
-  height: calc(100% - 77px);
+  height: 100%;
+  max-height: calc(600px - 77px);
   overflow-y: scroll;
 `;
 
