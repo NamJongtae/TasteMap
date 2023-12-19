@@ -33,8 +33,8 @@ export const useUpdateProfileMutation = () => {
       let imgURL: string = "";
       if (typeof img !== "string") {
         imgURL = URL.createObjectURL(img);
-      } else {
-        imgURL = process.env.REACT_APP_DEFAULT_PROFILE_IMG || "";
+      } else if (img === process.env.REACT_APP_DEFAULT_PROFILE_IMG) {
+        imgURL = process.env.REACT_APP_DEFAULT_PROFILE_IMG;
       }
 
       await queryClient.cancelQueries({
