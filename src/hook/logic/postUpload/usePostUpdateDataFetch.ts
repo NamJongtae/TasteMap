@@ -1,9 +1,10 @@
 import { useSelector } from "react-redux";
 import { RootState } from "../../../store/store";
 import { useCallback } from "react";
-import { IMapData, IPostData, IPostUpdateData } from "../../../api/apiType";
+import { IPostData, IPostUpdateData } from "../../../api/apiType";
 import { usePostUpdateMutation } from "../../query/post/usePostUpdateMutation";
 import { useCheckVaildationUser } from "./useCheckVaildationUser";
+import { FieldValues } from "react-hook-form";
 
 interface IProps {
   post: IPostData | undefined;
@@ -20,25 +21,18 @@ export const usePostUpdateDataFetch = ({ post }: IProps) => {
    *
    * 게시물 업로드 함수 */
   const postUpdateHandler = useCallback(
-    async (
-      content: string,
-      rating: number,
-      mapData: IMapData,
-      imgURL: string[],
-      imgName: string[],
-      img: File[]
-    ) => {
+    async (data: FieldValues) => {
       // 내용이 비었거나 맛집을 선택하지 않았을 경우 return
-      if (!content || !searchSelectedMap.mapx) return;
+      if (!data.content || !data.map) return;
       if (post) {
         const editPostData: IPostUpdateData = {
-          id: post!.id,
-          content,
-          rating,
-          mapData,
-          imgURL,
-          imgName,
-          img
+          id: post!.id || "",
+          content: data.content,
+          rating: data.rating,
+          mapData: data.map,
+          imgURL: data.imgURL,
+          imgName: data.imgName,
+          img: data.img
         };
         updatePostMutate({
           prevPostDataImgName: post,

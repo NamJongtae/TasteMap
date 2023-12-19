@@ -5,25 +5,23 @@ import {
   RatingSection,
   RatingTitle,
   RatingWrapper
-} from "../postUpload.styles";
+} from "../../../postUpload.styles";
+import { useFormContext } from "react-hook-form";
 
-interface IProps {
-  ratingValue: number;
-  setRatingValue: React.Dispatch<React.SetStateAction<number>>;
-}
-
-export default function PostUploadRating({
-  ratingValue,
-  setRatingValue
-}: IProps) {
+export default function PostUploadRating() {
+  const { register, setValue, watch } = useFormContext();
+  const { ref } = register("rating", { required: true });
+  const ratingValue = watch("rating");
   return (
     <RatingSection>
       <RatingTitle>평점*</RatingTitle>
       <RatingWrapper>
         <Rating
           count={5}
+          id='rating'
+          ref={ref}
           value={ratingValue}
-          onChange={(value) => setRatingValue(value)}
+          onChange={(value) => setValue("rating", value, { shouldDirty: true })}
           allowHalf
           autoFocus
         />

@@ -15,14 +15,14 @@ const SectionTtitle = styled.h3`
 
 // ----------------PostUpload style----------------
 
-export const Wrapper = styled.main`
+export const FormContentWrapper = styled.main`
   width: 100%;
   max-width: 500px;
   margin: 0 auto 20px auto;
   padding: 20px;
 `;
 
-export const HiddenUploadBtn = styled.input``;
+export const ImgUploadInput = styled.input``;
 
 // ----------------PostUploadMap style----------------
 

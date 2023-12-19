@@ -3,20 +3,10 @@ import Header from "../../component/commons/layouts/header/Header";
 import SearchModal from "../../component/commons/searchMapModal/SearchMapModal";
 import Loading from "../../component/commons/loading/Loading";
 import InvalidPage from "../../component/commons/invalidPage/InvalidPage";
-import { HiddenUploadBtn, Wrapper } from "./postUpload.styles";
-import PostUploadImg from "./postUploadImg/PostUploadImg";
-import PostUploadContent from "./postUploadContent/PostUploadContent";
-import PostUploadRating from "./postUploadRating/PostUploadRating";
-import { PostUploadMap } from "./postUploadMap/PostUploadMap";
-import { usePostUploadImg } from "../../hook/logic/postUpload/usePostUploadImg";
-import { usePostUploadContent } from "../../hook/logic/postUpload/usePostUploadContent";
-import { usePostUploadRating } from "../../hook/logic/postUpload/usePostUploadRating";
-import { usePostUploadMap } from "../../hook/logic/postUpload/usePostUploadMap";
-import { usePostUpdateDataFetch } from "../../hook/logic/postUpload/usePostUpdateDataFetch";
-import { usePostUploadDataFetch } from "../../hook/logic/postUpload/usePostUploadDataFetch";
-import { useSubmitBtnController } from "../../hook/logic/postUpload/useSubmitBtnController";
 import { useLoadPostData } from "../../hook/logic/postUpload/useLoadPostData";
-import { useUnMountResetMap } from "../../hook/logic/postUpload/useUnMountResetMap";
+import PostUploadForm from "./postUploadForm/PostUploadForm";
+import { useSelector } from "react-redux";
+import { RootState } from "../../store/store";
 interface IProps {
   isEdit: boolean;
 }
@@ -29,50 +19,11 @@ export default function PostUpload({ isEdit }: IProps) {
     isEdit
   });
 
-  // post upload map 관련 로직 customhook
-  const { searchSelectedMap, isOpenSearchMapModal, openSearchModal } =
-    usePostUploadMap({ isEdit, post });
+  const isOpenSearchMapModal = useSelector(
+    (state: RootState) => state.search.isOpenSearchMapModal
+  );
 
-  // post upload rating 관련 로직 customhook
-  const { ratingValue, setRatingValue } = usePostUploadRating({ isEdit, post });
-
-  // post upload content 관련 로직 customhook
-  const { textareaRef, contentValue, onChangeContentValue } =
-    usePostUploadContent({
-      isEdit,
-      post
-    });
-
-  // postUpdate 데이터 처리
-  const { postUpdateHandler, updatePostLoading } = usePostUpdateDataFetch({
-    post
-  });
-
-  // postUpload 데이터 처리
-  const { postUploadHandler, uploadPostLoading } = usePostUploadDataFetch();
-
-  // 업로드 버튼 제어
-  const { isDisabled } = useSubmitBtnController({ isEdit, post });
-
-  // post upload img 관련 로직 customhook
-  const {
-    imgFile,
-    preview,
-    updateImgName,
-    updateImgURL,
-    isImgLoading,
-    hiddenUploadBtnRef,
-    imgListRef,
-    wrapperRef,
-    onChangeImg,
-    onClickUploadImg,
-    onClickRemoveImg
-  } = usePostUploadImg({ isEdit, post });
-
-  // clean-up map data 초기화
-  useUnMountResetMap();
-
-  if (loadPostLoading || updatePostLoading) {
+  if (loadPostLoading) {
     return <Loading />;
   }
 
@@ -87,67 +38,8 @@ export default function PostUpload({ isEdit }: IProps) {
 
   return (
     <>
-      <Header
-        type='upload'
-        btnText={isEdit ? "수정" : "업로드"}
-        disabled={isDisabled(contentValue, preview, ratingValue)}
-        onSubmit={() => {
-          isEdit
-            ? postUpdateHandler(
-                contentValue,
-                ratingValue,
-                searchSelectedMap,
-                updateImgURL,
-                updateImgName,
-                imgFile
-              )
-            : postUploadHandler(
-                contentValue,
-                ratingValue,
-                searchSelectedMap,
-                imgFile
-              );
-        }}
-      />
-      <Wrapper ref={wrapperRef}>
-        <h2 className='a11y-hidden'>
-          {isEdit ? "게시물 수정" : "게시물 작성"}
-        </h2>
-
-        <PostUploadMap
-          openSearchModal={openSearchModal}
-          searchSelectedMap={searchSelectedMap}
-        />
-
-        <PostUploadRating
-          ratingValue={ratingValue}
-          setRatingValue={setRatingValue}
-        />
-
-        <PostUploadContent
-          textareaRef={textareaRef}
-          contentValue={contentValue}
-          onChangeContentValue={onChangeContentValue}
-        />
-
-        <PostUploadImg
-          onClickUploadImg={onClickUploadImg}
-          isImgLoading={isImgLoading}
-          imgListRef={imgListRef}
-          preview={preview}
-          onClickRemoveImg={onClickRemoveImg}
-        />
-      </Wrapper>
-
-      <HiddenUploadBtn
-        type='file'
-        accept='.jpg, .jpeg, .png, .bmp'
-        className='a11y-hidden'
-        onChange={onChangeImg}
-        ref={hiddenUploadBtnRef}
-      />
+      <PostUploadForm post={post} isEdit={isEdit} />
       {isOpenSearchMapModal && <SearchModal isTasteMapPage={false} />}
-      {uploadPostLoading && <Loading />}
     </>
   );
 }

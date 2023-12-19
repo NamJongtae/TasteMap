@@ -1,9 +1,10 @@
 import { useCallback, useEffect } from "react";
-import { IPostData } from "../../../api/apiType";
-import { tasteMapSlice } from "../../../slice/tasteMapSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../store/store";
 import { searchSlice } from "../../../slice/searchSlice";
+import { useFormContext } from "react-hook-form";
+import { IMapData, IPostData } from "../../../api/apiType";
+import { tasteMapSlice } from "../../../slice/tasteMapSlice";
 
 interface IProps {
   isEdit: boolean;
@@ -11,6 +12,7 @@ interface IProps {
 }
 
 export const usePostUploadMap = ({ isEdit, post }: IProps) => {
+  const { setValue } = useFormContext();
   const isOpenSearchMapModal = useSelector(
     (state: RootState) => state.search.isOpenSearchMapModal
   );
@@ -33,10 +35,19 @@ export const usePostUploadMap = ({ isEdit, post }: IProps) => {
     }
   };
 
+  useEffect(() => {
+    setValue("map", searchSelectedMap, { shouldDirty: true });
+  }, [searchSelectedMap]);
 
   useEffect(() => {
     setUpdateInitalValue();
   }, [post]);
+  
+  useEffect(() => {
+    return () => {
+      dispatch(tasteMapSlice.actions.setSearchSelectedMap({} as IMapData));
+    };
+  }, []);
 
   return {
     searchSelectedMap,

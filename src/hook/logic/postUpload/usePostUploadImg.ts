@@ -3,25 +3,26 @@ import { sweetToast } from "../../../library/sweetAlert/sweetAlert";
 import { imgValidation } from "../../../library/imageValidation";
 import { isMobile } from "react-device-detect";
 import { getCompressionImg } from "../../../library/imageCompression";
+import { useFormContext } from "react-hook-form";
 import { IPostData } from "../../../api/apiType";
 
-interface IProps {
+interface IPrpos {
   isEdit: boolean;
   post: IPostData | undefined;
 }
-export const usePostUploadImg = ({ isEdit, post }: IProps) => {
-  // 업로드할 이미지 파일
-  const [imgFile, setImgFile] = useState<File[]>([]);
-  // 업로드할 이미지 미리보기
+
+export const usePostUploadImg = ({ isEdit, post }: IPrpos) => {
   const [preview, setPreview] = useState<string[]>([]);
   const [isImgLoading, setIsImgLoading] = useState(false);
-  const [updateImgName, setUpdateImgName] = useState<string[]>([]);
-  const [updateImgURL, setUpdateImgURL] = useState<string[]>([]);
-  // 이미지 업로드 input button으로 custom하여 사용하기 위해 감춤
-  const hiddenUploadBtnRef = useRef<HTMLInputElement>(null);
-  // 이미지 업로드 페이지 wrapper
+
+  const uploadInputRef = useRef<HTMLInputElement | null>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const imgListRef = useRef<HTMLUListElement>(null);
+
+  const { getValues, setValue } = useFormContext();
+  const currentImgList = getValues("img");
+  const currentImgName = getValues("imgName");
+  const currentImgURL = getValues("imgURL");
 
   /**
    * 이미지 chage 함수 */
@@ -65,7 +66,10 @@ export const usePostUploadImg = ({ isEdit, post }: IProps) => {
       }
       // imgFile, preview 배열에 업로드한 이미지 추가
       setPreview((prev) => [...prev, compressdImg.compressedPreview]);
-      setImgFile((prev) => [...prev, compressdImg.compressedFile]);
+
+      setValue("img", [...currentImgList, compressdImg.compressedFile], {
+        shouldDirty: true
+      });
       // 이미지 업로드 후 업로드한 이미지가 보이도록 스크롤을 맨 아래로 내림
       if (wrapperRef.current)
         scrollTo({ top: wrapperRef.current.scrollHeight });
@@ -75,29 +79,44 @@ export const usePostUploadImg = ({ isEdit, post }: IProps) => {
 
   /**
    * 이미지 업로드 input 클릭 */
-  const onClickUploadImg = useCallback(() => {
-    if (hiddenUploadBtnRef.current) {
-      hiddenUploadBtnRef.current.click();
+  const clickUploadImgInputHandler = useCallback(() => {
+    if (uploadInputRef.current) {
+      uploadInputRef.current.click();
     }
   }, []);
 
   /**
    * 이미지 삭제 함수
    * 인자값으로 index를 받아 해당 index에 해당하는 imgFile, preview 제거 */
-  const onClickRemoveImg = useCallback((idx: number) => {
-    if (hiddenUploadBtnRef.current) {
-      hiddenUploadBtnRef.current.value = "";
+  const removeImgHandler = useCallback((idx: number) => {
+    if (uploadInputRef.current) {
+      uploadInputRef.current.value = "";
     }
     setPreview((prev) => prev.filter((_, itemIdx) => itemIdx != idx));
-    setImgFile((prev) => prev.filter((_, itemIdx) => itemIdx != idx));
-    setUpdateImgURL((prev) => prev.filter((_, itemIdx) => itemIdx != idx));
-    setUpdateImgName((prev) => prev.filter((_, itemIdx) => itemIdx != idx));
+
+    setValue(
+      "img",
+      currentImgList.filter((_: string, itemIdx: number) => itemIdx != idx),
+      {
+        shouldDirty: true
+      }
+    );
+
+    setValue(
+      "imgName",
+      currentImgName.filter((_: string, itemIdx: number) => itemIdx != idx)
+    );
+
+    setValue(
+      "imgURL",
+      currentImgURL.filter((_: string, itemIdx: number) => itemIdx != idx)
+    );
   }, []);
 
   /**
    * 이미지 추가 시 맨 마지막 이미지로 스크롤 이동 */
-  const handleImgListScroll = () => {
-    if (imgListRef.current && post?.imgURL !== preview) {
+  const imgListScrollHandler = () => {
+    if (imgListRef.current) {
       imgListRef.current.scrollLeft =
         imgListRef.current.clientWidth * preview.length;
     }
@@ -105,39 +124,35 @@ export const usePostUploadImg = ({ isEdit, post }: IProps) => {
 
   /**
    * 게시물 수정시 기존 초기값 설정 */
-  const setUpdateInitalValue = () => {
+  const setUpdateInitalValue = useCallback(() => {
     if (isEdit && post?.imgURL && post?.imgName) {
       setPreview(post.imgURL);
-      setImgFile(post.imgURL.map(() => ({}) as File));
-      setUpdateImgName(post.imgName);
-      setUpdateImgURL(post.imgURL);
+      setValue(
+        "img",
+        post.imgURL.map(() => ({}) as File)
+      );
+      setValue("imgName", post.imgName);
+      setValue("imgURL", post.imgURL);
     }
-  };
-
-  useEffect(() => {
-    handleImgListScroll();
-  }, [preview]);
+  }, [isEdit, post, setValue]);
 
   useEffect(() => {
     setUpdateInitalValue();
-  }, [post]);
+  }, []);
+
+  useEffect(() => {
+    imgListScrollHandler();
+  }, [preview]);
 
   return {
-    imgFile,
-    setImgFile,
     preview,
     setPreview,
-    updateImgName,
-    setUpdateImgName,
-    updateImgURL,
-    setUpdateImgURL,
     isImgLoading,
-    hiddenUploadBtnRef,
+    uploadInputRef,
     imgListRef,
     wrapperRef,
     onChangeImg,
-    onClickUploadImg,
-    onClickRemoveImg,
-    handleImgListScroll
+    clickUploadImgInputHandler,
+    removeImgHandler
   };
 };
