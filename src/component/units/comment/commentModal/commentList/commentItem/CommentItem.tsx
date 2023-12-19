@@ -1,7 +1,6 @@
 import React from "react";
 import { ICommentData, IReplyData } from "../../../../../../api/apiType";
-import { CommentLi, ReplyCountBtn } from "./commentItem.styles";
-import { useEditTextAreaController } from "../../../../../../hook/logic/comment/commentItem/useEditTextAreaController";
+import { useUpdateTextAreaController } from "../../../../../../hook/logic/comment/commentItem/useUpdateTextAreaController";
 import CommentContent from "./commentContent/CommentContent";
 import CommentBottom from "./commentBottom/CommentBottom";
 import { optModalTabFocus } from "../../../../../../library/optModalTabFocus";
@@ -9,6 +8,8 @@ import UserInfo from "../../../../../commons/userInfo/UserInfo";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../../../store/store";
 import { isMobile } from "react-device-detect";
+import { CommentLi, ReplyCountBtn } from '../../commentModal.styles';
+
 interface IProps {
   data: ICommentData | IReplyData;
   idx: number;
@@ -31,8 +32,8 @@ export default function CommentItem({
   openReplyModalHandler,
   closeNoHistoryBackModalHandler
 }: IProps) {
-  const { isEdit, openEditTextareaHandler, closeEditTextareaHandler } =
-    useEditTextAreaController();
+  const { isEdit, openUpdateTextareaHandler, closeUpdateTextareaHandler } =
+    useUpdateTextAreaController();
   const myInfo = useSelector((state: RootState) => state.user.myInfo);
   return (
     <>
@@ -58,7 +59,7 @@ export default function CommentItem({
             isEdit={isEdit}
             isReply={isReply}
             data={data}
-            closeEditTextareaHandler={closeEditTextareaHandler}
+            closeUpdateTextareaHandler={closeUpdateTextareaHandler}
             closeBtnRef={closeBtnRef}
             textareaRef={textareaRef}
             postType={postType}
@@ -69,8 +70,8 @@ export default function CommentItem({
             isEdit={isEdit}
             isReply={isReply}
             data={data}
-            openEditTextareaHandler={openEditTextareaHandler}
-            closeEditTextareaHandler={closeEditTextareaHandler}
+            openUpdateTextareaHandler={openUpdateTextareaHandler}
+            closeUpdateTextareaHandler={closeUpdateTextareaHandler}
             openReplyModalHandler={openReplyModalHandler}
           />
 

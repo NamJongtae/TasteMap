@@ -2,7 +2,7 @@ import React from "react";
 import { useCommentRemove } from "../../../../../../../hook/logic/comment/commentItem/useCommentRemove";
 import { useReplyRemove } from "../../../../../../../hook/logic/comment/commentItem/useReplyRemove";
 import { ICommentData, IReplyData } from "../../../../../../../api/apiType";
-import { CommentBtn } from './commentBottom.styles';
+import { CommentBtn } from '../../../commentModal.styles';
 
 interface IProps {
   postType: "HOME" | "FEED" | "PROFILE";

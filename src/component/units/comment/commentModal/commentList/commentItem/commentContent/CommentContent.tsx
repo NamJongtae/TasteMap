@@ -1,13 +1,13 @@
 import React from "react";
 import { ICommentData, IReplyData } from "../../../../../../../api/apiType";
-import { CommentText } from "./commentContent.styles";
-import CommentTextArea from "../../../textAreaField/commentTextArea/CommentTextarea";
+import CommentTextAreaForm from "../../../textAreaFormField/textAreaForm/TextAreaForm";
+import { CommentText } from '../../../commentModal.styles';
 
 interface IProps {
   isEdit: boolean;
   isReply: boolean;
   data: ICommentData | IReplyData;
-  closeEditTextareaHandler: () => void;
+  closeUpdateTextareaHandler: () => void;
   closeBtnRef: React.RefObject<HTMLButtonElement>;
   textareaRef: React.RefObject<HTMLTextAreaElement>;
   postType: "HOME" | "FEED" | "PROFILE";
@@ -20,14 +20,12 @@ export default function CommentContent({
   closeBtnRef,
   textareaRef,
   postType,
-  closeEditTextareaHandler
+  closeUpdateTextareaHandler
 }: IProps) {
-
-
   return (
     <>
       {isEdit ? (
-        <CommentTextArea
+        <CommentTextAreaForm
           isReply={isReply}
           postType={postType}
           commentId={
@@ -39,8 +37,8 @@ export default function CommentContent({
           textareaRef={textareaRef}
           closeBtnRef={closeBtnRef}
           initalvalue={data.content}
-          textareaType={"edit"}
-          closeTextarea={closeEditTextareaHandler}
+          textareaType={"update"}
+          closeUpdateTextareaHandler={closeUpdateTextareaHandler}
         />
       ) : (
         <CommentText>{data.content}</CommentText>

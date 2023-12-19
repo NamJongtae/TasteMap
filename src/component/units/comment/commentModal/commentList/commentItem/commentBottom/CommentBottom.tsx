@@ -3,22 +3,17 @@ import { ICommentData, IReplyData } from "../../../../../../../api/apiType";
 import { setDateFormat } from "../../../../../../../library/setDateFormat";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../../../../store/store";
-
-import {
-  CommentBottomWrapper,
-  CommentBtn,
-  CommentDate
-} from "./commentBottom.styles";
 import CommentRemoveBtn from './CommentRemoveBtn'
 import CommentReportBtn from './CommentReportBtn';
+import { CommentBottomWrapper, CommentBtn, CommentDate } from '../../../commentModal.styles';
 
 interface IProps {
   postType: "HOME" | "FEED" | "PROFILE";
   isEdit: boolean;
   isReply: boolean;
   data: ICommentData | IReplyData;
-  openEditTextareaHandler: () => void;
-  closeEditTextareaHandler: () => void;
+  openUpdateTextareaHandler: () => void;
+  closeUpdateTextareaHandler: () => void;
   openReplyModalHandler: (data: ICommentData) => void;
 }
 
@@ -27,8 +22,8 @@ export default function CommentBottom({
   isEdit,
   isReply,
   data,
-  openEditTextareaHandler,
-  closeEditTextareaHandler,
+  openUpdateTextareaHandler,
+  closeUpdateTextareaHandler,
   openReplyModalHandler
 }: IProps) {
   const myInfo = useSelector((state: RootState) => state.user.myInfo);
@@ -36,7 +31,7 @@ export default function CommentBottom({
   return (
     <CommentBottomWrapper>
       {isEdit ? (
-        <CommentBtn onClick={closeEditTextareaHandler}>취소</CommentBtn>
+        <CommentBtn onClick={closeUpdateTextareaHandler}>취소</CommentBtn>
       ) : (
         <>
           <CommentDate
@@ -54,7 +49,7 @@ export default function CommentBottom({
           )}
           {myInfo.uid === data.uid ? (
             <>
-              <CommentBtn onClick={openEditTextareaHandler}>수정</CommentBtn>
+              <CommentBtn onClick={openUpdateTextareaHandler}>수정</CommentBtn>
               <CommentRemoveBtn
                 postType={postType}
                 data={data}

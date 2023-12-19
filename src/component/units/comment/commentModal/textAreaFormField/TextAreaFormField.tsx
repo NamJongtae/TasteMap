@@ -1,9 +1,9 @@
 import React from "react";
-import { CommentTextAreaWrapper, UserImg } from "./textAreaField.styles";
-import CommentTextArea from "./commentTextArea/CommentTextarea";
 import { resolveWebp } from "../../../../../library/resolveWebp";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../../store/store";
+import CommentTextAreaForm from "./textAreaForm/TextAreaForm";
+import { TextAreaFormWrapper, UserImg } from '../commentModal.styles';
 
 interface IProps {
   isReply: boolean;
@@ -14,7 +14,7 @@ interface IProps {
   closeBtnRef: React.RefObject<HTMLButtonElement>;
 }
 
-export default function TextAreaField({
+export default function TextAreaFormField({
   isReply,
   postType,
   commentId,
@@ -24,7 +24,7 @@ export default function TextAreaField({
 }: IProps) {
   const myInfo = useSelector((state: RootState) => state.user.myInfo);
   return (
-    <CommentTextAreaWrapper>
+    <TextAreaFormWrapper>
       <UserImg
         src={myInfo.photoURL}
         alt='프로필 이미지'
@@ -35,16 +35,16 @@ export default function TextAreaField({
           );
         }}
       />
-      <CommentTextArea
+      <CommentTextAreaForm
         initalvalue=''
         isReply={isReply}
-        textareaType={isReply ? "reply" : "write"}
+        textareaType={"leave"}
         textareaRef={textareaRef}
         closeBtnRef={closeBtnRef}
         commentId={commentId}
         replyId={replyId}
         postType={postType}
       />
-    </CommentTextAreaWrapper>
+    </TextAreaFormWrapper>
   );
 }

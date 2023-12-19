@@ -1,19 +1,16 @@
-import React, { SyntheticEvent } from "react";
+import React from "react";
 import CommentList from "./commentList/CommentList";
-import CommentTextarea from "./textAreaField/commentTextArea/CommentTextarea";
 import { optModalTabFocus } from "../../../../library/optModalTabFocus";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../store/store";
-import { resolveWebp } from "../../../../library/resolveWebp";
 import { ICommentData } from "../../../../api/apiType";
 import {
   CloseBtn,
-  CommentTextAreaWrapper,
   ModalTitle,
   ModalTitleBar,
-  ModalWrapper,
-  UserImg
+  ModalWrapper
 } from "./commentModal.styles";
+import TextAreaFormField from "./textAreaFormField/TextAreaFormField";
 
 interface IProps {
   closeCommentModal: () => void;
@@ -45,7 +42,6 @@ export default function CommentModal({
   const isWebpSupported = useSelector(
     (state: RootState) => state.setting.isWebpSupported
   );
-  const myInfo = useSelector((state: RootState) => state.user.myInfo);
   const parentCommentId = useSelector(
     (state: RootState) => state.reply.parentCommentId
   );
@@ -68,27 +64,15 @@ export default function CommentModal({
         openReplyModalHandler={openReplyModalHandler}
         closeNoHistoryBackModalHandler={closeNoHistoryBackModalHandler}
       />
-      <CommentTextAreaWrapper>
-        <UserImg
-          src={myInfo.photoURL}
-          alt='프로필 이미지'
-          onError={(e: SyntheticEvent<HTMLImageElement, Event>) => {
-            e.currentTarget.src = resolveWebp(
-              "/assets/webp/icon-defaultProfile.webp",
-              "svg"
-            );
-          }}
-        />
-        <CommentTextarea
-          initalvalue=''
-          isReply={isReply}
-          textareaType={isReply ? "reply" : "write"}
-          commentId={parentCommentId}
-          textareaRef={textareaRef}
-          closeBtnRef={closeBtnRef}
-          postType={postType}
-        />
-      </CommentTextAreaWrapper>
+
+      <TextAreaFormField
+        isReply={isReply}
+        postType={"HOME"}
+        textareaRef={textareaRef}
+        closeBtnRef={closeBtnRef}
+        commentId={parentCommentId}
+      />
+
       <CloseBtn
         type='button'
         aria-label='닫기'

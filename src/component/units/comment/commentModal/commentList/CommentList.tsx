@@ -6,11 +6,8 @@ import { ICommentData, IReplyData } from "../../../../../api/apiType";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../../store/store";
 import { useCommentsInfiniteScroll } from "../../../../../hook/logic/comment/commentList/useCommentsInfiniteScroll";
-import {
-  CommentWrpper,
-  InfinityScrollTarget,
-  RefreshBtn
-} from "./commentList.styles";
+import { CommentWrpper, InfinityScrollTarget, RefreshBtn } from '../commentModal.styles';
+
 interface IProps {
   isReply: boolean;
   closeBtnRef: React.RefObject<HTMLButtonElement>;
