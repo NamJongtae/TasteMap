@@ -17,10 +17,8 @@ export const TextArea = styled.textarea`
   resize: none;
   padding: 15px 5px;
   border: none;
-  box-sizing: content-box;
   border-bottom: 1px solid #bdbdbd;
   line-height: 1.6;
-  max-height: 100px;
   background: #f5f5f5;
   ::placeholder {
     font-weight: 500;
@@ -29,16 +27,5 @@ export const TextArea = styled.textarea`
   :focus {
     outline: none;
   }
-  ::-webkit-scrollbar {
-    width: 8px; /* 스크롤바의 너비 */
-  }
-  ::-webkit-scrollbar-thumb {
-    height: 30%; /* 스크롤바의 길이 */
-    background: #79a7ff; /* 스크롤바의 색상 */
-    border-radius: 10px;
-  }
-  ::-webkit-scrollbar-track {
-    background: rgba(33, 100, 244, 0.1); /*스크롤바 뒷 배경 색상*/
-    border-radius: 10px;
-  }
+  overflow: hidden;
 `;

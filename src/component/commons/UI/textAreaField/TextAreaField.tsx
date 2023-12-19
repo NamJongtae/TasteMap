@@ -33,15 +33,21 @@ export default function TextAreaField({
   maxLength,
   minLength,
   placeholder,
-  textareaRef,
   textareaStyle,
+  textareaRef,
   required,
   errorMsgSize,
   validate,
   rows
 }: IProps) {
   const { register, formState } = useFormContext();
-  const { ref, ...rest } = register(name, { validate });
+  const { ref, ...rest } = register(name, {
+    validate,
+    onChange,
+    maxLength,
+    minLength,
+    required
+  });
   const error = formState.errors[name];
 
   return (
@@ -55,17 +61,12 @@ export default function TextAreaField({
           placeholder={placeholder}
           style={textareaStyle}
           rows={rows}
-          onKeyDown={onKeyDown}
           {...rest}
-          name={name}
           ref={(e) => {
             ref(e);
-            if (textareaRef?.current) textareaRef.current = e;
+            if (textareaRef) textareaRef.current = e;
           }}
-          onChange={onChange}
-          maxLength={maxLength}
-          minLength={minLength}
-          required={required}
+          onKeyDown={onKeyDown}
         />
       </Wrapper>
       {error && (
