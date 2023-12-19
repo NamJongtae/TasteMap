@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { isMobile } from "react-device-detect";
 
 export const useSingupSetScreenSize = () => {
   function setScreenSize() {
@@ -7,6 +8,6 @@ export const useSingupSetScreenSize = () => {
   }
 
   useEffect(() => {
-    setScreenSize();
-  }, []);
+    if (isMobile) setScreenSize();
+  }, [isMobile]);
 };

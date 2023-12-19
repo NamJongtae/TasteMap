@@ -1,10 +1,11 @@
+import { isMobile } from "react-device-detect";
 import styled from "styled-components";
 
 // ----------------Signup style----------------
 
 export const Wrapper = styled.main`
   width: 100%;
-  height: calc(var(--vh, 1vh) * 100);
+  height: ${isMobile ? "calc(var(--vh, 1vh) * 100)" : "100vh"};
   display: flex;
   flex-direction: column;
   align-items: center;
