@@ -7,8 +7,12 @@ interface IProps {
   btnText?: string;
   disabled?: boolean;
 }
-export default function Header({ type, onSubmit, btnText, disabled }: IProps) {
-  const { getHeader } = useHeader({ type, onSubmit, btnText, disabled });
+export default function Header({ type, btnText, disabled }: IProps) {
+  const { getHeader } = useHeader({
+    type,
+    btnText,
+    disabled
+  });
   return (
     <>
       <Wrapper>{getHeader()}</Wrapper>

@@ -23,12 +23,15 @@ import { resolveWebp } from "../../../library/resolveWebp";
 
 interface IProps {
   type: "home" | "upload" | "search" | "profile" | "tasteMap";
-  onSubmit?: () => void;
   btnText?: string;
   disabled?: boolean;
 }
 
-export const useHeader = ({ type, onSubmit, btnText, disabled }: IProps) => {
+export const useHeader = ({
+  type,
+  btnText,
+  disabled,
+}: IProps) => {
   const navigate = useNavigate();
   const { uid } = useParams();
   const { mutate } = useLogoutMutation();
@@ -97,8 +100,7 @@ export const useHeader = ({ type, onSubmit, btnText, disabled }: IProps) => {
             </LeftSide>
             <RightSide>
               <SubmitBtn
-                type='button'
-                onClick={onSubmit}
+                type='submit'
                 disabled={disabled === undefined ? false : disabled}
               >
                 {btnText}
