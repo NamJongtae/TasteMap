@@ -11,6 +11,7 @@ import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../../../store/store";
 import { leaveReply } from "../../../../api/firebase/replyAPI";
 import { useParams } from "react-router-dom";
+import { isMobile } from "react-device-detect";
 
 type InfiniteCommentsType = {
   commentDocs: QuerySnapshot<DocumentData, DocumentData>;
@@ -54,6 +55,16 @@ export const useReplyLeaveMutation = (
         "replies"
       ]);
 
+      await queryClient.cancelQueries({
+        queryKey: ["posts", newReplyData.postId, "comments"]
+      });
+
+      const previouseComments = await queryClient.getQueryData([
+        "post",
+        newReplyData.postId,
+        "comments"
+      ]);
+
       queryClient.setQueryData(
         [
           "post",
@@ -74,7 +85,22 @@ export const useReplyLeaveMutation = (
         })
       );
 
-      return { previousReplies };
+      queryClient.setQueryData(
+        ["post", newReplyData.postId, "comments"],
+        (data: InfiniteData<InfiniteCommentsType, unknown>) => ({
+          ...data,
+          pages: data.pages.map((page: InfiniteCommentsType) => ({
+            ...page,
+            data: page.data.map((comment: ICommentData) =>
+              comment.commentId === newReplyData?.parentCommentId
+                ? { ...comment, replyCount: comment.replyCount + 1 }
+                : comment
+            )
+          }))
+        })
+      );
+
+      return { previousReplies, previouseComments };
     },
     onSuccess: () => {
       sweetToast("답글 작성이 완료되었습니다.", "success");
@@ -84,6 +110,11 @@ export const useReplyLeaveMutation = (
         queryClient.setQueryData(
           ["post", data.postId, "comment", data.parentCommentId, "replies"],
           ctx.previousReplies
+        );
+
+        queryClient.setQueryData(
+          ["post", data.postId, "comments"],
+          ctx.previouseComments
         );
       }
 
@@ -105,6 +136,9 @@ export const useReplyLeaveMutation = (
           })
         );
         dispatch(commentSlice.actions.setIsOpenCommentModal(false));
+        if (isMobile) {
+          history.back();
+        }
       } else if (error.message === "댓글이 존재하지 않습니다.") {
         sweetToast("삭제된 댓글입니다!", "warning");
         // 댓글 삭제

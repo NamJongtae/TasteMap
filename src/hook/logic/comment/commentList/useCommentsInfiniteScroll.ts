@@ -11,6 +11,7 @@ import { DocumentData, QuerySnapshot } from "firebase/firestore";
 import { ICommentData, IPostData, IReplyData } from "../../../../api/apiType";
 import { commentSlice } from "../../../../slice/commentSlice";
 import { replySlice } from "../../../../slice/replySlice";
+import { isMobile } from "react-device-detect";
 
 interface IProps {
   isReply: boolean;
@@ -100,6 +101,9 @@ export const useCommentsInfiniteScroll = ({ isReply, postType }: IProps) => {
           })
         );
         dispatch(commentSlice.actions.setIsOpenCommentModal(false));
+        if (isMobile) {
+          history.back();
+        }
       } else if (error?.message === "댓글이 존재하지 않습니다.") {
         sweetToast("삭제된 댓글입니다!", "warning", 2000);
         // 댓글 삭제

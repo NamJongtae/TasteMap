@@ -10,8 +10,9 @@ import { getAuth } from "firebase/auth";
 import { useDispatch } from "react-redux";
 import { commentSlice } from "../../../../slice/commentSlice";
 import { AppDispatch } from "../../../../store/store";
-import { removeReply } from "../../../../api/firebase/replyAPI";
+import { reportReply } from "../../../../api/firebase/replyAPI";
 import { useParams } from "react-router-dom";
+import { isMobile } from "react-device-detect";
 
 type InfiniteCommentsType = {
   commentDocs: QuerySnapshot<DocumentData, DocumentData>;
@@ -40,7 +41,7 @@ export const useReplyReportMutation = (
         IReplyData,
         "replyId" | "parentCommentId" | "reportCount" | "postId"
       >
-    ) => removeReply(replyReportData),
+    ) => reportReply(replyReportData),
     onMutate: async (replyReportData) => {
       await queryClient.cancelQueries({
         queryKey: [
@@ -95,6 +96,35 @@ export const useReplyReportMutation = (
         })
       );
 
+      if (replyReportData.reportCount >= 4) {
+        await queryClient.cancelQueries({
+          queryKey: ["posts", replyReportData.postId, "comments"]
+        });
+
+        const previouseComments = await queryClient.getQueryData([
+          "post",
+          replyReportData.postId,
+          "comments"
+        ]);
+
+        queryClient.setQueryData(
+          ["post", replyReportData.postId, "comments"],
+          (data: InfiniteData<InfiniteCommentsType, unknown>) => ({
+            ...data,
+            pages: data.pages.map((page: InfiniteCommentsType) => ({
+              ...page,
+              data: page.data.map((comment: ICommentData) =>
+                comment.commentId === replyReportData?.parentCommentId
+                  ? { ...comment, replyCount: comment.replyCount - 1 }
+                  : comment
+              )
+            }))
+          })
+        );
+
+        return { previousReplies, previouseComments };
+      }
+
       return { previousReplies };
     },
     onSuccess: (replyReportData: any) => {
@@ -109,6 +139,11 @@ export const useReplyReportMutation = (
         queryClient.setQueryData(
           ["post", data.postId, "comment", data.parentCommentId, "replies"],
           ctx.previousReplies
+        );
+
+        queryClient.setQueryData(
+          ["post", data.postId, "comments"],
+          ctx.previouseComments
         );
       }
 
@@ -130,6 +165,9 @@ export const useReplyReportMutation = (
           })
         );
         dispatch(commentSlice.actions.setIsOpenCommentModal(false));
+        if (isMobile) {
+          history.back();
+        }
       } else if (error.message === "댓글이 존재하지 않습니다.") {
         sweetToast("삭제된 댓글입니다!", "warning");
         // 댓글 삭제

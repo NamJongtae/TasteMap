@@ -7,6 +7,7 @@ import { replySlice } from "../../../slice/replySlice";
 import { useFetchCommentCountMutation } from "../../query/post/useFetchCommentCountMutation";
 import { useHistoryMobileBackBtn } from "../../useHistoryMobileBackBtn";
 import { ICommentData } from "../../../api/apiType";
+import { useFetchReplyCountMutation } from "../../query/post/comment/useFetchReplyCountMutation";
 
 interface IProps {
   postType: "HOME" | "FEED" | "PROFILE";
@@ -20,12 +21,19 @@ export const useCommentModalController = ({ postType }: IProps) => {
     (state: RootState) => state.reply.isOpenReplyModal
   );
   const dispatch = useDispatch<AppDispatch>();
+  const commentId = useSelector(
+    (state: RootState) => state.reply.parentCommentId
+  );
   const postId = useSelector((state: RootState) => state.comment.postId);
   const commentModalRef = useRef<HTMLDivElement>(null);
   const replyModalRef = useRef<HTMLDivElement>(null);
   const closeBtnRef = useRef<HTMLButtonElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const firstItemLinkRef = useRef<HTMLAnchorElement>(null);
+
+  // 게시물 댓글 수 업데이트
+  const { mutate: commentCountMutate } = useFetchCommentCountMutation(postType);
+  const { mutate: replyCountMutate } = useFetchReplyCountMutation(postId);
 
   const openReplyModalHandler = (data: ICommentData) => {
     dispatch(replySlice.actions.setIsOpenReplyModal(true));
@@ -82,15 +90,19 @@ export const useCommentModalController = ({ postType }: IProps) => {
     handlePopStateCb: closeNoHistoryBackModalHandler
   });
 
-  // 게시물 댓글 수 업데이트
-  const { mutate } = useFetchCommentCountMutation(postType);
-
-  // 모달창이 닫힌 후 게시물 댓글 수를 업데이트
+  // 모달창이 열린 후 게시물 댓글 수를 업데이트
   useEffect(() => {
-    return () => {
-      mutate(postId);
-    };
-  }, []);
+    if (isOpenCommentModal) {
+      commentCountMutate(postId);
+    }
+  }, [isOpenCommentModal]);
+
+  // 모달창이 열린 댓글 답글 수를 업데이트
+  useEffect(() => {
+    if (isOpenReplyModal) {
+      replyCountMutate(commentId);
+    }
+  }, [isOpenReplyModal]);
 
   return {
     isOpenCommentModal,

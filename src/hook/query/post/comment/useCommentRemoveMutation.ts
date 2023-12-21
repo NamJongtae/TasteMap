@@ -10,7 +10,8 @@ import { sweetToast } from "../../../../library/sweetAlert/sweetAlert";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../../../store/store";
 import { commentSlice } from "../../../../slice/commentSlice";
-import { useParams } from 'react-router-dom';
+import { useParams } from "react-router-dom";
+import { isMobile } from "react-device-detect";
 
 type InfiniteCommentsType = {
   commentDocs: QuerySnapshot<DocumentData, DocumentData>;
@@ -27,16 +28,30 @@ export const useCommentRemoveMutation = (
   const { uid } = useParams();
   const dispatch = useDispatch<AppDispatch>();
   const queryClient = useQueryClient();
+  const postQuerykey =
+    postType === "PROFILE" ? ["posts", postType, uid] : ["posts", postType];
   const { mutate } = useMutation({
     mutationFn: (
       commentRemoveData: Pick<ICommentData, "postId" | "commentId">
     ) => removeComment(commentRemoveData),
     onMutate: async (commentRemoveData) => {
-      await queryClient.cancelQueries({ queryKey: ["post", commentRemoveData.postId, "comments"] });
+      await queryClient.cancelQueries({
+        queryKey: ["post", commentRemoveData.postId, "comments"]
+      });
 
       const previousComments:
         | InfiniteData<InfiniteCommentsType, unknown>
-        | undefined = await queryClient.getQueryData(["post", commentRemoveData.postId, "comments"]);
+        | undefined = await queryClient.getQueryData([
+        "post",
+        commentRemoveData.postId,
+        "comments"
+      ]);
+
+      await queryClient.cancelQueries({
+        queryKey: postQuerykey
+      });
+
+      const previousPosts = await queryClient.getQueryData(postQuerykey);
 
       const newPages = previousComments?.pages.map(
         (page: InfiniteCommentsType) => {
@@ -57,23 +72,43 @@ export const useCommentRemoveMutation = (
         })
       );
 
-      return { previousComments };
+      queryClient.setQueryData(
+        postQuerykey,
+        (postsData: InfiniteData<InfinitePostsType, unknown>) => ({
+          ...postsData,
+          pages: postsData.pages.map((page: InfinitePostsType) => ({
+            ...page,
+            data: page.data.map((post: IPostData) =>
+              post.id === commentRemoveData?.postId
+                ? { ...post, commentCount: post.commentCount - 1 }
+                : post
+            )
+          }))
+        })
+      );
+
+      return { previousComments, previousPosts };
     },
     onSuccess: () => {
       sweetToast("댓글 삭제가 완료되었습니다.", "success");
     },
     onError: (error, data, ctx) => {
       if (ctx) {
-        queryClient.setQueryData(["post", data.postId, "comments"], ctx.previousComments);
+        queryClient.setQueryData(
+          ["post", data.postId, "comments"],
+          ctx.previousComments
+        );
+        queryClient.setQueryData(postQuerykey, ctx.previousPosts);
+        if (isMobile) {
+          history.back();
+        }
       }
 
       if (error.message === "게시물이 존재하지 않습니다.") {
         sweetToast("삭제된 게시물입니다!", "warning");
         // 게시물 삭제
         queryClient.setQueryData(
-          postType === "PROFILE"
-            ? ["posts", postType, uid]
-            : ["posts", postType],
+          postQuerykey,
           (postsData: InfiniteData<InfinitePostsType, unknown>) => ({
             ...postsData,
             pages: postsData.pages.map((page: InfinitePostsType) => ({

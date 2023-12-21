@@ -12,6 +12,7 @@ import { useDispatch } from "react-redux";
 import { commentSlice } from "../../../../slice/commentSlice";
 import { AppDispatch } from "../../../../store/store";
 import { useParams } from "react-router-dom";
+import { isMobile } from "react-device-detect";
 
 type InfiniteCommentsType = {
   commentDocs: QuerySnapshot<DocumentData, DocumentData>;
@@ -29,6 +30,8 @@ export const useCommentReportMutation = (
   const { uid } = useParams();
   const dispatch = useDispatch<AppDispatch>();
   const queryClient = useQueryClient();
+  const postQuerykey =
+    postType === "PROFILE" ? ["posts", postType, uid] : ["posts", postType];
   const { mutate } = useMutation({
     mutationFn: (
       commentReportData: Pick<
@@ -76,6 +79,30 @@ export const useCommentReportMutation = (
         })
       );
 
+      if (commentReportData.reportCount >= 4) {
+        await queryClient.cancelQueries({
+          queryKey: postQuerykey
+        });
+
+        const previousPosts = await queryClient.getQueryData(postQuerykey);
+
+        queryClient.setQueryData(
+          postQuerykey,
+          (postsData: InfiniteData<InfinitePostsType, unknown>) => ({
+            ...postsData,
+            pages: postsData.pages.map((page: InfinitePostsType) => ({
+              ...page,
+              data: page.data.map((post: IPostData) =>
+                post.id === commentReportData?.postId
+                  ? { ...post, commentCount: post.commentCount - 1 }
+                  : post
+              )
+            }))
+          })
+        );
+
+        return { previousComments, previousPosts };
+      }
       return { previousComments };
     },
     onSuccess: (commentReportData: any) => {
@@ -91,15 +118,15 @@ export const useCommentReportMutation = (
           ["post", data.postId, "comments"],
           ctx.previousComments
         );
+
+        queryClient.setQueryData(postQuerykey, ctx.previousPosts);
       }
 
       if (error.message === "게시물이 존재하지 않습니다.") {
         sweetToast("삭제된 게시물입니다!", "warning");
         // 게시물 삭제
         queryClient.setQueryData(
-          postType === "PROFILE"
-            ? ["posts", postType, uid]
-            : ["posts", postType],
+          postQuerykey,
           (postsData: InfiniteData<InfinitePostsType, unknown>) => ({
             ...postsData,
             pages: postsData.pages.map((page: InfinitePostsType) => ({
@@ -111,6 +138,9 @@ export const useCommentReportMutation = (
           })
         );
         dispatch(commentSlice.actions.setIsOpenCommentModal(false));
+        if (isMobile) {
+          history.back();
+        }
       } else if (error.message === "댓글이 존재하지 않습니다.") {
         sweetToast("삭제된 댓글입니다!", "warning");
         // 댓글 삭제
