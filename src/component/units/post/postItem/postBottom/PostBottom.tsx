@@ -1,7 +1,6 @@
 import React from "react";
 import { useOpenCommentModal } from "../../../../../hook/logic/post/postItem/useOpenCommentModal";
 import { usePostLike } from "../../../../../hook/logic/post/postItem/usePostLike";
-import { setDateFormat } from "../../../../../library/setDateFormat";
 import { IMyProfileData, IPostData } from "../../../../../api/apiType";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../../store/store";
@@ -13,6 +12,7 @@ import {
   PostDate,
   PostItemBottomWrapper
 } from "../postItem.styles";
+import { useMemoFormattedDate } from "../../../../../hook/useMemoFormattedDate";
 
 interface IProps {
   data: IPostData;
@@ -32,6 +32,8 @@ export default function PostBottom({ data, myProfile, postType }: IProps) {
   });
 
   const openCommentModalHanlder = useOpenCommentModal(data.id);
+  const time = data.createdAt?.seconds * 1000;
+  const memoizedFormattedDate = useMemoFormattedDate(time);
 
   return (
     <PostItemBottomWrapper>
@@ -55,10 +57,8 @@ export default function PostBottom({ data, myProfile, postType }: IProps) {
         <Count>{data.commentCount}</Count>
       </ButtonWrapper>
       {data.createdAt?.seconds && (
-        <PostDate
-          dateTime={new Date(data.createdAt?.seconds * 1000).toISOString()}
-        >
-          {setDateFormat(data.createdAt?.seconds * 1000)}
+        <PostDate dateTime={new Date(time).toISOString()}>
+          {memoizedFormattedDate}
         </PostDate>
       )}
     </PostItemBottomWrapper>

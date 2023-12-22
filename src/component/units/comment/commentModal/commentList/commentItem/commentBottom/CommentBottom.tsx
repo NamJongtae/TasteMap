@@ -1,11 +1,15 @@
 import React from "react";
 import { ICommentData, IReplyData } from "../../../../../../../api/apiType";
-import { setDateFormat } from "../../../../../../../library/setDateFormat";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../../../../store/store";
-import CommentRemoveBtn from './CommentRemoveBtn'
-import CommentReportBtn from './CommentReportBtn';
-import { CommentBottomWrapper, CommentBtn, CommentDate } from '../../../commentModal.styles';
+import CommentRemoveBtn from "./CommentRemoveBtn";
+import CommentReportBtn from "./CommentReportBtn";
+import {
+  CommentBottomWrapper,
+  CommentBtn,
+  CommentDate
+} from "../../../commentModal.styles";
+import { useMemoFormattedDate } from "../../../../../../../hook/useMemoFormattedDate";
 
 interface IProps {
   postType: "HOME" | "FEED" | "PROFILE";
@@ -27,17 +31,16 @@ export default function CommentBottom({
   openReplyModalHandler
 }: IProps) {
   const myInfo = useSelector((state: RootState) => state.user.myInfo);
-
+  const time = data.createdAt?.seconds * 1000;
+  const memoizedFormattedDate = useMemoFormattedDate(time);
   return (
     <CommentBottomWrapper>
       {isEdit ? (
         <CommentBtn onClick={closeUpdateTextareaHandler}>취소</CommentBtn>
       ) : (
         <>
-          <CommentDate
-            dateTime={new Date(data.createdAt?.seconds * 1000).toISOString()}
-          >
-            {setDateFormat(data.createdAt?.seconds * 1000)}
+          <CommentDate dateTime={new Date(time).toISOString()}>
+            {memoizedFormattedDate}
           </CommentDate>
 
           {!isReply && (
