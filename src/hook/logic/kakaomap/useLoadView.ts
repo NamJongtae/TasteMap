@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { IMapData } from "../../../api/apiType";
 import { useLVMarkersAndCustomoverlays } from "./useLVMarkersAndCustomoverlays";
-import { useSelector } from 'react-redux';
-import { RootState } from '../../../store/store';
+import { useSelector } from "react-redux";
+import { RootState } from "../../../store/store";
 
 interface IProps {
   data: IMapData[];
@@ -27,6 +27,10 @@ export const useLoadView = ({ data, myMap }: IProps) => {
       roadviewRef,
       setRoadWalker
     });
+
+  const toggleRoadviewHandler = () => {
+    setRoadview((prev) => !prev);
+  };
 
   const resetRoadview = (position: any) => {
     myMap.removeOverlayMapTypeId(window.kakao.maps.MapTypeId.ROADVIEW);
@@ -83,6 +87,7 @@ export const useLoadView = ({ data, myMap }: IProps) => {
 
   return {
     roadview,
+    toggleRoadviewHandler,
     setRoadview,
     resetRoadview,
     roadWalker,

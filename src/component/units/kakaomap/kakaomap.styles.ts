@@ -14,7 +14,21 @@ export const MapContainer = styled.div`
   height: 300px;
 `;
 
-export const NoKakaoMap = styled(MapContainer)`
+// -------------------Roadview style-------------------
+
+export const RoadviewWrapper = styled.div`
+  width: 100%;
+  height: 300px;
+`;
+
+export const RoadviewMap = styled.div`
+  width: 100%;
+  height: 100%;
+`;
+
+// -------------------NoMapData style-------------------
+
+export const NoMapDataWrapper = styled(MapContainer)`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -34,9 +48,11 @@ export const NoKakaoMap = styled(MapContainer)`
   }
 `;
 
-export const NoKakaoMapText = styled.p`
+export const Message = styled.p`
   padding-top: 100px;
 `;
+
+// -------------------MapBtns style-------------------
 
 export const MapBtnWrapper = styled.div`
   position: absolute;

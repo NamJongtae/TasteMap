@@ -1,5 +1,5 @@
 import React from "react";
-import { RoadviewWrapper, RoadviewMap } from "./roadview.styles";
+import { RoadviewWrapper, RoadviewMap } from "../kakaomap.styles";
 
 interface IProps {
   rvWrapperRef: React.RefObject<HTMLDivElement>;

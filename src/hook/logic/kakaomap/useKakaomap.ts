@@ -26,9 +26,11 @@ export const useKakaomap = ({ items, isTasteMapPage, isSharePage }: IProps) => {
   const mapRef = useRef<HTMLDivElement>(null);
 
   const { myProfile } = useLoadMyProfile();
+  
   // map loadview 관련 customhook
   const {
     roadview,
+    toggleRoadviewHandler,
     setRoadview,
     resetRoadview,
     resetMarkers,
@@ -108,7 +110,7 @@ export const useKakaomap = ({ items, isTasteMapPage, isSharePage }: IProps) => {
     data,
     mapRef,
     roadview,
-    setRoadview,
+    toggleRoadviewHandler,
     zoomIn,
     zoomOut,
     rvWrapperRef,

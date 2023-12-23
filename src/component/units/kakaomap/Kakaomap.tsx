@@ -2,19 +2,10 @@ import React from "react";
 import "./mapWalker.style.css";
 import { IMapData } from "../../../api/apiType";
 import { useKakaomap } from "../../../hook/logic/kakaomap/useKakaomap";
-import {
-  MapBtnWrapper,
-  MapContainer,
-  RoadViewBtn,
-  Title,
-  Wrapper,
-  ZoomInBtn,
-  ZoomOutBtn
-} from "./kakaomap.styles";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../store/store";
-import NoMapData from "./NoMapData/NoMapData";
+import { MapContainer, Title, Wrapper } from "./kakaomap.styles";
+import NoMapData from "./noMapData/NoMapData";
 import Roadview from "./roadview/Roadview";
+import MapBtns from "./mapBtns/MapBtns";
 declare global {
   interface Window {
     kakao: any;
@@ -24,60 +15,38 @@ declare global {
 interface IProps {
   items: IMapData[];
   isTasteMapPage: boolean;
-  isSharePage:boolean;
+  isSharePage: boolean;
 }
 
 function Kakaomap({ items, isTasteMapPage, isSharePage }: IProps) {
-  const isWebpSupported = useSelector(
-    (state: RootState) => state.setting.isWebpSupported
-  );
   const {
     data,
     mapRef,
     roadview,
-    setRoadview,
+    toggleRoadviewHandler,
     zoomIn,
     zoomOut,
     rvWrapperRef,
     roadviewRef
   } = useKakaomap({ items, isTasteMapPage, isSharePage });
 
-  return (
-    <>
-      {data.length > 0 ? (
-        <Wrapper>
-          <Title className='a11y-hidden'>맛집 지도</Title>
-          <MapContainer ref={mapRef}>
-            <MapBtnWrapper>
-              <RoadViewBtn
-                title='로드뷰'
-                onClick={() => setRoadview(!roadview)}
-                aria-label='로드뷰'
-                roadview={roadview}
-                $isWebpSupported={isWebpSupported}
-              />
-              <ZoomInBtn
-                title='확대'
-                onClick={zoomIn}
-                aria-label='확대'
-                $isWebpSupported={isWebpSupported}
-              />
-              <ZoomOutBtn
-                title='축소'
-                onClick={zoomOut}
-                aria-label='축소'
-                $isWebpSupported={isWebpSupported}
-              />
-            </MapBtnWrapper>
-          </MapContainer>
-          {roadview && (
-            <Roadview rvWrapperRef={rvWrapperRef} roadviewRef={roadviewRef} />
-          )}
-        </Wrapper>
-      ) : (
-        <NoMapData isTasteMapPage={isTasteMapPage} />
+  return data.length > 0 ? (
+    <Wrapper>
+      <Title className='a11y-hidden'>맛집 지도</Title>
+      <MapContainer ref={mapRef}>
+        <MapBtns
+          toggleRoadviewHandler={toggleRoadviewHandler}
+          zoomIn={zoomIn}
+          zoomOut={zoomOut}
+          roadview={roadview}
+        />
+      </MapContainer>
+      {roadview && (
+        <Roadview rvWrapperRef={rvWrapperRef} roadviewRef={roadviewRef} />
       )}
-    </>
+    </Wrapper>
+  ) : (
+    <NoMapData isTasteMapPage={isTasteMapPage} />
   );
 }
 
