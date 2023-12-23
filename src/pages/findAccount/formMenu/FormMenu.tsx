@@ -1,6 +1,6 @@
 import React from "react";
 import { FormMenuList } from "../findAccount.styles";
-import FormMenuItem from "./FormMenuItem";
+import FormMenuItem from "./FormMenuItem/FormMenuItem";
 
 interface IProps {
   activeMenu: "email" | "password";
