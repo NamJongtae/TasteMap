@@ -2,7 +2,7 @@ import React from "react";
 
 import PostUserInfo from "./postUserInfo/PostUserInfo";
 import { IMyProfileData, IPostData } from "../../../../../api/apiType";
-import { UserInfoWrapper } from "../postItem.styles";
+import { UserInfoWrapper } from "../../postList/post.styles";
 
 interface IProps {
   myProfile: IMyProfileData;

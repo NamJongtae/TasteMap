@@ -2,16 +2,42 @@ import { Rate } from "antd";
 import { isMobile } from "react-device-detect";
 import styled from "styled-components";
 
-export const Wrapper = styled.li`
+// -------------------------PostList style-------------------------
+
+export const Wrapper = styled.div`
+  position: relative;
+  min-height: 500px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+export const PostListWrapper = styled.ul`
+  width: 100%;
+  max-width: 360px;
+  padding: 10px 20px 20px 20px;
+`;
+
+export const InfinityScrollTarget = styled.li`
+  position: relative;
+  bottom: 20px;
+`;
+
+// -------------------------PostItem style-------------------------
+
+export const PostItemWrapper = styled.li`
   width: 100%;
   height: 100%;
   position: relative;
   margin-bottom: 30px;
 `;
 
+// -------------------------UserInfoSection style-------------------------
+
 export const UserInfoWrapper = styled.section``;
 
-export const MoreBtn = styled.button`
+// -------------------------PostUserInfo style-------------------------
+
+export const MenuBtn = styled.button`
   width: 30px;
   height: 45px;
   background: ${(props: { $isWebpSupported: boolean | null }) =>
@@ -22,7 +48,9 @@ export const MoreBtn = styled.button`
     }) no-repeat center / 15px`};
 `;
 
-export const OptionList = styled.ul`
+// -------------------------PostMenu style-------------------------
+
+export const MenuList = styled.ul`
   position: absolute;
   top: 40px;
   right: 0;
@@ -52,13 +80,13 @@ export const OptionList = styled.ul`
   }
 `;
 
-export const Option = styled.li`
+export const MenuItem = styled.li`
   :not(:last-child) {
     border-bottom: 1px solid #bdbdbd;
   }
 `;
 
-export const OptionBtn = styled.button`
+export const MenuItemBtn = styled.button`
   padding: 6px;
   display: block;
   border: none;
@@ -76,7 +104,7 @@ export const OptionBtn = styled.button`
   }
 `;
 
-export const ContentWrapper = styled.section``;
+// -------------------------RatingSection style-------------------------
 
 export const RatingWrapper = styled.section`
   margin-top: 10px;
@@ -91,6 +119,21 @@ export const RatingCount = styled.span`
   font-size: 14px;
   color: #888;
   font-weight: 500;
+`;
+
+// -------------------------ContentSection style-------------------------
+
+export const ContentWrapper = styled.section``;
+
+export const MoreBtn = styled.button`
+  width: 30px;
+  height: 45px;
+  background: ${(props: { $isWebpSupported: boolean | null }) =>
+    `url(${
+      props.$isWebpSupported
+        ? "/assets/webp/icon-more.webp"
+        : "/assets/icon-more.svg"
+    }) no-repeat center / 15px`};
 `;
 
 export const ContentText = styled.p`
@@ -125,6 +168,15 @@ export const MoreContentBtn = styled.button`
   padding-right: 16px;
   font-weight: 500;
 `;
+
+export const KakaoMapWrapper = styled.section`
+  position: relative;
+  width: 100%;
+  height: ${(props: { contentType: "MAP" | "IMAGE" }) =>
+    props.contentType === "IMAGE" && "300px"};
+`;
+
+// -------------------------ContentTypeBtn style-------------------------
 
 export const StoredMapBtn = styled.button`
   position: absolute;
@@ -191,12 +243,7 @@ export const ActiveImageBtn = styled.button`
       : 'url("/assets/icon-thumbnailImgBtn.svg") no-repeat center / 30px'};
 `;
 
-export const KakaoMapWrapper = styled.section`
-  position: relative;
-  width: 100%;
-  height: ${(props: { contentType: "MAP" | "IMAGE" }) =>
-    props.contentType === "IMAGE" && "300px"};
-`;
+// -------------------------PostBottom style-------------------------
 
 export const PostItemBottomWrapper = styled.div`
   display: flex;
@@ -210,6 +257,8 @@ export const ButtonWrapper = styled.div`
   align-items: center;
   gap: 5px;
 `;
+
+// -------------------------PostLikeBtn style-------------------------
 
 export const LikeBtn = styled.button`
   width: 20px;
@@ -228,6 +277,14 @@ export const LikeBtn = styled.button`
         }) no-repeat center / cover`};
 `;
 
+export const Count = styled.span`
+  font-size: 14px;
+  font-weight: 500;
+  color: #888;
+`;
+
+// -------------------------PostCommentBtn style-------------------------
+
 export const CommentBtn = styled.button`
   width: 20px;
   height: 20px;
@@ -239,19 +296,9 @@ export const CommentBtn = styled.button`
     }) no-repeat center / 20px`};
 `;
 
-export const Count = styled.span`
-  font-size: 14px;
-  font-weight: 500;
-  color: #888;
-`;
+// -------------------------PostDate style-------------------------
 
-export const PostDate = styled.time`
+export const PostDateFormatted = styled.time`
   font-size: 12px;
   color: #888;
-`;
-
-export const Placeholder = styled.div`
-  width: 100%;
-  max-width: 320px;
-  height: 300px;
 `;

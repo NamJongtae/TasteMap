@@ -14,7 +14,7 @@ import {
   KakaoMapWrapper,
   MoreContentBtn,
   StoredMapBtn
-} from "../postItem.styles";
+} from "../../postList/post.styles";
 
 interface IProps {
   contentType: "MAP" | "IMAGE";

@@ -9,7 +9,7 @@ import { RootState } from "../../../../../../store/store";
 import { usePostMenu } from "../../../../../../hook/logic/post/postItem/usePostMenu";
 import PostMenu from "../postMenu/PostMenu";
 import UserInfo from "../../../../../commons/userInfo/UserInfo";
-import { MenuBtn } from "./postUserInfo.styles";
+import { MenuBtn } from "../../../postList/post.styles";
 
 interface IProps {
   userData: Omit<IUserData, "email">;

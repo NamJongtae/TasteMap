@@ -1,5 +1,5 @@
 import React from "react";
-import { Rating, RatingCount, RatingWrapper } from '../postItem.styles';
+import { Rating, RatingCount, RatingWrapper } from "../../postList/post.styles";
 
 interface IProps {
   rating: number;

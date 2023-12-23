@@ -1,11 +1,7 @@
 import React from "react";
 import PostItem from "../postItem/PostItem";
 import ScrollLoading from "../../../commons/loading/ScrollLoading";
-import {
-  InfinityScrollTarget,
-  PostListWrapper,
-  Wrapper
-} from "./postList.styles";
+import { InfinityScrollTarget, PostListWrapper, Wrapper } from "./post.styles";
 import NoData from "../../../commons/noData/NoData";
 import { IMyProfileData, IPostData } from "../../../../api/apiType";
 import { usePostsInfiniteScroll } from "../../../../hook/logic/post/postList/usePostsInfiniteScroll";

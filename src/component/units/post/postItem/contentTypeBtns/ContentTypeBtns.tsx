@@ -1,7 +1,7 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../../store/store";
-import { ActiveImageBtn, ActiveMapBtn } from '../postItem.styles';
+import { ActiveImageBtn, ActiveMapBtn } from "../../postList/post.styles";
 
 interface IProps {
   contentType: "MAP" | "IMAGE";

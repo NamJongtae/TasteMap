@@ -4,7 +4,7 @@ import { usePostReport } from "../../../../../../hook/logic/post/postItem/usePos
 import { IPostData, IUserData } from "../../../../../../api/apiType";
 
 import { useMoveToUpdatePage } from "../../../../../../hook/logic/post/postItem/useMoveToUpdatePage";
-import { MenuItemBtn, MenuItem, MenuList } from "./postMenu.styles";
+import { MenuItemBtn, MenuItem, MenuList } from "../../../postList/post.styles";
 
 interface IProps {
   menuRef: React.RefObject<HTMLUListElement>;

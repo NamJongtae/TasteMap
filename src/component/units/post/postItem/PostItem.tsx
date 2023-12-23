@@ -1,12 +1,12 @@
 import React from "react";
 import { IPostData, IMyProfileData } from "../../../../api/apiType";
-import { Wrapper } from "./postItem.styles";
 import UserInfoSection from "./userInfoSection/UserInfoSection";
 import ContentSection from "./contentSection/ContentSection";
 import { usePostContentType } from "../../../../hook/logic/post/postItem/usePostContentType";
 import RatingSection from "./ratingSection/RatingSection";
 import ContentTypeBtns from "./contentTypeBtns/ContentTypeBtns";
 import PostBottom from "./postBottom/PostBottom";
+import { PostItemWrapper } from "../postList/post.styles";
 
 interface IProps {
   data: IPostData;
@@ -21,7 +21,7 @@ export default function PostItem({ data, myProfile, postType }: IProps) {
   return (
     <>
       {myProfile.uid && (
-        <Wrapper>
+        <PostItemWrapper>
           <h2 className='a11y-hidden'>홈</h2>
           <UserInfoSection
             myProfile={myProfile}
@@ -41,7 +41,7 @@ export default function PostItem({ data, myProfile, postType }: IProps) {
             imgURL={data.imgURL}
           />
           <PostBottom data={data} myProfile={myProfile} postType={postType} />
-        </Wrapper>
+        </PostItemWrapper>
       )}
     </>
   );
