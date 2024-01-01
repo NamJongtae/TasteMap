@@ -11,10 +11,10 @@ interface IProps {
   userProfile: IUserProfileData;
 }
 export default function ProfileFollowBtn({ myProfile, userProfile }: IProps) {
-  const { followHandler } = useFollowFetchData({
+  const { profileFollowHandler } = useFollowFetchData({
     myUid: myProfile.uid,
     userUid: userProfile.uid
   });
 
-  return <FollowBtn onClick={followHandler}>팔로우</FollowBtn>;
+  return <FollowBtn onClick={profileFollowHandler}>팔로우</FollowBtn>;
 }

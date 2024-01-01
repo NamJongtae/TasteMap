@@ -1,4 +1,5 @@
-import { useFollowMutation } from "./query/profile/useFollowMutation";
+import { useFollowModalFollowMutation } from "./query/profile/useFollowModalFollowMutation";
+import { useProfileFollowMutation } from "./query/profile/useProfileFollowMutation";
 
 interface IProps {
   userUid: string;
@@ -6,11 +7,20 @@ interface IProps {
 }
 
 export const useFollowFetchData = ({ myUid, userUid }: IProps) => {
-  const { mutate: followMuate } = useFollowMutation();
+  const { mutate: profileFollowMuate } = useProfileFollowMutation();
+  const { mutate: followModalFollowMutate } =
+  useFollowModalFollowMutation();
 
-  const followHandler = () => {
-    followMuate({ myUid, userUid });
+  const profileFollowHandler = () => {
+    profileFollowMuate({ myUid, userUid });
   };
 
-  return { followHandler };
+  const followModalFollowHandler = () => {
+    followModalFollowMutate({ myUid, userUid });
+  };
+
+  return {
+    profileFollowHandler,
+    followModalFollowHandler
+  };
 };

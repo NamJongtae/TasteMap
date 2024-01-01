@@ -3,37 +3,33 @@ import {
   useMutation,
   useQueryClient
 } from "@tanstack/react-query";
-import { unfollow } from "../../../api/firebase/profileAPI";
-import {
-  IFollowData,
-  IMyProfileData,
-  IUserProfileData
-} from "../../../api/apiType";
+import { IFollowData, IMyProfileData } from "../../../api/apiType";
 import { sweetToast } from "../../../library/sweetAlert/sweetAlert";
-import { RootState } from "../../../store/store";
+import { unfollow } from "../../../api/firebase/profileAPI";
 import { useLocation, useParams } from "react-router-dom";
-import { DocumentData, QuerySnapshot } from "firebase/firestore";
 import { useSelector } from "react-redux";
+import { RootState } from "../../../store/store";
+import { DocumentData, QuerySnapshot } from "firebase/firestore";
 
-interface InfiniteFollowersType {
+interface InfiniteFolloweringType {
   followingDocs: QuerySnapshot<DocumentData, DocumentData>;
   data: IFollowData[];
 }
 
-export const useUnfollowMutation = () => {
+export const useFollowModalUnfollowMutation = () => {
+  // 내 프로필상에서 Follower/Following 모달창에서 언팔로우 버튼을 눌렀을 때
+  // Following 목록이 즉시 반영되도록 하기 위해 낙관적 업데이트를 사용
+
   const { uid } = useParams();
   const { pathname } = useLocation();
   const queryClient = useQueryClient();
-  const isOpenFollowerModal = useSelector(
-    (state: RootState) => state.user.isOpenFollowerModal
-  );
   const isOpenFollowingModal = useSelector(
     (state: RootState) => state.user.isOpenFollowingModal
   );
   const { mutate } = useMutation({
     mutationFn: ({ myUid, userUid }: { myUid: string; userUid: string }) =>
       unfollow(myUid, userUid),
-    onMutate: async ({ myUid, userUid }) => {
+    onMutate: async ({ userUid }) => {
       await queryClient.cancelQueries({
         queryKey: ["profile", "my"]
       });
@@ -47,39 +43,15 @@ export const useUnfollowMutation = () => {
       }));
 
       const previousFollowingList:
-        | InfiniteData<InfiniteFollowersType, unknown>
+        | InfiniteData<InfiniteFolloweringType, unknown>
         | undefined = await queryClient.getQueryData(["profile", "following"]);
 
-      let previousUserProfile: unknown;
-
-      // 모달창이 열렸을 경우는 상대방의 팔로워 팔로잉 목록을 출력, 나의 팔로우 여부가 표시되어, 팔로우 언팔로우시 나의 Following 목록에만 변화를 주어야함, 현재 프로필 정보 상대방의 팔로잉 목록을 변경 하면 안됨
-      // 검색 페이지가 아닐 때만 user정보를 변경 검색 페이지에서는 팔로우하는 유저 정보를 불러올 필요가 없음
-      if (
-        !isOpenFollowingModal &&
-        !isOpenFollowerModal &&
-        !pathname.includes("search")
-      ) {
-        await queryClient.cancelQueries({
-          queryKey: ["profile", userUid]
-        });
-        previousUserProfile = await queryClient.getQueryData([
-          "profile",
-          userUid
-        ]);
-        queryClient.setQueryData(
-          ["profile", userUid],
-          (data: IUserProfileData) => ({
-            ...data,
-            followerList: data.followerList.filter((uid) => uid !== myUid)
-          })
-        );
-      }
-
-      // 내 프로필인 경우(uid가 없을 때), followingModal이 열렸을 때, 검색 페이지가 아닐 떼
+      // 내 프로필인 경우(uid가 없을 때), followingModal이 열렸을 경우
+      // 검색 페이지가 아닌경우
       // 언팔로우 시 해당 유저 팔로잉 모달 목록에서 제거
       if (!uid && isOpenFollowingModal && !pathname.includes("search")) {
         const newFollowingList = previousFollowingList?.pages.map(
-          (page: InfiniteFollowersType) => {
+          (page: InfiniteFolloweringType) => {
             return {
               ...page,
               data: page.data.filter(
@@ -91,14 +63,14 @@ export const useUnfollowMutation = () => {
 
         queryClient.setQueryData(
           ["profile", "following"],
-          (data: InfiniteData<InfiniteFollowersType, unknown>) => ({
+          (data: InfiniteData<InfiniteFolloweringType, unknown>) => ({
             ...data,
             pages: newFollowingList
           })
         );
       }
 
-      return { previousMyProfile, previousUserProfile, previousFollowingList };
+      return { previousMyProfile, previousFollowingList };
     },
     onError: (error) => {
       sweetToast(
@@ -113,18 +85,7 @@ export const useUnfollowMutation = () => {
         refetchType: "inactive"
       });
 
-      if (
-        !isOpenFollowerModal &&
-        !isOpenFollowingModal &&
-        !pathname.includes("search")
-      ) {
-        queryClient.invalidateQueries({
-          queryKey: ["profile", uid],
-          refetchType: "inactive"
-        });
-      }
-
-      if (!uid && isOpenFollowingModal &&  !pathname.includes("search"))
+      if (!uid && isOpenFollowingModal && !pathname.includes("search"))
         queryClient.invalidateQueries({
           queryKey: ["profile", "following"],
           refetchType: "inactive"

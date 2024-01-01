@@ -11,10 +11,10 @@ interface IProps {
   userProfile: IUserProfileData;
 }
 export default function ProfileUnfollowBtn({ myProfile, userProfile }: IProps) {
-  const { unfollowHandler } = useUnfollowFetchData({
+  const { profileUnFollowHandler } = useUnfollowFetchData({
     myUid: myProfile.uid,
     userUid: userProfile.uid
   });
 
-  return <UnfollowBtn onClick={unfollowHandler}>언팔로우</UnfollowBtn>;
+  return <UnfollowBtn onClick={profileUnFollowHandler}>언팔로우</UnfollowBtn>;
 }

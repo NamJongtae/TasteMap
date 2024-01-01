@@ -15,14 +15,14 @@ export default function UnfollowBtn({
   isLastItem,
   lastItemFollowBtnRef
 }: IProps) {
-  const { unfollowHandler } = useUnfollowFetchData({
+  const { followModalUnfollowHandler } = useUnfollowFetchData({
     myUid: myProfile.uid,
     userUid: followData.uid
   });
 
   return (
     <StyledUnfollowBtn
-      onClick={unfollowHandler}
+      onClick={followModalUnfollowHandler}
       ref={isLastItem ? lastItemFollowBtnRef : null}
     >
       언팔로우

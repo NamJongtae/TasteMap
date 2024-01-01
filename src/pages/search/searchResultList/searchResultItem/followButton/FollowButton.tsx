@@ -8,9 +8,9 @@ interface IProps {
   userProfile: IUserProfileData;
 }
 export default function FollowButton({ myProfile, userProfile }: IProps) {
-  const { followHandler } = useFollowFetchData({
+  const { followModalFollowHandler } = useFollowFetchData({
     myUid: myProfile.uid,
     userUid: userProfile.uid
   });
-  return <FollowBtn onClick={followHandler}>팔로우</FollowBtn>;
+  return <FollowBtn onClick={followModalFollowHandler}>팔로우</FollowBtn>;
 }

@@ -1,4 +1,5 @@
-import { useUnfollowMutation } from "./query/profile/useUnfollowMutation";
+import { useFollowModalUnfollowMutation } from "./query/profile/useFollowModalUnfollowMutation";
+import { useProfileUnfollowMutation } from "./query/profile/useProfileUnfollowMutation";
 
 interface IProps {
   userUid: string;
@@ -6,11 +7,20 @@ interface IProps {
 }
 
 export const useUnfollowFetchData = ({ userUid, myUid }: IProps) => {
-  const { mutate: unfollowMutate } = useUnfollowMutation();
+  const { mutate: profileUnfollowMutate } = useProfileUnfollowMutation();
+  const { mutate: followModalUnfollowMutate } =
+    useFollowModalUnfollowMutation();
 
-  const unfollowHandler = () => {
-    unfollowMutate({ myUid, userUid });
+  const profileUnFollowHandler = () => {
+    profileUnfollowMutate({ myUid, userUid });
   };
 
-  return { unfollowHandler };
+  const followModalUnfollowHandler = () => {
+    followModalUnfollowMutate({ myUid, userUid });
+  };
+
+  return {
+    profileUnFollowHandler,
+    followModalUnfollowHandler,
+  };
 };

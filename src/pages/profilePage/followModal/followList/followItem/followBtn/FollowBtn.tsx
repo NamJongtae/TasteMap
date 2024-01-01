@@ -15,14 +15,14 @@ export default function FollowBtn({
   isLastItem,
   lastItemFollowBtnRef
 }: IProps) {
-  const { followHandler } = useFollowFetchData({
+  const { followModalFollowHandler } = useFollowFetchData({
     myUid: myProfile.uid,
     userUid: followData.uid
   });
 
   return (
     <StyledFollowBtn
-      onClick={followHandler}
+      onClick={followModalFollowHandler}
       ref={isLastItem ? lastItemFollowBtnRef : null}
     >
       팔로우
