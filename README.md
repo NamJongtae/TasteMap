@@ -1,11 +1,13 @@
 # 🍽 TasteMap
 ![thumbnail](https://github.com/NamJongtae/TasteMap/assets/113427991/16745d53-453b-4e9b-b0f5-84a60f9b1d4a)
-#### 테스트 계정
+#### 🎈 테스트 계정
 | ID         | PW     |
 |------------|--------|
 | test@a.com | asdzxc123! |
 
-#### 배포 URL : 🍴 [TasteMap](https://tastemap.site)
+#### 🌏 배포 URL : 🍴 [TasteMap](https://tastemap.site)
+
+<br/>
 
 ### 📃 목차 (클릭 시 해당 목차로 이동합니다.)
 - [🙋‍♂ 프로젝트 소개](#-프로젝트-소개)
@@ -1889,4 +1891,8 @@ export default function UserInfoSetting({ nextStepHandler }: IProps) {
 |---|---|
 |![로그아웃](https://github.com/NamJongtae/TasteMap/assets/113427991/635b35e4-f1d0-4325-9f69-52fa4c3c02ce)|![404](https://github.com/NamJongtae/TasteMap/assets/113427991/830a1146-2967-4d80-8c4d-d0ed94503851)|
 
+<p align="right"><a href="#top">TOP 🔼</a></p>
+
 </div>
+
+
