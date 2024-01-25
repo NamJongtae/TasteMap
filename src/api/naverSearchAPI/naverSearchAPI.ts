@@ -2,17 +2,13 @@ import axios from "axios";
 import { IMapData } from "../apiType";
 
 // cors에러 우회를 위한 proxy 사용
-const PROXY = window.location.hostname === 'localhost' ? '' : '/proxy';
+const PROXY = window.location.hostname === "localhost" ? "" : "/proxy";
 const URL = `${PROXY}/v1/search/local.json`;
 
 /**
  * 네이버 지역 검색 API 사용 함수
  */
-export const 
-
-fetchMap = async (
-  keyword: string
-): Promise<IMapData[]> => {
+export const fetchMap = async (keyword: string): Promise<IMapData[]> => {
   try {
     const res = await axios.get(URL, {
       headers: {

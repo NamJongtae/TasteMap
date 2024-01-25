@@ -5,7 +5,7 @@ import { db } from "./setting";
 export const fetchDuplication = async (
   duplicationValue: string,
   duplicationTarget: "email" | "phone" | "displayName"
-) => {
+): Promise<false | undefined> => {
   try {
     const userRef = collection(db, "user");
     const q = query(

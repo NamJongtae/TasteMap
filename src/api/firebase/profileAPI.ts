@@ -14,7 +14,8 @@ import {
   setDoc,
   deleteDoc,
   arrayUnion,
-  arrayRemove
+  arrayRemove,
+  QuerySnapshot
 } from "firebase/firestore";
 import { v4 as uuid } from "uuid";
 
@@ -97,7 +98,10 @@ export const fetchProfilePosts = async (
   uid: string,
   pagePerData: number,
   page: QueryDocumentSnapshot<DocumentData, DocumentData> | null
-) => {
+): Promise<{
+  postDocs: QuerySnapshot<DocumentData, DocumentData>;
+  data: IPostData[];
+}> => {
   try {
     const postRef = collection(db, `post`);
     const q = page
@@ -145,7 +149,7 @@ export const fetchProfilePosts = async (
 /**
  * 팔로우
  */
-export const follow = async (myUid: string, userUid: string) => {
+export const follow = async (myUid: string, userUid: string): Promise<void> => {
   // 나의 프로필 Doc에 followingList에 해당 유저의 uid 추가
   const myProfileDoc = doc(db, `user/${myUid}`);
   const followingListRef = collection(myProfileDoc, `following`);
@@ -177,7 +181,10 @@ export const follow = async (myUid: string, userUid: string) => {
 /**
  * 언팔로우
  */
-export const unfollow = async (myUid: string, userUid: string) => {
+export const unfollow = async (
+  myUid: string,
+  userUid: string
+): Promise<void> => {
   // 나의 프로필 Doc에 followingList에 해당 유저의 uid 제거
   const myProfileDoc = doc(db, `user/${myUid}`);
   const followingDoc = doc(myProfileDoc, `following/${userUid}`);
@@ -208,7 +215,10 @@ export const unfollow = async (myUid: string, userUid: string) => {
 export const fetchFirstpageFollowers = async (
   uid: string,
   pagePerData: number
-) => {
+): Promise<{
+  followerDocs: QuerySnapshot<DocumentData, DocumentData>;
+  data: IFollowData[];
+}> => {
   const userDoc = doc(db, `user/${uid}`);
   const followerRef = collection(userDoc, "follower");
   const q = query(followerRef, limit(pagePerData));
@@ -243,7 +253,10 @@ export const fetchPagingFollowers = async (
   uid: string,
   page: QueryDocumentSnapshot<DocumentData, DocumentData>,
   pagePerData: number
-) => {
+): Promise<{
+  followerDocs: QuerySnapshot<DocumentData, DocumentData>;
+  data: IFollowData[];
+}> => {
   const userDoc = doc(db, `user/${uid}`);
   const followerRef = collection(userDoc, "follower");
   const q = query(followerRef, startAfter(page), limit(pagePerData));
@@ -277,7 +290,10 @@ export const fetchPagingFollowers = async (
 export const fetchFirstpageFollowing = async (
   uid: string,
   pagePerData: number
-) => {
+): Promise<{
+  followingDocs: QuerySnapshot<DocumentData, DocumentData>;
+  data: IFollowData[];
+}> => {
   const userDoc = doc(db, `user/${uid}`);
   const followingRef = collection(userDoc, "following");
   const q = query(followingRef, limit(pagePerData));
@@ -312,7 +328,10 @@ export const fetchPagingFollowing = async (
   uid: string,
   page: QueryDocumentSnapshot<DocumentData, DocumentData>,
   pagePerData: number
-) => {
+): Promise<{
+  followingDocs: QuerySnapshot<DocumentData, DocumentData>;
+  data: IFollowData[];
+}> => {
   const userDoc = doc(db, `user/${uid}`);
   const followingRef = collection(userDoc, "following");
   const q = query(followingRef, startAfter(page), limit(pagePerData));
@@ -344,7 +363,18 @@ export const fetchPagingFollowing = async (
  * 프로필 수정
  */
 const auth = getAuth();
-export const updateMyProfile = async (editProfileData: IProfileUpdateData) => {
+export const updateMyProfile = async (
+  editProfileData: IProfileUpdateData
+): Promise<
+  | {
+      uid: string;
+      email: string | null;
+      displayName: any;
+      introduce: any;
+      photoURL: any;
+    }
+  | undefined
+> => {
   try {
     // 이미지 파일 존재시 이미지 파일을 업로드
     const fileName =
@@ -408,7 +438,9 @@ export const updateMyProfile = async (editProfileData: IProfileUpdateData) => {
     // photoFileName 속성이 fileName에 존재하면 업데이트 객체에 추가합니다.
     if (fileName) {
       updateFields.photoFileName = fileName;
-    } else if (editProfileData.file === process.env.REACT_APP_DEFAULT_PROFILE_IMG) {
+    } else if (
+      editProfileData.file === process.env.REACT_APP_DEFAULT_PROFILE_IMG
+    ) {
       updateFields.photoFileName = "icon-defaultProfileImg.png";
     }
 

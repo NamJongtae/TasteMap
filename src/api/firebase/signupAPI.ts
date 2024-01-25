@@ -21,7 +21,12 @@ export const signup = async (
   password: string,
   phone: string,
   introduce: string
-) => {
+): Promise<{
+  uid: string;
+  email: string | null;
+  displayName: string | null;
+  photoURL: string | undefined;
+}> => {
   try {
     const res = await createUserWithEmailAndPassword(auth, email, password);
     const fileName = file && `${uuidv4()}_${file.name}`;

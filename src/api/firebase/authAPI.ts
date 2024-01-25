@@ -1,7 +1,7 @@
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { IUserData } from "../apiType";
 
-export const fetchAuth = async () => {
+export const fetchAuth = async (): Promise<IUserData> => {
   try {
     const auth = getAuth();
     const myInfo = await new Promise((resolve) => {

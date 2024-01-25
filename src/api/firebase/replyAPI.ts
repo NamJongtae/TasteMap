@@ -14,7 +14,8 @@ import {
   DocumentData,
   startAfter,
   where,
-  getDoc
+  getDoc,
+  QuerySnapshot
 } from "firebase/firestore";
 import { IReplyData, IUserData } from "../apiType";
 import { db } from "./setting";
@@ -30,7 +31,10 @@ export const fetchReplies = async (
   postId: string,
   parentCommentId: string,
   pagePerData: number
-) => {
+): Promise<{
+  replyDocs: QuerySnapshot<DocumentData, DocumentData>;
+  data: IReplyData[];
+}> => {
   try {
     const postDoc = doc(db, `post/${postId}`);
     const postDocSnapshot = await getDoc(postDoc);
@@ -87,7 +91,12 @@ export const fetchReplies = async (
 /**
  * 답글 추가
  */
-export const leaveReply = async (replyData: IReplyData) => {
+export const leaveReply = async (
+  replyData: IReplyData
+): Promise<{
+  postId: string;
+  parentCommentId: string;
+}> => {
   try {
     // 게시물 확인 작업 추가
     const postDoc = doc(db, `post/${replyData.postId}`);
@@ -136,7 +145,10 @@ export const updateReply = async (
     IReplyData,
     "parentCommentId" | "replyId" | "content" | "postId"
   >
-) => {
+): Promise<{
+  postId: string;
+  parentCommentId: string;
+}> => {
   try {
     // 게시물 확인 작업 추가
     const postDoc = doc(db, `post/${replyData.postId}`);
@@ -182,7 +194,10 @@ export const updateReply = async (
  */
 export const removeReply = async (
   replyData: Pick<IReplyData, "parentCommentId" | "replyId" | "postId">
-) => {
+): Promise<{
+  postId: string;
+  parentCommentId: string;
+}> => {
   try {
     // 게시물 확인 작업 추가
     const postDoc = doc(db, `post/${replyData.postId}`);
@@ -203,7 +218,7 @@ export const removeReply = async (
     // 답글 확인 작업 추가
     const replyDoc = doc(commentDoc, `replies/${replyData.replyId}`);
     const replyDocSnapshot = await getDoc(replyDoc);
-    
+
     if (!replyDocSnapshot.exists()) {
       throw new Error("답글이 존재하지 않습니다.");
     }
@@ -236,7 +251,10 @@ export const reportReply = async (
     IReplyData,
     "replyId" | "parentCommentId" | "reportCount" | "postId"
   >
-) => {
+): Promise<
+  | Pick<IReplyData, "parentCommentId" | "replyId" | "postId" | "reportCount">
+  | undefined
+> => {
   try {
     // 게시물 확인 작업 추가
     const postDoc = doc(db, `post/${replyData.postId}`);

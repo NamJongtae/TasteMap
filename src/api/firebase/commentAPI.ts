@@ -1,6 +1,7 @@
 import {
   DocumentData,
   QueryDocumentSnapshot,
+  QuerySnapshot,
   arrayUnion,
   collection,
   deleteDoc,
@@ -46,7 +47,10 @@ export const fetchComments = async (
   page: QueryDocumentSnapshot<DocumentData, DocumentData> | null,
   postId: string,
   pagePerData: number
-) => {
+): Promise<{
+  commentDocs: QuerySnapshot<DocumentData, DocumentData>;
+  data: ICommentData[];
+}> => {
   try {
     const commentsRef = collection(db, "comments");
 
@@ -104,7 +108,9 @@ export const fetchComments = async (
 /**
  * 댓글 추가
  */
-export const leaveComment = async (commentData: ICommentData) => {
+export const leaveComment = async (
+  commentData: ICommentData
+): Promise<string> => {
   try {
     // 게시물 확인 작업 추가
     const postDoc = doc(db, `post/${commentData.postId}`);
@@ -141,7 +147,7 @@ export const leaveComment = async (commentData: ICommentData) => {
  */
 export const updateComment = async (
   commentData: Pick<ICommentData, "commentId" | "content" | "postId">
-) => {
+): Promise<string> => {
   try {
     // 게시물 확인 작업 추가
     const postDoc = doc(db, `post/${commentData.postId}`);
@@ -173,7 +179,7 @@ export const updateComment = async (
  */
 export const removeComment = async (
   commentData: Pick<ICommentData, "postId" | "commentId">
-) => {
+): Promise<string> => {
   try {
     // 게시물 확인 작업 추가
     const postDoc = doc(db, `post/${commentData.postId}`);
@@ -229,7 +235,9 @@ export const removeComment = async (
  */
 export const reportComment = async (
   reportCommentData: Pick<ICommentData, "postId" | "commentId" | "reportCount">
-) => {
+): Promise<
+  Pick<ICommentData, "commentId" | "postId" | "reportCount"> | undefined
+> => {
   try {
     if (!auth.currentUser) return;
 

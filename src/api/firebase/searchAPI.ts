@@ -1,6 +1,7 @@
 import {
   DocumentData,
   QueryDocumentSnapshot,
+  QuerySnapshot,
   collection,
   getDocs,
   limit,
@@ -16,7 +17,10 @@ export const fetchUserSearch = async (
   keyword: string,
   page: QueryDocumentSnapshot<DocumentData, DocumentData> | null,
   pagePerData: number
-) => {
+): Promise<{
+  userDocs: QuerySnapshot<DocumentData, DocumentData>;
+  data: IUserProfileData[];
+}> => {
   const userRef = collection(db, "user");
   const q = page
     ? query(
@@ -45,5 +49,5 @@ export const fetchUserSearch = async (
     followerList: profile.followerList,
     followingList: profile.followingList
   }));
-  return { userDocs: res, data: userProfiles as IUserProfileData[]};
+  return { userDocs: res, data: userProfiles as IUserProfileData[] };
 };

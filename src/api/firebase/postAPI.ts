@@ -1,6 +1,7 @@
 import {
   DocumentData,
   QueryDocumentSnapshot,
+  QuerySnapshot,
   arrayRemove,
   arrayUnion,
   collection,
@@ -69,7 +70,10 @@ export const fetchPost = async (
 export const fetchPosts = async (
   page: QueryDocumentSnapshot<DocumentData, DocumentData> | null,
   pagePerData: number
-) => {
+): Promise<{
+  postDocs: QuerySnapshot<DocumentData, DocumentData>;
+  data: IPostData[];
+}> => {
   try {
     const postRef = collection(db, "post");
     const q = page
@@ -116,7 +120,13 @@ export const fetchFeedPosts = async (
   page: QueryDocumentSnapshot<DocumentData, DocumentData> | null,
   pagePerData: number,
   followingList: string[]
-) => {
+): Promise<{
+  postDocs: null;
+  data: IPostData[];
+} | {
+  postDocs: QuerySnapshot<DocumentData, DocumentData>;
+  data: IPostData[];
+}> => {
   try {
     if (followingList.length === 0) {
       return { postDocs: null, data: [] as IPostData[] };
@@ -169,7 +179,7 @@ export const fetchFeedPosts = async (
  */
 export const uploadPost = async (
   postData: Omit<IPostUploadData, "img"> // img는 쓰이지 않기 때문에 Omit 타입으로 빼줌
-) => {
+): Promise<void> => {
   try {
     // post colletion
     const postRef = collection(db, "post");
@@ -235,7 +245,7 @@ export const updatePost = async (
     IPostUploadData,
     "id" | "content" | "rating" | "mapData" | "imgURL" | "imgName" | "img"
   >
-) => {
+): Promise<void> => {
   try {
     const postDoc = doc(db, `post/${editPostData.id}`);
     const postDocSnapshot = await getDoc(postDoc);
@@ -268,7 +278,7 @@ export const updatePost = async (
  */
 export const deletePost = async (
   postData: Pick<IPostData, "id" | "imgName">
-) => {
+): Promise<void> => {
   try {
     if (!postData.imgName) return;
     const postDoc = doc(db, `post/${postData.id}`);
@@ -313,7 +323,7 @@ export const deletePost = async (
 /**
  * 좋아요 추가
  */
-export const addPostLike = async (id: string) => {
+export const addPostLike = async (id: string): Promise<void> => {
   try {
     const postRef = doc(db, `post/${id}`);
     const postDocSnapshot = await getDoc(postRef);
@@ -339,7 +349,7 @@ export const addPostLike = async (id: string) => {
 /**
  * 좋아요 삭제
  */
-export const removePostLike = async (id: string) => {
+export const removePostLike = async (id: string): Promise<void> => {
   try {
     const postDoc = doc(db, `post/${id}`);
     const postDocSnapshot = await getDoc(postDoc);
@@ -365,7 +375,7 @@ export const removePostLike = async (id: string) => {
 /**
  * 맛집 지도 추가
  */
-export const addTasteMap = async (mapData: IMapData) => {
+export const addTasteMap = async (mapData: IMapData): Promise<void> => {
   try {
     if (!auth.currentUser) return;
     const userRef = doc(db, `user/${auth.currentUser.uid}`);
@@ -381,7 +391,7 @@ export const addTasteMap = async (mapData: IMapData) => {
 /**
  * 맛집 지도 삭제
  */
-export const removeTasteMap = async (mapData: IMapData) => {
+export const removeTasteMap = async (mapData: IMapData): Promise<void> => {
   try {
     if (!auth.currentUser) return;
     const userRef = doc(db, `user/${auth.currentUser.uid}`);
@@ -399,7 +409,7 @@ export const removeTasteMap = async (mapData: IMapData) => {
  */
 export const reportPost = async (
   postData: Pick<IPostData, "id" | "reportCount">
-) => {
+): Promise<void> => {
   try {
     if (!auth.currentUser) return;
     const postDoc = doc(db, `post/${postData.id}`);

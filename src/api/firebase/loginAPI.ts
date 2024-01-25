@@ -6,7 +6,7 @@ import {
   signInWithPopup,
   GoogleAuthProvider,
   GithubAuthProvider,
-  signOut,
+  signOut
 } from "firebase/auth";
 import { db } from "./setting";
 import { sweetToast } from "../../library/sweetAlert/sweetAlert";
@@ -16,7 +16,7 @@ const googleProvider = new GoogleAuthProvider();
 const githubProvider = new GithubAuthProvider();
 
 // 로그인 API
-export const login = async (email: string, password: string) => {
+export const login = async (email: string, password: string): Promise<void> => {
   try {
     await signInWithEmailAndPassword(auth, email, password);
     if (!auth.currentUser) return;
@@ -31,7 +31,7 @@ export const login = async (email: string, password: string) => {
   }
 };
 
-export const socialLogin = async (type: string) => {
+export const socialLogin = async (type: string): Promise<void> => {
   try {
     let provider;
     if (type === "google") {
@@ -85,7 +85,7 @@ export const socialLogin = async (type: string) => {
   }
 };
 
-export const logout = async () => {
+export const logout = async (): Promise<void> => {
   try {
     await signOut(auth);
   } catch (error) {
@@ -93,4 +93,3 @@ export const logout = async () => {
     throw error;
   }
 };
-
