@@ -8,7 +8,8 @@ import { useCheckIsMyProfilePage } from "../../hook/logic/profile/profileInfo/us
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/store";
 import Profile from "./profile/Profile";
-import ProfileUpdateModal from './profileUpdateModal/ProfileUpdateModal';
+import ProfileUpdateModal from "./profileUpdateModal/ProfileUpdateModal";
+import CommentModalWrapper from "../../component/units/comment/CommentModalWrapper";
 
 export default function ProfilePage() {
   const isOpenFollowerModal = useSelector(
@@ -19,6 +20,9 @@ export default function ProfilePage() {
   );
   const isOpenProfileUpdateModal = useSelector(
     (state: RootState) => state.user.isOpenUpdateProfileModal
+  );
+  const isOpenCommentModal = useSelector(
+    (state: RootState) => state.comment.isOpenCommentModal
   );
 
   const { myProfile, userProfile, loadProfileLoading, isNoProfileData } =
@@ -60,6 +64,7 @@ export default function ProfilePage() {
       {isOpenProfileUpdateModal && (
         <ProfileUpdateModal myProfile={myProfile || ({} as IMyProfileData)} />
       )}
+      {isOpenCommentModal && <CommentModalWrapper postType={"PROFILE"} />}
     </>
   );
 }
