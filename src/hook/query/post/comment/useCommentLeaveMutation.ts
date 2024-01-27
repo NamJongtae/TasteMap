@@ -12,6 +12,10 @@ import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../../../store/store";
 import { useParams } from "react-router-dom";
 import { isMobile } from "react-device-detect";
+import {
+  getCommentsQuerykey,
+  getPostsQuerykey
+} from "../../../../querykey/querykey";
 
 type InfiniteCommentsType = {
   commentDocs: QuerySnapshot<DocumentData, DocumentData>;
@@ -29,29 +33,25 @@ export const useCommentLeaveMutation = (
   const { uid } = useParams();
   const dispatch = useDispatch<AppDispatch>();
   const queryClient = useQueryClient();
-  const postQuerykey =
-    postType === "PROFILE" ? ["posts", postType, uid] : ["posts", postType];
+  const POSTS_QUERYKEY = getPostsQuerykey(postType, uid);
   const { mutate } = useMutation({
     mutationFn: (commentData: ICommentData) => leaveComment(commentData),
     onMutate: async (newCommentData) => {
+      const COMMENTS_QUERYKEY = getCommentsQuerykey(newCommentData.postId);
       await queryClient.cancelQueries({
-        queryKey: ["post", newCommentData.postId, "comments"]
+        queryKey: COMMENTS_QUERYKEY
       });
 
-      const previousComments = await queryClient.getQueryData([
-        "post",
-        newCommentData.postId,
-        "comments"
-      ]);
+      const previousComments = queryClient.getQueryData(COMMENTS_QUERYKEY);
 
       await queryClient.cancelQueries({
-        queryKey: postQuerykey
+        queryKey: POSTS_QUERYKEY
       });
 
-      const previousPosts = await queryClient.getQueryData(postQuerykey);
+      const previousPosts = queryClient.getQueryData(POSTS_QUERYKEY);
 
       queryClient.setQueryData(
-        ["post", newCommentData.postId, "comments"],
+        COMMENTS_QUERYKEY,
         (data: InfiniteData<InfiniteCommentsType, unknown>) => ({
           ...data,
           pages: [
@@ -65,7 +65,7 @@ export const useCommentLeaveMutation = (
       );
 
       queryClient.setQueryData(
-        postQuerykey,
+        POSTS_QUERYKEY,
         (postsData: InfiniteData<InfinitePostsType, unknown>) => ({
           ...postsData,
           pages: postsData.pages.map((page: InfinitePostsType) => ({
@@ -85,19 +85,17 @@ export const useCommentLeaveMutation = (
       sweetToast("댓글 작성이 완료되었습니다.", "success");
     },
     onError: (error, data, ctx) => {
+      const COMMENTS_QUERYKEY = getCommentsQuerykey(data.postId);
       if (ctx) {
-        queryClient.setQueryData(
-          ["post", data.postId, "comments"],
-          ctx.previousComments
-        );
-        queryClient.setQueryData(postQuerykey, ctx.previousPosts);
+        queryClient.setQueryData(COMMENTS_QUERYKEY, ctx.previousComments);
+        queryClient.setQueryData(POSTS_QUERYKEY, ctx.previousPosts);
       }
 
       if (error.message === "게시물이 존재하지 않습니다.") {
         sweetToast("삭제된 게시물입니다!", "warning");
         // 게시물 삭제
         queryClient.setQueryData(
-          postQuerykey,
+          POSTS_QUERYKEY,
           (postsData: InfiniteData<InfinitePostsType, unknown>) => ({
             ...postsData,
             pages: postsData.pages.map((page: InfinitePostsType) => ({
@@ -121,8 +119,10 @@ export const useCommentLeaveMutation = (
       }
     },
     onSettled: (postId: string | undefined) => {
+      if (!postId) return;
+      const COMMENTS_QUERYKEY = getCommentsQuerykey(postId);
       queryClient.invalidateQueries({
-        queryKey: ["post", postId, "comments"],
+        queryKey: COMMENTS_QUERYKEY,
         refetchType: "inactive"
       });
     }

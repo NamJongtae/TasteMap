@@ -8,6 +8,10 @@ import { IPostData, IMyProfileData } from "../../../api/apiType";
 import { sweetToast } from "../../../library/sweetAlert/sweetAlert";
 import { DocumentData, QuerySnapshot } from "firebase/firestore";
 import { useParams } from "react-router-dom";
+import {
+  My_PROFILE_QUERYKEY,
+  getPostsQuerykey
+} from "../../../querykey/querykey";
 
 type InfinityPostsType = {
   postDocs: QuerySnapshot<DocumentData, DocumentData>;
@@ -22,23 +26,21 @@ type InfinitePostsType = {
 export const useAddLikeMutation = (postType: "HOME" | "FEED" | "PROFILE") => {
   const { uid } = useParams();
   const queryClient = useQueryClient();
+  const POSTS_QUERYKEY = getPostsQuerykey(postType, uid);
   const { mutate } = useMutation({
     mutationFn: (postId: string) => addPostLike(postId),
     onMutate: async (postId) => {
       Promise.all([
-        queryClient.cancelQueries({ queryKey: ["profile", "my"] }),
+        queryClient.cancelQueries({ queryKey: My_PROFILE_QUERYKEY }),
         queryClient.cancelQueries({
-          queryKey:
-            postType === "PROFILE"
-              ? ["posts", postType, uid]
-              : ["posts", postType]
+          queryKey: POSTS_QUERYKEY
         })
       ]);
 
-      const previousProfile = await queryClient.getQueryData(["profile", "my"]);
+      const previousProfile = queryClient.getQueryData(My_PROFILE_QUERYKEY);
 
       queryClient.setQueryData(
-        ["profile", "my"],
+        My_PROFILE_QUERYKEY,
         (myProfile: IMyProfileData) => ({
           ...myProfile,
           likeList: [...myProfile.likeList, postId]
@@ -47,9 +49,7 @@ export const useAddLikeMutation = (postType: "HOME" | "FEED" | "PROFILE") => {
 
       const previousPosts:
         | InfiniteData<InfinityPostsType, unknown>
-        | undefined = await queryClient.getQueryData(
-        postType === "PROFILE" ? ["posts", postType, uid] : ["posts", postType]
-      );
+        | undefined = queryClient.getQueryData(POSTS_QUERYKEY);
 
       const newPages = previousPosts?.pages.map((page: InfinityPostsType) => {
         return {
@@ -63,7 +63,7 @@ export const useAddLikeMutation = (postType: "HOME" | "FEED" | "PROFILE") => {
       });
 
       queryClient.setQueryData(
-        postType === "PROFILE" ? ["posts", postType, uid] : ["posts", postType],
+        POSTS_QUERYKEY,
         (data: InfiniteData<InfinityPostsType, unknown>) => ({
           ...data,
           pages: newPages
@@ -74,20 +74,13 @@ export const useAddLikeMutation = (postType: "HOME" | "FEED" | "PROFILE") => {
     },
     onError: (error, data, ctx) => {
       if (ctx) {
-        queryClient.setQueryData(["profile", "my"], ctx.previousProfile);
-        queryClient.setQueryData(
-          postType === "PROFILE"
-            ? ["posts", postType, uid]
-            : ["posts", postType],
-          ctx.previousPosts
-        );
+        queryClient.setQueryData(My_PROFILE_QUERYKEY, ctx.previousProfile);
+        queryClient.setQueryData(POSTS_QUERYKEY, ctx.previousPosts);
       }
       if (error.message === "게시물이 존재하지 않습니다.") {
         sweetToast("삭제된 게시물입니다.", "warning");
         queryClient.setQueryData(
-          postType === "PROFILE"
-            ? ["posts", postType, uid]
-            : ["posts", postType],
+          POSTS_QUERYKEY,
           (postsData: InfiniteData<InfinitePostsType, unknown>) => ({
             ...postsData,
             pages: postsData.pages.map((page: InfinitePostsType) => ({
@@ -105,12 +98,9 @@ export const useAddLikeMutation = (postType: "HOME" | "FEED" | "PROFILE") => {
       }
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["profile", "my"] });
+      queryClient.invalidateQueries({ queryKey: My_PROFILE_QUERYKEY });
       queryClient.invalidateQueries({
-        queryKey:
-          postType === "PROFILE"
-            ? ["posts", postType, uid]
-            : ["posts", postType],
+        queryKey: POSTS_QUERYKEY,
         refetchType: "inactive"
       });
     }

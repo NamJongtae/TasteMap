@@ -8,6 +8,7 @@ import { IPostData, IPostUploadData } from "../../../api/apiType";
 import { sweetToast } from "../../../library/sweetAlert/sweetAlert";
 import { DocumentData, QuerySnapshot } from "firebase/firestore";
 import { useNavigate } from 'react-router-dom';
+import { HOME_POSTS_QUERYKEY } from "../../../querykey/querykey";
 
 type FetchDataResponse = {
   postDocs: QuerySnapshot<DocumentData, DocumentData>;
@@ -42,11 +43,11 @@ export const usePostUploadMutation = () => {
       return postData as IPostUploadData;
     },
     onMutate: async (newPost) => {
-      await queryClient.cancelQueries({ queryKey: ["posts", "HOME"] });
-      const previousPosts = await queryClient.getQueryData(["posts", "HOME"]);
+      await queryClient.cancelQueries({ queryKey: HOME_POSTS_QUERYKEY });
+      const previousPosts = await queryClient.getQueryData(HOME_POSTS_QUERYKEY);
 
       queryClient.setQueryData(
-        ["posts", "HOME"],
+        HOME_POSTS_QUERYKEY,
         (data: InfiniteData<FetchDataResponse, unknown>) => ({
           ...data,
           pages: [
@@ -63,7 +64,7 @@ export const usePostUploadMutation = () => {
     },
     onError: (error, data, ctx) => {
       if (ctx) {
-        queryClient.setQueryData(["posts", "HOME"], ctx.previousPosts);
+        queryClient.setQueryData(HOME_POSTS_QUERYKEY, ctx.previousPosts);
       }
 
       sweetToast(
@@ -74,7 +75,7 @@ export const usePostUploadMutation = () => {
     },
     onSettled: () => {
       queryClient.invalidateQueries({
-        queryKey: ["posts", "HOME"],
+        queryKey: HOME_POSTS_QUERYKEY,
       });
       navigate("/");
     }

@@ -6,6 +6,7 @@ import {
   QuerySnapshot
 } from "firebase/firestore";
 import { IReplyData } from "../../../../api/apiType";
+import { getRepliesQuerykey } from "../../../../querykey/querykey";
 
 interface InfiniteReplyType {
   replyDocs: QuerySnapshot<DocumentData, DocumentData>;
@@ -18,6 +19,7 @@ export const useReplyInfiniteQuery = (
   pagePerData: number,
   isReply: boolean
 ) => {
+  const REPLIES_QUERYKEY = getRepliesQuerykey(postId, parentCommentId)
   const {
     data,
     hasNextPage,
@@ -31,7 +33,7 @@ export const useReplyInfiniteQuery = (
     isRefetchError,
     error
   } = useInfiniteQuery<InfiniteReplyType>({
-    queryKey: ["post", postId, "comment", parentCommentId, "replies"],
+    queryKey: REPLIES_QUERYKEY,
     queryFn: async ({ pageParam }) => {
       const result = await fetchReplies(
         pageParam as QueryDocumentSnapshot<DocumentData, DocumentData> | null,

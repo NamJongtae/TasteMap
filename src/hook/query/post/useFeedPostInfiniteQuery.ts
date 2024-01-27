@@ -6,6 +6,7 @@ import {
   QuerySnapshot
 } from "firebase/firestore";
 import { IPostData } from "../../../api/apiType";
+import { FEED_POSTS_QUERYKEY } from "../../../querykey/querykey";
 
 type FetchDataResponse = {
   postDocs: QuerySnapshot<DocumentData, DocumentData> | null;
@@ -26,7 +27,7 @@ export const useFeedPostInfiniteQuery = (
     isFetchingNextPage,
     isRefetching
   } = useInfiniteQuery<FetchDataResponse>({
-    queryKey: ["posts", "FEED"],
+    queryKey: FEED_POSTS_QUERYKEY,
     queryFn: async ({ pageParam }) =>
       await fetchFeedPosts(
         pageParam as QueryDocumentSnapshot<DocumentData, DocumentData> | null,

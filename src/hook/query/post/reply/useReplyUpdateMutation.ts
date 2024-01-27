@@ -11,6 +11,11 @@ import { AppDispatch } from "../../../../store/store";
 import { commentSlice } from "../../../../slice/commentSlice";
 import { updateReply } from "../../../../api/firebase/replyAPI";
 import { useParams } from "react-router-dom";
+import {
+  getCommentsQuerykey,
+  getPostsQuerykey,
+  getRepliesQuerykey
+} from "../../../../querykey/querykey";
 
 type InfiniteCommentsType = {
   commentDocs: QuerySnapshot<DocumentData, DocumentData>;
@@ -41,25 +46,17 @@ export const useReplyUpdateMutation = (
       >
     ) => updateReply(replyUpdateData),
     onMutate: async (reportUpdateData) => {
+      const REPLIES_QUERYKEY = getRepliesQuerykey(
+        reportUpdateData.postId,
+        reportUpdateData.parentCommentId
+      );
       await queryClient.cancelQueries({
-        queryKey: [
-          "post",
-          reportUpdateData.postId,
-          "comment",
-          reportUpdateData.parentCommentId,
-          "replies"
-        ]
+        queryKey: REPLIES_QUERYKEY
       });
 
       const previousReplies:
         | InfiniteData<InfiniteRepliesType, unknown>
-        | undefined = await queryClient.getQueryData([
-        "post",
-        reportUpdateData.postId,
-        "comment",
-        reportUpdateData.parentCommentId,
-        "replies"
-      ]);
+        | undefined = queryClient.getQueryData(REPLIES_QUERYKEY);
 
       const newPages = previousReplies?.pages.map(
         (page: InfiniteRepliesType) => {
@@ -77,13 +74,7 @@ export const useReplyUpdateMutation = (
         }
       );
       queryClient.setQueryData(
-        [
-          "post",
-          reportUpdateData.postId,
-          "comment",
-          reportUpdateData.parentCommentId,
-          "replies"
-        ],
+        REPLIES_QUERYKEY,
         (data: InfiniteData<InfiniteRepliesType, unknown>) => ({
           ...data,
           pages: newPages
@@ -93,20 +84,22 @@ export const useReplyUpdateMutation = (
       return { previousReplies };
     },
     onError: (error, data, ctx) => {
+      const REPLIES_QUERYKEY = getRepliesQuerykey(
+        data.postId,
+        data.parentCommentId
+      );
+      const COMMENTS_QUERYKEY = getCommentsQuerykey(data.postId);
+      const POSTS_QUERYKEY = getPostsQuerykey(postType, uid);
+
       if (ctx) {
-        queryClient.setQueryData(
-          ["post", data.postId, "comment", data.parentCommentId, "replies"],
-          ctx.previousReplies
-        );
+        queryClient.setQueryData(REPLIES_QUERYKEY, ctx.previousReplies);
       }
 
       if (error.message === "게시물이 존재하지 않습니다.") {
         sweetToast("삭제된 게시물입니다!", "warning");
         // 게시물 삭제
         queryClient.setQueryData(
-          postType === "PROFILE"
-            ? ["posts", postType, uid]
-            : ["posts", postType],
+          POSTS_QUERYKEY,
           (postsData: InfiniteData<InfinitePostsType, unknown>) => ({
             ...postsData,
             pages: postsData.pages.map((page: InfinitePostsType) => ({
@@ -122,7 +115,7 @@ export const useReplyUpdateMutation = (
         sweetToast("삭제된 댓글입니다!", "warning");
         // 댓글 삭제
         queryClient.setQueryData(
-          ["post", data.postId, "comments"],
+          COMMENTS_QUERYKEY,
           (commentsData: InfiniteData<InfiniteCommentsType, unknown>) => ({
             ...commentsData,
             pages: commentsData.pages.map((page: InfiniteCommentsType) => ({
@@ -145,14 +138,14 @@ export const useReplyUpdateMutation = (
     onSettled: (
       data: { postId: string; parentCommentId: string } | undefined
     ) => {
+      if (!data) return;
+      const REPLIES_QUERYKEY = getRepliesQuerykey(
+        data.postId,
+        data.parentCommentId
+      );
+
       queryClient.invalidateQueries({
-        queryKey: [
-          "post",
-          data?.postId,
-          "comment",
-          data?.parentCommentId,
-          "replies"
-        ],
+        queryKey: REPLIES_QUERYKEY,
         refetchType: "inactive"
       });
     }

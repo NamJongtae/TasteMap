@@ -8,6 +8,10 @@ import { IPostData, IMyProfileData } from "../../../api/apiType";
 import { sweetToast } from "../../../library/sweetAlert/sweetAlert";
 import { DocumentData, QuerySnapshot } from "firebase/firestore";
 import { useParams } from "react-router-dom";
+import {
+  My_PROFILE_QUERYKEY,
+  getPostsQuerykey
+} from "../../../querykey/querykey";
 
 type InfinityPostsType = {
   postDocs: QuerySnapshot<DocumentData, DocumentData>;
@@ -19,21 +23,19 @@ export const useRemoveLikeMutation = (
 ) => {
   const { uid } = useParams();
   const queryClient = useQueryClient();
+  const POSTS_QUERYKEY = getPostsQuerykey(postType, uid);
   const { mutate } = useMutation({
     mutationFn: (postId: string) => removePostLike(postId),
     onMutate: async (postId) => {
-      await queryClient.cancelQueries({ queryKey: ["profile", "my"] }),
+      await queryClient.cancelQueries({ queryKey: My_PROFILE_QUERYKEY }),
         await queryClient.cancelQueries({
-          queryKey:
-            postType === "PROFILE"
-              ? ["posts", postType, uid]
-              : ["posts", postType]
+          queryKey: POSTS_QUERYKEY
         });
 
-      const previousProfile = await queryClient.getQueryData(["profile", "my"]);
+      const previousProfile = queryClient.getQueryData(My_PROFILE_QUERYKEY);
 
       queryClient.setQueryData(
-        ["profile", "my"],
+        My_PROFILE_QUERYKEY,
         (myProfile: IMyProfileData) => ({
           ...myProfile,
           likeList: myProfile.likeList.filter((like) => like !== postId)
@@ -42,9 +44,7 @@ export const useRemoveLikeMutation = (
 
       const previousPosts:
         | InfiniteData<InfinityPostsType, unknown>
-        | undefined = await queryClient.getQueryData(
-        postType === "PROFILE" ? ["posts", postType, uid] : ["posts", postType]
-      );
+        | undefined = queryClient.getQueryData(POSTS_QUERYKEY);
 
       const newPages = previousPosts?.pages.map((page: InfinityPostsType) => {
         return {
@@ -58,7 +58,7 @@ export const useRemoveLikeMutation = (
       });
 
       queryClient.setQueryData(
-        postType === "PROFILE" ? ["posts", postType, uid] : ["posts", postType],
+        POSTS_QUERYKEY,
         (data: InfiniteData<InfinityPostsType, unknown>) => ({
           ...data,
           pages: newPages
@@ -69,13 +69,8 @@ export const useRemoveLikeMutation = (
     },
     onError: (error, data, ctx) => {
       if (ctx) {
-        queryClient.setQueryData(["profile", "my"], ctx.previousProfile);
-        queryClient.setQueryData(
-          postType === "PROFILE"
-            ? ["posts", postType, uid]
-            : ["posts", postType],
-          ctx.previousPosts
-        );
+        queryClient.setQueryData(My_PROFILE_QUERYKEY, ctx.previousProfile);
+        queryClient.setQueryData(POSTS_QUERYKEY, ctx.previousPosts);
       }
       sweetToast(
         "알 수 없는 에러가 발생하였습니다.\n잠시 후 다시 시도해 주세요.",
@@ -84,12 +79,9 @@ export const useRemoveLikeMutation = (
       console.error(error);
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["profile", "my"] });
+      queryClient.invalidateQueries({ queryKey: My_PROFILE_QUERYKEY });
       queryClient.invalidateQueries({
-        queryKey:
-          postType === "PROFILE"
-            ? ["posts", postType, uid]
-            : ["posts", postType],
+        queryKey: POSTS_QUERYKEY,
         refetchType: "inactive"
       });
     }

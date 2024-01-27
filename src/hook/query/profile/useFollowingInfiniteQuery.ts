@@ -9,6 +9,7 @@ import {
   QuerySnapshot
 } from "firebase/firestore";
 import { IFollowData } from "../../../api/apiType";
+import { FOLLOWING_QUERYKEY } from "../../../querykey/querykey";
 
 interface InfiniteFollowersType {
   followingDocs: QuerySnapshot<DocumentData, DocumentData>;
@@ -30,7 +31,7 @@ export const useFollowingInfiniteQuery = (
     isError,
     error
   } = useInfiniteQuery<InfiniteFollowersType>({
-    queryKey: ["profile", "following"],
+    queryKey: FOLLOWING_QUERYKEY,
     queryFn: async ({ pageParam }) => {
       const result = pageParam
         ? await fetchPagingFollowing(

@@ -6,6 +6,7 @@ import {
   QuerySnapshot
 } from "firebase/firestore";
 import { IPostData } from "../../../api/apiType";
+import { getProfilePostsQuerykey } from "../../../querykey/querykey";
 
 type FetchDataResponse = {
   postDocs: QuerySnapshot<DocumentData, DocumentData>;
@@ -17,6 +18,7 @@ export const useProfilePostInfiniteQuery = (
   pagePerData: number,
   postType: "HOME" | "FEED" | "PROFILE"
 ) => {
+  const PROFILE_POSTS_QUERYKEY = getProfilePostsQuerykey(uid);
   const {
     data,
     hasNextPage,
@@ -27,7 +29,7 @@ export const useProfilePostInfiniteQuery = (
     refetch,
     isRefetching
   } = useInfiniteQuery<FetchDataResponse>({
-    queryKey: ["posts", "PROFILE", uid],
+    queryKey: PROFILE_POSTS_QUERYKEY,
     queryFn: async ({ pageParam }) =>
       await fetchProfilePosts(
         uid,

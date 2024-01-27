@@ -6,13 +6,17 @@ import {
   QuerySnapshot
 } from "firebase/firestore";
 import { IUserProfileData } from "../../../api/apiType";
+import { SEARCH_QUERYKEY } from "../../../querykey/querykey";
 
 interface InfiniteSearchType {
   userDocs: QuerySnapshot<DocumentData, DocumentData>;
   data: IUserProfileData[];
 }
 
-export const useSearchUserInfiniteQuery = (keyword: string, pagePerData: number) => {
+export const useSearchUserInfiniteQuery = (
+  keyword: string,
+  pagePerData: number
+) => {
   const {
     data,
     hasNextPage,
@@ -25,7 +29,7 @@ export const useSearchUserInfiniteQuery = (keyword: string, pagePerData: number)
     isError,
     error
   } = useInfiniteQuery<InfiniteSearchType>({
-    queryKey: ["search"],
+    queryKey: SEARCH_QUERYKEY,
     queryFn: async ({ pageParam }) => {
       const result = await fetchUserSearch(
         keyword,

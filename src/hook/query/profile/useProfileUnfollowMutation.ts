@@ -1,11 +1,12 @@
-import {
-  useMutation,
-  useQueryClient
-} from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { IMyProfileData, IUserProfileData } from "../../../api/apiType";
 import { unfollow } from "../../../api/firebase/profileAPI";
 import { sweetToast } from "../../../library/sweetAlert/sweetAlert";
 import { useParams } from "react-router-dom";
+import {
+  My_PROFILE_QUERYKEY,
+  getUserProfileQuerykey
+} from "../../../querykey/querykey";
 
 export const useProfileUnfollowMutation = () => {
   // 프로핊 페이지에서 언팔로우
@@ -17,30 +18,28 @@ export const useProfileUnfollowMutation = () => {
       unfollow(myUid, userUid),
     onMutate: async ({ myUid, userUid }) => {
       await queryClient.cancelQueries({
-        queryKey: ["profile", "my"]
+        queryKey: My_PROFILE_QUERYKEY
       });
-      const previousMyProfile = await queryClient.getQueryData([
-        "profile",
-        "my"
-      ]);
+      const previousMyProfile = queryClient.getQueryData(["profile", "my"]);
 
       // 나의 following 목록에서 상대 유저를 제거
-      queryClient.setQueryData(["profile", "my"], (data: IMyProfileData) => ({
+      queryClient.setQueryData(My_PROFILE_QUERYKEY, (data: IMyProfileData) => ({
         ...data,
         followingList: data.followingList.filter((uid) => uid !== userUid)
       }));
 
+      const USER_PROFILE_QUERYKEY = getUserProfileQuerykey(userUid);
       await queryClient.cancelQueries({
-        queryKey: ["profile", userUid]
+        queryKey: USER_PROFILE_QUERYKEY
       });
-      const previousUserProfile = await queryClient.getQueryData([
+      const previousUserProfile = queryClient.getQueryData([
         "profile",
         userUid
       ]);
 
       // 상대 follower 목록에서 나를 제거
       queryClient.setQueryData(
-        ["profile", userUid],
+        USER_PROFILE_QUERYKEY,
         (data: IUserProfileData) => ({
           ...data,
           followerList: data.followerList.filter((uid) => uid !== myUid)
@@ -58,12 +57,14 @@ export const useProfileUnfollowMutation = () => {
     },
     onSettled: () => {
       queryClient.invalidateQueries({
-        queryKey: ["profile", "my"],
+        queryKey: My_PROFILE_QUERYKEY,
         refetchType: "inactive"
       });
 
+      if (!uid) return;
+      const USER_PROFILE_QUERYKEY = getUserProfileQuerykey(uid);
       queryClient.invalidateQueries({
-        queryKey: ["profile", uid],
+        queryKey: USER_PROFILE_QUERYKEY,
         refetchType: "inactive"
       });
     }

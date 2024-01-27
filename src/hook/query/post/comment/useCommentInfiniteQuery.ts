@@ -6,6 +6,7 @@ import {
 } from "firebase/firestore";
 import { ICommentData } from "../../../../api/apiType";
 import { fetchComments } from "../../../../api/firebase/commentAPI";
+import { getCommentsQuerykey } from "../../../../querykey/querykey";
 
 type FetchDataResponse = {
   commentDocs: QuerySnapshot<DocumentData, DocumentData>;
@@ -17,6 +18,7 @@ export const useCommentInfiniteQuery = (
   pagePerData: number,
   isReply: boolean
 ) => {
+  const COMMENTS_QUERYKEY = getCommentsQuerykey(postId);
   const {
     data,
     hasNextPage,
@@ -30,7 +32,7 @@ export const useCommentInfiniteQuery = (
     isRefetchError,
     error
   } = useInfiniteQuery<FetchDataResponse>({
-    queryKey: ["post", postId,"comments"],
+    queryKey: COMMENTS_QUERYKEY,
     queryFn: async ({ pageParam }) =>
       await fetchComments(
         pageParam as QueryDocumentSnapshot<DocumentData, DocumentData> | null,

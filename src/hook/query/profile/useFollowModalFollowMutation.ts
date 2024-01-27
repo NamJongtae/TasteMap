@@ -2,6 +2,7 @@ import { IMyProfileData } from "../../../api/apiType";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { follow } from "../../../api/firebase/profileAPI";
 import { sweetToast } from "../../../library/sweetAlert/sweetAlert";
+import { My_PROFILE_QUERYKEY } from "../../../querykey/querykey";
 
 export const useFollowModalFollowMutation = () => {
   // 내 프로필상에서 Follower/Following 모달창에서 팔로우 버튼을 눌렀을 때
@@ -13,13 +14,13 @@ export const useFollowModalFollowMutation = () => {
       follow(myUid, userUid),
     onMutate: async ({ userUid }) => {
       await queryClient.cancelQueries({
-        queryKey: ["profile", "my"]
+        queryKey: My_PROFILE_QUERYKEY
       });
-      const previousMyProfile = await queryClient.getQueryData([
+      const previousMyProfile = queryClient.getQueryData([
         "profile",
         "my"
       ]);
-      queryClient.setQueryData(["profile", "my"], (data: IMyProfileData) => ({
+      queryClient.setQueryData(My_PROFILE_QUERYKEY, (data: IMyProfileData) => ({
         ...data,
         followingList: [...data.followingList, userUid]
       }));
@@ -35,7 +36,7 @@ export const useFollowModalFollowMutation = () => {
     },
     onSettled: () => {
       queryClient.invalidateQueries({
-        queryKey: ["profile", "my"],
+        queryKey: My_PROFILE_QUERYKEY,
         refetchType: "inactive"
       });
     }

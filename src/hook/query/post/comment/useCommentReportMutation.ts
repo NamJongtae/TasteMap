@@ -13,6 +13,10 @@ import { commentSlice } from "../../../../slice/commentSlice";
 import { AppDispatch } from "../../../../store/store";
 import { useParams } from "react-router-dom";
 import { isMobile } from "react-device-detect";
+import {
+  getCommentsQuerykey,
+  getPostsQuerykey
+} from "../../../../querykey/querykey";
 
 type InfiniteCommentsType = {
   commentDocs: QuerySnapshot<DocumentData, DocumentData>;
@@ -30,8 +34,7 @@ export const useCommentReportMutation = (
   const { uid } = useParams();
   const dispatch = useDispatch<AppDispatch>();
   const queryClient = useQueryClient();
-  const postQuerykey =
-    postType === "PROFILE" ? ["posts", postType, uid] : ["posts", postType];
+  const POSTS_QUERYKEY = getPostsQuerykey(postType, uid);
   const { mutate } = useMutation({
     mutationFn: (
       commentReportData: Pick<
@@ -40,16 +43,13 @@ export const useCommentReportMutation = (
       >
     ) => reportComment(commentReportData),
     onMutate: async (commentReportData) => {
+      const COMMENTS_QUERYKEY = getCommentsQuerykey(commentReportData.postId);
       await queryClient.cancelQueries({
-        queryKey: ["post", commentReportData.postId, "comments"]
+        queryKey: COMMENTS_QUERYKEY
       });
       const previousComments:
         | InfiniteData<InfiniteCommentsType, unknown>
-        | undefined = await queryClient.getQueryData([
-        "post",
-        commentReportData.postId,
-        "comments"
-      ]);
+        | undefined = queryClient.getQueryData(COMMENTS_QUERYKEY);
 
       const newPages = previousComments?.pages.map(
         (page: InfiniteCommentsType) => {
@@ -72,7 +72,7 @@ export const useCommentReportMutation = (
         }
       );
       queryClient.setQueryData(
-        ["post", commentReportData.postId, "comments"],
+        COMMENTS_QUERYKEY,
         (data: InfiniteData<InfiniteCommentsType, unknown>) => ({
           ...data,
           pages: newPages
@@ -81,13 +81,13 @@ export const useCommentReportMutation = (
 
       if (commentReportData.reportCount >= 4) {
         await queryClient.cancelQueries({
-          queryKey: postQuerykey
+          queryKey: POSTS_QUERYKEY
         });
 
-        const previousPosts = await queryClient.getQueryData(postQuerykey);
+        const previousPosts = queryClient.getQueryData(POSTS_QUERYKEY);
 
         queryClient.setQueryData(
-          postQuerykey,
+          POSTS_QUERYKEY,
           (postsData: InfiniteData<InfinitePostsType, unknown>) => ({
             ...postsData,
             pages: postsData.pages.map((page: InfinitePostsType) => ({
@@ -113,20 +113,18 @@ export const useCommentReportMutation = (
       }
     },
     onError: (error, data, ctx) => {
-      if (ctx) {
-        queryClient.setQueryData(
-          ["post", data.postId, "comments"],
-          ctx.previousComments
-        );
+      const COMMENTS_QUERYKEY = getCommentsQuerykey(data.postId);
 
-        queryClient.setQueryData(postQuerykey, ctx.previousPosts);
+      if (ctx) {
+        queryClient.setQueryData(COMMENTS_QUERYKEY, ctx.previousComments);
+        queryClient.setQueryData(POSTS_QUERYKEY, ctx.previousPosts);
       }
 
       if (error.message === "게시물이 존재하지 않습니다.") {
         sweetToast("삭제된 게시물입니다!", "warning");
         // 게시물 삭제
         queryClient.setQueryData(
-          postQuerykey,
+          POSTS_QUERYKEY,
           (postsData: InfiniteData<InfinitePostsType, unknown>) => ({
             ...postsData,
             pages: postsData.pages.map((page: InfinitePostsType) => ({
@@ -145,7 +143,7 @@ export const useCommentReportMutation = (
         sweetToast("삭제된 댓글입니다!", "warning");
         // 댓글 삭제
         queryClient.setQueryData(
-          ["post", data.postId, "comments"],
+          COMMENTS_QUERYKEY,
           (commentsData: InfiniteData<InfiniteCommentsType, unknown>) => ({
             ...commentsData,
             pages: commentsData.pages.map((page: InfiniteCommentsType) => ({
@@ -165,8 +163,10 @@ export const useCommentReportMutation = (
       }
     },
     onSettled: (data) => {
+      if(!data) return;
+      const COMMENTS_QUERYKEY = getCommentsQuerykey(data.postId);
       queryClient.invalidateQueries({
-        queryKey: ["post", data?.postId, "comments"],
+        queryKey: COMMENTS_QUERYKEY,
         refetchType: "inactive"
       });
     }

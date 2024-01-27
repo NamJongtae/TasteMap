@@ -8,6 +8,7 @@ import { IPostUpdateData, IPostData } from "../../../api/apiType";
 import { sweetToast } from "../../../library/sweetAlert/sweetAlert";
 import { useNavigate } from "react-router-dom";
 import { DocumentData, QuerySnapshot } from "firebase/firestore";
+import { HOME_POSTS_QUERYKEY } from "../../../querykey/querykey";
 
 type InfinitePostsType = {
   postDocs: QuerySnapshot<DocumentData, DocumentData>;
@@ -41,11 +42,11 @@ export const usePostUpdateMutation = () => {
     },
     onMutate: async (data) => {
       await queryClient.cancelQueries({
-        queryKey: ["posts", "HOME"]
+        queryKey: HOME_POSTS_QUERYKEY
       });
       const previousPosts:
         | InfiniteData<InfinitePostsType, unknown>
-        | undefined = await queryClient.getQueryData(["posts", "HOME"]);
+        | undefined = queryClient.getQueryData(HOME_POSTS_QUERYKEY);
 
       const updatedPages = previousPosts?.pages.map(
         (page: InfinitePostsType) => {
@@ -59,7 +60,7 @@ export const usePostUpdateMutation = () => {
       );
 
       queryClient.setQueryData(
-        ["posts", "HOME"],
+        HOME_POSTS_QUERYKEY,
         (data: InfiniteData<InfinitePostsType, unknown>) => ({
           ...data,
           pages: updatedPages
@@ -69,14 +70,14 @@ export const usePostUpdateMutation = () => {
     },
     onError: (error, data, ctx) => {
       if (ctx) {
-        queryClient.setQueryData(["posts", "HOME"], ctx.previousPosts);
+        queryClient.setQueryData(HOME_POSTS_QUERYKEY, ctx.previousPosts);
       }
 
       if (error.message === "게시물이 존재하지 않습니다.") {
         sweetToast("삭제된 게시물입니다!", "warning");
         // 게시물 삭제
         queryClient.setQueryData(
-          ["posts", "HOME"] ,
+          HOME_POSTS_QUERYKEY ,
           (postsData: InfiniteData<InfinitePostsType, unknown>) => ({
             ...postsData,
             pages: postsData.pages.map((page: InfinitePostsType) => ({
@@ -96,7 +97,7 @@ export const usePostUpdateMutation = () => {
       }
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["posts", "HOME"] });
+      queryClient.invalidateQueries({ queryKey: HOME_POSTS_QUERYKEY });
       navigate("/");
     }
   });

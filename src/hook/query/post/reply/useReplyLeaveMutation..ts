@@ -12,6 +12,11 @@ import { AppDispatch } from "../../../../store/store";
 import { leaveReply } from "../../../../api/firebase/replyAPI";
 import { useParams } from "react-router-dom";
 import { isMobile } from "react-device-detect";
+import {
+  getCommentsQuerykey,
+  getPostsQuerykey,
+  getRepliesQuerykey
+} from "../../../../querykey/querykey";
 
 type InfiniteCommentsType = {
   commentDocs: QuerySnapshot<DocumentData, DocumentData>;
@@ -37,42 +42,29 @@ export const useReplyLeaveMutation = (
   const { mutate } = useMutation({
     mutationFn: (replyData: IReplyData) => leaveReply(replyData),
     onMutate: async (newReplyData) => {
-      await queryClient.cancelQueries({
-        queryKey: [
-          "post",
-          newReplyData.postId,
-          "comment",
-          newReplyData.parentCommentId,
-          "replies"
-        ]
-      });
-
-      const previousReplies = await queryClient.getQueryData([
-        "post",
+      const REPLIES_QUERYKEY = getRepliesQuerykey(
         newReplyData.postId,
-        "comment",
-        newReplyData.parentCommentId,
-        "replies"
-      ]);
-
+        newReplyData.parentCommentId
+      );
+      const COMMENTS_QUERYKEY = getCommentsQuerykey(newReplyData.postId);
       await queryClient.cancelQueries({
-        queryKey: ["posts", newReplyData.postId, "comments"]
+        queryKey: REPLIES_QUERYKEY
       });
 
-      const previouseComments = await queryClient.getQueryData([
+      const previousReplies = queryClient.getQueryData(REPLIES_QUERYKEY);
+
+      await queryClient.cancelQueries({
+        queryKey: COMMENTS_QUERYKEY
+      });
+
+      const previouseComments = queryClient.getQueryData([
         "post",
         newReplyData.postId,
         "comments"
       ]);
 
       queryClient.setQueryData(
-        [
-          "post",
-          newReplyData.postId,
-          "comment",
-          newReplyData.parentCommentId,
-          "replies"
-        ],
+        REPLIES_QUERYKEY,
         (data: InfiniteData<InfiniteRepliesType, unknown>) => ({
           ...data,
           pages: [
@@ -86,7 +78,7 @@ export const useReplyLeaveMutation = (
       );
 
       queryClient.setQueryData(
-        ["post", newReplyData.postId, "comments"],
+        COMMENTS_QUERYKEY,
         (data: InfiniteData<InfiniteCommentsType, unknown>) => ({
           ...data,
           pages: data.pages.map((page: InfiniteCommentsType) => ({
@@ -106,25 +98,23 @@ export const useReplyLeaveMutation = (
       sweetToast("답글 작성이 완료되었습니다.", "success");
     },
     onError: (error, data, ctx) => {
+      const REPLIES_QUERYKEY = getRepliesQuerykey(
+        data.postId,
+        data.parentCommentId
+      );
+      const COMMENTS_QUERYKEY = getCommentsQuerykey(data.postId);
       if (ctx) {
-        queryClient.setQueryData(
-          ["post", data.postId, "comment", data.parentCommentId, "replies"],
-          ctx.previousReplies
-        );
+        queryClient.setQueryData(REPLIES_QUERYKEY, ctx.previousReplies);
 
-        queryClient.setQueryData(
-          ["post", data.postId, "comments"],
-          ctx.previouseComments
-        );
+        queryClient.setQueryData(COMMENTS_QUERYKEY, ctx.previouseComments);
       }
 
       if (error.message === "게시물이 존재하지 않습니다.") {
         sweetToast("삭제된 게시물입니다!", "warning");
         // 게시물 삭제
+        const POSTS_QUERYKEY = getPostsQuerykey(postType, uid);
         queryClient.setQueryData(
-          postType === "PROFILE"
-            ? ["posts", postType, uid]
-            : ["posts", postType],
+          POSTS_QUERYKEY,
           (postsData: InfiniteData<InfinitePostsType, unknown>) => ({
             ...postsData,
             pages: postsData.pages.map((page: InfinitePostsType) => ({
@@ -143,7 +133,7 @@ export const useReplyLeaveMutation = (
         sweetToast("삭제된 댓글입니다!", "warning");
         // 댓글 삭제
         queryClient.setQueryData(
-          ["posts", data.postId, "comments"],
+          COMMENTS_QUERYKEY,
           (commentsData: InfiniteData<InfiniteCommentsType, unknown>) => ({
             ...commentsData,
             pages: commentsData.pages.map((page: InfiniteCommentsType) => ({
@@ -166,14 +156,13 @@ export const useReplyLeaveMutation = (
     onSettled: (
       data: { postId: string; parentCommentId: string } | undefined
     ) => {
+      if (!data) return;
+      const REPLIES_QUERYKEY = getRepliesQuerykey(
+        data?.postId,
+        data?.parentCommentId
+      );
       queryClient.invalidateQueries({
-        queryKey: [
-          "post",
-          data?.postId,
-          "comment",
-          data?.parentCommentId,
-          "replies"
-        ],
+        queryKey: REPLIES_QUERYKEY,
         refetchType: "inactive"
       });
     }

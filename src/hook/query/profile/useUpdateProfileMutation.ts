@@ -14,6 +14,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../store/store";
 import { DocumentData, QuerySnapshot } from "firebase/firestore";
 import { userSlice } from "../../../slice/userSlice";
+import {
+  AUTH_QUERYKEY,
+  HOME_POSTS_QUERYKEY,
+  My_PROFILE_QUERYKEY,
+  getProfilePostsQuerykey
+} from "../../../querykey/querykey";
 
 type InfinitePostsType = {
   postDocs: QuerySnapshot<DocumentData, DocumentData>;
@@ -24,7 +30,7 @@ export const useUpdateProfileMutation = () => {
   const queryClient = useQueryClient();
   const myInfo = useSelector((state: RootState) => state.user.myInfo);
   const dispatch = useDispatch<AppDispatch>();
-
+  const PROFILE_POSTS_QUERYKEY = getProfilePostsQuerykey(myInfo.uid);
   const { mutate, isPending } = useMutation({
     mutationFn: (updateProfileData: IProfileUpdateData) =>
       updateMyProfile(updateProfileData),
@@ -38,23 +44,19 @@ export const useUpdateProfileMutation = () => {
       }
 
       await queryClient.cancelQueries({
-        queryKey: ["profile", "my"]
+        queryKey: My_PROFILE_QUERYKEY
       });
 
       await queryClient.cancelQueries({
-        queryKey: ["posts", "PROFILE", myInfo.uid]
+        queryKey: PROFILE_POSTS_QUERYKEY
       });
 
       const previousMyProfile: IMyProfileData | undefined =
-        await queryClient.getQueryData(["profile", "my"]);
+        queryClient.getQueryData(My_PROFILE_QUERYKEY);
 
       const previousPosts:
         | InfiniteData<InfinitePostsType, unknown>
-        | undefined = await queryClient.getQueryData([
-        "posts",
-        "PROFILE",
-        myInfo.uid
-      ]);
+        | undefined = queryClient.getQueryData(PROFILE_POSTS_QUERYKEY);
 
       const updateMyProfile = {
         ...previousMyProfile,
@@ -77,9 +79,9 @@ export const useUpdateProfileMutation = () => {
         };
       });
 
-      queryClient.setQueryData(["profile", "my"], updateMyProfile);
+      queryClient.setQueryData(My_PROFILE_QUERYKEY, updateMyProfile);
       queryClient.setQueryData(
-        ["posts", "PROFILE", myInfo.uid],
+        PROFILE_POSTS_QUERYKEY,
         (data: InfiniteData<InfinitePostsType, unknown>) => ({
           ...data,
           pages: updatePosts
@@ -90,21 +92,21 @@ export const useUpdateProfileMutation = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["profile", "my"],
+        queryKey: My_PROFILE_QUERYKEY,
         refetchType: "inactive"
       });
       queryClient.invalidateQueries({
-        queryKey: ["posts", "PROFILE", myInfo.uid],
+        queryKey: PROFILE_POSTS_QUERYKEY,
         refetchType: "inactive"
       });
-      queryClient.invalidateQueries({ queryKey: ["auth"] });
+      queryClient.invalidateQueries({ queryKey: AUTH_QUERYKEY });
       dispatch(userSlice.actions.setIsOpenUpdateProfileModal(false));
     },
     onError: (error, data, ctx) => {
       if (ctx) {
-        queryClient.setQueryData(["posts", "HOME"], ctx.previousMyProfile);
+        queryClient.setQueryData(HOME_POSTS_QUERYKEY, ctx.previousMyProfile);
         queryClient.setQueryData(
-          ["posts", "PROFILE", myInfo.uid],
+          PROFILE_POSTS_QUERYKEY,
           ctx.previousPosts
         );
       }

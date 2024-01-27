@@ -9,6 +9,7 @@ import { DocumentData, QuerySnapshot } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { sweetToast } from "../../../library/sweetAlert/sweetAlert";
 import { useParams } from "react-router-dom";
+import { getPostsQuerykey } from "../../../querykey/querykey";
 
 type InfinitePostsType = {
   postDocs: QuerySnapshot<DocumentData, DocumentData>;
@@ -20,22 +21,18 @@ export const usePostReportMutation = (
 ) => {
   const { uid } = useParams();
   const queryClient = useQueryClient();
+  const POSTS_QUERYKEY = getPostsQuerykey(postType, uid);
   const { mutate } = useMutation({
     mutationFn: (reportData: Pick<IPostData, "id" | "reportCount">) =>
       reportPost(reportData),
     onMutate: async (reportData) => {
       await queryClient.cancelQueries({
-        queryKey:
-          postType === "PROFILE"
-            ? ["posts", postType, uid]
-            : ["posts", postType]
+        queryKey: POSTS_QUERYKEY
       });
 
       const previousPosts:
         | InfiniteData<InfinitePostsType, unknown>
-        | undefined = await queryClient.getQueryData(
-        postType === "PROFILE" ? ["posts", postType, uid] : ["posts", postType]
-      );
+        | undefined = queryClient.getQueryData(POSTS_QUERYKEY);
 
       const newPages = previousPosts?.pages.map((page: InfinitePostsType) => {
         return {
@@ -57,7 +54,7 @@ export const usePostReportMutation = (
       });
 
       queryClient.setQueryData(
-        postType === "PROFILE" ? ["posts", postType, uid] : ["posts", postType],
+        POSTS_QUERYKEY,
         (data: InfiniteData<InfinitePostsType, unknown>) => ({
           ...data,
           pages: newPages
@@ -68,20 +65,13 @@ export const usePostReportMutation = (
     },
     onError: (error, data, ctx) => {
       if (ctx) {
-        queryClient.setQueryData(
-          postType === "PROFILE"
-            ? ["posts", postType, uid]
-            : ["posts", postType],
-          ctx.previousPosts
-        );
+        queryClient.setQueryData(POSTS_QUERYKEY, ctx.previousPosts);
       }
       if (error.message === "게시물이 존재하지 않습니다.") {
         sweetToast("삭제된 게시물입니다!", "warning");
         // 게시물 삭제
         queryClient.setQueryData(
-          postType === "PROFILE"
-            ? ["posts", postType, uid]
-            : ["posts", postType],
+          POSTS_QUERYKEY,
           (postsData: InfiniteData<InfinitePostsType, unknown>) => ({
             ...postsData,
             pages: postsData.pages.map((page: InfinitePostsType) => ({
@@ -103,10 +93,7 @@ export const usePostReportMutation = (
     },
     onSettled: () => {
       queryClient.invalidateQueries({
-        queryKey:
-          postType === "PROFILE"
-            ? ["posts", postType, uid]
-            : ["posts", postType],
+        queryKey: POSTS_QUERYKEY,
         refetchType: "inactive"
       });
     }

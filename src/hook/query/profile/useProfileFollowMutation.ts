@@ -3,6 +3,10 @@ import { IMyProfileData, IUserProfileData } from "../../../api/apiType";
 import { sweetToast } from "../../../library/sweetAlert/sweetAlert";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { follow } from "../../../api/firebase/profileAPI";
+import {
+  My_PROFILE_QUERYKEY,
+  getUserProfileQuerykey
+} from "../../../querykey/querykey";
 
 export const useProfileFollowMutation = () => {
   // 프로필 페이지에서 팔로우
@@ -13,31 +17,29 @@ export const useProfileFollowMutation = () => {
       follow(myUid, userUid),
     onMutate: async ({ myUid, userUid }) => {
       await queryClient.cancelQueries({
-        queryKey: ["profile", "my"]
+        queryKey: My_PROFILE_QUERYKEY
       });
-      const previousMyProfile = await queryClient.getQueryData([
-        "profile",
-        "my"
-      ]);
+      const previousMyProfile = queryClient.getQueryData(["profile", "my"]);
 
       // 나의 following 목록애서 대상 유저 추가
-      queryClient.setQueryData(["profile", "my"], (data: IMyProfileData) => ({
+      queryClient.setQueryData(My_PROFILE_QUERYKEY, (data: IMyProfileData) => ({
         ...data,
         followingList: [...data.followingList, userUid]
       }));
 
+      const USER_PROFILE_QUERYKEY = getUserProfileQuerykey(userUid);
       await queryClient.cancelQueries({
-        queryKey: ["profile", userUid]
+        queryKey: USER_PROFILE_QUERYKEY
       });
 
-      const previousUserProfile = await queryClient.getQueryData([
+      const previousUserProfile = queryClient.getQueryData([
         "profile",
         userUid
       ]);
 
       // 대상 유저 follower 목록에 나를 추가
       queryClient.setQueryData(
-        ["profile", userUid],
+        USER_PROFILE_QUERYKEY,
         (data: IUserProfileData) => ({
           ...data,
           followerList: [...data.followerList, myUid]
@@ -55,12 +57,14 @@ export const useProfileFollowMutation = () => {
     },
     onSettled: () => {
       queryClient.invalidateQueries({
-        queryKey: ["profile", "my"],
+        queryKey: My_PROFILE_QUERYKEY,
         refetchType: "inactive"
       });
 
+      if(!uid) return;
+      const USER_PROFILE_QUERYKEY = getUserProfileQuerykey(uid);
       queryClient.invalidateQueries({
-        queryKey: ["profile", uid],
+        queryKey: USER_PROFILE_QUERYKEY,
         refetchType: "inactive"
       });
     }

@@ -10,8 +10,9 @@ import { useLocation, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../store/store";
 import { DocumentData, QuerySnapshot } from "firebase/firestore";
+import { FOLLOWING_QUERYKEY, My_PROFILE_QUERYKEY } from "../../../querykey/querykey";
 
-interface InfiniteFolloweringType {
+interface InfiniteFollowingType {
   followingDocs: QuerySnapshot<DocumentData, DocumentData>;
   data: IFollowData[];
 }
@@ -31,27 +32,27 @@ export const useFollowModalUnfollowMutation = () => {
       unfollow(myUid, userUid),
     onMutate: async ({ userUid }) => {
       await queryClient.cancelQueries({
-        queryKey: ["profile", "my"]
+        queryKey: My_PROFILE_QUERYKEY
       });
-      const previousMyProfile = await queryClient.getQueryData([
+      const previousMyProfile = queryClient.getQueryData([
         "profile",
         "my"
       ]);
-      queryClient.setQueryData(["profile", "my"], (data: IMyProfileData) => ({
+      queryClient.setQueryData(My_PROFILE_QUERYKEY, (data: IMyProfileData) => ({
         ...data,
         followingList: data.followingList.filter((uid) => uid !== userUid)
       }));
 
       const previousFollowingList:
-        | InfiniteData<InfiniteFolloweringType, unknown>
-        | undefined = await queryClient.getQueryData(["profile", "following"]);
+        | InfiniteData<InfiniteFollowingType, unknown>
+        | undefined = queryClient.getQueryData(FOLLOWING_QUERYKEY);
 
       // 내 프로필인 경우(uid가 없을 때), followingModal이 열렸을 경우
       // 검색 페이지가 아닌경우
       // 언팔로우 시 해당 유저 팔로잉 모달 목록에서 제거
       if (!uid && isOpenFollowingModal && !pathname.includes("search")) {
         const newFollowingList = previousFollowingList?.pages.map(
-          (page: InfiniteFolloweringType) => {
+          (page: InfiniteFollowingType) => {
             return {
               ...page,
               data: page.data.filter(
@@ -62,8 +63,8 @@ export const useFollowModalUnfollowMutation = () => {
         );
 
         queryClient.setQueryData(
-          ["profile", "following"],
-          (data: InfiniteData<InfiniteFolloweringType, unknown>) => ({
+          FOLLOWING_QUERYKEY,
+          (data: InfiniteData<InfiniteFollowingType, unknown>) => ({
             ...data,
             pages: newFollowingList
           })
@@ -81,13 +82,13 @@ export const useFollowModalUnfollowMutation = () => {
     },
     onSettled: () => {
       queryClient.invalidateQueries({
-        queryKey: ["profile", "my"],
+        queryKey: My_PROFILE_QUERYKEY,
         refetchType: "inactive"
       });
 
       if (!uid && isOpenFollowingModal && !pathname.includes("search"))
         queryClient.invalidateQueries({
-          queryKey: ["profile", "following"],
+          queryKey: FOLLOWING_QUERYKEY,
           refetchType: "inactive"
         });
     }
