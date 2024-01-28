@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { TPost } from "../../types/types";
 
 // ----------------Home style----------------
 
@@ -35,7 +36,7 @@ export const HomeBtn = styled.button`
   height: 30px;
   border-radius: 5px;
   background: ${(props: {
-    postType:  "HOME" | "FEED";
+    postType: Exclude<TPost, "PROFILE">;
     $isWebpSupported: boolean | null;
   }) =>
     props.postType === "HOME"
@@ -52,7 +53,7 @@ export const FeedBtn = styled.button`
   height: 30px;
   border-radius: 5px;
   background: ${(props: {
-    postType:  "HOME" | "FEED";
+    postType: Exclude<TPost, "PROFILE">;
     $isWebpSupported: boolean | null;
   }) =>
     props.postType === "FEED"
@@ -67,4 +68,3 @@ export const FeedBtn = styled.button`
             : "/assets/icon-feedBtn.svg"
         })  no-repeat center / 30px`};
 `;
-

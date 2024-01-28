@@ -3,14 +3,17 @@ import {
   useMutation,
   useQueryClient
 } from "@tanstack/react-query";
-import { IFollowData, IMyProfileData } from "../../../api/apiType";
+import { IFollowData, IMyProfileData } from "../../../types/apiTypes";
 import { sweetToast } from "../../../library/sweetAlert/sweetAlert";
 import { unfollow } from "../../../api/firebase/profileAPI";
 import { useLocation, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../store/store";
 import { DocumentData, QuerySnapshot } from "firebase/firestore";
-import { FOLLOWING_QUERYKEY, My_PROFILE_QUERYKEY } from "../../../querykey/querykey";
+import {
+  FOLLOWING_QUERYKEY,
+  My_PROFILE_QUERYKEY
+} from "../../../querykey/querykey";
 
 interface InfiniteFollowingType {
   followingDocs: QuerySnapshot<DocumentData, DocumentData>;
@@ -34,10 +37,7 @@ export const useFollowModalUnfollowMutation = () => {
       await queryClient.cancelQueries({
         queryKey: My_PROFILE_QUERYKEY
       });
-      const previousMyProfile = queryClient.getQueryData([
-        "profile",
-        "my"
-      ]);
+      const previousMyProfile = queryClient.getQueryData(My_PROFILE_QUERYKEY);
       queryClient.setQueryData(My_PROFILE_QUERYKEY, (data: IMyProfileData) => ({
         ...data,
         followingList: data.followingList.filter((uid) => uid !== userUid)

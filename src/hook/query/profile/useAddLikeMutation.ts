@@ -4,7 +4,7 @@ import {
   useQueryClient
 } from "@tanstack/react-query";
 import { addPostLike } from "../../../api/firebase/postAPI";
-import { IPostData, IMyProfileData } from "../../../api/apiType";
+import { IPostData, IMyProfileData } from "../../../types/apiTypes";
 import { sweetToast } from "../../../library/sweetAlert/sweetAlert";
 import { DocumentData, QuerySnapshot } from "firebase/firestore";
 import { useParams } from "react-router-dom";

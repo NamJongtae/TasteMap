@@ -8,7 +8,7 @@ import {
 } from "../../../postUpload.styles";
 import { usePostUploadMap } from "../../../../../hook/logic/postUpload/usePostUploadMap";
 import { useFormContext } from "react-hook-form";
-import { IPostData } from "../../../../../api/apiType";
+import { IPostData } from "../../../../../types/apiTypes";
 
 interface IProps {
   isEdit: boolean;

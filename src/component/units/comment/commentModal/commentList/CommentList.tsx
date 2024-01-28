@@ -2,11 +2,15 @@ import React from "react";
 import CommentItem from "./commentItem/CommentItem";
 import ScrollLoading from "../../../../commons/loading/ScrollLoading";
 import NoData from "../../../../commons/noData/NoData";
-import { ICommentData, IReplyData } from "../../../../../api/apiType";
+import { ICommentData, IReplyData } from "../../../../../types/apiTypes";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../../store/store";
 import { useCommentsInfiniteScroll } from "../../../../../hook/logic/comment/commentList/useCommentsInfiniteScroll";
-import { CommentWrpper, InfinityScrollTarget, RefreshBtn } from '../commentModal.styles';
+import {
+  CommentWrpper,
+  InfinityScrollTarget,
+  RefreshBtn
+} from "../commentModal.styles";
 
 interface IProps {
   isReply: boolean;

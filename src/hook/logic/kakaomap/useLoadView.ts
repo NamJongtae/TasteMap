@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { IMapData } from "../../../api/apiType";
+import { IMapData } from "../../../types/apiTypes";
 import { useLVMarkersAndCustomoverlays } from "./useLVMarkersAndCustomoverlays";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../store/store";

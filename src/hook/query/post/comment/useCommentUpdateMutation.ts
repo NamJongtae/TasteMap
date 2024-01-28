@@ -4,7 +4,7 @@ import {
   useQueryClient
 } from "@tanstack/react-query";
 import { updateComment } from "../../../../api/firebase/commentAPI";
-import { ICommentData, IPostData } from "../../../../api/apiType";
+import { ICommentData, IPostData } from "../../../../types/apiTypes";
 import { DocumentData, QuerySnapshot } from "firebase/firestore";
 import { sweetToast } from "../../../../library/sweetAlert/sweetAlert";
 import { useDispatch } from "react-redux";
@@ -13,8 +13,9 @@ import { commentSlice } from "../../../../slice/commentSlice";
 import { useParams } from "react-router-dom";
 import {
   getCommentsQuerykey,
-  getPostsQuerykey,
+  getPostsQuerykey
 } from "../../../../querykey/querykey";
+import { TPost } from "../../../../types/types";
 
 type InfiniteCommentsType = {
   commentDocs: QuerySnapshot<DocumentData, DocumentData>;
@@ -26,7 +27,7 @@ type InfinitePostsType = {
 };
 
 export const useCommentUpdateMutation = (
-  postType: "HOME" | "FEED" | "PROFILE"
+  postType: TPost
 ) => {
   const { uid } = useParams();
   const dispatch = useDispatch<AppDispatch>();

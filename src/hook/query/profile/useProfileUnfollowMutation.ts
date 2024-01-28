@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { IMyProfileData, IUserProfileData } from "../../../api/apiType";
+import { IMyProfileData, IUserProfileData } from "../../../types/apiTypes";
 import { unfollow } from "../../../api/firebase/profileAPI";
 import { sweetToast } from "../../../library/sweetAlert/sweetAlert";
 import { useParams } from "react-router-dom";
@@ -20,7 +20,7 @@ export const useProfileUnfollowMutation = () => {
       await queryClient.cancelQueries({
         queryKey: My_PROFILE_QUERYKEY
       });
-      const previousMyProfile = queryClient.getQueryData(["profile", "my"]);
+      const previousMyProfile = queryClient.getQueryData(My_PROFILE_QUERYKEY);
 
       // 나의 following 목록에서 상대 유저를 제거
       queryClient.setQueryData(My_PROFILE_QUERYKEY, (data: IMyProfileData) => ({

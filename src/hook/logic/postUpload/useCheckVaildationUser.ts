@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { IPostData } from "../../../api/apiType";
+import { IPostData } from "../../../types/apiTypes";
 import { sweetToast } from "../../../library/sweetAlert/sweetAlert";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";

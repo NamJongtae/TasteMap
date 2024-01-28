@@ -1,7 +1,8 @@
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../../store/store";
-import { EMapContentType, tasteMapSlice } from "../../../slice/tasteMapSlice";
-import { IMapData } from "../../../api/apiType";
+import { tasteMapSlice } from "../../../slice/tasteMapSlice";
+import { IMapData } from "../../../types/apiTypes";
+import { EMapContentType } from "../../../types/types";
 
 interface IProps {
   mapData: IMapData;

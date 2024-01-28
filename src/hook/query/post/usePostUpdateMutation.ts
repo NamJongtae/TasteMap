@@ -4,7 +4,7 @@ import {
   useQueryClient
 } from "@tanstack/react-query";
 import { updatePost, uploadPostImg } from "../../../api/firebase/postAPI";
-import { IPostUpdateData, IPostData } from "../../../api/apiType";
+import { IPostUpdateData, IPostData } from "../../../types/apiTypes";
 import { sweetToast } from "../../../library/sweetAlert/sweetAlert";
 import { useNavigate } from "react-router-dom";
 import { DocumentData, QuerySnapshot } from "firebase/firestore";
@@ -77,7 +77,7 @@ export const usePostUpdateMutation = () => {
         sweetToast("삭제된 게시물입니다!", "warning");
         // 게시물 삭제
         queryClient.setQueryData(
-          HOME_POSTS_QUERYKEY ,
+          HOME_POSTS_QUERYKEY,
           (postsData: InfiniteData<InfinitePostsType, unknown>) => ({
             ...postsData,
             pages: postsData.pages.map((page: InfinitePostsType) => ({

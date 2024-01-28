@@ -2,9 +2,10 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../store/store";
 import { FeedBtn, HomeBtn, PostTypeTitle, PostTypeWrapper } from '../home.styles';
+import { TPost } from "../../../types/types";
 
 interface IProps {
-  postType: "HOME" | "FEED";
+  postType: Exclude<TPost, "PROFILE">;
   homeBtnActiveHandler: () => void;
   FeedBtnActiveHandler: () => void;
 }

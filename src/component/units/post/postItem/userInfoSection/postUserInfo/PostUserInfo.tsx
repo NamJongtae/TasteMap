@@ -3,7 +3,7 @@ import {
   ICommentData,
   IPostData,
   IUserData
-} from "../../../../../../api/apiType";
+} from "../../../../../../types/apiTypes";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../../../store/store";
 import { usePostMenu } from "../../../../../../hook/logic/post/postItem/usePostMenu";

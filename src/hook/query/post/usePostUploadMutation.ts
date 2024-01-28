@@ -4,10 +4,10 @@ import {
   useQueryClient
 } from "@tanstack/react-query";
 import { uploadPostImg, uploadPost } from "../../../api/firebase/postAPI";
-import { IPostData, IPostUploadData } from "../../../api/apiType";
+import { IPostData, IPostUploadData } from "../../../types/apiTypes";
 import { sweetToast } from "../../../library/sweetAlert/sweetAlert";
 import { DocumentData, QuerySnapshot } from "firebase/firestore";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 import { HOME_POSTS_QUERYKEY } from "../../../querykey/querykey";
 
 type FetchDataResponse = {
@@ -33,12 +33,12 @@ export const usePostUploadMutation = () => {
           throw error;
         }
       }
-  
+
       // 이미지 저장, 이미지 저장 데이터 적용 후
       // 이미지 파일 프로퍼티 삭제
       // 데이터 업로드시 파일 프로퍼티는 업로드할 필요가 없음
       delete postData.img;
-  
+
       await uploadPost(postData);
       return postData as IPostUploadData;
     },
@@ -75,7 +75,7 @@ export const usePostUploadMutation = () => {
     },
     onSettled: () => {
       queryClient.invalidateQueries({
-        queryKey: HOME_POSTS_QUERYKEY,
+        queryKey: HOME_POSTS_QUERYKEY
       });
       navigate("/");
     }

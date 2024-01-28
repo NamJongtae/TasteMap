@@ -2,7 +2,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../store/store";
 import { useParams } from "react-router-dom";
 import { useUserProfileQuery } from "../../query/profile/useUserProfileQuery";
-import { EMapContentType, tasteMapSlice } from "../../../slice/tasteMapSlice";
+import { tasteMapSlice } from "../../../slice/tasteMapSlice";
+import { EMapContentType } from "../../../types/types";
 
 export const useShareTasteMap = () => {
   const { uid } = useParams();

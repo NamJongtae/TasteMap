@@ -1,5 +1,5 @@
 import React from "react";
-import { ICommentData, IPostData } from "../../../api/apiType";
+import { ICommentData, IPostData } from "../../../types/apiTypes";
 import {
   Username,
   UserImg,
@@ -12,7 +12,7 @@ type UserInfoType = {
   displayName: string | JSX.Element;
   photoURL: string;
   uid: string;
-}
+};
 interface IProps {
   userData: UserInfoType;
   onClick?: React.MouseEventHandler<HTMLAnchorElement>;

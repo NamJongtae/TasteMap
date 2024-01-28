@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { usePostDeleteMutation } from "../../../query/post/usePostDeleteMutation";
 import { usePostReportMutation } from "../../../query/post/usePostReportMutation";
-import { ICommentData, IPostData, IUserData } from "../../../../api/apiType";
+import { ICommentData, IPostData, IUserData } from "../../../../types/apiTypes";
 import {
   sweetConfirm,
   sweetToast

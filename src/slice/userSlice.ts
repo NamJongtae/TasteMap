@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { IUserData, IMyProfileData, IUserProfileData } from "../api/apiType";
+import { IUserData, IMyProfileData, IUserProfileData } from "../types/apiTypes";
 
 // locatlStroage에 저장된 유저 데이터 불러오기
 const userDataString = localStorage.getItem("user");
@@ -15,7 +15,7 @@ export const userSlice = createSlice({
     followsPagePerData: 20,
     isOpenFollowerModal: false,
     isOpenFollowingModal: false,
-    isOpenUpdateProfileModal: false,
+    isOpenUpdateProfileModal: false
   },
   reducers: {
     setMyInfo: (state, action) => {

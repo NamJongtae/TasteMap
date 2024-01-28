@@ -4,7 +4,7 @@ import { ProfileUpdateImg } from "./profileUpdateImg/profileUpdateImg";
 import DisplayNameField from "./displayNameField/DisplayNameField";
 import IntroduceField from "./IntroduceField/IntroduceField";
 import ProfileUpdateBtn from "./profileUpdateBtn/ProfileUpdateBtn";
-import { IMyProfileData } from "../../../../../api/apiType";
+import { IMyProfileData } from "../../../../../types/apiTypes";
 import { useProfileUpdateCheckDuplication } from "../../../../../hook/logic/profile/profileUpdateModal/useProfileUpdateCheckDuplication";
 
 interface IProps {

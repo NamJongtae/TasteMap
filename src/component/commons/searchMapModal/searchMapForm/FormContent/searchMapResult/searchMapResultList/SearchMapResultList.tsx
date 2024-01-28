@@ -1,4 +1,4 @@
-import { IMapData } from "../../../../../../../api/apiType";
+import { IMapData } from "../../../../../../../types/apiTypes";
 import { SearchList } from "../../../../searchMapModal.styles";
 import SearchMapResultItem from "./searchMapResultItem/SearchMapResultItem";
 

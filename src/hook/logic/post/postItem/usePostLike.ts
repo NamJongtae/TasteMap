@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import { sweetToast } from "../../../../library/sweetAlert/sweetAlert";
 import { useAddLikeMutation } from "../../../query/profile/useAddLikeMutation";
 import { useRemoveLikeMutation } from "../../../query/profile/useRemoveLikeMutation";
-import { IMyProfileData, IPostData } from "../../../../api/apiType";
+import { IMyProfileData, IPostData } from "../../../../types/apiTypes";
 
 interface IProps {
   data: IPostData;

@@ -1,5 +1,5 @@
 import React from "react";
-import { IMapData } from "../../../../../../api/apiType";
+import { IMapData } from "../../../../../../types/apiTypes";
 import {
   BtnWrapper,
   FocusMapBtn,

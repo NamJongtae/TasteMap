@@ -4,7 +4,7 @@ import {
   useQueryClient
 } from "@tanstack/react-query";
 import { removePostLike } from "../../../api/firebase/postAPI";
-import { IPostData, IMyProfileData } from "../../../api/apiType";
+import { IPostData, IMyProfileData } from "../../../types/apiTypes";
 import { sweetToast } from "../../../library/sweetAlert/sweetAlert";
 import { DocumentData, QuerySnapshot } from "firebase/firestore";
 import { useParams } from "react-router-dom";
@@ -12,6 +12,7 @@ import {
   My_PROFILE_QUERYKEY,
   getPostsQuerykey
 } from "../../../querykey/querykey";
+import { TPost } from "../../../types/types";
 
 type InfinityPostsType = {
   postDocs: QuerySnapshot<DocumentData, DocumentData>;
@@ -19,7 +20,7 @@ type InfinityPostsType = {
 };
 
 export const useRemoveLikeMutation = (
-  postType: "HOME" | "FEED" | "PROFILE"
+  postType: TPost
 ) => {
   const { uid } = useParams();
   const queryClient = useQueryClient();

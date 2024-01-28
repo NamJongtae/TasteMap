@@ -3,7 +3,7 @@ import { useFollowFetchData } from "../../../../../../hook/useFollowFetchData";
 import {
   IMyProfileData,
   IUserProfileData
-} from "../../../../../../api/apiType";
+} from "../../../../../../types/apiTypes";
 import { FollowBtn } from "../../profileInfo.styles";
 
 interface IProps {

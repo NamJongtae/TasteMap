@@ -1,6 +1,9 @@
 import React from "react";
 import { ButtonWrapper } from "../profileInfo.styles";
-import { IMyProfileData, IUserProfileData } from "../../../../../api/apiType";
+import {
+  IMyProfileData,
+  IUserProfileData
+} from "../../../../../types/apiTypes";
 import ProfileUpdateModalBtn from "./profileUpdateModalBtn/ProfileUpdateModalBtn";
 import { ProfileTasteMapBtn } from "./ProfileTasteMapBtn";
 import useCheckIsMe from "../../../../../hook/useCheckIsMe";

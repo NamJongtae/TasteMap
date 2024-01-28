@@ -3,7 +3,7 @@ import {
   sweetConfirm,
   sweetToast
 } from "../../../../library/sweetAlert/sweetAlert";
-import { IReplyData } from "../../../../api/apiType";
+import { IReplyData } from "../../../../types/apiTypes";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../store/store";
 import { useReplyReportMutation } from "../../../query/post/reply/useReplyReportMutation";

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { IMapData } from "../../../api/apiType";
+import { IMapData } from "../../../types/apiTypes";
 import { tasteMapSlice } from "../../../slice/tasteMapSlice";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../../store/store";
@@ -78,7 +78,6 @@ export const useMarkerAndCustomoverlays = ({
       setCustomOverlays((prev) => [...prev, customOverlay]);
     }
   };
-  
 
   useEffect(() => {
     if (myMap === null || data.length === 0) {

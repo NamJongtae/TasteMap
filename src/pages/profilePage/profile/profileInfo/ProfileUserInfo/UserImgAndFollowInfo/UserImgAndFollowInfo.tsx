@@ -5,8 +5,11 @@ import {
 } from "../../profileInfo.styles";
 import FollowerModalBtn from "./FollowerModalBtn/FollowerModalBtn";
 import FollowingModalBtn from "./FollowingModalBtn/FollowingModalBtn";
-import { IMyProfileData, IUserProfileData } from "../../../../../../api/apiType";
-import { resolveWebp } from '../../../../../../library/resolveWebp';
+import {
+  IMyProfileData,
+  IUserProfileData
+} from "../../../../../../types/apiTypes";
+import { resolveWebp } from "../../../../../../library/resolveWebp";
 
 interface IProps {
   profile: IMyProfileData | IUserProfileData;

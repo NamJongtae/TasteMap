@@ -7,7 +7,7 @@ import { usePostTypeBtnActions } from "../../hook/logic/home/usePostTypeBtnActio
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/store";
 import CommentModalWrapper from "../../component/units/comment/CommentModalWrapper";
-import { IMyProfileData } from "../../api/apiType";
+import { IMyProfileData } from "../../types/apiTypes";
 import Loading from "../../component/commons/loading/Loading";
 import { useLoadMyProfile } from "../../hook/useLoadMyProfile";
 import HomePostType from "./homePostType/HomePostType";

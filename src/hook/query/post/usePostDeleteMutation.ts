@@ -4,11 +4,12 @@ import {
   useQueryClient
 } from "@tanstack/react-query";
 import { deletePost } from "../../../api/firebase/postAPI";
-import { IPostData } from "../../../api/apiType";
+import { IPostData } from "../../../types/apiTypes";
 import { DocumentData, QuerySnapshot } from "firebase/firestore";
 import { sweetToast } from "../../../library/sweetAlert/sweetAlert";
 import { useParams } from "react-router-dom";
 import { getPostsQuerykey } from "../../../querykey/querykey";
+import { TPost } from "../../../types/types";
 
 type InfinitePostsType = {
   postDocs: QuerySnapshot<DocumentData, DocumentData>;
@@ -16,7 +17,7 @@ type InfinitePostsType = {
 };
 
 export const usePostDeleteMutation = (
-  postType: "HOME" | "FEED" | "PROFILE"
+  postType: TPost
 ) => {
   const { uid } = useParams();
   const queryClient = useQueryClient();

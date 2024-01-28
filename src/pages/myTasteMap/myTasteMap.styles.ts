@@ -1,7 +1,7 @@
 import { isMobile } from "react-device-detect";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-import { EMapContentType } from "../../slice/tasteMapSlice";
+import { EMapContentType } from "../../types/types";
 
 export const Wrapper = styled.main`
   width: 100%;

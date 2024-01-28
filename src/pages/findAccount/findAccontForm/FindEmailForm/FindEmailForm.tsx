@@ -25,7 +25,7 @@ export default function FindEmailForm() {
         )}
         {<FindAccountError isError={findEmailError} />}
         <FormButton
-          menu={"email"}
+          menu={"EMAIL"}
           isFind={!!findEmailValue?.email}
           isLoading={findEmailIsPending}
         />

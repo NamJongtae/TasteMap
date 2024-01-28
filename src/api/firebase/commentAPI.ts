@@ -18,7 +18,7 @@ import {
   where
 } from "firebase/firestore";
 import { db } from "./setting";
-import { ICommentData, IUserData } from "../apiType";
+import { ICommentData, IUserData } from "../../types/apiTypes";
 import { getAuth } from "firebase/auth";
 
 const auth = getAuth();

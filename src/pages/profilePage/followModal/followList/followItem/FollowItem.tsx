@@ -1,6 +1,6 @@
 import React from "react";
 import { FollowLi } from "../../followModal.styles";
-import { IFollowData, IMyProfileData } from "../../../../../api/apiType";
+import { IFollowData, IMyProfileData } from "../../../../../types/apiTypes";
 import { isMobile } from "react-device-detect";
 import { optModalTabFocus } from "../../../../../library/optModalTabFocus";
 import UserInfo from "../../../../../component/commons/userInfo/UserInfo";

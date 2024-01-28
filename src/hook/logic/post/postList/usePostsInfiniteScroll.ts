@@ -4,7 +4,7 @@ import { useInView } from "react-intersection-observer";
 import { usePostInfiniteQuery } from "../../../query/post/usePostInfiniteQuery";
 import { useFeedPostInfiniteQuery } from "../../../query/post/useFeedPostInfiniteQuery";
 import { useProfilePostInfiniteQuery } from "../../../query/post/useProfilePostInfiniteQuery";
-import { IMyProfileData } from "../../../../api/apiType";
+import { IMyProfileData } from "../../../../types/apiTypes";
 import { useParams } from "react-router-dom";
 import { useEffect } from "react";
 

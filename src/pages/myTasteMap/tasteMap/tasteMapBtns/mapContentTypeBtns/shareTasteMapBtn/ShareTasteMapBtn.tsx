@@ -1,15 +1,12 @@
 import React from "react";
 import { ShareBtn } from "../../../TasteMap.styles";
 import { useTasteMapShare } from "../../../../../../hook/logic/TasetMap/useTasteMapShare";
-import {
-  IMyProfileData,
-  IUserProfileData
-} from "../../../../../../api/apiType";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../../../store/store";
+import { TProfile } from "../../../../../../types/types";
 
 interface IProps {
-  profile: IMyProfileData | IUserProfileData | undefined;
+  profile: TProfile | undefined;
 }
 
 export default function ShareTasteMapBtn({ profile }: IProps) {

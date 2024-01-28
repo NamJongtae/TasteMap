@@ -1,10 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { IMapData } from "../api/apiType";
+import { IMapData } from "../types/apiTypes";
+import { EMapContentType } from "../types/types";
 
-export const enum EMapContentType {
-  MAP = "MAP",
-  LIST = "LIST"
-}
 export const tasteMapSlice = createSlice({
   name: "tasteMapSlice",
   initialState: {

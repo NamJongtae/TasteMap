@@ -1,7 +1,10 @@
 import React from "react";
 import { FollowBtn } from "../../../search.styles";
 import { useFollowFetchData } from "../../../../../hook/useFollowFetchData";
-import { IMyProfileData, IUserProfileData } from "../../../../../api/apiType";
+import {
+  IMyProfileData,
+  IUserProfileData
+} from "../../../../../types/apiTypes";
 
 interface IProps {
   myProfile: IMyProfileData;

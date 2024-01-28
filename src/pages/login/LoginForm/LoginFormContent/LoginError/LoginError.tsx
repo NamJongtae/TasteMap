@@ -2,9 +2,10 @@ import React from "react";
 import ErrorMsg from "../../../../../component/commons/errorMsg/ErrorMsg";
 import { useLoginError } from "../../../../../hook/logic/login/useLoginError";
 import { useFormContext } from "react-hook-form";
+import { TError } from "../../../../../types/types";
 
 interface IProps {
-  isError: Error | null;
+  isError: TError;
 }
 
 export default function LoginError({ isError }: IProps) {

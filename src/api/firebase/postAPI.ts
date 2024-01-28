@@ -21,7 +21,12 @@ import {
 import { v4 as uuid } from "uuid";
 import { db, storage } from "./setting";
 import { getAuth } from "firebase/auth";
-import { IPostData, IPostUploadData, IMapData, IUserData } from "../apiType";
+import {
+  IPostData,
+  IPostUploadData,
+  IMapData,
+  IUserData
+} from "../../types/apiTypes";
 import {
   deleteObject,
   getDownloadURL,
@@ -120,13 +125,16 @@ export const fetchFeedPosts = async (
   page: QueryDocumentSnapshot<DocumentData, DocumentData> | null,
   pagePerData: number,
   followingList: string[]
-): Promise<{
-  postDocs: null;
-  data: IPostData[];
-} | {
-  postDocs: QuerySnapshot<DocumentData, DocumentData>;
-  data: IPostData[];
-}> => {
+): Promise<
+  | {
+      postDocs: null;
+      data: IPostData[];
+    }
+  | {
+      postDocs: QuerySnapshot<DocumentData, DocumentData>;
+      data: IPostData[];
+    }
+> => {
   try {
     if (followingList.length === 0) {
       return { postDocs: null, data: [] as IPostData[] };

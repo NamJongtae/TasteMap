@@ -1,7 +1,8 @@
 import { useDispatch, useSelector } from "react-redux";
-import { tasteMapSlice, EMapContentType } from "../../../slice/tasteMapSlice";
+import { tasteMapSlice } from "../../../slice/tasteMapSlice";
 import { AppDispatch, RootState } from "../../../store/store";
 import { useEffect } from "react";
+import { EMapContentType } from "../../../types/types";
 
 export const usetasteMapContentTypeController = () => {
   const dispatch = useDispatch<AppDispatch>();

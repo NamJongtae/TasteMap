@@ -17,7 +17,7 @@ import {
   getDoc,
   QuerySnapshot
 } from "firebase/firestore";
-import { IReplyData, IUserData } from "../apiType";
+import { IReplyData, IUserData } from "../../types/apiTypes";
 import { db } from "./setting";
 import { getAuth } from "firebase/auth";
 

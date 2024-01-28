@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { IReplyData } from "../api/apiType";
+import { IReplyData } from "../types/apiTypes";
 import { DocumentData, QueryDocumentSnapshot } from "firebase/firestore";
 
 export const replySlice = createSlice({

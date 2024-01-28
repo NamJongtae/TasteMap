@@ -2,7 +2,11 @@ import { useCallback } from "react";
 import { sweetToast } from "../../../../library/sweetAlert/sweetAlert";
 import { useAddTasteMapMutation } from "../../../query/profile/useAddTasteMapMutation";
 import { useRemoveTasteMapMutation } from "../../../query/profile/useRemoveTasteMapMutation";
-import { IMapData, IMyProfileData, IPostData } from "../../../../api/apiType";
+import {
+  IMapData,
+  IMyProfileData,
+  IPostData
+} from "../../../../types/apiTypes";
 
 interface IProps {
   data: IPostData;

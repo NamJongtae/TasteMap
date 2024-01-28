@@ -1,10 +1,11 @@
 import React from "react";
 import FindEmailForm from "./FindEmailForm/FindEmailForm";
 import FindPasswordForm from "./FindPasswordForm/FindPasswordForm";
+import { TFindAccountMenu } from "../../../types/types";
 
 interface IProps {
-  activeMenu: "email" | "password";
+  activeMenu: TFindAccountMenu;
 }
 export default function FindAccountForm({ activeMenu }: IProps) {
-  return activeMenu === "email" ? <FindEmailForm /> : <FindPasswordForm />;
+  return activeMenu === "EMAIL" ? <FindEmailForm /> : <FindPasswordForm />;
 }

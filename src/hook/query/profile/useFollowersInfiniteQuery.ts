@@ -8,7 +8,7 @@ import {
   QueryDocumentSnapshot,
   QuerySnapshot
 } from "firebase/firestore";
-import { IFollowData } from "../../../api/apiType";
+import { IFollowData } from "../../../types/apiTypes";
 import { FOLLOWERS_QUERYKEY } from "../../../querykey/querykey";
 
 interface InfiniteFollowersType {
@@ -16,10 +16,7 @@ interface InfiniteFollowersType {
   data: IFollowData[];
 }
 
-export const useFollowersInfiniteQuery = (
-  uid: string,
-  pagePerData: number,
-) => {
+export const useFollowersInfiniteQuery = (uid: string, pagePerData: number) => {
   const {
     data,
     hasNextPage,
@@ -48,7 +45,7 @@ export const useFollowersInfiniteQuery = (
       return lastpage.data.length > 0
         ? lastpage.followerDocs.docs[lastpage.followerDocs.docs.length - 1]
         : undefined;
-    },
+    }
   });
 
   return {

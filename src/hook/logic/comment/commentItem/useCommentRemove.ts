@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { sweetConfirm } from "../../../../library/sweetAlert/sweetAlert";
 import { useCommentRemoveMutation } from "../../../query/post/comment/useCommentRemoveMutation";
-import { ICommentData } from "../../../../api/apiType";
+import { ICommentData } from "../../../../types/apiTypes";
 
 interface IProps {
   postType: "HOME" | "FEED" | "PROFILE";

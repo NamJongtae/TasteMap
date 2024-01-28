@@ -1,6 +1,6 @@
 import React from "react";
 import { StyledUnfollowBtn } from "../../../followModal.styles";
-import { IFollowData, IMyProfileData } from "../../../../../../api/apiType";
+import { IFollowData, IMyProfileData } from "../../../../../../types/apiTypes";
 import { useUnfollowFetchData } from "../../../../../../hook/useUnfollowFetchData";
 
 interface IProps {

@@ -3,7 +3,7 @@ import PostItem from "../postItem/PostItem";
 import ScrollLoading from "../../../commons/loading/ScrollLoading";
 import { InfinityScrollTarget, PostListWrapper, Wrapper } from "./post.styles";
 import NoData from "../../../commons/noData/NoData";
-import { IMyProfileData, IPostData } from "../../../../api/apiType";
+import { IMyProfileData, IPostData } from "../../../../types/apiTypes";
 import { usePostsInfiniteScroll } from "../../../../hook/logic/post/postList/usePostsInfiniteScroll";
 
 interface IProps {

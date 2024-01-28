@@ -1,9 +1,9 @@
 import React from "react";
 import { ShareTasteMapTitle, ShareTasteMapTitleImg } from "../TasteMap.styles";
-import { IMyProfileData, IUserProfileData } from "../../../../api/apiType";
+import { TProfile } from "../../../../types/types";
 
 interface IProps {
-  profile: IMyProfileData | IUserProfileData | undefined;
+  profile: TProfile | undefined;
   isSharePage: boolean;
 }
 

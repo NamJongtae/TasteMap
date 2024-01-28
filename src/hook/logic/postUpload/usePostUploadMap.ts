@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../store/store";
 import { searchSlice } from "../../../slice/searchSlice";
 import { useFormContext } from "react-hook-form";
-import { IMapData, IPostData } from "../../../api/apiType";
+import { IMapData, IPostData } from "../../../types/apiTypes";
 import { tasteMapSlice } from "../../../slice/tasteMapSlice";
 
 interface IProps {
@@ -42,7 +42,7 @@ export const usePostUploadMap = ({ isEdit, post }: IProps) => {
   useEffect(() => {
     setUpdateInitalValue();
   }, [post]);
-  
+
   useEffect(() => {
     return () => {
       dispatch(tasteMapSlice.actions.setSearchSelectedMap({} as IMapData));

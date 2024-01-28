@@ -3,7 +3,7 @@ import { useCallback, useState } from "react";
 import { useFormContext } from "react-hook-form";
 import { fetchDuplication } from "../../../../api/firebase/validationAPI";
 import { displayNameRegex } from "../../../../library/validationRegex";
-import { IMyProfileData } from "../../../../api/apiType";
+import { IMyProfileData } from "../../../../types/apiTypes";
 
 interface IProps {
   myProfile: IMyProfileData;
@@ -26,7 +26,7 @@ export const useProfileUpdateCheckDuplication = ({ myProfile }: IProps) => {
 
       if (value.match(displayNameRegex)) {
         try {
-          await fetchDuplication(value, "displayName");
+          await fetchDuplication(value, "DISPLAYNAME");
           checkDuplicationActiveHanlder();
         } catch (error: any) {
           return setError("displayName", {

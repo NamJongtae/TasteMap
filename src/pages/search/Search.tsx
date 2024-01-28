@@ -5,7 +5,7 @@ import SearchInput from "./searchInput/SearchInput";
 import TopButton from "../../component/commons/topButton/TopButton";
 import Loading from "../../component/commons/loading/Loading";
 import { useLoadMyProfile } from "../../hook/useLoadMyProfile";
-import { IMyProfileData } from "../../api/apiType";
+import { IMyProfileData } from "../../types/apiTypes";
 import SearchResultList from "./searchResultList/SearchResultList";
 
 export default function Search() {

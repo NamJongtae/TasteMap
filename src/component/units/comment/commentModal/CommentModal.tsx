@@ -3,7 +3,7 @@ import CommentList from "./commentList/CommentList";
 import { optModalTabFocus } from "../../../../library/optModalTabFocus";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../store/store";
-import { ICommentData } from "../../../../api/apiType";
+import { ICommentData } from "../../../../types/apiTypes";
 import {
   CloseBtn,
   ModalTitle,

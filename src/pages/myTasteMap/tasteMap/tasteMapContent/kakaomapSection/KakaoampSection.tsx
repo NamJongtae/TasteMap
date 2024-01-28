@@ -1,10 +1,10 @@
 import React from "react";
 import { MapDesc, KakaomapWrapper } from "../../TasteMap.styles";
 import Kakaomap from "../../../../../component/units/kakaomap/Kakaomap";
-import { IMyProfileData, IUserProfileData } from "../../../../../api/apiType";
+import { TProfile } from "../../../../../types/types";
 
 interface IProps {
-  profile: IMyProfileData | IUserProfileData | undefined;
+  profile: TProfile | undefined;
   isSharePage: boolean;
 }
 

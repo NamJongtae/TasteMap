@@ -1,7 +1,7 @@
 import React from "react";
 import CommentModal from "./commentModal/CommentModal";
 import { useCommentModalController } from "../../../hook/logic/comment/useCommentModalController";
-import { ICommentData } from "../../../api/apiType";
+import { ICommentData } from "../../../types/apiTypes";
 import { PortalModal } from "../../commons/UI/portalModal/PortalModal";
 
 interface IProps {

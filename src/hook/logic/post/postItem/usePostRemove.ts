@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { IPostData } from "../../../../api/apiType";
+import { IPostData } from "../../../../types/apiTypes";
 import { usePostDeleteMutation } from "../../../query/post/usePostDeleteMutation";
 import { sweetConfirm } from "../../../../library/sweetAlert/sweetAlert";
 

@@ -1,7 +1,7 @@
 import React from "react";
 import { usePostRemove } from "../../../../../../hook/logic/post/postItem/usePostRemove";
 import { usePostReport } from "../../../../../../hook/logic/post/postItem/usePostReport";
-import { IPostData, IUserData } from "../../../../../../api/apiType";
+import { IPostData, IUserData } from "../../../../../../types/apiTypes";
 
 import { useMoveToUpdatePage } from "../../../../../../hook/logic/post/postItem/useMoveToUpdatePage";
 import { MenuItemBtn, MenuItem, MenuList } from "../../../postList/post.styles";

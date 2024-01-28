@@ -7,7 +7,7 @@ import {
 import {
   IMyProfileData,
   IUserProfileData
-} from "../../../../../../../api/apiType";
+} from "../../../../../../../types/apiTypes";
 import useOpenFollowingModal from "../../../../../../../hook/logic/profile/followModal/useOpenFollowingModal";
 
 interface IProps {

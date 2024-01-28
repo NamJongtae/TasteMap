@@ -6,9 +6,10 @@ import {
 } from "@tanstack/react-query";
 import { fetchPost } from "../../../api/firebase/postAPI";
 import { DocumentData, QuerySnapshot } from "firebase/firestore";
-import { IPostData } from "../../../api/apiType";
+import { IPostData } from "../../../types/apiTypes";
 import { useParams } from "react-router-dom";
 import { getPostsQuerykey } from "../../../querykey/querykey";
+import { TPost } from "../../../types/types";
 
 type InfinitePostsType = {
   postDocs: QuerySnapshot<DocumentData, DocumentData>;
@@ -16,7 +17,7 @@ type InfinitePostsType = {
 };
 
 export const useFetchCommentCountMutation = (
-  postType: "HOME" | "FEED" | "PROFILE"
+  postType: TPost
 ): {
   mutate: UseMutateFunction<IPostData | undefined, Error, string, unknown>;
 } => {

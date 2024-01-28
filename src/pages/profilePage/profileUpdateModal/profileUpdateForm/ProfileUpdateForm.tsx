@@ -1,5 +1,5 @@
 import React from "react";
-import { IMyProfileData } from "../../../../api/apiType";
+import { IMyProfileData } from "../../../../types/apiTypes";
 import { useProfileUpdateFetchData } from "../../../../hook/logic/profile/profileUpdateModal/useProfileUpdateFetchData";
 import { MyForm } from "../../../../component/commons/UI/myForm/MyForm";
 import FormContent from "./FormContent/FormContent";

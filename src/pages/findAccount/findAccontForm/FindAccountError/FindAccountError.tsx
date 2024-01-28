@@ -3,9 +3,10 @@ import ErrorMsg from "../../../../component/commons/errorMsg/ErrorMsg";
 
 import { useFormContext } from "react-hook-form";
 import { useFindAccountError } from "../../../../hook/logic/findAccount/findAccountForm/useFindAccountError";
+import { TError } from "../../../../types/types";
 
 interface IProps {
-  isError: Error | null;
+  isError: TError;
 }
 
 export default function FindAccountError({ isError }: IProps) {

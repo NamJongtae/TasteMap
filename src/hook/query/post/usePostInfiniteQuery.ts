@@ -5,8 +5,9 @@ import {
   QueryDocumentSnapshot,
   QuerySnapshot
 } from "firebase/firestore";
-import { IPostData } from "../../../api/apiType";
+import { IPostData } from "../../../types/apiTypes";
 import { HOME_POSTS_QUERYKEY } from "../../../querykey/querykey";
+import { TPost } from "../../../types/types";
 
 type FetchDataResponse = {
   postDocs: QuerySnapshot<DocumentData, DocumentData>;
@@ -15,7 +16,7 @@ type FetchDataResponse = {
 
 export const usePostInfiniteQuery = (
   pagePerData: number,
-  postType: "HOME" | "FEED" | "PROFILE"
+  postType: TPost
 ) => {
   const {
     data,

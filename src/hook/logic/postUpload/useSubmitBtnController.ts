@@ -1,5 +1,5 @@
 import { useSelector } from "react-redux";
-import { IPostData } from "../../../api/apiType";
+import { IPostData } from "../../../types/apiTypes";
 import { RootState } from "../../../store/store";
 
 interface IProps {

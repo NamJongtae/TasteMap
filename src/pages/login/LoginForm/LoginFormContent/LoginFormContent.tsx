@@ -8,9 +8,10 @@ import LoginError from "./LoginError/LoginError";
 import LoginBtn from "./LoginBtn/LoginBtn";
 import SignupLink from "./SignupLink/SignupLink";
 import { SocialLogin } from "./socialLogin/SocialLogin";
+import { TError } from "../../../../types/types";
 
 interface IProps {
-  loginError: Error | null;
+  loginError: TError;
   loginIsPending: boolean;
 }
 export default function LoginFormContent({

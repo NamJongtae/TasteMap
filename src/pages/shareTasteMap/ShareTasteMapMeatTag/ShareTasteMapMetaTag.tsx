@@ -1,6 +1,6 @@
 import React from "react";
 import { Helmet } from "react-helmet-async";
-import { IUserProfileData } from "../../../api/apiType";
+import { IUserProfileData } from "../../../types/apiTypes";
 
 interface IProps {
   userProfile: IUserProfileData | undefined;

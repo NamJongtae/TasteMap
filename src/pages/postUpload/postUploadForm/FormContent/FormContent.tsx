@@ -5,7 +5,7 @@ import { PostUploadMap } from "./postUploadMap/PostUploadMap";
 import PostUploadRating from "./postUploadRating/PostUploadRating";
 import PostUploadContent from "./postUploadContent/PostUploadContent";
 import PostUploadImg from "./postUploadImg/PostUploadImg";
-import { IPostData } from "../../../../api/apiType";
+import { IPostData } from "../../../../types/apiTypes";
 
 interface IProps {
   formContentWrapperRef: React.RefObject<HTMLDivElement>;

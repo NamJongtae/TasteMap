@@ -3,12 +3,13 @@ import { AppDispatch } from "../../../store/store";
 import { useRemoveTasteMapMutation } from "../../query/profile/useRemoveTasteMapMutation";
 import { useCallback } from "react";
 import { sweetConfirm } from "../../../library/sweetAlert/sweetAlert";
-import { EMapContentType, tasteMapSlice } from "../../../slice/tasteMapSlice";
+import { tasteMapSlice } from "../../../slice/tasteMapSlice";
 import {
   IMapData,
   IMyProfileData,
   IUserProfileData
-} from "../../../api/apiType";
+} from "../../../types/apiTypes";
+import { EMapContentType } from "../../../types/types";
 
 interface IProps {
   item: IMapData;

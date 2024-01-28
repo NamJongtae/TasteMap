@@ -2,13 +2,12 @@ import React from "react";
 import KakaoampSection from "./kakaomapSection/KakaoampSection";
 import MapTypeMarkerData from "./mapTypeMarkerData/MapTypeMarkerDataList";
 import ListTypeMarkerData from "./listTypeMarkerData/ListTypeMarkerData";
-import { EMapContentType } from "../../../../slice/tasteMapSlice";
-import { IMyProfileData, IUserProfileData } from "../../../../api/apiType";
+import { EMapContentType, TProfile } from "../../../../types/types";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../store/store";
 
 interface IProps {
-  profile: IMyProfileData | IUserProfileData | undefined;
+  profile: TProfile | undefined;
   isSharePage: boolean;
 }
 export default function TasteMapContent({ profile, isSharePage }: IProps) {

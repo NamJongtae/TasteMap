@@ -5,7 +5,7 @@ import {
   QueryDocumentSnapshot,
   QuerySnapshot
 } from "firebase/firestore";
-import { IUserProfileData } from "../../../api/apiType";
+import { IUserProfileData } from "../../../types/apiTypes";
 import { SEARCH_QUERYKEY } from "../../../querykey/querykey";
 
 interface InfiniteSearchType {

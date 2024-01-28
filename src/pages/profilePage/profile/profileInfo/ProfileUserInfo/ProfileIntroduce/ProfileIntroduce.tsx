@@ -1,4 +1,3 @@
-import { IMyProfileData, IUserProfileData } from "../../../../../../api/apiType";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../../../store/store";
 import {
@@ -7,9 +6,10 @@ import {
   MoreTextBtn
 } from "../../profileInfo.styles";
 import { useMoreIntroduceText } from "../../../../../../hook/logic/profile/profileInfo/useMoreIntroduceText";
+import { TProfile } from "../../../../../../types/types";
 
 interface IProps {
-  profile: IMyProfileData | IUserProfileData;
+  profile: TProfile;
 }
 
 export const ProfileIntroduce = ({ profile }: IProps) => {

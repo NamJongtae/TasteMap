@@ -3,7 +3,11 @@ import {
   useMutation,
   useQueryClient
 } from "@tanstack/react-query";
-import { ICommentData, IPostData, IReplyData } from "../../../../api/apiType";
+import {
+  ICommentData,
+  IPostData,
+  IReplyData
+} from "../../../../types/apiTypes";
 import { DocumentData, QuerySnapshot } from "firebase/firestore";
 import { sweetToast } from "../../../../library/sweetAlert/sweetAlert";
 import { useDispatch } from "react-redux";

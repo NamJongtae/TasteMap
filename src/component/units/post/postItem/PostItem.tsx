@@ -1,5 +1,5 @@
 import React from "react";
-import { IPostData, IMyProfileData } from "../../../../api/apiType";
+import { IPostData, IMyProfileData } from "../../../../types/apiTypes";
 import UserInfoSection from "./userInfoSection/UserInfoSection";
 import ContentSection from "./contentSection/ContentSection";
 import { usePostContentType } from "../../../../hook/logic/post/postItem/usePostContentType";

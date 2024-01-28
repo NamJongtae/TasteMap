@@ -1,5 +1,5 @@
 import { useDispatch } from "react-redux";
-import { IMapData } from "../../../api/apiType";
+import { IMapData } from "../../../types/apiTypes";
 import { sweetToast } from "../../../library/sweetAlert/sweetAlert";
 import { useAddTasteMapMutation } from "../../query/profile/useAddTasteMapMutation";
 import { useLoadMyProfile } from "../../useLoadMyProfile";

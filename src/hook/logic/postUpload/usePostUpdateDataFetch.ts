@@ -1,7 +1,7 @@
 import { useSelector } from "react-redux";
 import { RootState } from "../../../store/store";
 import { useCallback } from "react";
-import { IPostData, IPostUpdateData } from "../../../api/apiType";
+import { IPostData, IPostUpdateData } from "../../../types/apiTypes";
 import { usePostUpdateMutation } from "../../query/post/usePostUpdateMutation";
 import { useCheckVaildationUser } from "./useCheckVaildationUser";
 import { FieldValues } from "react-hook-form";

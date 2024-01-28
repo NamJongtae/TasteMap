@@ -1,6 +1,6 @@
 import React from "react";
 import SearchMapResult from "./searchMapResult/SearchMapResult";
-import { IMapData } from "../../../../../api/apiType";
+import { IMapData } from "../../../../../types/apiTypes";
 import SearchInputField from "./searchMapInputField/SearchMapInputField";
 
 interface IProps {
@@ -21,7 +21,6 @@ export default function FormContent({
   isSearched,
   isTasteMapPage
 }: IProps) {
-
   return (
     <>
       <SearchInputField inputRef={inputRef} closeBtnRef={closeBtnRef} />

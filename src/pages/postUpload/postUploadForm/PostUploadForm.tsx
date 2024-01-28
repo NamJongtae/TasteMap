@@ -3,9 +3,9 @@ import HeaderBtn from "./HeaderBtn/HeaderBtn";
 import { MyForm } from "../../../component/commons/UI/myForm/MyForm";
 import { usePostUploadDataFetch } from "../../../hook/logic/postUpload/usePostUploadDataFetch";
 import { usePostUpdateDataFetch } from "../../../hook/logic/postUpload/usePostUpdateDataFetch";
-import { IPostData } from "../../../api/apiType";
+import { IPostData } from "../../../types/apiTypes";
 import Loading from "../../../component/commons/loading/Loading";
-import FormContent from './FormContent/FormContent';
+import FormContent from "./FormContent/FormContent";
 
 interface IProps {
   isEdit: boolean;

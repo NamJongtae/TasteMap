@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { addTasteMap } from "../../../api/firebase/postAPI";
-import { IMyProfileData, IMapData } from "../../../api/apiType";
+import { IMyProfileData, IMapData } from "../../../types/apiTypes";
 import { sweetToast } from "../../../library/sweetAlert/sweetAlert";
 import { My_PROFILE_QUERYKEY } from "../../../querykey/querykey";
 

@@ -1,3 +1,5 @@
+import { TPost } from "../types/types";
+
 export const AUTH_QUERYKEY = ["auth"];
 
 export const HOME_POSTS_QUERYKEY = ["posts", "HOME"];
@@ -23,7 +25,7 @@ export const getRepliesQuerykey = (postId: string, parentCommentId: string) => {
 export const getPostQuerykey = (postId: string) => {
   return ["post", postId];
 };
-export const getPostsQuerykey = (postType: string, uid: string | undefined) => {
+export const getPostsQuerykey = (postType: TPost, uid: string | undefined) => {
   return postType === "PROFILE"
     ? ["posts", postType, uid]
     : ["posts", postType];

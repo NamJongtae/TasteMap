@@ -1,5 +1,8 @@
 import React from "react";
-import { IMyProfileData, IUserProfileData } from "../../../../../api/apiType";
+import {
+  IMyProfileData,
+  IUserProfileData
+} from "../../../../../types/apiTypes";
 import { useUnfollowFetchData } from "../../../../../hook/useUnfollowFetchData";
 import { UnfollowBtn } from "../../../search.styles";
 
@@ -12,5 +15,7 @@ export default function UnfollowButton({ myProfile, userProfile }: IProps) {
     myUid: myProfile.uid,
     userUid: userProfile.uid
   });
-  return <UnfollowBtn onClick={followModalUnfollowHandler}>언팔로우</UnfollowBtn>;
+  return (
+    <UnfollowBtn onClick={followModalUnfollowHandler}>언팔로우</UnfollowBtn>
+  );
 }

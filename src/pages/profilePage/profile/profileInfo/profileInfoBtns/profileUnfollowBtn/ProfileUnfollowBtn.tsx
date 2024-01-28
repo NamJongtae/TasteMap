@@ -2,7 +2,7 @@ import React from "react";
 import {
   IMyProfileData,
   IUserProfileData
-} from "../../../../../../api/apiType";
+} from "../../../../../../types/apiTypes";
 import { UnfollowBtn } from "../../profileInfo.styles";
 import { useUnfollowFetchData } from "../../../../../../hook/useUnfollowFetchData";
 

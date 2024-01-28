@@ -1,10 +1,11 @@
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "./setting";
+import { TDuplication } from "../../types/types";
 
 // 중복검사 API
 export const fetchDuplication = async (
   duplicationValue: string,
-  duplicationTarget: "email" | "phone" | "displayName"
+  duplicationTarget: TDuplication
 ): Promise<false | undefined> => {
   try {
     const userRef = collection(db, "user");
@@ -15,13 +16,13 @@ export const fetchDuplication = async (
     const res = await getDocs(q);
     const data = res.docs.map((el) => el.data());
     if (data.length > 0) {
-      if (duplicationTarget === "email") {
+      if (duplicationTarget === "EMAIL") {
         throw new Error("이미 사용중인 이메일입니다.");
       }
-      if (duplicationTarget === "phone") {
+      if (duplicationTarget === "PHONE") {
         throw new Error("이미 사용중인 휴대폰 번호입니다.");
       }
-      if (duplicationTarget === "displayName") {
+      if (duplicationTarget === "DISPLAYNAME") {
         throw new Error("이미 사용중인 닉네임입니다.");
       }
     } else {

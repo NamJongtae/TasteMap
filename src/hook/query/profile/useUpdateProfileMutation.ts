@@ -8,7 +8,7 @@ import {
   IMyProfileData,
   IPostData,
   IProfileUpdateData
-} from "../../../api/apiType";
+} from "../../../types/apiTypes";
 import { sweetToast } from "../../../library/sweetAlert/sweetAlert";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../store/store";
@@ -105,10 +105,7 @@ export const useUpdateProfileMutation = () => {
     onError: (error, data, ctx) => {
       if (ctx) {
         queryClient.setQueryData(HOME_POSTS_QUERYKEY, ctx.previousMyProfile);
-        queryClient.setQueryData(
-          PROFILE_POSTS_QUERYKEY,
-          ctx.previousPosts
-        );
+        queryClient.setQueryData(PROFILE_POSTS_QUERYKEY, ctx.previousPosts);
       }
       if (error) {
         sweetToast(

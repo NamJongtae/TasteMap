@@ -1,12 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
-import {
-  IPostData,
-  IMapData
-} from "../api/apiType";
-import {
-  DocumentData,
-  QueryDocumentSnapshot,
-} from "firebase/firestore";
+import { IPostData, IMapData } from "../types/apiTypes";
+import { DocumentData, QueryDocumentSnapshot } from "firebase/firestore";
 
 export const postSlice = createSlice({
   name: "postSlice",
@@ -17,7 +11,7 @@ export const postSlice = createSlice({
     postsPagePerData: 5,
     postsHasMore: false,
     searchMapData: [] as IMapData[], // 검색 데이터
-    userPostsPagePerData: 5,
+    userPostsPagePerData: 5
   },
 
   reducers: {
@@ -29,6 +23,6 @@ export const postSlice = createSlice({
         (item) => item.id !== action.payload
       );
       state.posts = newData;
-    },
-  },
+    }
+  }
 });

@@ -5,11 +5,12 @@ import {
 } from "../../../../login.styles";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../../../store/store";
+import { TLogin } from "../../../../../../types/types";
 
 interface IProps {
-  socialLoginHandler: (type: "google" | "github") => void;
+  socialLoginHandler: (type: TLogin) => void;
   btnText: string;
-  loginType: "google" | "github";
+  loginType: TLogin;
 }
 export default function SocialLoginBtn({
   socialLoginHandler,

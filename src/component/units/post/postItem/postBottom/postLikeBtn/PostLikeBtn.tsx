@@ -3,7 +3,7 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../../../store/store";
 import { usePostLike } from "../../../../../../hook/logic/post/postItem/usePostLike";
-import { IMyProfileData, IPostData } from "../../../../../../api/apiType";
+import { IMyProfileData, IPostData } from "../../../../../../types/apiTypes";
 import { ButtonWrapper, Count, LikeBtn } from "../../../postList/post.styles";
 
 interface IProps {

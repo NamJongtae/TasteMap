@@ -1,5 +1,5 @@
 import React from "react";
-import { ICommentData, IReplyData } from "../../../../../../../api/apiType";
+import { ICommentData, IReplyData } from "../../../../../../../types/apiTypes";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../../../../store/store";
 import CommentRemoveBtn from "./CommentRemoveBtn";

@@ -4,7 +4,7 @@ import Kakaomap from "../../../kakaomap/Kakaomap";
 import ImgSlider from "../../../imgSlider/ImgSlider";
 import { usePostTasteMap } from "../../../../../hook/logic/post/postItem/usePostTasteMap";
 import { usePostMoreTextBtn } from "../../../../../hook/logic/post/postItem/usePostMoreTextBtn";
-import { IMyProfileData, IPostData } from "../../../../../api/apiType";
+import { IMyProfileData, IPostData } from "../../../../../types/apiTypes";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../../store/store";
 import {

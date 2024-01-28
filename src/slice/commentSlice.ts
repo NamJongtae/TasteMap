@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { ICommentData } from "../api/apiType";
+import { ICommentData } from "../types/apiTypes";
 import { DocumentData, QueryDocumentSnapshot } from "firebase/firestore";
 
 export const commentSlice = createSlice({

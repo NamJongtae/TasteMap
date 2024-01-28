@@ -1,5 +1,5 @@
 import React from "react";
-import { ICommentData, IReplyData } from "../../../../../../api/apiType";
+import { ICommentData, IReplyData } from "../../../../../../types/apiTypes";
 import { useUpdateTextAreaController } from "../../../../../../hook/logic/comment/commentItem/useUpdateTextAreaController";
 import CommentContent from "./commentContent/CommentContent";
 import CommentBottom from "./commentBottom/CommentBottom";
@@ -8,7 +8,7 @@ import UserInfo from "../../../../../commons/userInfo/UserInfo";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../../../store/store";
 import { isMobile } from "react-device-detect";
-import { CommentLi, ReplyCountBtn } from '../../commentModal.styles';
+import { CommentLi, ReplyCountBtn } from "../../commentModal.styles";
 
 interface IProps {
   data: ICommentData | IReplyData;

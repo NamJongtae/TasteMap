@@ -11,7 +11,7 @@ export default function EmailField() {
     checkDuplicationHandler: checkEmailDuplicationHandler,
     resetCheckDuplication: resetCheckEmailDuplication
   } = useSignupCheckDuplication({
-    type: "email"
+    type: "EMAIL"
   });
   return (
     <InputField

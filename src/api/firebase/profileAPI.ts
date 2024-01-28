@@ -27,7 +27,7 @@ import {
   IProfileUpdateData,
   IMyProfileData,
   IUserProfileData
-} from "../apiType";
+} from "../../types/apiTypes";
 import {
   UploadResult,
   deleteObject,

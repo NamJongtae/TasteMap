@@ -1,6 +1,6 @@
 import React from "react";
 import { SearchItem } from "../../../../../searchMapModal.styles";
-import { IMapData } from "../../../../../../../../api/apiType";
+import { IMapData } from "../../../../../../../../types/apiTypes";
 import SelectedMapBtn from "./selectedMapBtn/SelectedMapBtn";
 import SearchMapResultItemContent from "./SearchMapResultItemContent/SearchMapResultItemContent";
 

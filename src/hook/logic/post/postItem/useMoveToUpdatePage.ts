@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { IPostData } from "../../../../api/apiType";
+import { IPostData } from "../../../../types/apiTypes";
 
 export const useMoveToUpdatePage = () => {
   const navigate = useNavigate();

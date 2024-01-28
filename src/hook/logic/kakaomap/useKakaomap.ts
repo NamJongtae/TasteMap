@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { IMapData } from "../../../api/apiType";
+import { IMapData } from "../../../types/apiTypes";
 import { useLoadView } from "./useLoadView";
 import { useMarkerAndCustomoverlays } from "./useMarkerAndCustomoverlays";
 import { useLoadMyProfile } from "../../useLoadMyProfile";
@@ -26,7 +26,7 @@ export const useKakaomap = ({ items, isTasteMapPage, isSharePage }: IProps) => {
   const mapRef = useRef<HTMLDivElement>(null);
 
   const { myProfile } = useLoadMyProfile();
-  
+
   // map loadview 관련 customhook
   const {
     roadview,

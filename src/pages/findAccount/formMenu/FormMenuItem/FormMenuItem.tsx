@@ -1,9 +1,10 @@
 import React from "react";
 import { FormMenuBtn, FormMenuItemWrapper } from "../../findAccount.styles";
+import { TFindAccountMenu } from "../../../../types/types";
 
 interface IProps {
-  activeMenu: "email" | "password";
-  menu: "email" | "password";
+  activeMenu: TFindAccountMenu;
+  menu: TFindAccountMenu;
   activeMenuHandler: () => void;
   menuText: string;
 }

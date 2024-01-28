@@ -1,6 +1,9 @@
 import React from "react";
 import { UserName } from "../profileInfo.styles";
-import { IMyProfileData, IUserProfileData } from "../../../../../api/apiType";
+import {
+  IMyProfileData,
+  IUserProfileData
+} from "../../../../../types/apiTypes";
 import { ProfileIntroduce } from "./ProfileIntroduce/ProfileIntroduce";
 import useCheckIsMe from "../../../../../hook/useCheckIsMe";
 import UserImgAndFollowInfo from "./UserImgAndFollowInfo/UserImgAndFollowInfo";

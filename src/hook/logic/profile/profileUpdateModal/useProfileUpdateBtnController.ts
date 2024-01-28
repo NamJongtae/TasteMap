@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { IMyProfileData } from "../../../../api/apiType";
+import { IMyProfileData } from "../../../../types/apiTypes";
 
 interface IProps {
   myProfile: IMyProfileData;

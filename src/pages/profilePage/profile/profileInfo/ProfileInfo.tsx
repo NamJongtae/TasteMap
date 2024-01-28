@@ -1,5 +1,5 @@
 import React from "react";
-import { IMyProfileData, IUserProfileData } from "../../../../api/apiType";
+import { IMyProfileData, IUserProfileData } from "../../../../types/apiTypes";
 import { ProfileInfoWrapper } from "./profileInfo.styles";
 import ProfileUserInfo from "./ProfileUserInfo/ProfileUserInfo";
 import ProfileInfoBtns from "./profileInfoBtns/ProfileInfoBtns";

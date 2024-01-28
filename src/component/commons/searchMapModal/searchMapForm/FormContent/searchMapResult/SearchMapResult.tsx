@@ -3,7 +3,7 @@ import { SearchMapResultList } from "./searchMapResultList/SearchMapResultList";
 import SearchMapTip from "./searchMapTip/SearchMapTip";
 import ScrollLoading from "../../../../loading/ScrollLoading";
 import NoneSearchMapResult from "./noneSearchMapResult/NoneSearchMapResult";
-import { IMapData } from "../../../../../../api/apiType";
+import { IMapData } from "../../../../../../types/apiTypes";
 import { useFormContext } from "react-hook-form";
 
 interface IProps {

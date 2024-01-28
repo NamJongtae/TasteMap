@@ -1,6 +1,6 @@
 import React from "react";
 import { ListTypeMarkDataUl, NoDataWrapper } from "../../TasteMap.styles";
-import { IMapData } from "../../../../../api/apiType";
+import { IMapData } from "../../../../../types/apiTypes";
 
 import NoData from "../../../../../component/commons/noData/NoData";
 import ListTypeMarkerDataItem from "./ListTypeMarkerDataItem/ListTypeMarkerDataItem";

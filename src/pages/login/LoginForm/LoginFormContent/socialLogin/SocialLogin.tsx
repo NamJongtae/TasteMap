@@ -14,13 +14,13 @@ export const SocialLogin = () => {
   return (
     <SocialLoginWrapper>
       <SocialLoginBtn
-        loginType='google'
+        loginType="GOOGLE"
         socialLoginHandler={socialLoginHandler}
         btnText='구글 계정으로 로그인'
       />
 
       <SocialLoginBtn
-        loginType='github'
+        loginType='GITHUB'
         socialLoginHandler={socialLoginHandler}
         btnText='깃 허브 계정으로 로그인'
       />

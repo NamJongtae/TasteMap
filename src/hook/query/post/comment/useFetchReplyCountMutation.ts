@@ -5,7 +5,7 @@ import {
 } from "@tanstack/react-query";
 import { fetchComment } from "../../../../api/firebase/commentAPI";
 import { DocumentData, QuerySnapshot } from "firebase/firestore";
-import { ICommentData } from "../../../../api/apiType";
+import { ICommentData } from "../../../../types/apiTypes";
 import { getCommentsQuerykey } from "../../../../querykey/querykey";
 
 type InfinitCommentsType = {

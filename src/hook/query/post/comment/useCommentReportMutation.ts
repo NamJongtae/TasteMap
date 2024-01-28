@@ -4,7 +4,7 @@ import {
   useQueryClient
 } from "@tanstack/react-query";
 import { reportComment } from "../../../../api/firebase/commentAPI";
-import { ICommentData, IPostData } from "../../../../api/apiType";
+import { ICommentData, IPostData } from "../../../../types/apiTypes";
 import { DocumentData, QuerySnapshot } from "firebase/firestore";
 import { sweetToast } from "../../../../library/sweetAlert/sweetAlert";
 import { getAuth } from "firebase/auth";
@@ -17,6 +17,7 @@ import {
   getCommentsQuerykey,
   getPostsQuerykey
 } from "../../../../querykey/querykey";
+import { TPost } from "../../../../types/types";
 
 type InfiniteCommentsType = {
   commentDocs: QuerySnapshot<DocumentData, DocumentData>;
@@ -29,7 +30,7 @@ type InfinitePostsType = {
 };
 
 export const useCommentReportMutation = (
-  postType: "HOME" | "FEED" | "PROFILE"
+  postType: TPost
 ) => {
   const { uid } = useParams();
   const dispatch = useDispatch<AppDispatch>();
@@ -163,7 +164,7 @@ export const useCommentReportMutation = (
       }
     },
     onSettled: (data) => {
-      if(!data) return;
+      if (!data) return;
       const COMMENTS_QUERYKEY = getCommentsQuerykey(data.postId);
       queryClient.invalidateQueries({
         queryKey: COMMENTS_QUERYKEY,

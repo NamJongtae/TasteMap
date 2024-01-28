@@ -21,7 +21,7 @@ export default function FindPasswordForm() {
         {isFindPassword ? <FindPasswordValueContent /> : <FindPasswordField />}
         {<FindAccountError isError={findPasswordError} />}
         <FormButton
-          menu={"password"}
+          menu={"PASSWORD"}
           isFind={!!isFindPassword}
           isLoading={findPasswordIsPending}
         />

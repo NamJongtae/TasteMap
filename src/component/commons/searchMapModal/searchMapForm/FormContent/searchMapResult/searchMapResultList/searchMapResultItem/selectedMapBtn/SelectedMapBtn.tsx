@@ -1,7 +1,7 @@
 import React from "react";
 import { SelectedBtn } from "../../../../../../searchMapModal.styles";
 import useSelectedResultMap from "../../../../../../../../../hook/logic/searchMapModal/useSelectedResultMap";
-import { IMapData } from "../../../../../../../../../api/apiType";
+import { IMapData } from "../../../../../../../../../types/apiTypes";
 
 interface IProps {
   isTasteMapPage: boolean;

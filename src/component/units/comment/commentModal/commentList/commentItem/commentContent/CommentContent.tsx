@@ -1,7 +1,7 @@
 import React from "react";
-import { ICommentData, IReplyData } from "../../../../../../../api/apiType";
+import { ICommentData, IReplyData } from "../../../../../../../types/apiTypes";
 import CommentTextAreaForm from "../../../textAreaFormField/textAreaForm/TextAreaForm";
-import { CommentText } from '../../../commentModal.styles';
+import { CommentText } from "../../../commentModal.styles";
 
 interface IProps {
   isEdit: boolean;

@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { useReplyRemoveMutation } from "../../../query/post/reply/useReplyRemoveMutation";
 import { sweetConfirm } from "../../../../library/sweetAlert/sweetAlert";
-import { IReplyData } from "../../../../api/apiType";
+import { IReplyData } from "../../../../types/apiTypes";
 
 interface IProps {
   postType: "HOME" | "FEED" | "PROFILE";

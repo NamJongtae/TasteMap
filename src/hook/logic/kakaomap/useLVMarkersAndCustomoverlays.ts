@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { IMapData } from "../../../api/apiType";
+import { IMapData } from "../../../types/apiTypes";
 
 interface IProps {
   data: IMapData[];

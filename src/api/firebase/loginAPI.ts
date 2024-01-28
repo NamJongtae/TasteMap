@@ -34,9 +34,9 @@ export const login = async (email: string, password: string): Promise<void> => {
 export const socialLogin = async (type: string): Promise<void> => {
   try {
     let provider;
-    if (type === "google") {
+    if (type === "GOOGLE") {
       provider = googleProvider;
-    } else if (type === "github") {
+    } else if (type === "GITHUB") {
       provider = githubProvider;
     }
     if (!provider) return;

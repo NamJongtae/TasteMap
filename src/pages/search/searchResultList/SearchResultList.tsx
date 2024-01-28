@@ -3,7 +3,7 @@ import { InfinityScrollTarget, SearchList } from "../search.styles";
 import SearchResultItem from "./searchResultItem/SearchResultItem";
 import ScrollLoading from "../../../component/commons/loading/ScrollLoading";
 import { useSearchUserInfiniteScroll } from "../../../hook/logic/search/searchResultList/useSearchUserInfiniteScroll";
-import { IMyProfileData } from "../../../api/apiType";
+import { IMyProfileData } from "../../../types/apiTypes";
 import NoSearchResult from "./NoSearchResult/NoSearchResult";
 
 interface IProps {

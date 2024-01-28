@@ -2,7 +2,7 @@ import { ProfileUpdateImgWrapper } from "../../../ProfileUpdateModal.styles";
 import ProfileUpdateImgBtns from "./profileUpdateImgBtns/ProfileUpdateImgBtns";
 import ProfileUpdateImgDesc from "./profileUpdateImgDesc/ProfileUpdateImgDesc";
 import { useProfileUpdateImg } from "../../../../../../hook/logic/profile/profileUpdateModal/useProfileUpdateImg";
-import { IMyProfileData } from "../../../../../../api/apiType";
+import { IMyProfileData } from "../../../../../../types/apiTypes";
 import ProfileUpdateImgField from "./profileUpdateImgField/ProfileUpdateImgField";
 interface IProps {
   imgInputRef: React.RefObject<HTMLInputElement>;

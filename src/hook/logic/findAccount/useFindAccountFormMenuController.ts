@@ -1,14 +1,15 @@
 import { useState } from "react";
+import { TFindAccountMenu } from "../../../types/types";
 
 export const useFindAccountFormMenuController = () => {
-  const [activeMenu, setActiveMenu] = useState<"email" | "password">("email");
+  const [activeMenu, setActiveMenu] = useState<TFindAccountMenu>("EMAIL");
 
   const activeFindEmailMenuHandler = () => {
-    setActiveMenu("email");
+    setActiveMenu("EMAIL");
   };
 
   const activeFindPasswordMenuHandler = () => {
-    setActiveMenu("password");
+    setActiveMenu("PASSWORD");
   };
 
   return {

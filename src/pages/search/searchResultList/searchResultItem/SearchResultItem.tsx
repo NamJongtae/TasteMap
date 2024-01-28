@@ -1,5 +1,5 @@
 import React from "react";
-import { IMyProfileData, IUserProfileData } from "../../../../api/apiType";
+import { IMyProfileData, IUserProfileData } from "../../../../types/apiTypes";
 import { SearchItem } from "../../search.styles";
 import useCheckIsFollow from "../../../../hook/useCheckIsFollow";
 import FollowButton from "./followButton/FollowButton";

@@ -11,7 +11,7 @@ import {
   where
 } from "firebase/firestore";
 import { db } from "./setting";
-import { IUserProfileData } from "../apiType";
+import { IUserProfileData } from "../../types/apiTypes";
 
 export const fetchUserSearch = async (
   keyword: string,

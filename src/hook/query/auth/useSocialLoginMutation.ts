@@ -5,11 +5,12 @@ import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../../store/store";
 import { userSlice } from "../../../slice/userSlice";
 import { sweetToast } from "../../../library/sweetAlert/sweetAlert";
+import { TLogin } from "../../../types/types";
 
 export const useSocialLoginMutation = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { mutate, isPending } = useMutation({
-    mutationFn: (type: "google" | "github") => socialLogin(type),
+    mutationFn: (type: TLogin) => socialLogin(type),
     onSuccess: () => {
       // 현재 유저 정보를 불러옴
       const user = getAuth().currentUser;

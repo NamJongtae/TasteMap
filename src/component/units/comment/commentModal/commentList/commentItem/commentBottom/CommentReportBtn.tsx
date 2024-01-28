@@ -1,8 +1,8 @@
 import React from "react";
-import { ICommentData, IReplyData } from "../../../../../../../api/apiType";
+import { ICommentData, IReplyData } from "../../../../../../../types/apiTypes";
 import { useCommentReport } from "../../../../../../../hook/logic/comment/commentItem/useCommentReport";
 import { useReplyReport } from "../../../../../../../hook/logic/comment/commentItem/useReplyReport";
-import { CommentBtn } from '../../../commentModal.styles';
+import { CommentBtn } from "../../../commentModal.styles";
 
 interface IProps {
   postType: "HOME" | "FEED" | "PROFILE";

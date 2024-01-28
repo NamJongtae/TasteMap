@@ -8,7 +8,11 @@ import { useCommentInfiniteQuery } from "../../../query/post/comment/useCommentI
 import { useReplyInfiniteQuery } from "../../../query/post/reply/useReplyInfiniteQuery";
 import { sweetToast } from "../../../../library/sweetAlert/sweetAlert";
 import { DocumentData, QuerySnapshot } from "firebase/firestore";
-import { ICommentData, IPostData, IReplyData } from "../../../../api/apiType";
+import {
+  ICommentData,
+  IPostData,
+  IReplyData
+} from "../../../../types/apiTypes";
 import { commentSlice } from "../../../../slice/commentSlice";
 import { replySlice } from "../../../../slice/replySlice";
 import { isMobile } from "react-device-detect";

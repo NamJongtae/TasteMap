@@ -2,10 +2,10 @@ import React from "react";
 import { BtnsWrapper, ListBtn, MapBtn } from "../TasteMap.styles";
 import { usetasteMapContentTypeController } from "../../../../hook/logic/TasetMap/useTasteMapContentTypeController";
 import MapContentTypeBtns from "./mapContentTypeBtns/MapContentTypeBtns";
-import { IMyProfileData, IUserProfileData } from "../../../../api/apiType";
+import { TProfile } from "../../../../types/types";
 
 interface IProps {
-  profile: IMyProfileData | IUserProfileData | undefined;
+  profile: TProfile | undefined;
   isSharePage: boolean;
 }
 

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { IPostData } from "../../../api/apiType";
+import { IPostData } from "../../../types/apiTypes";
 
 interface IProps {
   isEdit: boolean;

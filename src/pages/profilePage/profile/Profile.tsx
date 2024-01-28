@@ -3,7 +3,7 @@ import ProfileInfo from "./profileInfo/ProfileInfo";
 import ProfilePost from "./profilePost/ProfilePost";
 import Header from "../../../component/commons/layouts/header/Header";
 import TopButton from "../../../component/commons/topButton/TopButton";
-import { IMyProfileData, IUserProfileData } from "../../../api/apiType";
+import { IMyProfileData, IUserProfileData } from "../../../types/apiTypes";
 
 interface IProps {
   myProfile: IMyProfileData;

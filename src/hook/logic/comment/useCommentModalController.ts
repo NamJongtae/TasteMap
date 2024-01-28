@@ -6,7 +6,7 @@ import { commentSlice } from "../../../slice/commentSlice";
 import { replySlice } from "../../../slice/replySlice";
 import { useFetchCommentCountMutation } from "../../query/post/useFetchCommentCountMutation";
 import { useHistoryMobileBackBtn } from "../../useHistoryMobileBackBtn";
-import { ICommentData } from "../../../api/apiType";
+import { ICommentData } from "../../../types/apiTypes";
 import { useFetchReplyCountMutation } from "../../query/post/comment/useFetchReplyCountMutation";
 
 interface IProps {

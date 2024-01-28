@@ -12,7 +12,7 @@ import {
   IMapData,
   IPostUpdateData,
   IPostUploadData
-} from "../../../api/apiType";
+} from "../../../types/apiTypes";
 import { Timestamp } from "firebase/firestore";
 import { tasteMapSlice } from "../../../slice/tasteMapSlice";
 

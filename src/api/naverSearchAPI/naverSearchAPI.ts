@@ -1,5 +1,5 @@
 import axios from "axios";
-import { IMapData } from "../apiType";
+import { IMapData } from "../../types/apiTypes";
 
 // cors에러 우회를 위한 proxy 사용
 const PROXY = window.location.hostname === "localhost" ? "" : "/proxy";

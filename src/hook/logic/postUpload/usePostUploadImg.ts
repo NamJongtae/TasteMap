@@ -4,7 +4,7 @@ import { imgValidation } from "../../../library/imageValidation";
 import { isMobile } from "react-device-detect";
 import { getCompressionImg } from "../../../library/imageCompression";
 import { useFormContext } from "react-hook-form";
-import { IPostData } from "../../../api/apiType";
+import { IPostData } from "../../../types/apiTypes";
 
 interface IPrpos {
   isEdit: boolean;

@@ -1,5 +1,5 @@
 import React from "react";
-import { IMyProfileData, IPostData } from "../../../../../api/apiType";
+import { IMyProfileData, IPostData } from "../../../../../types/apiTypes";
 import PostLikeBtn from "./postLikeBtn/PostLikeBtn";
 import PostCommentBtn from "./postCommentBtn/PostCommentBtn";
 import PostDate from "./postDate/PostDate";

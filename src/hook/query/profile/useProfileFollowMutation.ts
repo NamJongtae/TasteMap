@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { IMyProfileData, IUserProfileData } from "../../../api/apiType";
+import { IMyProfileData, IUserProfileData } from "../../../types/apiTypes";
 import { sweetToast } from "../../../library/sweetAlert/sweetAlert";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { follow } from "../../../api/firebase/profileAPI";
@@ -19,7 +19,7 @@ export const useProfileFollowMutation = () => {
       await queryClient.cancelQueries({
         queryKey: My_PROFILE_QUERYKEY
       });
-      const previousMyProfile = queryClient.getQueryData(["profile", "my"]);
+      const previousMyProfile = queryClient.getQueryData(My_PROFILE_QUERYKEY);
 
       // 나의 following 목록애서 대상 유저 추가
       queryClient.setQueryData(My_PROFILE_QUERYKEY, (data: IMyProfileData) => ({
@@ -61,7 +61,7 @@ export const useProfileFollowMutation = () => {
         refetchType: "inactive"
       });
 
-      if(!uid) return;
+      if (!uid) return;
       const USER_PROFILE_QUERYKEY = getUserProfileQuerykey(uid);
       queryClient.invalidateQueries({
         queryKey: USER_PROFILE_QUERYKEY,

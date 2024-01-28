@@ -16,7 +16,7 @@ export default function PhoneField() {
     checkDuplicationHandler: checkPhoneDuplicationHandler,
     resetCheckDuplication: resetCheckPhoneDuplication
   } = useSignupCheckDuplication({
-    type: "phone"
+    type: "PHONE"
   });
 
   return (

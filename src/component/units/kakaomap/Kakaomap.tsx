@@ -1,6 +1,6 @@
 import React from "react";
 import "./mapWalker.style.css";
-import { IMapData } from "../../../api/apiType";
+import { IMapData } from "../../../types/apiTypes";
 import { useKakaomap } from "../../../hook/logic/kakaomap/useKakaomap";
 import { MapContainer, Title, Wrapper } from "./kakaomap.styles";
 import NoMapData from "./noMapData/NoMapData";

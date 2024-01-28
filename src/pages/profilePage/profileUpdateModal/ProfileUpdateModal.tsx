@@ -1,5 +1,5 @@
 import React from "react";
-import { IMyProfileData } from "../../../api/apiType";
+import { IMyProfileData } from "../../../types/apiTypes";
 import { useSupportedWebp } from "../../../hook/useSupportedWebp";
 import { optModalTabFocus } from "../../../library/optModalTabFocus";
 import {

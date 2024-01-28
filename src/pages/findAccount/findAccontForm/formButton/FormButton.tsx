@@ -1,8 +1,9 @@
 import { useFormContext } from "react-hook-form";
 import { FindAccountBtn, LoginLink } from "../../findAccount.styles";
+import { TFindAccountMenu } from "../../../../types/types";
 
 interface IProps {
-  menu: "email" | "password";
+  menu: TFindAccountMenu;
   isFind: boolean;
   isLoading: boolean;
 }
@@ -24,7 +25,7 @@ export default function FormButton({ menu, isFind, isLoading }: IProps) {
 
   return (
     <FindAccountBtn type='submit' disabled={!formState.isValid}>
-      {menu === "email" ? "이메일 찾기" : "비밀번호 찾기"}
+      {menu === "EMAIL" ? "이메일 찾기" : "비밀번호 찾기"}
     </FindAccountBtn>
   );
 }

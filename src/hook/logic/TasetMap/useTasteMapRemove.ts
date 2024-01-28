@@ -4,7 +4,7 @@ import { useCallback } from "react";
 import { sweetConfirm } from "../../../library/sweetAlert/sweetAlert";
 import { useRemoveTasteMapMutation } from "../../query/profile/useRemoveTasteMapMutation";
 import { tasteMapSlice } from "../../../slice/tasteMapSlice";
-import { IMapData } from "../../../api/apiType";
+import { IMapData } from "../../../types/apiTypes";
 
 export const useTasteMapRemove = () => {
   const clickMarkerData = useSelector(

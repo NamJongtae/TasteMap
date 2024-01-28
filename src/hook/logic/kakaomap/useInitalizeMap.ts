@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { IMapData } from "../../../api/apiType";
+import { IMapData } from "../../../types/apiTypes";
 
 interface IProps {
   data: IMapData[];
@@ -24,7 +24,6 @@ export const useInitalizeMap = ({
   resetRoadview,
   resetMarkers
 }: IProps) => {
-
   const initializeMap = (latitude: number, longitude: number) => {
     if (!myMap) {
       const container = mapRef.current;

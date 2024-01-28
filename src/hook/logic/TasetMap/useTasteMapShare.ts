@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { sweetToast } from "../../../library/sweetAlert/sweetAlert";
-import { IMyProfileData, IUserProfileData } from "../../../api/apiType";
+import { IMyProfileData, IUserProfileData } from "../../../types/apiTypes";
 
 interface IProps {
   profile: IMyProfileData | IUserProfileData | undefined;

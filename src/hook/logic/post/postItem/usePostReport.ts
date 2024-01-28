@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { usePostReportMutation } from "../../../query/post/usePostReportMutation";
-import { IPostData, IUserData } from "../../../../api/apiType";
+import { IPostData, IUserData } from "../../../../types/apiTypes";
 import {
   sweetConfirm,
   sweetToast

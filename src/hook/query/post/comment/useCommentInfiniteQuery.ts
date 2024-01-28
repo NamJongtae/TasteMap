@@ -4,7 +4,7 @@ import {
   QueryDocumentSnapshot,
   QuerySnapshot
 } from "firebase/firestore";
-import { ICommentData } from "../../../../api/apiType";
+import { ICommentData } from "../../../../types/apiTypes";
 import { fetchComments } from "../../../../api/firebase/commentAPI";
 import { getCommentsQuerykey } from "../../../../querykey/querykey";
 

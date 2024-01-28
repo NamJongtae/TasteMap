@@ -4,7 +4,7 @@ import {
   sweetToast
 } from "../../../../library/sweetAlert/sweetAlert";
 import { useCommentReportMutation } from "../../../query/post/comment/useCommentReportMutation";
-import { ICommentData } from "../../../../api/apiType";
+import { ICommentData } from "../../../../types/apiTypes";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../store/store";
 

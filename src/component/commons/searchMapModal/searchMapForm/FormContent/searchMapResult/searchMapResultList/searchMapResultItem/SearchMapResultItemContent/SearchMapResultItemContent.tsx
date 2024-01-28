@@ -5,7 +5,7 @@ import {
   ResultContentTag,
   ResultContentText
 } from "../../../../../../searchMapModal.styles";
-import { IMapData } from "../../../../../../../../../api/apiType";
+import { IMapData } from "../../../../../../../../../types/apiTypes";
 
 interface IProps {
   data: IMapData;

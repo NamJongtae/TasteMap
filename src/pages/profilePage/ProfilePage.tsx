@@ -2,7 +2,7 @@ import Header from "../../component/commons/layouts/header/Header";
 import FollowModal from "./followModal/FollowModal";
 import InvalidPage from "../../component/commons/invalidPage/InvalidPage";
 import Loading from "../../component/commons/loading/Loading";
-import { IMyProfileData, IUserProfileData } from "../../api/apiType";
+import { IMyProfileData, IUserProfileData } from "../../types/apiTypes";
 import { useProfileFetchData } from "../../hook/logic/profile/profileInfo/useProfileFetchData";
 import { useCheckIsMyProfilePage } from "../../hook/logic/profile/profileInfo/useCheckIsMyProfilePage";
 import { useSelector } from "react-redux";

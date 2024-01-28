@@ -1,5 +1,5 @@
 import { useDispatch } from "react-redux";
-import { IMapData } from "../../../api/apiType";
+import { IMapData } from "../../../types/apiTypes";
 import { tasteMapSlice } from "../../../slice/tasteMapSlice";
 import { AppDispatch } from "../../../store/store";
 import { useAddTasteMapDataFetch } from "./useAddTasteMapDataFetch";

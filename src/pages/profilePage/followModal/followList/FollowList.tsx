@@ -5,7 +5,7 @@ import NoData from "../../../../component/commons/noData/NoData";
 import ScrollLoading from "../../../../component/commons/loading/ScrollLoading";
 import { useFollowListInfiniteScroll } from "../../../../hook/logic/profile/followModal/useFollowListInfiniteScroll";
 import { useFocusing } from "../../../../hook/useFocusing";
-import { IMyProfileData } from "../../../../api/apiType";
+import { IMyProfileData } from "../../../../types/apiTypes";
 
 interface IProps {
   myProfile: IMyProfileData;

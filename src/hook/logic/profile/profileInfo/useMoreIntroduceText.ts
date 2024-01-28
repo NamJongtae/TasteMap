@@ -1,5 +1,5 @@
 import { useLayoutEffect, useRef, useState } from "react";
-import { IMyProfileData, IUserProfileData } from "../../../../api/apiType";
+import { IMyProfileData, IUserProfileData } from "../../../../types/apiTypes";
 
 interface IProps {
   profile: IMyProfileData | IUserProfileData;
