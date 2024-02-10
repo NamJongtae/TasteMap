@@ -45,7 +45,7 @@ export const usePostLike = ({ data, myProfile, postType }: IProps) => {
     } else {
       addLikeHandler(id);
     }
-  }, []);
+  }, [isLike]);
 
   return { isLike, likeCount, toggleLikeHandler };
 };
