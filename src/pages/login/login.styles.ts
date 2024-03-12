@@ -111,9 +111,10 @@ export const StyledSocialLoginBtn = styled.button`
   border-radius: 5px;
   font-weight: 400;
   padding: 15px 0;
-  border: px solid #bdbdbd;
+  border: 1px solid #bdbdbd;
   transition: all 0.2s;
-  &.google {
+
+  &.GOOGLE {
     background: ${(props: { $isWebpSupported: boolean | null }) =>
       `url(${
         props.$isWebpSupported
@@ -121,7 +122,7 @@ export const StyledSocialLoginBtn = styled.button`
           : "/assets/icon-google.svg"
       }) no-repeat center left 15px / 24px #fff`};
   }
-  &.github {
+  &.GITHUB {
     background: ${(props: { $isWebpSupported: boolean | null }) =>
       `url(${
         props.$isWebpSupported
