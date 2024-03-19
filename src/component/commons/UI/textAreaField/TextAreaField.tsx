@@ -61,6 +61,8 @@ export default function TextAreaField({
           placeholder={placeholder}
           style={textareaStyle}
           rows={rows}
+          maxLength={maxLength}
+          minLength={minLength}
           {...rest}
           ref={(e) => {
             ref(e);
