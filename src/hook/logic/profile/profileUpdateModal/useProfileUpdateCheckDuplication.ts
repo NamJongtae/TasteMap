@@ -26,7 +26,7 @@ export const useProfileUpdateCheckDuplication = ({ myProfile }: IProps) => {
 
       if (value.match(displayNameRegex)) {
         try {
-          await fetchDuplication(value, "DISPLAYNAME");
+          await fetchDuplication(value, "displayName");
           checkDuplicationActiveHanlder();
         } catch (error: any) {
           return setError("displayName", {

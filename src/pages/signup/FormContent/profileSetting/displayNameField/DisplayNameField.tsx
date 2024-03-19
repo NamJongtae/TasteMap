@@ -9,7 +9,7 @@ import { useSignupCheckDuplication } from "../../../../../hook/logic/signup/useS
 export default function DisplayNameField() {
   const { checkDuplicationHandler, resetCheckDuplication } =
     useSignupCheckDuplication({
-      type: "DISPLAYNAME"
+      type: "displayName"
     });
 
   return (

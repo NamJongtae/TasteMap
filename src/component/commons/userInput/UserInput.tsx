@@ -1,7 +1,7 @@
 import {
   ChangeEventHandler,
   FocusEventHandler,
-  HTMLInputTypeAttribute
+  HTMLInputTypeAttribute,
 } from "react";
 import { Input, Label, Wrapper } from "./userInput.styles";
 import {

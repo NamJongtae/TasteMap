@@ -10,10 +10,9 @@ import {
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../../store/store";
 import { signupSlice } from "../../../slice/signupSlice";
-import { TDuplication } from "../../../types/types";
 
 interface IProps {
-  type: TDuplication;
+  type: "email" | "phone" | "displayName";
 }
 
 export const useSignupCheckDuplication = ({ type }: IProps) => {
@@ -21,10 +20,10 @@ export const useSignupCheckDuplication = ({ type }: IProps) => {
   const { setError } = useFormContext();
 
   const setCheckDuplication = () => {
-    if (type === "EMAIL") {
+    if (type === "email") {
       return "setCheckEmailDuplication";
     }
-    if (type === "DISPLAYNAME") {
+    if (type === "displayName") {
       return "setCheckDisplayNameDuplication";
     }
     return "setCheckPhoneDuplication";
@@ -35,10 +34,10 @@ export const useSignupCheckDuplication = ({ type }: IProps) => {
   };
 
   const checkRegex = useCallback(() => {
-    if (type === "EMAIL") {
+    if (type === "email") {
       return emailRegex;
     }
-    if (type === "DISPLAYNAME") {
+    if (type === "displayName") {
       return displayNameRegex;
     }
 
@@ -54,7 +53,7 @@ export const useSignupCheckDuplication = ({ type }: IProps) => {
       if (value.match(checkRegex())) {
         try {
           await fetchDuplication(
-            type === "PHONE" ? value.replace(/-/g, "") : value,
+            type === "phone" ? value.replace(/-/g, "") : value,
             type
           );
           checkDuplicationActiveHanlder();

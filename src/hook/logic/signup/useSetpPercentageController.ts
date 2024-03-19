@@ -62,9 +62,11 @@ export const useStepProgressController = ({ currentStep, steps }: IProps) => {
     if (currentStep === steps[1])
       if (
         percentage >= 50 &&
+        percentage < 100 &&
         !formState.errors.displayName &&
         checkDisplayNameDuplication
       ) {
+        console.log("a");
         addPercentageHandler(setpPerPercentage);
       } else if (
         percentage > 50 &&
