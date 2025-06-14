@@ -5,7 +5,7 @@
 |------------|--------|
 | test@a.com | asdzxc123! |
 
-#### 🌏 배포 URL : 🍴 [TasteMap](https://tastemap.site)
+#### 🌏 배포 URL : 🍴 [TasteMap](https://tastemaps.netlify.app)
 
 <br/>
 
